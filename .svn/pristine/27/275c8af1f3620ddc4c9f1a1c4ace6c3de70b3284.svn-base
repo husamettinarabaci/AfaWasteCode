@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: waste-pgadmin-config
+  namespace: waste-system
+data:
+  PGADMIN_DEFAULT_EMAIL: "developer@afatek.com.tr"
+  PGADMIN_DEFAULT_PASSWORD: "Amca151200"

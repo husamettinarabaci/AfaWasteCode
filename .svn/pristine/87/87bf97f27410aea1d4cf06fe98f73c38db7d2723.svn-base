@@ -1,0 +1,220 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"os"
+	"time"
+
+	_ "github.com/lib/pq"
+)
+
+var debug bool = os.Getenv("DEBUG") == "1"
+
+func initStart() {
+
+	logStr("Successfully connected!")
+	time.Sleep(time.Second * 10)
+}
+func main() {
+
+	initStart()
+	bulkDbSet()
+	configDbSet()
+	sumDbSet()
+	readerDbSet()
+
+}
+
+func bulkDbSet() {
+	var bulkDbHost string = "waste-bulkdb-cluster-ip"
+	var port int = 5432
+	var user string = os.Getenv("POSTGRES_USER")
+	var password string = os.Getenv("POSTGRES_PASSWORD")
+	var dbname string = os.Getenv("POSTGRES_DB")
+	bulkDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		bulkDbHost, port, user, password, dbname)
+
+	bulkDb, err := sql.Open("postgres", bulkDbInfo)
+	logErr(err)
+	defer bulkDb.Close()
+
+	err = bulkDb.Ping()
+	logErr(err)
+
+	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS listenerdata ( 
+			data_id serial PRIMARY KEY,
+			app_type varchar(50) NOT NULL DEFAULT '',
+			serial_number varchar(50) NOT NULL DEFAULT '',
+			data_type varchar(50) NOT NULL DEFAULT '',
+			data TEXT NOT NULL DEFAULT '',
+			customer_id INT NOT NULL DEFAULT -1,
+			  data_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+			  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+			);`)
+	_, err = bulkDb.Exec(createSQL)
+	logErr(err)
+	bulkDb.Close()
+}
+
+func configDbSet() {
+	var configDbHost string = "waste-configdb-cluster-ip"
+	var port int = 5432
+	var user string = os.Getenv("POSTGRES_USER")
+	var password string = os.Getenv("POSTGRES_PASSWORD")
+	var dbname string = os.Getenv("POSTGRES_DB")
+	configDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		configDbHost, port, user, password, dbname)
+
+	configDb, err := sql.Open("postgres", configDbInfo)
+	logErr(err)
+	defer configDb.Close()
+
+	err = configDb.Ping()
+	logErr(err)
+
+	configDb.Close()
+}
+
+func sumDbSet() {
+	var sumDbHost string = "waste-sumdb-cluster-ip"
+	var port int = 5432
+	var user string = os.Getenv("POSTGRES_USER")
+	var password string = os.Getenv("POSTGRES_PASSWORD")
+	var dbname string = os.Getenv("POSTGRES_DB")
+	sumDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		sumDbHost, port, user, password, dbname)
+
+	sumDb, err := sql.Open("postgres", sumDbInfo)
+	logErr(err)
+	defer sumDb.Close()
+
+	err = sumDb.Ping()
+	logErr(err)
+
+	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS redisdata ( 
+			data_id serial PRIMARY KEY,
+			hashkey TEXT NOT NULL DEFAULT '',
+			subkey TEXT NOT NULL DEFAULT '', 
+			keyvalue TEXT NOT NULL DEFAULT '',
+			  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+			);`)
+	_, err = sumDb.Exec(createSQL)
+	logErr(err)
+	sumDb.Close()
+}
+
+func readerDbSet() {
+	var sumDbHost string = "waste-readerdb-cluster-ip"
+	var port int = 5432
+	var user string = os.Getenv("POSTGRES_USER")
+	var password string = os.Getenv("POSTGRES_PASSWORD")
+	var dbname string = os.Getenv("POSTGRES_DB")
+	sumDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		sumDbHost, port, user, password, dbname)
+
+	sumDb, err := sql.Open("postgres", sumDbInfo)
+	logErr(err)
+	defer sumDb.Close()
+
+	err = sumDb.Ping()
+	logErr(err)
+	var createSQL string
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfdata ( 
+		data_id serial PRIMARY KEY,
+		app_type varchar(50) NOT NULL DEFAULT '',
+		serial_number varchar(50) NOT NULL DEFAULT '',
+		data_type varchar(50) NOT NULL DEFAULT '',
+		customer_id INT NOT NULL DEFAULT -1,
+		tagid varchar(50) NOT NULL DEFAULT '',
+		uid varchar(50) NOT NULL DEFAULT '',
+		  data_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = sumDb.Exec(createSQL)
+	logErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS gpsdata ( 
+		data_id serial PRIMARY KEY,
+		app_type varchar(50) NOT NULL DEFAULT '',
+		serial_number varchar(50) NOT NULL DEFAULT '',
+		data_type varchar(50) NOT NULL DEFAULT '',
+		customer_id INT NOT NULL DEFAULT -1,
+		latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		  data_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = sumDb.Exec(createSQL)
+	logErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS statusdata ( 
+		data_id serial PRIMARY KEY,
+		app_type varchar(50) NOT NULL DEFAULT '',
+		serial_number varchar(50) NOT NULL DEFAULT '',
+		data_type varchar(50) NOT NULL DEFAULT '',
+		customer_id INT NOT NULL DEFAULT -1,
+		reader_app_status varchar(50) NOT NULL DEFAULT '0',
+		reader_conn_status varchar(50) NOT NULL DEFAULT '0',
+		reader_status varchar(50) NOT NULL DEFAULT '0',
+		cam_app_status varchar(50) NOT NULL DEFAULT '0',
+		cam_conn_status varchar(50) NOT NULL DEFAULT '0',
+		cam_status varchar(50) NOT NULL DEFAULT '0',
+		gps_app_status varchar(50) NOT NULL DEFAULT '0',
+		gps_conn_status varchar(50) NOT NULL DEFAULT '0',
+		gps_status varchar(50) NOT NULL DEFAULT '0',
+		therm_app_status varchar(50) NOT NULL DEFAULT '0',
+		transfer_app_status varchar(50) NOT NULL DEFAULT '0',
+		alive_status varchar(50) NOT NULL DEFAULT '0',
+		contact_status varchar(50) NOT NULL DEFAULT '0',
+		  data_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = sumDb.Exec(createSQL)
+	logErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS thermdata ( 
+		data_id serial PRIMARY KEY,
+		app_type varchar(50) NOT NULL DEFAULT '',
+		serial_number varchar(50) NOT NULL DEFAULT '',
+		data_type varchar(50) NOT NULL DEFAULT '',
+		customer_id INT NOT NULL DEFAULT -1,
+		therm varchar(50) NOT NULL DEFAULT '0',
+		  data_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = sumDb.Exec(createSQL)
+	logErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS camdata ( 
+		data_id serial PRIMARY KEY,
+		app_type varchar(50) NOT NULL DEFAULT '',
+		serial_number varchar(50) NOT NULL DEFAULT '',
+		data_type varchar(50) NOT NULL DEFAULT '',
+		customer_id INT NOT NULL DEFAULT -1,
+		tagid varchar(50) NOT NULL DEFAULT '',
+		uid varchar(50) NOT NULL DEFAULT '',
+		  data_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = sumDb.Exec(createSQL)
+	logErr(err)
+	sumDb.Close()
+}
+
+func logErr(err error) {
+	if err != nil {
+		logStr(err.Error())
+	}
+}
+
+func logStr(value string) {
+	if debug {
+		fmt.Println(value)
+	}
+}

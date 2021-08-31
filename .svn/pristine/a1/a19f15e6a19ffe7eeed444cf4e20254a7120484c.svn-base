@@ -1,0 +1,14 @@
+
+
+
+
+
+
+#all app liveness readness probe 
+#example store api 
+#   readness 
+#     db conn redis conn test
+
+
+#log for err 
+#log for string

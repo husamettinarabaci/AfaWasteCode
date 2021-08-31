@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waste-bulkdb-deployment
+  namespace: waste-system
+  labels:
+    app: waste-bulkdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waste-bulkdb
+  template:
+    metadata:
+      labels:
+        app: waste-bulkdb
+    spec:
+      containers:
+        - name: waste-bulkdb
+          image: postgres:13.4
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          args: ["-c", "shared_buffers=256MB", "-c", "max_connections=400"]
+          envFrom:
+            - configMapRef:
+                name: waste-psqldb-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: waste-bulkdb-vm
+              subPath: bulkdb
+      volumes:
+        - name: waste-bulkdb-vm
+          persistentVolumeClaim:
+            claimName: waste-bulkdb-pv-claim
