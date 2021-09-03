@@ -3,20 +3,16 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 	"os"
 	"time"
 
+	"github.com/devafatek/WasteLibrary"
 	_ "github.com/lib/pq"
 )
 
-var debug bool = os.Getenv("DEBUG") == "1"
-
 func initStart() {
 
-	logStr("Successfully connected!")
+	WasteLibrary.LogStr("Successfully connected!")
 	time.Sleep(time.Second * 10)
 }
 func main() {
@@ -40,11 +36,11 @@ func bulkDbSet() {
 		bulkDbHost, port, user, password, dbname)
 
 	bulkDb, err := sql.Open("postgres", bulkDbInfo)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	defer bulkDb.Close()
 
 	err = bulkDb.Ping()
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
 	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS listenerdata ( 
 			data_id serial PRIMARY KEY,
@@ -57,7 +53,7 @@ func bulkDbSet() {
 			  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 			);`)
 	_, err = bulkDb.Exec(createSQL)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	bulkDb.Close()
 }
 
@@ -72,11 +68,11 @@ func configDbSet() {
 		configDbHost, port, user, password, dbname)
 
 	configDb, err := sql.Open("postgres", configDbInfo)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	defer configDb.Close()
 
 	err = configDb.Ping()
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
 	configDb.Close()
 }
@@ -92,11 +88,11 @@ func sumDbSet() {
 		sumDbHost, port, user, password, dbname)
 
 	sumDb, err := sql.Open("postgres", sumDbInfo)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	defer sumDb.Close()
 
 	err = sumDb.Ping()
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
 	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS redisdata ( 
 			data_id serial PRIMARY KEY,
@@ -106,7 +102,7 @@ func sumDbSet() {
 			  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 			);`)
 	_, err = sumDb.Exec(createSQL)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	sumDb.Close()
 }
 
@@ -121,11 +117,11 @@ func staticDbSet() {
 		sumDbHost, port, user, password, dbname)
 
 	sumDb, err := sql.Open("postgres", sumDbInfo)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	defer sumDb.Close()
 
 	err = sumDb.Ping()
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	var createSQL string
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tags ( 
@@ -146,7 +142,7 @@ func staticDbSet() {
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = sumDb.Exec(createSQL)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS devices ( 
 		device_id serial PRIMARY KEY,
@@ -178,7 +174,7 @@ func staticDbSet() {
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = sumDb.Exec(createSQL)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS customers ( 
 		customer_id serial PRIMARY KEY,
@@ -191,48 +187,6 @@ func staticDbSet() {
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = sumDb.Exec(createSQL)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	sumDb.Close()
-}
-
-func logErr(err error) {
-	if err != nil {
-		sendLogServer("ERR", err.Error())
-	}
-}
-
-func logStr(value string) {
-	if debug {
-		sendLogServer("INFO", value)
-	}
-}
-
-var container string = os.Getenv("CONTAINER_TYPE")
-
-func sendLogServer(logType string, logVal string) string {
-	var retVal string = "FAIL"
-	data := url.Values{
-		"CONTAINER": {container},
-		"LOGTYPE":   {logType},
-		"LOG":       {logVal},
-	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://waste-logserver-cluster-ip/log", data)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		if bodyString != "NOT" {
-			retVal = bodyString
-		}
-	}
-
-	return retVal
 }

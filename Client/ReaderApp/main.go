@@ -2,14 +2,10 @@ package main
 
 import (
 	"encoding/hex"
-	"encoding/json"
-	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
-	"os/user"
 	"strconv"
 	"strings"
 	"sync"
@@ -17,14 +13,11 @@ import (
 
 	"gitee.com/wiseai/go-rpio"
 	"github.com/AfatekDevelopers/serial_lib_go/devafatekserial"
+	"github.com/devafatek/WasteLibrary"
 	"github.com/google/uuid"
 )
 
-var debug bool = os.Getenv("DEBUG") == "1"
 var readerPort string = os.Getenv("READER_PORT")
-var appStatus string = "1"
-var connStatus string = "0"
-var readerStatus string = "0"
 var opInterval time.Duration = 5 * 60
 var wg sync.WaitGroup
 var currentUser string
@@ -47,21 +40,20 @@ type rfType struct {
 	UID   string `json:"UID"`
 }
 
-var currentRfType rfType
+var currentReaderDataType WasteLibrary.ReaderDataType = WasteLibrary.ReaderDataType{
+	UID:   "",
+	TagID: "",
+}
 
 func initStart() {
 
-	currentRfType.TagID = ""
-	currentRfType.UID = ""
 	lastReadTime = time.Now()
 	lastSendTime = time.Now()
 	readTags = make(map[string]time.Time)
-	if !debug {
-		time.Sleep(60 * time.Second)
-	}
-	logStr("Successfully connected!")
-	currentUser = getCurrentUser()
-	logStr(currentUser)
+	time.Sleep(5 * time.Second)
+	WasteLibrary.LogStr("Successfully connected!")
+	currentUser = WasteLibrary.GetCurrentUser()
+	WasteLibrary.LogStr(currentUser)
 }
 func main() {
 
@@ -75,42 +67,10 @@ func main() {
 	go deviceCheck()
 	wg.Add(1)
 
-	http.HandleFunc("/status", status)
+	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.ListenAndServe(":10001", nil)
 
 	wg.Wait()
-}
-
-func status(w http.ResponseWriter, req *http.Request) {
-
-	if err := req.ParseForm(); err != nil {
-		logErr(err)
-		return
-	}
-	opType := req.FormValue("OPTYPE")
-	logStr(opType)
-
-	if opType == "APP" {
-		if appStatus == "1" {
-			w.Write([]byte("OK"))
-		} else {
-			w.Write([]byte("FAIL"))
-		}
-	} else if opType == "CONN" {
-		if connStatus == "1" {
-			w.Write([]byte("OK"))
-		} else {
-			w.Write([]byte("FAIL"))
-		}
-	} else if opType == "READER" {
-		if readerStatus == "1" {
-			w.Write([]byte("OK"))
-		} else {
-			w.Write([]byte("FAIL"))
-		}
-	} else {
-		w.Write([]byte("FAIL"))
-	}
 }
 
 func rfCheck() {
@@ -118,10 +78,10 @@ func rfCheck() {
 
 		serialPort, err := devafatekserial.Open(serialOptions)
 		if err != nil {
-			logErr(err)
-			connStatus = "0"
+			WasteLibrary.LogErr(err)
+			WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
 		} else {
-			connStatus = "1"
+			WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
 		}
 		defer serialPort.Close()
 		var data string = ""
@@ -131,19 +91,19 @@ func rfCheck() {
 			n, err := serialPort.Read(buf)
 			if err != nil {
 				if err != io.EOF {
-					logErr(err)
+					WasteLibrary.LogErr(err)
 				}
 			} else {
 				buf = buf[:n]
 				data = hex.EncodeToString(buf)
 				lastReadTime = time.Now()
 				data = strings.ToUpper(data)
-				logStr(data)
+				WasteLibrary.LogStr(data)
 
 				if strings.Contains(data, "5379") || strings.Contains(data, "4354") {
-					readerStatus = "1"
+					WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
 				} else {
-					readerStatus = "0"
+					WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
 				}
 
 				tempData += data
@@ -154,8 +114,8 @@ func rfCheck() {
 						nid, _ := uuid.NewUUID()
 						lastSendTime = time.Now()
 						readTags[tempData[36:60]] = lastSendTime
-						currentRfType.TagID = lastRfTag
-						currentRfType.UID = nid.String()
+						currentReaderDataType.TagID = lastRfTag
+						currentReaderDataType.UID = nid.String()
 						sendRf()
 						sendRfToCam()
 					}
@@ -171,62 +131,27 @@ func rfCheck() {
 }
 
 func sendRf() {
-
 	data := url.Values{
 		"OPTYPE": {"RF"},
-		"TAGID":  {string(currentRfType.TagID)},
-		"UID":    {string(currentRfType.UID)},
+		"DATA":   {currentReaderDataType.ToString()},
 	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://127.0.0.1:10000/trans", data)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		logStr(bodyString)
-	}
+	WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 }
 
 func sendRfToCam() {
 
-	currentRfTypeJSON, err := json.Marshal(currentRfType)
-	if err != nil {
-		logErr(err)
-
-	}
 	data := url.Values{
 		"OPTYPE": {"RF"},
-		"RF":     {string(currentRfTypeJSON)},
+		"DATA":   {currentReaderDataType.ToString()},
 	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://127.0.0.1:10002/trigger", data)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		logStr(bodyString)
-	}
+	WasteLibrary.HttpPostReq("http://127.0.0.1:10002/trigger", data)
 }
 
 func deviceCheck() {
 	for {
 		if time.Since(lastReadTime).Seconds() > 60*60 {
 
-			logStr("Restart device...")
+			WasteLibrary.LogStr("Restart device...")
 			rpio.Open()
 			readerPort, _ := strconv.Atoi(readerPort)
 			pin := rpio.Pin(readerPort)
@@ -238,27 +163,5 @@ func deviceCheck() {
 		}
 
 		time.Sleep(opInterval * time.Second)
-	}
-}
-
-func getCurrentUser() string {
-	user, err := user.Current()
-	if err != nil {
-		logErr(err)
-	}
-
-	username := user.Username
-	return username
-}
-
-func logErr(err error) {
-	if err != nil {
-		logStr(err.Error())
-	}
-}
-
-func logStr(value string) {
-	if debug {
-		fmt.Println(value)
 	}
 }

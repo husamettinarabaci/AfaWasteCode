@@ -1,121 +1,34 @@
 package main
 
 import (
-	"io/ioutil"
 	"net/http"
-	"net/url"
-	"os"
-	"time"
-)
 
-var debug bool = os.Getenv("DEBUG") == "1"
-var appStatus string = "1"
+	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
+	"github.com/devafatek/WasteLibrary"
+)
 
 func initStart() {
 
-	logStr("Successfully connected!")
+	WasteLibrary.LogStr("Successfully connected!")
 }
 func main() {
 
 	initStart()
 
-	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/readiness", readinessHandler)
-	http.HandleFunc("/status", status)
+	http.HandleFunc("/health", WasteLibrary.HealthHandler)
+	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
+	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/data", data)
 	http.ListenAndServe(":80", nil)
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func readinessHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func status(w http.ResponseWriter, req *http.Request) {
-
-	if err := req.ParseForm(); err != nil {
-		logErr(err)
-		return
-	}
-	opType := req.FormValue("OPTYPE")
-	logStr(opType)
-
-	if opType == "TYPE" {
-		w.Write([]byte("WasteListener"))
-	} else if opType == "APP" {
-		if appStatus == "1" {
-			w.Write([]byte("OK"))
-		} else {
-			w.Write([]byte("FAIL"))
-		}
-	} else {
-		w.Write([]byte("FAIL"))
-	}
-}
-
 func data(w http.ResponseWriter, req *http.Request) {
-
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 		return
 	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://waste-enhc-cluster-ip/data", req.Form)
-	if err != nil {
-		logErr(err)
-
-	}
-	bodyBytes, errBdy := ioutil.ReadAll(resp.Body)
-	if errBdy != nil {
-		logErr(errBdy)
-	}
-	bodyString := string(bodyBytes)
-	w.Write([]byte(bodyString))
-}
-
-func logErr(err error) {
-	if err != nil {
-		sendLogServer("ERR", err.Error())
-	}
-}
-
-func logStr(value string) {
-	if debug {
-		sendLogServer("INFO", value)
-	}
-}
-
-var container string = os.Getenv("CONTAINER_TYPE")
-
-func sendLogServer(logType string, logVal string) string {
-	var retVal string = "FAIL"
-	data := url.Values{
-		"CONTAINER": {container},
-		"LOGTYPE":   {logType},
-		"LOG":       {logVal},
-	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://waste-logserver-cluster-ip/log", data)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		if bodyString != "NOT" {
-			retVal = bodyString
-		}
-	}
-
-	return retVal
+	resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
+	w.Write(resultVal.ToByte())
 }

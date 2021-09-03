@@ -1,0 +1,7 @@
+cd /home/uncle/Documents/Project/AfaWasteCode/Client &&
+cd CamApp/ && env GOOS=linux GOARCH=arm GOARM=5 go build && cp CamApp ../Client\ Files/Binary/ && cd .. &&
+cd CheckerApp/ && env GOOS=linux GOARCH=arm GOARM=5 go build && cp CheckerApp ../Client\ Files/Binary/ && cd .. &&
+cd GpsApp/ && env GOOS=linux GOARCH=arm GOARM=5 go build && cp GpsApp ../Client\ Files/Binary/ && cd .. &&
+cd ReaderApp/ && env GOOS=linux GOARCH=arm GOARM=5 go build && cp ReaderApp ../Client\ Files/Binary/ && cd .. &&
+cd ThermApp/ && env GOOS=linux GOARCH=arm GOARM=5 go build && cp ThermApp ../Client\ Files/Binary/ && cd .. &&
+cd TransferApp/ && env GOOS=linux GOARCH=arm GOARM=5 go build && cp TransferApp ../Client\ Files/Binary/ && cd .. &&

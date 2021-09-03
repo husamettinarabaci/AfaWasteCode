@@ -1,11 +1,12 @@
 package main
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/AfatekDevelopers/gps_lib_go/devafatekresult"
 )
 
 var debug bool = os.Getenv("DEBUG") == "1"
@@ -34,7 +35,7 @@ func readinessHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func status(w http.ResponseWriter, req *http.Request) {
-
+	var resultVal devafatekresult.ResultType
 	if err := req.ParseForm(); err != nil {
 		logErr(err)
 		return
@@ -42,17 +43,19 @@ func status(w http.ResponseWriter, req *http.Request) {
 	opType := req.FormValue("OPTYPE")
 	logStr(opType)
 
+	resultVal.Result = "FAIL"
 	if opType == "TYPE" {
-		w.Write([]byte("TcpTest"))
+		resultVal.Result = "TcpTest"
 	} else if opType == "APP" {
 		if appStatus == "1" {
-			w.Write([]byte("OK"))
+			resultVal.Result = "OK"
 		} else {
-			w.Write([]byte("FAIL"))
+			resultVal.Result = "FAIL"
 		}
 	} else {
-		w.Write([]byte("FAIL"))
+		resultVal.Result = "FAIL"
 	}
+	w.Write(resultVal.ToByte())
 }
 
 func logErr(err error) {
@@ -69,8 +72,7 @@ func logStr(value string) {
 
 var container string = os.Getenv("CONTAINER_TYPE")
 
-func sendLogServer(logType string, logVal string) string {
-	var retVal string = "FAIL"
+func sendLogServer(logType string, logVal string) {
 	data := url.Values{
 		"CONTAINER": {container},
 		"LOGTYPE":   {logType},
@@ -79,20 +81,5 @@ func sendLogServer(logType string, logVal string) string {
 	client := http.Client{
 		Timeout: 10 * time.Second,
 	}
-	resp, err := client.PostForm("http://waste-logserver-cluster-ip/log", data)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		if bodyString != "NOT" {
-			retVal = bodyString
-		}
-	}
-
-	return retVal
+	client.PostForm("http://waste-logserver-cluster-ip/log", data)
 }

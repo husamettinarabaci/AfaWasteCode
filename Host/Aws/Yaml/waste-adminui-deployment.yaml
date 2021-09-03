@@ -20,10 +20,10 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
-      - name: wait-for-wastestoreapi
+      - name: wait-for-wasteadminapi
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
-        args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApi...'; done"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-adminapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteAdminApi...'; done"]
       containers:
       - name: waste-adminui
         image: devafatek/wasteadminui

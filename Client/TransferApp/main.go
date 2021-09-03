@@ -2,24 +2,22 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
-	"os/user"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/devafatek/WasteLibrary"
 )
 
-var debug bool = os.Getenv("DEBUG") == "1"
 var applicationType = "RFID"
 var serialNumber = "0"
 var currentUser string
@@ -33,14 +31,12 @@ const (
 
 func initStart() {
 
-	if !debug {
-		time.Sleep(60 * time.Second)
-	}
-	logStr("Successfully connected!")
-	currentUser = getCurrentUser()
+	time.Sleep(5 * time.Second)
+	WasteLibrary.LogStr("Successfully connected!")
+	currentUser = WasteLibrary.GetCurrentUser()
 	serialNumber = getSerialNumber()
-	logStr(currentUser)
-	logStr(serialNumber)
+	WasteLibrary.LogStr(currentUser)
+	WasteLibrary.LogStr(serialNumber)
 }
 func main() {
 
@@ -75,59 +71,61 @@ func main() {
 }
 
 func status(w http.ResponseWriter, req *http.Request) {
+	var resultVal devafatekresult.ResultType
 
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 		return
 	}
 	opType := req.FormValue("OPTYPE")
-	logStr(opType)
+	WasteLibrary.LogStr(opType)
 
+	resultVal.Result = "FAIL"
 	if opType == "APP" {
-		w.Write([]byte("OK"))
+		resultVal.Result = "OK"
 	} else {
-		w.Write([]byte("FAIL"))
+		resultVal.Result = "FAIL"
 	}
+	w.Write(resultVal.ToByte())
 }
 
 func trans(w http.ResponseWriter, req *http.Request) {
+	var resultVal devafatekresult.ResultType
 
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
-		return
-	}
-	opType := req.FormValue("OPTYPE")
-	logStr(opType)
+		WasteLibrary.LogErr(err)
+		resultVal.Result = "FAIL"
 
-	w.Write([]byte("OK"))
-	dataMap := req.Form
-	sendDataByte, err := json.Marshal(dataMap)
-	if err != nil {
-		logErr(err)
-	}
-	sendDataJson := string(sendDataByte)
-	retVal := sendDataToServer(opType, sendDataJson, getTime(), "0")
-	logStr("Send Data To Server : " + retVal)
-	if retVal != "OK" {
-		if opType != "CAM" {
-			storeData(opType, sendDataJson)
+	} else {
+
+		opType := req.FormValue("OPTYPE")
+		dataVal := req.FormValue("DATA")
+		resultVal = sendDataToServer(opType, dataVal, WasteLibrary.GetTime(), "0")
+		WasteLibrary.LogStr("Send Data To Server : " + resultVal.ToString())
+		if resultVal.Result != "OK" {
+			if opType != "CAM" {
+				storeData(opType, dataVal)
+			}
 		}
+		if opType == "CAM" {
+
+			sendFileToServer(req.FormValue("UID"))
+		}
+		resultVal.Result = "OK"
 	}
-	if opType == "CAM" {
-		sendFileToServer(req.FormValue("UID"))
-	}
+	w.Write(resultVal.ToByte())
 }
 
 func sendFileToServer(fileName string) {
 	session, err := session.NewSession(&aws.Config{Region: aws.String(AWS_S3_REGION)})
 	if err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 	} else {
 		err = uploadFile(session, "WAIT_CAM/"+fileName+".mp4")
 		if err != nil {
-			logErr(err)
+			WasteLibrary.LogErr(err)
 		} else {
-			removeFile("WAIT_CAM/" + fileName + ".mp4")
+			WasteLibrary.RemoveFile("WAIT_CAM/" + fileName + ".mp4")
 		}
 	}
 }
@@ -158,8 +156,8 @@ func uploadFile(session *session.Session, uploadFileDir string) error {
 	return err
 }
 
-func sendDataToServer(datatype string, sendData string, dataTime string, repeat string) string {
-	var retVal string = "FAIL"
+func sendDataToServer(datatype string, sendData string, dataTime string, repeat string) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
 	data := url.Values{
 		"APPTYPE":  {applicationType},
 		"DID":      {serialNumber},
@@ -168,35 +166,19 @@ func sendDataToServer(datatype string, sendData string, dataTime string, repeat 
 		"DATA":     {sendData},
 		"REPEAT":   {repeat},
 	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://aws.afatek.com.tr/data", data)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		if bodyString == "OK" {
-			retVal = "OK"
-		}
-		logStr(bodyString)
-	}
-	return retVal
+	resultVal = WasteLibrary.HttpPostReq("http://aws.afatek.com.tr/data", data)
+	return resultVal
 }
 
 func storeData(dataType string, sendData string) {
-	err := ioutil.WriteFile("WAIT_"+dataType+"/"+getTime(), []byte(sendData), 0644)
+	err := ioutil.WriteFile("WAIT_"+dataType+"/"+WasteLibrary.GetTime(), []byte(sendData), 0644)
 	if err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 	}
 }
 
 func resendData(opType string, fileName string) {
+	var resultVal devafatekresult.ResultType
 	if opType == "CAM" {
 		sendFileToServer(fileName)
 	} else {
@@ -206,36 +188,36 @@ func resendData(opType string, fileName string) {
 
 		readByte, err := ioutil.ReadFile("WAIT_" + opType + "/" + fileName)
 		if err != nil {
-			logErr(err)
+			WasteLibrary.LogErr(err)
 		} else {
 
 			dataJSON = string(readByte)
 
-			logStr("Read File : " + dataJSON)
+			WasteLibrary.LogStr("Read File : " + dataJSON)
 
-			retVal := sendDataToServer(opType, string(dataJSON), dataTime, "1")
-			logStr("Send Data To Server Again : " + retVal)
-			if retVal == "OK" {
-				removeFile("WAIT_" + opType + "/" + fileName)
+			resultVal = sendDataToServer(opType, string(dataJSON), dataTime, "1")
+			WasteLibrary.LogStr("Send Data To Server Again : " + resultVal.ToString())
+			if resultVal.Result == "OK" {
+				WasteLibrary.RemoveFile("WAIT_" + opType + "/" + fileName)
 			}
 		}
 	}
 }
 
 func fileCheck(opType string) {
-	logStr("File Check :" + opType)
+	WasteLibrary.LogStr("File Check :" + opType)
 	for {
 		time.Sleep(opInterval * time.Second)
 
 		f, err := os.Open("WAIT_" + opType)
 		if err != nil {
-			logErr(err)
+			WasteLibrary.LogErr(err)
 			continue
 		}
 		fileInfo, err := f.Readdir(-1)
 		f.Close()
 		if err != nil {
-			logErr(err)
+			WasteLibrary.LogErr(err)
 			continue
 		}
 
@@ -251,7 +233,7 @@ func fileCheck(opType string) {
 				resendData(opType, fileName)
 			}
 			if second > 24*60*60 {
-				removeFile("WAIT_" + opType + "/" + file.Name())
+				WasteLibrary.RemoveFile("WAIT_" + opType + "/" + file.Name())
 			}
 		}
 	}
@@ -259,49 +241,13 @@ func fileCheck(opType string) {
 	wg.Done()
 }
 
-func removeFile(filePath string) {
-	logStr("Remove File : " + filePath)
-	cmdRm := exec.Command("rm", filePath)
-	errRm := cmdRm.Start()
-	if errRm != nil {
-		logErr(errRm)
-	}
-}
-
-func getCurrentUser() string {
-	user, err := user.Current()
-	if err != nil {
-		logErr(err)
-	}
-
-	username := user.Username
-	return username
-}
-
 func getSerialNumber() string {
 	var tempNumber string = ""
 	out, err := exec.Command("/home/pi/getSerialNumber.sh").Output()
 	if err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 	}
 	tempNumber = strings.TrimSuffix(string(out), "\n")
 
 	return tempNumber
-}
-
-func logErr(err error) {
-	if err != nil {
-		logStr(err.Error())
-	}
-}
-
-func logStr(value string) {
-	if debug {
-		fmt.Println(value)
-	}
-}
-
-func getTime() string {
-	currentTime := time.Now()
-	return currentTime.Format("2006.01.02 15:04:05")
 }

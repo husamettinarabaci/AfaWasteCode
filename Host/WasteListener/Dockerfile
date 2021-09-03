@@ -4,12 +4,13 @@ FROM golang:latest as builder
 LABEL maintainer="Afatek Developers <developer@afatek.com.tr>"
 
 WORKDIR /app
-
-COPY go.mod go.sum ./
+RUN mkdir ../WasteLibrary
+COPY WasteLibrary/ ../WasteLibrary
+COPY WasteListener/go.* ./
 
 RUN go mod download
 
-COPY . .
+COPY WasteListener/ .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o WasteListener .
 

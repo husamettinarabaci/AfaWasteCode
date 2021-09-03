@@ -1,38 +1,36 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"os"
-	"os/user"
 	"strconv"
 	"sync"
 	"time"
 
 	"gitee.com/wiseai/go-rpio"
+	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
+	"github.com/devafatek/WasteLibrary"
 )
 
-var debug bool = os.Getenv("DEBUG") == "1"
 var wg sync.WaitGroup
 var opInterval time.Duration = 5 * 60
 var contactPort string = os.Getenv("CONTACT_PORT")
 var currentUser string
-
-var readerAppStatus string = "0"
-var readerConnStatus string = "0"
-var readerStatus string = "0"
-var camAppStatus string = "0"
-var camConnStatus string = "0"
-var camStatus string = "0"
-var gpsAppStatus string = "0"
-var gpsConnStatus string = "0"
-var gpsStatus string = "0"
-var thermAppStatus string = "0"
-var transferAppStatus string = "0"
-var aliveStatus string = "1"
-var contactStatus string = "0"
+var currentCheckType WasteLibrary.CheckDataType = WasteLibrary.CheckDataType{
+	ReaderAppStatus:   "1",
+	ReaderConnStatus:  "0",
+	ReaderStatus:      "0",
+	CamAppStatus:      "1",
+	CamConnStatus:     "0",
+	CamStatus:         "0",
+	GpsAppStatus:      "1",
+	GpsConnStatus:     "0",
+	GpsStatus:         "0",
+	ThermAppStatus:    "1",
+	TransferAppStatus: "1",
+	AliveStatus:       "1",
+	ContactStatus:     "0",
+}
 
 type statusType struct {
 	Name string `json:"Name"`
@@ -110,12 +108,10 @@ var statusTypes []statusType = []statusType{
 
 func initStart() {
 
-	if !debug {
-		time.Sleep(60 * time.Second)
-	}
-	logStr("Successfully connected!")
-	currentUser = getCurrentUser()
-	logStr(currentUser)
+	time.Sleep(5 * time.Second)
+	WasteLibrary.LogStr("Successfully connected!")
+	currentUser = WasteLibrary.GetCurrentUser()
+	WasteLibrary.LogStr(currentUser)
 }
 func main() {
 
@@ -140,55 +136,43 @@ func main() {
 }
 
 func statusCheck(statusTypeIndex int) {
-
+	var resultVal devafatekresult.ResultType
 	for {
 		var lastStatus = "0"
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
 			"OPTYPE": {statusTypes[statusTypeIndex].Key},
 		}
-		client := http.Client{
-			Timeout: 10 * time.Second,
-		}
-		resp, err := client.PostForm("http://127.0.0.1:"+statusTypes[statusTypeIndex].Port+"/status", data)
-		if err != nil {
-			logErr(err)
 
-		} else {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				logErr(err)
-			}
-			bodyString := string(bodyBytes)
-			if bodyString == "OK" {
-				lastStatus = "1"
-			}
+		resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:"+statusTypes[statusTypeIndex].Port+"/status", data)
+		if resultVal.Result == "OK" {
+			lastStatus = "1"
 		}
 
 		if statusTypes[statusTypeIndex].Name == "readerAppStatus" {
-			readerAppStatus = lastStatus
+			currentCheckType.ReaderAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "readerConnStatus" {
-			readerConnStatus = lastStatus
+			currentCheckType.ReaderConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "readerStatus" {
-			readerStatus = lastStatus
+			currentCheckType.ReaderStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camAppStatus" {
-			camAppStatus = lastStatus
+			currentCheckType.CamAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camConnStatus" {
-			camConnStatus = lastStatus
+			currentCheckType.CamConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camStatus" {
-			camStatus = lastStatus
+			currentCheckType.CamStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsAppStatus" {
-			gpsAppStatus = lastStatus
+			currentCheckType.GpsAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsConnStatus" {
-			gpsConnStatus = lastStatus
+			currentCheckType.GpsConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsStatus" {
-			gpsStatus = lastStatus
+			currentCheckType.GpsStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "transferAppStatus" {
-			transferAppStatus = lastStatus
+			currentCheckType.TransferAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "aliveStatus" {
-			aliveStatus = lastStatus
+			currentCheckType.AliveStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "contactStatus" {
-			contactStatus = lastStatus
+			currentCheckType.ContactStatus = lastStatus
 		} else {
 
 		}
@@ -206,9 +190,9 @@ func contactCheck() {
 			pin := rpio.Pin(conPort)
 			var tempData = rpio.ReadPin(pin) == 1
 			if tempData {
-				contactStatus = "1"
+				currentCheckType.ContactStatus = "1"
 			} else {
-				contactStatus = "0"
+				currentCheckType.ContactStatus = "0"
 			}
 			rpio.Close()
 		}
@@ -217,64 +201,14 @@ func contactCheck() {
 }
 
 func sendStatus() {
-
 	for {
 		time.Sleep(opInterval * time.Second)
 
 		data := url.Values{
-			"OPTYPE":           {"STATUS"},
-			"READERAPPSTATUS":  {readerAppStatus},
-			"READERCONNSTATUS": {readerConnStatus},
-			"READERSTATUS":     {readerStatus},
-			"CAMAPPSTATUS":     {camAppStatus},
-			"CAMCONNSTATUS":    {camConnStatus},
-			"CAMSTATUS":        {camStatus},
-			"GPSAPPSTATUS":     {gpsAppStatus},
-			"GPSCONNSTATUS":    {gpsConnStatus},
-			"GPSSTATUS":        {gpsStatus},
-			"THERMAPSTATUS":    {thermAppStatus},
-			"TRANSFERAPP":      {transferAppStatus},
-			"ALIVESTATUS":      {aliveStatus},
-			"CONTACTSTATUS":    {contactStatus},
+			"OPTYPE": {"STATUS"},
+			"DATA":   {currentCheckType.ToString()},
 		}
-		client := http.Client{
-			Timeout: 10 * time.Second,
-		}
-		resp, err := client.PostForm("http://127.0.0.1:10000/trans", data)
-		if err != nil {
-			logErr(err)
-
-		} else {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				logErr(err)
-			}
-			bodyString := string(bodyBytes)
-			logStr(bodyString)
-		}
+		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}
 	wg.Done()
-}
-
-func getCurrentUser() string {
-	user, err := user.Current()
-	if err != nil {
-		logErr(err)
-	}
-
-	username := user.Username
-	return username
-}
-
-func logErr(err error) {
-	if err != nil {
-		logStr(err.Error())
-	}
-}
-
-func logStr(value string) {
-
-	if debug {
-		fmt.Println(value)
-	}
 }

@@ -6,46 +6,42 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+
+	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
+	"github.com/devafatek/WasteLibrary"
 )
 
 func main() {
 
-	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/readiness", readinessHandler)
+	http.HandleFunc("/health", WasteLibrary.HealthHandler)
+	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", status)
 	http.HandleFunc("/log", log)
 	http.ListenAndServe(":80", nil)
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func readinessHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
 func status(w http.ResponseWriter, req *http.Request) {
-
+	var resultVal devafatekresult.ResultType
 	if err := req.ParseForm(); err != nil {
 		logErr(err)
 		return
 	}
 	opType := req.FormValue("OPTYPE")
 	logStr(opType)
-
+	resultVal.Result = "FAIL"
 	if opType == "TYPE" {
-		w.Write([]byte("WasteLogServer"))
+		resultVal.Result = "WasteLogServer"
 	} else if opType == "APP" {
-		w.Write([]byte("OK"))
+		resultVal.Result = "OK"
 	} else {
-		w.Write([]byte("FAIL"))
+		resultVal.Result = "FAIL"
 	}
+	w.Write(resultVal.ToByte())
 }
 
 func log(w http.ResponseWriter, req *http.Request) {
-
-	var retVal string = "FAIL"
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "OK"
 	if err := req.ParseForm(); err != nil {
 		logErr(err)
 		return
@@ -53,8 +49,8 @@ func log(w http.ResponseWriter, req *http.Request) {
 	container := req.FormValue("CONTAINER")
 	logType := req.FormValue("LOGTYPE")
 	logVal := req.FormValue("LOG")
-	logStr("Time : " + time.Now().String() + " - Container : " + container + " - LogType : " + logType + " - Log : " + logVal)
-	w.Write([]byte(retVal))
+	logStr("Time : " + time.Now().String() + " - Container : " + container + " - LogType : " + logType + " - Log : " + logVal + " - IP : " + req.RemoteAddr)
+	w.Write(resultVal.ToByte())
 }
 
 func logErr(err error) {

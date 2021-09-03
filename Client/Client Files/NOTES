@@ -28,9 +28,12 @@ sudo chmod +x ~/getSerialNumber.sh
 NTP=0.tr.pool.ntp.org 1.tr.pool.ntp.org 2.tr.pool.ntp.org 3.tr.pool.ntp.org
 FallbackNTP=0.tr.pool.ntp.org 1.tr.pool.ntp.org 2.tr.pool.ntp.org 3.tr.pool.ntp.org 
 
+mkdir /home/pi/WAIT_CAM
+mkdir /home/pi/WAIT_GPS
+mkdir /home/pi/WAIT_RF
+mkdir /home/pi/WAIT_STATUS
+mkdir /home/pi/WAIT_THERM
+
 
 ##Build Code
 env GOOS=linux GOARCH=arm GOARM=5 go build
-
-
-#Therm Fan Open

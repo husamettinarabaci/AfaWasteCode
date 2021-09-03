@@ -1,3 +1,5 @@
+github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085 h1:+R4bIn6VsTgzCG5yOf22HitjaEl6bWE1ByS/IkB8nyQ=
+github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085/go.mod h1:Tn+zmza68qM3WRUBoD+qiyuxb+Hu4ufudcq0yJChWvs=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=
 github.com/cespare/xxhash/v2 v2.1.2/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=

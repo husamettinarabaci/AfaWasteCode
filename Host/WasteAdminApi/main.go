@@ -1,125 +1,109 @@
 package main
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
-	"time"
-)
+	"strconv"
 
-var debug bool = os.Getenv("DEBUG") == "1"
-var appStatus string = "1"
+	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
+	"github.com/devafatek/WasteLibrary"
+)
 
 func initStart() {
 
-	logStr("Successfully connected!")
+	WasteLibrary.LogStr("Successfully connected!")
 }
 func main() {
 
 	initStart()
 
-	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/readiness", readinessHandler)
-	http.HandleFunc("/status", status)
-	http.HandleFunc("/data", data)
+	http.HandleFunc("/health", WasteLibrary.HealthHandler)
+	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
+	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/setCustomer", setCustomer)
+	http.HandleFunc("/setDevice", setDevice)
 	http.ListenAndServe(":80", nil)
 }
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
+func setCustomer(w http.ResponseWriter, req *http.Request) {
 
-func readinessHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func status(w http.ResponseWriter, req *http.Request) {
-
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 		return
 	}
-	opType := req.FormValue("OPTYPE")
-	logStr(opType)
-
-	if opType == "TYPE" {
-		w.Write([]byte("WasteAdminApi"))
-	} else if opType == "APP" {
-		if appStatus == "1" {
-			w.Write([]byte("OK"))
-		} else {
-			w.Write([]byte("FAIL"))
-		}
-	} else {
-		w.Write([]byte("FAIL"))
-	}
-}
-
-func data(w http.ResponseWriter, req *http.Request) {
-
-	var retVal string = "FAIL"
-	if err := req.ParseForm(); err != nil {
-		logErr(err)
+	resultVal = checkAuth(req.Form)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
 		return
 	}
-
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://waste-storeapi-cluster-ip/saveStaticDbMain", req.Form)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		retVal = bodyString
-	}
-	w.Write([]byte(retVal))
-}
-
-func logErr(err error) {
-	if err != nil {
-		sendLogServer("ERR", err.Error())
-	}
-}
-
-func logStr(value string) {
-	if debug {
-		sendLogServer("INFO", value)
-	}
-}
-
-var container string = os.Getenv("CONTAINER_TYPE")
-
-func sendLogServer(logType string, logVal string) string {
-	var retVal string = "FAIL"
 	data := url.Values{
-		"CONTAINER": {container},
-		"LOGTYPE":   {logType},
-		"LOG":       {logVal},
+		"APPTYPE": {"ADMIN"},
+		"OPTYPE":  {"CUSTOMER"},
 	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
+	customerId, _ := strconv.Atoi(req.FormValue("CUSTOMERID"))
+	var currentCustomer WasteLibrary.CustomerType = WasteLibrary.CustomerType{
+		CustomerId:   float64(customerId),
+		CustomerName: req.FormValue("CUSTOMERNAME"),
+		Domain:       req.FormValue("DOMAIN"),
+		RfIdApp:      req.FormValue("RFIDAPP"),
+		UltApp:       req.FormValue("ULTAPP"),
+		RecyApp:      req.FormValue("RECYAPP"),
 	}
-	resp, err := client.PostForm("http://waste-logserver-cluster-ip/log", data)
-	if err != nil {
-		logErr(err)
+	data.Add("DATA", currentCustomer.ToString())
 
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		if bodyString != "NOT" {
-			retVal = bodyString
-		}
-	}
+	resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result == "OK" {
 
-	return retVal
+		customerTypeVal := WasteLibrary.StringToCustomerType(resultVal.Retval.(string))
+		WasteLibrary.LogStr("Customer : " + customerTypeVal.ToString())
+		resultVal = WasteLibrary.SaveRedisForStoreApi("customers", customerTypeVal.ToIdString(), customerTypeVal.ToString())
+	}
+	w.Write(resultVal.ToByte())
+}
+
+func setDevice(w http.ResponseWriter, req *http.Request) {
+
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	if err := req.ParseForm(); err != nil {
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = checkAuth(req.Form)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	data := url.Values{
+		"APPTYPE": {"ADMIN"},
+		"OPTYPE":  {"DEVICE"},
+	}
+	deviceId, _ := strconv.Atoi(req.FormValue("DEVICEID"))
+	customerId, _ := strconv.Atoi(req.FormValue("CUSTOMERID"))
+	var currentDevice WasteLibrary.DeviceType = WasteLibrary.DeviceType{
+		DeviceId:     float64(deviceId),
+		CustomerId:   float64(customerId),
+		DeviceName:   req.FormValue("DEVICENAME"),
+		DeviceType:   req.FormValue("DEVICETYPE"),
+		SerialNumber: req.FormValue("SERIALNUMBER"),
+	}
+	data.Add("DATA", currentDevice.ToString())
+
+	resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result == "OK" {
+
+		deviceTypeVal := WasteLibrary.StringToCustomerType(resultVal.Retval.(string))
+		WasteLibrary.LogStr("Device : " + deviceTypeVal.ToString())
+		resultVal = WasteLibrary.SaveRedisForStoreApi("devices", deviceTypeVal.ToIdString(), deviceTypeVal.ToString())
+	}
+	w.Write(resultVal.ToByte())
+}
+
+func checkAuth(data url.Values) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	resultVal.Result = "OK"
+	return resultVal
 }

@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waste-storeapi-deployment
+  namespace: waste-system
+  labels:
+    app: waste-storeapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waste-storeapi
+  template:
+    metadata:
+      labels:
+        app: waste-storeapi
+    spec:
+      initContainers:
+      - name: wait-for-wastelogserver
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
+      - name: wait-for-wastebulkdb
+        image: postgres:9.6.5
+        command: ['sh', '-c', 'until pg_isready -h waste-bulkdb-cluster-ip -p 5432; do echo waiting for wastebulkdb; sleep 2; done;']
+      - name: wait-for-wastesumdb
+        image: postgres:9.6.5
+        command: ['sh', '-c', 'until pg_isready -h waste-sumdb-cluster-ip -p 5432; do echo waiting for wastesumdb; sleep 2; done;']
+      - name: wait-for-wasteconfigdb
+        image: postgres:9.6.5
+        command: ['sh', '-c', 'until pg_isready -h waste-configdb-cluster-ip -p 5432; do echo waiting for wasteconfigdb; sleep 2; done;']
+      - name: wait-for-wastestaticdb
+        image: postgres:9.6.5
+        command: ['sh', '-c', 'until pg_isready -h waste-staticdb-cluster-ip -p 5432; do echo waiting for wastestaticdb; sleep 2; done;']
+      - name: wait-for-wasteredis
+        image: busybox
+        command:
+        - /bin/sh
+        - -c
+        - >
+          set -x;
+          until ((printf "PING\r\n"; sleep 1) | nc waste-redis-cluster-ip 6379);
+          do echo waiting for waste-redis;
+          sleep 2; done
+      containers:
+      - name: waste-storeapi
+        image: devafatek/wastestoreapi
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: waste-psqldb-config
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 5

@@ -4,23 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	"strconv"
-	"time"
 
+	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
+	"github.com/devafatek/WasteLibrary"
 	"github.com/go-redis/redis/v8"
 	_ "github.com/lib/pq"
 )
 
-var debug bool = os.Getenv("DEBUG") == "1"
 var port int = 5432
 var user string = os.Getenv("POSTGRES_USER")
 var password string = os.Getenv("POSTGRES_PASSWORD")
 var dbname string = os.Getenv("POSTGRES_DB")
-var appStatus string = "1"
 var redisDb *redis.Client
 
 var ctx = context.Background()
@@ -31,7 +28,7 @@ var err error
 
 func initStart() {
 
-	logStr("Successfully connected!")
+	WasteLibrary.LogStr("Successfully connected!")
 	redisDb = redis.NewClient(&redis.Options{
 		Addr:     "waste-redis-cluster-ip:6379",
 		Password: "",
@@ -39,8 +36,8 @@ func initStart() {
 	})
 
 	pong, err := redisDb.Ping(ctx).Result()
-	logErr(err)
-	logStr(pong)
+	WasteLibrary.LogErr(err)
+	WasteLibrary.LogStr(pong)
 
 }
 
@@ -54,11 +51,11 @@ func main() {
 		sumDbHost, port, user, password, dbname)
 
 	sumDb, err = sql.Open("postgres", sumdDbInfo)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	defer sumDb.Close()
 
 	err = sumDb.Ping()
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
 	var bulkDbHost string = "waste-bulkdb-cluster-ip"
 	bulkDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -66,11 +63,11 @@ func main() {
 		bulkDbHost, port, user, password, dbname)
 
 	bulkDb, err = sql.Open("postgres", bulkDbInfo)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	defer bulkDb.Close()
 
 	err = bulkDb.Ping()
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
 	var staticDbHost string = "waste-staticdb-cluster-ip"
 	staticDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -78,58 +75,29 @@ func main() {
 		staticDbHost, port, user, password, dbname)
 
 	staticDb, err = sql.Open("postgres", staticDbInfo)
-	logErr(err)
+	WasteLibrary.LogErr(err)
 	defer staticDb.Close()
 
 	err = staticDb.Ping()
-	logErr(err)
+	WasteLibrary.LogErr(err)
 
-	logStr("Start")
-	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/readiness", readinessHandler)
-	http.HandleFunc("/status", status)
+	WasteLibrary.LogStr("Start")
+	http.HandleFunc("/health", WasteLibrary.HealthHandler)
+	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
+	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/getkey", getkey)
 	http.HandleFunc("/setkey", setkey)
 	http.HandleFunc("/saveBulkDbMain", saveBulkDbMain)
 	http.HandleFunc("/saveStaticDbMain", saveStaticDbMain)
 	http.ListenAndServe(":80", nil)
-	logStr("Finished")
-}
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func readinessHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func status(w http.ResponseWriter, req *http.Request) {
-
-	if err := req.ParseForm(); err != nil {
-		logErr(err)
-		return
-	}
-	opType := req.FormValue("OPTYPE")
-	logStr(opType)
-
-	if opType == "TYPE" {
-		w.Write([]byte("WasteStoreApi"))
-	} else if opType == "APP" {
-		if appStatus == "1" {
-			w.Write([]byte("OK"))
-		} else {
-			w.Write([]byte("FAIL"))
-		}
-	} else {
-		w.Write([]byte("FAIL"))
-	}
+	WasteLibrary.LogStr("Finished")
 }
 
 func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
-
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 		return
 	}
 	appTypeVal := req.FormValue("APPTYPE")
@@ -138,32 +106,33 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	timeVal := req.FormValue("TIME")
 	dataVal := req.FormValue("DATA")
 	customerIdVal, _ := strconv.Atoi(req.FormValue("CUSTOMERID"))
-	logStr("Insert BulkDb : " + appTypeVal + " - " + didVal + " - " + dataTypeVal + " - " + timeVal + " - " + dataVal + "-" + string(customerIdVal))
+	WasteLibrary.LogStr("Insert BulkDb : " + appTypeVal + " - " + didVal + " - " + dataTypeVal + " - " + timeVal + " - " + dataVal + "-" + string(customerIdVal))
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata(
 		app_type,serial_number,data_type,data,customer_id,data_time)
 	   VALUES ('%s','%s','%s','%s',%d,'%s');`, appTypeVal, didVal, dataTypeVal, dataVal, customerIdVal, timeVal)
-	logStr(insertSQL)
+	WasteLibrary.LogStr(insertSQL)
 	_, errDb := bulkDb.Exec(insertSQL)
-	logErr(errDb)
+	WasteLibrary.LogErr(errDb)
 	if errDb != nil {
-		logErr(err)
-		w.Write([]byte("FAIL"))
+		WasteLibrary.LogErr(err)
+		resultVal.Result = "FAIL"
 	} else {
-		w.Write([]byte("OK"))
+		resultVal.Result = "OK"
 	}
-
+	w.Write(resultVal.ToByte())
 }
 
 func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
-
-	var retVal string = "FAIL"
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 		return
 	}
 
 	appTypeVal := req.FormValue("APPTYPE")
 	opTypeVal := req.FormValue("OPTYPE")
+	WasteLibrary.LogStr(appTypeVal + " - " + opTypeVal)
 	if appTypeVal == "RFID" {
 
 		didVal := req.FormValue("DID")
@@ -179,7 +148,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			uId := req.FormValue("UID")
 			latitude := req.FormValue("LATITUDE")
 			longitude := req.FormValue("LONGITUDE")
-			logStr(repeat + " - " + dataTypeVal + " - " + latitude + " - " + longitude)
+			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + latitude + " - " + longitude)
 
 			var fLatitude float64 = 0
 			var fLongitude float64 = 0
@@ -197,7 +166,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			var selectSQL string = fmt.Sprintf(`SELECT tag_id
 			FROM public.tags WHERE epc='%s' AND customer_id=%d;`, tagId, customerIdVal)
 			rows, errSel := staticDb.Query(selectSQL)
-			logErr(errSel)
+			WasteLibrary.LogErr(errSel)
 			var tagsID int = 0
 			for rows.Next() {
 				rows.Scan(&tagsID)
@@ -207,26 +176,26 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 					execSQL = fmt.Sprintf(`UPDATE public.tags
 					SET uid='%s',read_time='%s',statu='1'
 				   WHERE epc='%s' AND customer_id=%d;`, uId, dataTime, tagId, customerIdVal)
-					logStr(execSQL)
+					WasteLibrary.LogStr(execSQL)
 				} else {
 					execSQL = fmt.Sprintf(`UPDATE public.tags
 					SET uid='%s',read_time='%s',statu='1',latitude=%f,longitude=%f,gps_time='%s'
 				   WHERE epc='%s' AND customer_id=%d;`, uId, dataTime, fLatitude, fLongitude, dataTime, tagId, customerIdVal)
-					logStr(execSQL)
+					WasteLibrary.LogStr(execSQL)
 				}
 			} else {
 
 				execSQL = fmt.Sprintf(`INSERT INTO public.tags(
 			   app_type,serial_number,customer_id,epc,uid,container_no,latitude,longitude,statu)
 			  VALUES ('%s','%s',%d,'%s','%s','%s',%f,%f,'1');`, appTypeVal, didVal, customerIdVal, tagId, uId, tagId, fLatitude, fLongitude)
-				logStr(execSQL)
+				WasteLibrary.LogStr(execSQL)
 			}
 
 		} else if opTypeVal == "GPS" {
 
 			latitude := req.FormValue("LATITUDE")
 			longitude := req.FormValue("LONGITUDE")
-			logStr(repeat + " - " + dataTypeVal + " - " + latitude + " - " + longitude)
+			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + latitude + " - " + longitude)
 
 			var fLatitude float64 = 0
 			var fLongitude float64 = 0
@@ -244,7 +213,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 			   SET gps_time='%s',latitude=%f,longitude=%f
 			   WHERE serial_number='%s' AND customer_id=%d;`, dataTime, fLatitude, fLongitude, didVal, customerIdVal)
-			logStr(execSQL)
+			WasteLibrary.LogStr(execSQL)
 
 		} else if opTypeVal == "STATUS" {
 
@@ -261,7 +230,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			transferAppStatus := req.FormValue("TRANSFERAPP")
 			aliveStatus := req.FormValue("ALIVESTATUS")
 			contactStatus := req.FormValue("CONTACTSTATUS")
-			logStr(repeat + " - " + dataTypeVal + " - " + readerAppStatus + " - " + readerConnStatus + " - " + readerStatus + " - " + camAppStatus + " - " + camConnStatus + " - " + camStatus + " - " + gpsAppStatus + " - " + gpsConnStatus + " - " + gpsStatus + " - " + thermAppStatus + " - " + transferAppStatus + " - " + aliveStatus + " - " + contactStatus)
+			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + readerAppStatus + " - " + readerConnStatus + " - " + readerStatus + " - " + camAppStatus + " - " + camConnStatus + " - " + camStatus + " - " + gpsAppStatus + " - " + gpsConnStatus + " - " + gpsStatus + " - " + thermAppStatus + " - " + transferAppStatus + " - " + aliveStatus + " - " + contactStatus)
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 				SET status_time='%s',
@@ -270,259 +239,273 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 				transfer_app_status='%s',alive_status='%s',contact_status='%s'
 			   WHERE serial_number='%s' AND customer_id=%d;
 			   `, dataTime, readerAppStatus, readerConnStatus, readerStatus, camAppStatus, camConnStatus, camStatus, gpsAppStatus, gpsConnStatus, gpsStatus, thermAppStatus, transferAppStatus, aliveStatus, contactStatus, didVal, customerIdVal)
-			logStr(execSQL)
+			WasteLibrary.LogStr(execSQL)
 
 		} else if opTypeVal == "THERM" {
 
 			therm := req.FormValue("THERM")
-			logStr(repeat + " - " + dataTypeVal + " - " + therm)
+			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + therm)
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 			   SET therm='%s',therm_time='%s'
 			   WHERE serial_number='%s' AND customer_id=%d;`, therm, dataTime, didVal, customerIdVal)
-			logStr(execSQL)
+			WasteLibrary.LogStr(execSQL)
 
 		} else if opTypeVal == "CAM_IMAGE" {
 
 			uId := req.FormValue("UID")
 			tagId := req.FormValue("TAGID")
 			imageStatu := req.FormValue("IMAGE")
-			logStr(repeat + " - " + dataTypeVal + " - " + tagId + " - " + uId + " - " + imageStatu)
+			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + tagId + " - " + uId + " - " + imageStatu)
 
 			execSQL = fmt.Sprintf(`UPDATE public.tags
 			   SET image_statu='%s'
 			   WHERE tag_id='%s' AND customer_id=%d;`, imageStatu, tagId, customerIdVal)
-			logStr(execSQL)
+			WasteLibrary.LogStr(execSQL)
 
 		} else {
-			retVal = "FAIL"
+			resultVal.Result = "FAIL"
 		}
 
 		if execSQL != "" {
 			_, errDb := staticDb.Exec(execSQL)
-			logErr(errDb)
+			WasteLibrary.LogErr(errDb)
 			if errDb != nil {
-				logErr(err)
+				WasteLibrary.LogErr(err)
 			} else {
-				retVal = "OK"
+				resultVal.Result = "OK"
 			}
 		}
-		w.Write([]byte(retVal))
 	} else if appTypeVal == "ULT" {
-		w.Write([]byte(retVal))
+		resultVal.Result = "OK"
 	} else if appTypeVal == "RECY" {
-		w.Write([]byte(retVal))
+		resultVal.Result = "OK"
 	} else if appTypeVal == "ADMIN" {
 		var execSQL string = ""
 		if opTypeVal == "CUSTOMER" {
 
-			customerId, _ := strconv.Atoi(req.FormValue("CUSTOMERID"))
-			customerName := req.FormValue("NAME")
-			domain := req.FormValue("DOMAIN")
-			rfidApp := req.FormValue("RFIDAPP")
-			ultApp := req.FormValue("ULTAPP")
-			recyApp := req.FormValue("RECYAPP")
-			logStr(string(customerId) + " - " + customerName + " - " + domain + " - " + rfidApp + " - " + ultApp + " - " + recyApp)
+			currentCustomer := WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentCustomer.ToIdString() + " - " + currentCustomer.CustomerName + " - " + currentCustomer.Domain + " - " + currentCustomer.RfIdApp + " - " + currentCustomer.UltApp + " - " + currentCustomer.RecyApp)
 
-			if customerId != 0 {
+			if currentCustomer.CustomerId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.customers
 					SET customer_name='%s',domain='%s',rfid_app='%s',ult_app='%s',recy_app='%s'
-				   WHERE customer_id=%d;`, customerName, domain, rfidApp, ultApp, recyApp, customerId)
-				logStr(execSQL)
+				   WHERE customer_id=%f  RETURNING customer_id;`, currentCustomer.CustomerName, currentCustomer.Domain, currentCustomer.RfIdApp, currentCustomer.UltApp, currentCustomer.RecyApp, currentCustomer.CustomerId)
+				WasteLibrary.LogStr(execSQL)
 			} else {
 
 				execSQL = fmt.Sprintf(`INSERT INTO public.customers(
 					customer_name,domain,rfid_app,ult_app,recy_app)
-			  VALUES ('%s','%s','%s','%s','%s');`, customerName, domain, rfidApp, ultApp, recyApp)
-				logStr(execSQL)
+			  VALUES ('%s','%s','%s','%s','%s')  RETURNING customer_id;`, currentCustomer.CustomerName, currentCustomer.Domain, currentCustomer.RfIdApp, currentCustomer.UltApp, currentCustomer.RecyApp)
+				WasteLibrary.LogStr(execSQL)
 			}
+			var id int = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&id)
+			WasteLibrary.LogErr(errDb)
+			if errDb != nil {
+				WasteLibrary.LogErr(err)
+			}
+
+			var customerRetVal WasteLibrary.CustomerType
+			var selectSQL string = fmt.Sprintf(`SELECT 
+			customer_id,customer_name,domain,rfid_app,ult_app,recy_app,active,create_time
+			 FROM public.customers WHERE customer_id=%d;`, id)
+			rows, errSel := staticDb.Query(selectSQL)
+			WasteLibrary.LogErr(errSel)
+			for rows.Next() {
+				rows.Scan(&customerRetVal.CustomerId, &customerRetVal.CustomerName, &customerRetVal.Domain, &customerRetVal.RfIdApp, &customerRetVal.UltApp,
+					&customerRetVal.RecyApp, &customerRetVal.Active, &customerRetVal.CreateTime)
+			}
+			if customerRetVal.CustomerId != 0 {
+				resultVal.Result = "OK"
+				resultVal.Retval = customerRetVal.ToString()
+			}
+
+			WasteLibrary.LogStr("CustomerType : " + customerRetVal.ToString())
 
 		} else if opTypeVal == "DEVICE" {
 
-			deviceId, _ := strconv.Atoi(req.FormValue("DEVICEID"))
-			customerId, _ := strconv.Atoi(req.FormValue("CUSTOMERID"))
-			deviceName := req.FormValue("NAME")
-			serialNumber := req.FormValue("SERIALNO")
-			deviceType := req.FormValue("DEVICETYPE")
-			logStr(string(deviceId) + " - " + string(customerId) + " - " + deviceName + " - " + deviceType)
+			currentDevice := WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentDevice.ToIdString() + " - " + currentDevice.DeviceType + " - " + currentDevice.SerialNumber + " - " + currentDevice.DeviceName + " - " + currentDevice.ToCustomerIdString())
 
-			if deviceId != 0 {
-				execSQL = fmt.Sprintf(`UPDATE public.devices
-					SET device_type='%s',serial_number='%s',device_name='%s',customer_id=%d
-				   WHERE device_id=%d;`, deviceType, serialNumber, deviceName, customerId, deviceId)
-				logStr(execSQL)
+			if currentDevice.DeviceId != 0 {
+				execSQL = fmt.Sprintf(`UPDATE public.devices 
+				SET device_type='%s',serial_number='%s',device_name='%s',customer_id=%f 
+	  			WHERE device_id=%f  
+				RETURNING device_id;`, currentDevice.DeviceType, currentDevice.SerialNumber, currentDevice.DeviceName, currentDevice.CustomerId, currentDevice.DeviceId)
+				WasteLibrary.LogStr(execSQL)
 			} else {
 
-				execSQL = fmt.Sprintf(`INSERT INTO public.devices(
-					device_type,serial_number,device_name,customer_id)
-			  VALUES ('%s','%s','%s',%d);`, deviceType, serialNumber, deviceName, customerId)
-				logStr(execSQL)
+				execSQL = fmt.Sprintf(`INSERT INTO public.devices 
+				(device_type,serial_number,device_name,customer_id) 
+  				VALUES ('%s','%s','%s',%f)   
+  				RETURNING device_id;`, currentDevice.DeviceType, currentDevice.SerialNumber, currentDevice.DeviceName, currentDevice.CustomerId)
+				WasteLibrary.LogStr(execSQL)
 			}
+			var id int = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&id)
+			WasteLibrary.LogErr(errDb)
+			if errDb != nil {
+				WasteLibrary.LogErr(err)
+			}
+
+			var deviceRetVal WasteLibrary.DeviceType
+			var selectSQL string = fmt.Sprintf(`SELECT 
+device_id,device_type,serial_number,device_name,customer_id,active,create_time
+ FROM public.devices WHERE device_id=%d;`, id)
+			rows, errSel := staticDb.Query(selectSQL)
+			WasteLibrary.LogErr(errSel)
+			for rows.Next() {
+				rows.Scan(&deviceRetVal.DeviceId, &deviceRetVal.DeviceType, &deviceRetVal.SerialNumber, &deviceRetVal.DeviceName,
+					&deviceRetVal.CustomerId, &deviceRetVal.Active, &deviceRetVal.CreateTime)
+			}
+			if deviceRetVal.DeviceId != 0 {
+				resultVal.Result = "OK"
+				resultVal.Retval = deviceRetVal.ToString()
+			}
+
+			WasteLibrary.LogStr("DeviceType : " + deviceRetVal.ToString())
 
 		} else {
-			retVal = "FAIL"
+			resultVal.Result = "FAIL"
 		}
-		if execSQL != "" {
-			_, errDb := staticDb.Exec(execSQL)
-			logErr(errDb)
-			if errDb != nil {
-				logErr(err)
-			} else {
-				retVal = "OK"
-			}
-		}
-		w.Write([]byte(retVal))
 	} else {
-		w.Write([]byte(retVal))
+		resultVal.Result = "OK"
 	}
-
+	w.Write(resultVal.ToByte())
 }
 
 func getkey(w http.ResponseWriter, req *http.Request) {
-
-	var retVal string = "FAIL"
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 		return
 	}
 	hKey := req.FormValue("HASHKEY")
 	sKey := req.FormValue("SUBKEY")
-	logStr("GetKEy : " + hKey + " - " + sKey)
-	retVal = getKeyRedis(hKey, sKey)
-	logStr("RetValByRedis : " + retVal)
-	if retVal == "NOT" {
-		retVal = getKeyDb(hKey, sKey)
-		if retVal != "NOT" && retVal != "FAIL" {
-			setKeyRedis(hKey, sKey, retVal)
+	WasteLibrary.LogStr("GetKey : " + hKey + " - " + sKey)
+	resultVal = getKeyRedis(hKey, sKey)
+	WasteLibrary.LogStr("RetValByRedis : " + resultVal.ToString())
+	if resultVal.Result == "FAIL" {
+		resultVal = getKeyDb(hKey, sKey)
+		if resultVal.Result != "FAIL" {
+			setKeyRedis(hKey, sKey, resultVal.Retval.(string))
 		}
 	}
-	w.Write([]byte(retVal))
+	w.Write(resultVal.ToByte())
 }
 
 func setkey(w http.ResponseWriter, req *http.Request) {
-
-	var retVal string = "OK"
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
-		logErr(err)
+		WasteLibrary.LogErr(err)
 		return
 	}
 	hKey := req.FormValue("HASHKEY")
 	sKey := req.FormValue("SUBKEY")
 	kVal := req.FormValue("KEYVALUE")
-
-	retVal = getKeyDb(hKey, sKey)
-
-	if retVal == "NOT" {
-		insertKeyDb(hKey, sKey, kVal)
+	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
+	resultVal = getKeyDb(hKey, sKey)
+	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
+	if resultVal.Result == "FAIL" {
+		resultVal = insertKeyDb(hKey, sKey, kVal)
 	} else {
-		updateKeyDb(hKey, sKey, kVal)
+		resultVal = updateKeyDb(hKey, sKey, kVal)
 	}
 	setKeyRedis(hKey, sKey, kVal)
 
-	w.Write([]byte(retVal))
+	w.Write(resultVal.ToByte())
 }
 
-func getKeyRedis(hKey string, sKey string) string {
-	var retVal string = "FAIL"
-	val, err := redisDb.HGet(ctx, hKey, sKey).Result()
+func getKeyRedis(hKey string, sKey string) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	var val string = ""
+	var err error
+	if hKey != "" {
+		val, err = redisDb.HGet(ctx, hKey, sKey).Result()
+	} else {
+		val, err = redisDb.Get(ctx, sKey).Result()
+	}
 	switch {
 	case err == redis.Nil:
-		logStr("Not Found")
-		retVal = "NOT"
+		WasteLibrary.LogStr("Not Found")
+		resultVal.Result = "FAIL"
 	case err != nil:
-		logErr(err)
+		WasteLibrary.LogErr(err)
 	case val == "":
-		logStr("Not Found")
-		retVal = "NOT"
+		WasteLibrary.LogStr("Not Found")
+		resultVal.Result = "FAIL"
 	case val != "":
-		retVal = val
-		logStr(retVal)
+		resultVal.Result = "OK"
+		resultVal.Retval = val
+		WasteLibrary.LogStr(resultVal.ToString())
 	}
 
-	return retVal
+	return resultVal
 }
 
 func setKeyRedis(hKey string, sKey string, kVal string) {
-	redisDb.HSet(ctx, hKey, sKey, kVal).Result()
+	var err error
+	if hKey != "" {
+		_, err = redisDb.HSet(ctx, hKey, sKey, kVal).Result()
+	} else {
+		_, err = redisDb.HSet(ctx, sKey, kVal).Result()
+
+	}
+	switch {
+	case err == redis.Nil:
+		WasteLibrary.LogStr("Not Found")
+	case err != nil:
+		WasteLibrary.LogErr(err)
+	}
 }
 
-func getKeyDb(hKey string, sKey string) string {
-	logStr("Serach Db : " + hKey + " - " + sKey)
-	var retVal string = "FAIL"
+func getKeyDb(hKey string, sKey string) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	WasteLibrary.LogStr("Serach Db : " + hKey + " - " + sKey)
 
 	var selectSQL string = fmt.Sprintf(`SELECT keyvalue 
 	FROM public.redisdata WHERE hashkey='%s' AND subkey='%s';`, hKey, sKey)
 	rows, errSel := sumDb.Query(selectSQL)
-	logErr(errSel)
+	WasteLibrary.LogErr(errSel)
 	var kVal string = "NOT"
 	for rows.Next() {
 		rows.Scan(&kVal)
 	}
 
-	logStr("KeyValue : " + kVal)
-
-	retVal = kVal
-	return retVal
+	if kVal == "NOT" {
+		resultVal.Result = "FAIL"
+	} else {
+		resultVal.Result = "OK"
+	}
+	WasteLibrary.LogStr("KeyValue : " + kVal)
+	return resultVal
 }
 
-func insertKeyDb(hKey string, sKey string, kVal string) string {
-	logStr("Insert Db : " + hKey + " - " + sKey + " - " + kVal)
-	var retVal string = "OK"
+func insertKeyDb(hKey string, sKey string, kVal string) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	WasteLibrary.LogStr("Insert Db : " + hKey + " - " + sKey + " - " + kVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.redisdata(
 		hashkey,subkey,keyvalue)
 	   VALUES ('%s','%s','%s');`, hKey, sKey, kVal)
 	_, errDb := sumDb.Exec(insertSQL)
-	logErr(errDb)
-	return retVal
+	WasteLibrary.LogErr(errDb)
+	resultVal.Result = "OK"
+	return resultVal
 }
 
-func updateKeyDb(hKey string, sKey string, kVal string) string {
-	logStr("Update Db : " + hKey + " - " + sKey + " - " + kVal)
-	var retVal string = "FAIL"
+func updateKeyDb(hKey string, sKey string, kVal string) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	WasteLibrary.LogStr("Update Db : " + hKey + " - " + sKey + " - " + kVal)
 	var updateSQL string = fmt.Sprintf(`UPDATE public.redisdata SET keyvalue='%s' WHERE hashkey='%s' AND subkey='%s';`, kVal, hKey, sKey)
 	_, errDb := sumDb.Exec(updateSQL)
-	logErr(errDb)
-	return retVal
-}
-
-func logErr(err error) {
-	if err != nil {
-		sendLogServer("ERR", err.Error())
-	}
-}
-
-func logStr(value string) {
-	if debug {
-		sendLogServer("INFO", value)
-	}
-}
-
-var container string = os.Getenv("CONTAINER_TYPE")
-
-func sendLogServer(logType string, logVal string) string {
-	var retVal string = "FAIL"
-	data := url.Values{
-		"CONTAINER": {container},
-		"LOGTYPE":   {logType},
-		"LOG":       {logVal},
-	}
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
-	resp, err := client.PostForm("http://waste-logserver-cluster-ip/log", data)
-	if err != nil {
-		logErr(err)
-
-	} else {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logErr(err)
-		}
-		bodyString := string(bodyBytes)
-		if bodyString != "NOT" {
-			retVal = bodyString
-		}
-	}
-
-	return retVal
+	WasteLibrary.LogErr(errDb)
+	resultVal.Result = "OK"
+	return resultVal
 }

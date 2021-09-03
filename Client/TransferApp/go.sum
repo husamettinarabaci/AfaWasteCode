@@ -1,3 +1,5 @@
+github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085 h1:+R4bIn6VsTgzCG5yOf22HitjaEl6bWE1ByS/IkB8nyQ=
+github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085/go.mod h1:Tn+zmza68qM3WRUBoD+qiyuxb+Hu4ufudcq0yJChWvs=
 github.com/aws/aws-sdk-go v1.40.31 h1:RqozVt+A4tqH8Nv9ITw8eRWtKLkIUAqqZm2Sh2ayMA4=
 github.com/aws/aws-sdk-go v1.40.31/go.mod h1:585smgzpB/KqRA+K3y/NL/oYRqQvpNJYvLm+LY1U59Q=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
