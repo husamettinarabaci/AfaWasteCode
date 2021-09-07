@@ -15,7 +15,7 @@ import (
 var opInterval time.Duration = 5 * 60
 var wg sync.WaitGroup
 var currentUser string
-var currentThermDataType WasteLibrary.ThermDataType = WasteLibrary.ThermDataType{
+var currentThermDataType WasteLibrary.DeviceType = WasteLibrary.DeviceType{
 	Therm: "",
 }
 

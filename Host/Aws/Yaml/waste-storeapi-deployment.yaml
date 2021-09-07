@@ -26,6 +26,9 @@ spec:
       - name: wait-for-wastesumdb
         image: postgres:9.6.5
         command: ['sh', '-c', 'until pg_isready -h waste-sumdb-cluster-ip -p 5432; do echo waiting for wastesumdb; sleep 2; done;']
+      - name: wait-for-wastereaderdb
+        image: postgres:9.6.5
+        command: ['sh', '-c', 'until pg_isready -h waste-readerdb-cluster-ip -p 5432; do echo waiting for wastereaderdb; sleep 2; done;']
       - name: wait-for-wasteconfigdb
         image: postgres:9.6.5
         command: ['sh', '-c', 'until pg_isready -h waste-configdb-cluster-ip -p 5432; do echo waiting for wasteconfigdb; sleep 2; done;']

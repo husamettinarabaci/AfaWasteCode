@@ -1,7 +1,9 @@
 package WasteLibrary
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/base64"
+	"encoding/gob"
 	"fmt"
 )
 
@@ -9,7 +11,8 @@ import (
 type CustomerType struct {
 	CustomerId   float64
 	CustomerName string
-	Domain       string
+	AdminLink    string
+	WebLink      string
 	RfIdApp      string
 	UltApp       string
 	RecyApp      string
@@ -24,23 +27,31 @@ func (res CustomerType) ToIdString() string {
 
 //ToByte
 func (res CustomerType) ToByte() []byte {
-	jData, _ := json.Marshal(res)
-	return jData
+
+	bBuf := bytes.Buffer{}
+	gobEn := gob.NewEncoder(&bBuf)
+	gobEn.Encode(res)
+	return bBuf.Bytes()
 }
 
 //ToString Get JSON
 func (res CustomerType) ToString() string {
-	return string(res.ToByte())
+	return base64.StdEncoding.EncodeToString(res.ToByte())
+
 }
 
 //Byte To CustomerType
 func ByteToCustomerType(retByte []byte) CustomerType {
 	var retVal CustomerType
-	json.Unmarshal(retByte, &retVal)
+	bBuf := bytes.Buffer{}
+	bBuf.Write(retByte)
+	gobDe := gob.NewDecoder(&bBuf)
+	gobDe.Decode(&retVal)
 	return retVal
 }
 
 //String To CustomerType
 func StringToCustomerType(retStr string) CustomerType {
-	return ByteToCustomerType([]byte(retStr))
+	bStr, _ := base64.StdEncoding.DecodeString(retStr)
+	return ByteToCustomerType(bStr)
 }

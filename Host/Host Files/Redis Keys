@@ -1,0 +1,10 @@
+"serial-device" serialNo deviceId
+"devices" deviceId DeviceType
+"customer-tags" customerID CustomerTagsType
+"customer-devices" customerID CustomerDevicesType
+"customers" customerID CustomerType
+"customers" []customerID
+"tags" tagID TagType
+"customer-customerconfig" customerID CustomerConfigType
+"customer-adminconfig" customerID AdminConfigType
+"customer-localconfig" customerID LocalConfigType

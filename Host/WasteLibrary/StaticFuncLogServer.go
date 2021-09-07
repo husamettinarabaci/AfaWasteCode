@@ -4,15 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 	"time"
 )
-
-//Debug Mode
-var Debug bool = os.Getenv("DEBUG") == "1"
-
-//Container
-var Container string = os.Getenv("CONTAINER_TYPE")
 
 //LogErr
 func LogErr(err error) {

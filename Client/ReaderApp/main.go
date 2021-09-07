@@ -26,8 +26,9 @@ var lastReadTime time.Time
 var lastSendTime time.Time
 var lastRfTag string = ""
 var readTags map[string]time.Time
+var serialPort io.ReadWriteCloser
 
-var serialOptions devafatekserial.OpenOptions = devafatekserial.OpenOptions{
+var serialOptions0 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
 	PortName:        "/dev/ttyUSB0",
 	BaudRate:        115200,
 	DataBits:        8,
@@ -35,14 +36,17 @@ var serialOptions devafatekserial.OpenOptions = devafatekserial.OpenOptions{
 	MinimumReadSize: 4,
 }
 
-type rfType struct {
-	TagID string `json:"TagID"`
-	UID   string `json:"UID"`
+var serialOptions1 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
+	PortName:        "/dev/ttyUSB1",
+	BaudRate:        115200,
+	DataBits:        8,
+	StopBits:        1,
+	MinimumReadSize: 4,
 }
 
-var currentReaderDataType WasteLibrary.ReaderDataType = WasteLibrary.ReaderDataType{
-	UID:   "",
-	TagID: "",
+var currentTagDataType WasteLibrary.TagType = WasteLibrary.TagType{
+	UID: "",
+	Epc: "",
 }
 
 func initStart() {
@@ -75,56 +79,76 @@ func main() {
 
 func rfCheck() {
 	if currentUser == "pi" {
-
-		serialPort, err := devafatekserial.Open(serialOptions)
-		if err != nil {
-			WasteLibrary.LogErr(err)
-			WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
-		} else {
-			WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
-		}
-		defer serialPort.Close()
-		var data string = ""
-		var tempData string = ""
+		var err error
 		for {
-			buf := make([]byte, 256)
-			n, err := serialPort.Read(buf)
+			time.Sleep(time.Second)
+			WasteLibrary.LogStr("Device Check")
+			serialPort, err = devafatekserial.Open(serialOptions0)
 			if err != nil {
-				if err != io.EOF {
-					WasteLibrary.LogErr(err)
-				}
+				WasteLibrary.LogErr(err)
+				WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
 			} else {
-				buf = buf[:n]
-				data = hex.EncodeToString(buf)
-				lastReadTime = time.Now()
-				data = strings.ToUpper(data)
-				WasteLibrary.LogStr(data)
-
-				if strings.Contains(data, "5379") || strings.Contains(data, "4354") {
-					WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
+				WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
+			}
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == "0" {
+				serialPort, err = devafatekserial.Open(serialOptions1)
+				if err != nil {
+					WasteLibrary.LogErr(err)
+					WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
 				} else {
-					WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
+					WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
 				}
+			}
 
-				tempData += data
+			var data string = ""
+			var tempData string = ""
 
-				if len(tempData) == 64 && tempData[:4] == "4354" && tempData[10:12] == "45" && tempData[36:50] == "AFA09012018AFA" {
-					if time.Since(readTags[tempData[36:60]]).Seconds() > 15*60 {
-						lastRfTag = tempData[36:60]
-						nid, _ := uuid.NewUUID()
-						lastSendTime = time.Now()
-						readTags[tempData[36:60]] = lastSendTime
-						currentReaderDataType.TagID = lastRfTag
-						currentReaderDataType.UID = nid.String()
-						sendRf()
-						sendRfToCam()
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == "1" {
+				for {
+					WasteLibrary.LogStr("Device OK")
+					buf := make([]byte, 256)
+					n, err := serialPort.Read(buf)
+					if err != nil {
+						WasteLibrary.LogErr(err)
+						if err != io.EOF {
+							WasteLibrary.LogErr(err)
+						}
+						break
+					} else {
+						buf = buf[:n]
+						data = hex.EncodeToString(buf)
+						lastReadTime = time.Now()
+						data = strings.ToUpper(data)
+						WasteLibrary.LogStr(data)
+
+						if strings.Contains(data, "5379") || strings.Contains(data, "4354") {
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
+						} else {
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
+						}
+
+						tempData += data
+
+						if len(tempData) == 64 && tempData[:4] == "4354" && tempData[10:12] == "45" && tempData[36:50] == "AFA09012018AFA" {
+							if time.Since(readTags[tempData[36:60]]).Seconds() > 15*60 {
+								lastRfTag = tempData[36:60]
+								nid, _ := uuid.NewUUID()
+								lastSendTime = time.Now()
+								readTags[tempData[36:60]] = lastSendTime
+								currentTagDataType.Epc = lastRfTag
+								currentTagDataType.UID = nid.String()
+								sendRf()
+								sendRfToCam()
+							}
+						}
+						if len(tempData) >= 64 {
+							tempData = ""
+						}
+
 					}
 				}
-				if len(tempData) >= 64 {
-					tempData = ""
-				}
-
 			}
+			WasteLibrary.LogStr("Device NONE")
 		}
 	}
 	wg.Done()
@@ -133,7 +157,7 @@ func rfCheck() {
 func sendRf() {
 	data := url.Values{
 		"OPTYPE": {"RF"},
-		"DATA":   {currentReaderDataType.ToString()},
+		"DATA":   {currentTagDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 }
@@ -142,7 +166,7 @@ func sendRfToCam() {
 
 	data := url.Values{
 		"OPTYPE": {"RF"},
-		"DATA":   {currentReaderDataType.ToString()},
+		"DATA":   {currentTagDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10002/trigger", data)
 }

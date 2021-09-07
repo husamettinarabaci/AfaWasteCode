@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 
@@ -25,49 +24,43 @@ func main() {
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {
+
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	appTypeVal := req.FormValue("APPTYPE")
-	didVal := req.FormValue("DID")
-	dataTypeVal := req.FormValue("DATATYPE")
-	dataVal := req.FormValue("DATA")
-	dataTime := req.FormValue("TIME")
-	repeat := req.FormValue("REPEAT")
-	customerIdVal := req.FormValue("CUSTOMERID")
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 
-	var dataMap map[string][]string
-	err := json.Unmarshal([]byte(dataVal), &dataMap)
-	if err != nil {
-		WasteLibrary.LogErr(err)
-	}
-
-	if repeat == "0" {
-		data := url.Values{
-			"APPTYPE":    {appTypeVal},
-			"DID":        {didVal},
-			"DATATYPE":   {dataTypeVal},
-			"TIME":       {dataTime},
-			"CUSTOMERID": {customerIdVal},
-		}
-
-		latitude := dataMap["LATITUDE"][0]
-		longitude := dataMap["LONGITUDE"][0]
-		WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + latitude + " - " + longitude)
-
-		if longitude != "" && latitude != "" {
-			data.Add("OPTYPE", "GPS")
-			data.Add("LATITUDE", latitude)
-			data.Add("LONGITUDE", longitude)
+	if currentHttpHeader.Repeat == "0" {
+		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+		WasteLibrary.LogStr(currentHttpHeader.ToString() + " - " + currentData.ToString())
+		currentData.GpsTime = currentHttpHeader.Time
+		if currentData.Longitude != 0 && currentData.Latitude != 0 {
+			data := url.Values{
+				"HEADER": {currentHttpHeader.ToString()},
+				"DATA":   {currentData.ToString()},
+			}
 			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-			WasteLibrary.LogStr("Save StaticDbMain : " + appTypeVal + " - " + dataTypeVal + " - " + resultVal.ToString())
 
 			if resultVal.Result == "OK" {
-				resultVal = WasteLibrary.SaveRedisForStoreApi("device-gps", didVal, dataVal)
-				WasteLibrary.LogStr("Save Redis : " + appTypeVal + " - " + dataTypeVal + " - " + resultVal.ToString() + " - " + dataVal)
+				currentData.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+				data := url.Values{
+					"HEADER": {currentHttpHeader.ToString()},
+					"DATA":   {currentData.ToString()},
+				}
+				var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetStaticDbMainForStoreApi(data).Retval.(string))
+				resultVal = WasteLibrary.SaveRedisForStoreApi("devices", currentDevice.ToIdString(), currentDevice.ToString())
+
+				var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
+				newCurrentHttpHeader.AppType = "RFID"
+				newCurrentHttpHeader.OpType = "DEVICE"
+				data = url.Values{
+					"HEADER": {newCurrentHttpHeader.ToString()},
+					"DATA":   {currentDevice.ToString()},
+				}
+				WasteLibrary.SaveReaderDbMainForStoreApi(data)
 			}
 
 		} else {
@@ -76,6 +69,5 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	} else {
 		resultVal.Result = "OK"
 	}
-
 	w.Write(resultVal.ToByte())
 }

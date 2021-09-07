@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 
@@ -25,71 +24,88 @@ func main() {
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {
+
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	appTypeVal := req.FormValue("APPTYPE")
-	didVal := req.FormValue("DID")
-	dataTypeVal := req.FormValue("DATATYPE")
-	dataVal := req.FormValue("DATA")
-	dataTime := req.FormValue("TIME")
-	repeat := req.FormValue("REPEAT")
-	customerIdVal := req.FormValue("CUSTOMERID")
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 
-	var dataMap map[string][]string
-	err := json.Unmarshal([]byte(dataVal), &dataMap)
-	if err != nil {
-		WasteLibrary.LogErr(err)
-	}
-
-	if repeat == "0" {
+	if currentHttpHeader.Repeat == "0" {
+		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+		WasteLibrary.LogStr(currentHttpHeader.ToString() + " - " + currentData.ToString())
+		currentData.StatusTime = currentHttpHeader.Time
 		data := url.Values{
-			"APPTYPE":    {appTypeVal},
-			"DID":        {didVal},
-			"DATATYPE":   {dataTypeVal},
-			"TIME":       {dataTime},
-			"CUSTOMERID": {customerIdVal},
+			"HEADER": {currentHttpHeader.ToString()},
+			"DATA":   {currentData.ToString()},
 		}
-
-		readerAppStatus := dataMap["READERAPPSTATUS"][0]
-		readerConnStatus := dataMap["READERCONNSTATUS"][0]
-		readerStatus := dataMap["READERSTATUS"][0]
-		camAppStatus := dataMap["CAMAPPSTATUS"][0]
-		camConnStatus := dataMap["CAMCONNSTATUS"][0]
-		camStatus := dataMap["CAMSTATUS"][0]
-		gpsAppStatus := dataMap["GPSAPPSTATUS"][0]
-		gpsConnStatus := dataMap["GPSCONNSTATUS"][0]
-		gpsStatus := dataMap["GPSSTATUS"][0]
-		thermAppStatus := dataMap["THERMAPSTATUS"][0]
-		transferAppStatus := dataMap["TRANSFERAPP"][0]
-		aliveStatus := dataMap["ALIVESTATUS"][0]
-		contactStatus := dataMap["CONTACTSTATUS"][0]
-		WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + readerAppStatus + " - " + readerConnStatus + " - " + readerStatus + " - " + camAppStatus + " - " + camConnStatus + " - " + camStatus + " - " + gpsAppStatus + " - " + gpsConnStatus + " - " + gpsStatus + " - " + thermAppStatus + " - " + transferAppStatus + " - " + aliveStatus + " - " + contactStatus)
-
-		data.Add("OPTYPE", "STATUS")
-		data.Add("READERAPPSTATUS", readerAppStatus)
-		data.Add("READERCONNSTATUS", readerConnStatus)
-		data.Add("READERSTATUS", readerStatus)
-		data.Add("CAMAPPSTATUS", camAppStatus)
-		data.Add("CAMCONNSTATUS", camConnStatus)
-		data.Add("CAMSTATUS", camStatus)
-		data.Add("GPSAPPSTATUS", gpsAppStatus)
-		data.Add("GPSCONNSTATUS", gpsConnStatus)
-		data.Add("GPSSTATUS", gpsStatus)
-		data.Add("THERMAPSTATUS", thermAppStatus)
-		data.Add("TRANSFERAPP", transferAppStatus)
-		data.Add("ALIVESTATUS", aliveStatus)
-		data.Add("CONTACTSTATUS", contactStatus)
 		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-		WasteLibrary.LogStr("Save StaticDbMain : " + appTypeVal + " - " + dataTypeVal + " - " + resultVal.ToString())
 
 		if resultVal.Result == "OK" {
-			resultVal = WasteLibrary.SaveRedisForStoreApi("device-status", didVal, dataVal)
-			WasteLibrary.LogStr("Save Redis : " + appTypeVal + " - " + dataTypeVal + " - " + resultVal.ToString() + " - " + dataVal)
+			currentData.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+
+			if currentData.ReaderAppStatus == "1" {
+				currentData.ReaderAppLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.ReaderConnStatus == "1" {
+				currentData.ReaderConnLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.ReaderStatus == "1" {
+				currentData.ReaderLastOkTime = currentHttpHeader.Time
+			}
+
+			if currentData.CamAppStatus == "1" {
+				currentData.CamAppLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.CamConnStatus == "1" {
+				currentData.CamConnLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.CamStatus == "1" {
+				currentData.CamLastOkTime = currentHttpHeader.Time
+			}
+
+			if currentData.GpsAppStatus == "1" {
+				currentData.GpsAppLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.GpsConnStatus == "1" {
+				currentData.GpsConnLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.GpsStatus == "1" {
+				currentData.GpsLastOkTime = currentHttpHeader.Time
+			}
+
+			if currentData.ThermAppStatus == "1" {
+				currentData.ThermAppLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.TransferAppStatus == "1" {
+				currentData.TransferAppLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.AliveStatus == "1" {
+				currentData.AliveLastOkTime = currentHttpHeader.Time
+			}
+			if currentData.ContactStatus == "1" {
+				currentData.ContactLastOkTime = currentHttpHeader.Time
+			}
+
+			data := url.Values{
+				"HEADER": {currentHttpHeader.ToString()},
+				"DATA":   {currentData.ToString()},
+			}
+			var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetStaticDbMainForStoreApi(data).Retval.(string))
+			resultVal = WasteLibrary.SaveRedisForStoreApi("devices", currentDevice.ToIdString(), currentDevice.ToString())
+
+			var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
+			newCurrentHttpHeader.AppType = "RFID"
+			newCurrentHttpHeader.OpType = "DEVICE"
+			data = url.Values{
+				"HEADER": {newCurrentHttpHeader.ToString()},
+				"DATA":   {currentDevice.ToString()},
+			}
+			WasteLibrary.SaveReaderDbMainForStoreApi(data)
 		}
+
 	} else {
 		resultVal.Result = "OK"
 	}

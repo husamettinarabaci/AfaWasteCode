@@ -16,7 +16,7 @@ var wg sync.WaitGroup
 var opInterval time.Duration = 5 * 60
 var contactPort string = os.Getenv("CONTACT_PORT")
 var currentUser string
-var currentCheckType WasteLibrary.CheckDataType = WasteLibrary.CheckDataType{
+var currentDeviceType WasteLibrary.DeviceType = WasteLibrary.DeviceType{
 	ReaderAppStatus:   "1",
 	ReaderConnStatus:  "0",
 	ReaderStatus:      "0",
@@ -150,29 +150,29 @@ func statusCheck(statusTypeIndex int) {
 		}
 
 		if statusTypes[statusTypeIndex].Name == "readerAppStatus" {
-			currentCheckType.ReaderAppStatus = lastStatus
+			currentDeviceType.ReaderAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "readerConnStatus" {
-			currentCheckType.ReaderConnStatus = lastStatus
+			currentDeviceType.ReaderConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "readerStatus" {
-			currentCheckType.ReaderStatus = lastStatus
+			currentDeviceType.ReaderStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camAppStatus" {
-			currentCheckType.CamAppStatus = lastStatus
+			currentDeviceType.CamAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camConnStatus" {
-			currentCheckType.CamConnStatus = lastStatus
+			currentDeviceType.CamConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camStatus" {
-			currentCheckType.CamStatus = lastStatus
+			currentDeviceType.CamStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsAppStatus" {
-			currentCheckType.GpsAppStatus = lastStatus
+			currentDeviceType.GpsAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsConnStatus" {
-			currentCheckType.GpsConnStatus = lastStatus
+			currentDeviceType.GpsConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsStatus" {
-			currentCheckType.GpsStatus = lastStatus
+			currentDeviceType.GpsStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "transferAppStatus" {
-			currentCheckType.TransferAppStatus = lastStatus
+			currentDeviceType.TransferAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "aliveStatus" {
-			currentCheckType.AliveStatus = lastStatus
+			currentDeviceType.AliveStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "contactStatus" {
-			currentCheckType.ContactStatus = lastStatus
+			currentDeviceType.ContactStatus = lastStatus
 		} else {
 
 		}
@@ -190,9 +190,9 @@ func contactCheck() {
 			pin := rpio.Pin(conPort)
 			var tempData = rpio.ReadPin(pin) == 1
 			if tempData {
-				currentCheckType.ContactStatus = "1"
+				currentDeviceType.ContactStatus = "1"
 			} else {
-				currentCheckType.ContactStatus = "0"
+				currentDeviceType.ContactStatus = "0"
 			}
 			rpio.Close()
 		}
@@ -206,7 +206,7 @@ func sendStatus() {
 
 		data := url.Values{
 			"OPTYPE": {"STATUS"},
-			"DATA":   {currentCheckType.ToString()},
+			"DATA":   {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"sync"
@@ -16,8 +17,9 @@ import (
 var opInterval time.Duration = 1 * 60
 var wg sync.WaitGroup
 var currentUser string
+var serialPort io.ReadWriteCloser
 
-var serialOptions devafatekserial.OpenOptions = devafatekserial.OpenOptions{
+var serialOptions0 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
 	PortName:        "/dev/ttyAMA0",
 	BaudRate:        9600,
 	DataBits:        8,
@@ -25,11 +27,18 @@ var serialOptions devafatekserial.OpenOptions = devafatekserial.OpenOptions{
 	MinimumReadSize: 4,
 }
 
-var currentGpsDataType WasteLibrary.GpsDataType = WasteLibrary.GpsDataType{
-	Latitude:   "",
-	Longitude:  "",
-	LatitudeF:  0,
-	LongitudeF: 0,
+var serialOptions1 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
+	PortName:        "/dev/ttyAMA1",
+	BaudRate:        9600,
+	DataBits:        8,
+	StopBits:        1,
+	MinimumReadSize: 4,
+}
+
+var currentDeviceType WasteLibrary.DeviceType = WasteLibrary.DeviceType{
+	Latitude:  0,
+	Longitude: 0,
+	Speed:     -1,
 }
 
 func initStart() {
@@ -58,36 +67,61 @@ func main() {
 
 func gpsCheck() {
 	if currentUser == "pi" {
-
-		serialPort, err := devafatekserial.Open(serialOptions)
-		if err != nil {
-			WasteLibrary.LogErr(err)
-			WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
-		} else {
-			WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
-		}
-		defer serialPort.Close()
-		reader := bufio.NewReader(serialPort)
-		scanner := bufio.NewScanner(reader)
-
-		for scanner.Scan() {
-			gps, err := devafatekgps.ParseGpsLine(scanner.Text())
-			fmt.Println(gps)
-			if err == nil {
-				if gps.GetFixQuality() == "1" || gps.GetFixQuality() == "2" {
-					latitude, _ := gps.GetLatitude()
-					longitude, _ := gps.GetLongitude()
-
-					currentGpsDataType.Latitude = latitude
-					currentGpsDataType.Longitude = longitude
-					WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
-				} else {
-					currentGpsDataType.Latitude = ""
-					currentGpsDataType.Longitude = ""
-					WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
-				}
-				time.Sleep(opInterval * time.Second)
+		var err error
+		for {
+			time.Sleep(time.Second)
+			WasteLibrary.LogStr("Device Check")
+			serialPort, err = devafatekserial.Open(serialOptions0)
+			if err != nil {
+				WasteLibrary.LogErr(err)
+				WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+			} else {
+				WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
 			}
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == "0" {
+				serialPort, err = devafatekserial.Open(serialOptions1)
+				if err != nil {
+					WasteLibrary.LogErr(err)
+					WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+				} else {
+					WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
+				}
+			}
+
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == "1" {
+				reader := bufio.NewReader(serialPort)
+				scanner := bufio.NewScanner(reader)
+				WasteLibrary.LogStr("Device OK")
+				for scanner.Scan() {
+					gps, err := devafatekgps.ParseGpsLine(scanner.Text())
+					fmt.Println(gps)
+					if err == nil {
+						if gps.GetFixQuality() == "1" || gps.GetFixQuality() == "2" {
+							latitude, _ := gps.GetLatitude()
+							longitude, _ := gps.GetLongitude()
+
+							if latitude != "" {
+								currentDeviceType.Latitude = WasteLibrary.StringToFloat64(latitude)
+							} else {
+								currentDeviceType.Latitude = 0
+							}
+							if longitude != "" {
+								currentDeviceType.Longitude = WasteLibrary.StringToFloat64(longitude)
+							} else {
+								currentDeviceType.Longitude = 0
+							}
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
+						} else {
+							currentDeviceType.Latitude = 0
+							currentDeviceType.Longitude = 0
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
+						}
+						currentDeviceType.Speed = -1
+					}
+					time.Sleep(opInterval * time.Second)
+				}
+			}
+			WasteLibrary.LogStr("Device NONE")
 		}
 	}
 	wg.Done()
@@ -98,7 +132,7 @@ func sendGps() {
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
 			"OPTYPE": {"GPS"},
-			"DATA":   {currentGpsDataType.ToString()},
+			"DATA":   {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

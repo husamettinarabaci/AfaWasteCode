@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 
@@ -25,61 +24,56 @@ func main() {
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {
+
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	appTypeVal := req.FormValue("APPTYPE")
-	didVal := req.FormValue("DID")
-	dataTypeVal := req.FormValue("DATATYPE")
-	dataVal := req.FormValue("DATA")
-	dataTime := req.FormValue("TIME")
-	repeat := req.FormValue("REPEAT")
-	customerIdVal := req.FormValue("CUSTOMERID")
-
-	var dataMap map[string][]string
-	err := json.Unmarshal([]byte(dataVal), &dataMap)
-	if err != nil {
-		WasteLibrary.LogErr(err)
-	}
-
-	if repeat == "0" {
-
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	if currentHttpHeader.Repeat == "0" {
+		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+		WasteLibrary.LogStr(currentHttpHeader.ToString() + " - " + currentData.ToString())
+		var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetRedisForStoreApi("devices", currentHttpHeader.ToDeviceIdString()).Retval.(string))
+		currentData.Latitude = currentDevice.Latitude
+		currentData.Longitude = currentDevice.Longitude
+		currentData.ReadTime = currentHttpHeader.Time
 		data := url.Values{
-			"APPTYPE":    {appTypeVal},
-			"DID":        {didVal},
-			"DATATYPE":   {dataTypeVal},
-			"TIME":       {dataTime},
-			"CUSTOMERID": {customerIdVal},
+			"HEADER": {currentHttpHeader.ToString()},
+			"DATA":   {currentData.ToString()},
 		}
-
-		tagId := dataMap["TAGID"][0]
-		uId := dataMap["UID"][0]
-		WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + tagId + " - " + uId)
-
-		data.Add("OPTYPE", "RF")
-		data.Add("TAGID", tagId)
-		data.Add("UID", uId)
-
-		var resultVal = WasteLibrary.GetRedisForStoreApi("device-gps", didVal)
-		var dataMapGps map[string][]string
-		err = json.Unmarshal([]byte(resultVal.Retval.(string)), &dataMapGps)
-		if err != nil {
-			WasteLibrary.LogErr(err)
-		}
-
-		latitude := dataMap["LATITUDE"][0]
-		longitude := dataMap["LONGITUDE"][0]
-		data.Add("LATITUDE", latitude)
-		data.Add("LONGITUDE", longitude)
 		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-		WasteLibrary.LogStr("Save StaticDbMain : " + appTypeVal + " - " + dataTypeVal + " - " + resultVal.ToString())
+
+		if resultVal.Result == "OK" {
+
+			currentData.TagID = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+			data := url.Values{
+				"HEADER": {currentHttpHeader.ToString()},
+				"DATA":   {currentData.ToString()},
+			}
+			var currentTag WasteLibrary.TagType = WasteLibrary.StringToTagType(WasteLibrary.GetStaticDbMainForStoreApi(data).Retval.(string))
+			resultVal = WasteLibrary.SaveRedisForStoreApi("tags", currentTag.ToIdString(), currentTag.ToString())
+
+			resultVal = WasteLibrary.GetRedisForStoreApi("customer-tags", currentTag.ToCustomerIdString())
+			if resultVal.Result == "OK" {
+				var currentCustomerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
+				currentCustomerTags.Tags[currentTag.TagID] = currentTag
+				resultVal = WasteLibrary.SaveRedisForStoreApi("customer-tags", currentCustomerTags.ToIdString(), currentCustomerTags.ToString())
+			}
+
+			var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
+			newCurrentHttpHeader.AppType = "RFID"
+			newCurrentHttpHeader.OpType = "TAG"
+			data = url.Values{
+				"HEADER": {newCurrentHttpHeader.ToString()},
+				"DATA":   {currentTag.ToString()},
+			}
+			WasteLibrary.SaveReaderDbMainForStoreApi(data)
+		}
 
 	} else {
 		resultVal.Result = "OK"
 	}
-
 	w.Write(resultVal.ToByte())
 }

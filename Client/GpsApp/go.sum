@@ -1,5 +1,7 @@
 github.com/AfatekDevelopers/gps_lib_go v0.0.0-20200525193957-04fe8c0bf846 h1:yb0jkr18K/DZ2k/ZUv9Q5m9PVqZ280LbFTaCA1ndpXY=
 github.com/AfatekDevelopers/gps_lib_go v0.0.0-20200525193957-04fe8c0bf846/go.mod h1:kxl1Cy9kIGskuHqB1qbZIcx/s8dJfLuP0UyImf0aKu4=
+github.com/AfatekDevelopers/gps_lib_go v0.0.0-20210906102949-9bb66ba894fd h1:/NGQVWrLIwTqfJPdG3iW7kZocQ1v+EDaN91tB4MR0U0=
+github.com/AfatekDevelopers/gps_lib_go v0.0.0-20210906102949-9bb66ba894fd/go.mod h1:kxl1Cy9kIGskuHqB1qbZIcx/s8dJfLuP0UyImf0aKu4=
 github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085 h1:+R4bIn6VsTgzCG5yOf22HitjaEl6bWE1ByS/IkB8nyQ=
 github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085/go.mod h1:Tn+zmza68qM3WRUBoD+qiyuxb+Hu4ufudcq0yJChWvs=
 github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a h1:oNZW9Z2KNR1brtrdGwOPiUrzbBgi+ltn0bzFGfoD5Kg=

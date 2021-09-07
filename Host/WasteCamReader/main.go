@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
-	"net/url"
 
 	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
@@ -32,39 +30,14 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	appTypeVal := req.FormValue("APPTYPE")
-	didVal := req.FormValue("DID")
-	dataTypeVal := req.FormValue("DATATYPE")
-	dataVal := req.FormValue("DATA")
-	dataTime := req.FormValue("TIME")
-	repeat := req.FormValue("REPEAT")
-	customerIdVal := req.FormValue("CUSTOMERID")
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 
-	var dataMap map[string][]string
-	err := json.Unmarshal([]byte(dataVal), &dataMap)
-	if err != nil {
-		WasteLibrary.LogErr(err)
-	}
+	if currentHttpHeader.Repeat == "0" {
+		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+		WasteLibrary.LogStr(currentHttpHeader.ToString() + " - " + currentData.ToString())
 
-	if repeat == "0" {
-		data := url.Values{
-			"APPTYPE":    {appTypeVal},
-			"DID":        {didVal},
-			"DATATYPE":   {dataTypeVal},
-			"TIME":       {dataTime},
-			"CUSTOMERID": {customerIdVal},
-		}
-
-		uId := dataMap["UID"][0]
-		tagId := dataMap["TAGID"][0]
-		WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + tagId + " - " + uId)
-
-		data.Add("OPTYPE", "CAM_IMAGE")
-		data.Add("TAGID", tagId)
-		data.Add("UID", uId)
-		data.Add("IMAGE", "1")
-		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-		WasteLibrary.LogStr("Save StaticDbMain : " + appTypeVal + " - " + dataTypeVal + " - " + resultVal.ToString())
+		//TO DO
+		//Set ImageStatu
 	} else {
 		resultVal.Result = "OK"
 	}

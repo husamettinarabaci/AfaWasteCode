@@ -6,11 +6,27 @@ import (
 	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 )
 
+//SaveBulkDbMainForStoreApi
+func SaveBulkDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveBulkDbMain", data)
+	return resultVal
+}
+
 //SaveStaticDbMainForStoreApi
 func SaveStaticDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveStaticDbMain", data)
+	return resultVal
+}
+
+//GetStaticDbMainForStoreApi
+func GetStaticDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getStaticDbMain", data)
 	return resultVal
 }
 

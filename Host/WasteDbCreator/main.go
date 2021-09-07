@@ -22,6 +22,7 @@ func main() {
 	configDbSet()
 	sumDbSet()
 	staticDbSet()
+	readerDbSet()
 
 }
 
@@ -45,8 +46,8 @@ func bulkDbSet() {
 	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS listenerdata ( 
 			data_id serial PRIMARY KEY,
 			app_type varchar(50) NOT NULL DEFAULT '',
-			serial_number varchar(50) NOT NULL DEFAULT '',
-			data_type varchar(50) NOT NULL DEFAULT '',
+			device_id INT NOT NULL DEFAULT -1,
+			optype varchar(50) NOT NULL DEFAULT '',
 			data TEXT NOT NULL DEFAULT '',
 			customer_id INT NOT NULL DEFAULT -1,
 			  data_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
@@ -106,6 +107,93 @@ func sumDbSet() {
 	sumDb.Close()
 }
 
+func readerDbSet() {
+	var readerDbHost string = "waste-readerdb-cluster-ip"
+	var port int = 5432
+	var user string = os.Getenv("POSTGRES_USER")
+	var password string = os.Getenv("POSTGRES_PASSWORD")
+	var dbname string = os.Getenv("POSTGRES_DB")
+	readerDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		readerDbHost, port, user, password, dbname)
+
+	readerDb, err := sql.Open("postgres", readerDbInfo)
+	WasteLibrary.LogErr(err)
+	defer readerDb.Close()
+
+	err = readerDb.Ping()
+	WasteLibrary.LogErr(err)
+
+	var createSQL string
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tagdata ( 
+		data_id serial PRIMARY KEY,
+		tag_id  INT NOT NULL DEFAULT -1,
+		customer_id INT NOT NULL DEFAULT -1,
+		device_id INT NOT NULL DEFAULT -1,
+		epc varchar(50) NOT NULL DEFAULT '',
+		uid varchar(50) NOT NULL DEFAULT '',
+		container_no varchar(50) NOT NULL DEFAULT '',
+		latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		statu varchar(50) NOT NULL DEFAULT '0',
+		image_statu varchar(50) NOT NULL DEFAULT '0',
+		active varchar(50) NOT NULL DEFAULT '1',
+		read_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		check_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS devicedata ( 
+		data_id serial PRIMARY KEY,
+		device_id INT NOT NULL DEFAULT -1,
+		device_type varchar(50) NOT NULL DEFAULT '',
+		serial_number varchar(50) NOT NULL DEFAULT '',
+		device_name varchar(50) NOT NULL DEFAULT '',
+		customer_id INT NOT NULL DEFAULT -1,
+		reader_app_status varchar(50) NOT NULL DEFAULT '0',
+		reader_conn_status varchar(50) NOT NULL DEFAULT '0',
+		reader_status varchar(50) NOT NULL DEFAULT '0',
+		cam_app_status varchar(50) NOT NULL DEFAULT '0',
+		cam_conn_status varchar(50) NOT NULL DEFAULT '0',
+		cam_status varchar(50) NOT NULL DEFAULT '0',
+		gps_app_status varchar(50) NOT NULL DEFAULT '0',
+		gps_conn_status varchar(50) NOT NULL DEFAULT '0',
+		gps_status varchar(50) NOT NULL DEFAULT '0',
+		therm_app_status varchar(50) NOT NULL DEFAULT '0',
+		transfer_app_status varchar(50) NOT NULL DEFAULT '0',
+		alive_status varchar(50) NOT NULL DEFAULT '0',
+		contact_status varchar(50) NOT NULL DEFAULT '0',
+		therm varchar(50) NOT NULL DEFAULT '0',
+		latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		speed NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		active varchar(50) NOT NULL DEFAULT '1', 
+		therm_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		gps_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		status_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		reader_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		reader_conn_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		reader_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		gps_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		gps_conn_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		gps_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		cam_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		cam_conn_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		cam_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		therm_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		transfer_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		alive_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		contact_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+	readerDb.Close()
+}
+
 func staticDbSet() {
 	var sumDbHost string = "waste-staticdb-cluster-ip"
 	var port int = 5432
@@ -126,9 +214,8 @@ func staticDbSet() {
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tags ( 
 		tag_id serial PRIMARY KEY,
-		app_type varchar(50) NOT NULL DEFAULT '',
-		serial_number varchar(50) NOT NULL DEFAULT '',
 		customer_id INT NOT NULL DEFAULT -1,
+		device_id INT NOT NULL DEFAULT -1,
 		epc varchar(50) NOT NULL DEFAULT '',
 		uid varchar(50) NOT NULL DEFAULT '',
 		container_no varchar(50) NOT NULL DEFAULT '',
@@ -166,11 +253,24 @@ func staticDbSet() {
 		therm varchar(50) NOT NULL DEFAULT '0',
 		latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
 		longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		active varchar(50) NOT NULL DEFAULT '1',
-		read_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		speed NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		active varchar(50) NOT NULL DEFAULT '1', 
 		therm_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		gps_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-		status_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		status_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		reader_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		reader_conn_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		reader_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		gps_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		gps_conn_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		gps_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		cam_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		cam_conn_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		cam_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		therm_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		transfer_app_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		alive_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		contact_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = sumDb.Exec(createSQL)
@@ -179,7 +279,8 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS customers ( 
 		customer_id serial PRIMARY KEY,
 		customer_name varchar(50) NOT NULL DEFAULT '',
-		domain varchar(50) NOT NULL DEFAULT '',
+		admin_link varchar(50) NOT NULL DEFAULT '',
+		web_link varchar(50) NOT NULL DEFAULT '',
 		rfid_app varchar(50) NOT NULL DEFAULT '0',
 		ult_app varchar(50) NOT NULL DEFAULT '0',
 		recy_app varchar(50) NOT NULL DEFAULT '0',

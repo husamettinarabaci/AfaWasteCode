@@ -1,7 +1,9 @@
 package WasteLibrary
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/base64"
+	"encoding/gob"
 )
 
 //CheckStatuType
@@ -19,23 +21,31 @@ var CurrentCheckStatu CheckStatuType = CheckStatuType{
 
 //ToByte
 func (res CheckStatuType) ToByte() []byte {
-	jData, _ := json.Marshal(res)
-	return jData
+
+	bBuf := bytes.Buffer{}
+	gobEn := gob.NewEncoder(&bBuf)
+	gobEn.Encode(res)
+	return bBuf.Bytes()
 }
 
 //ToString Get JSON
 func (res CheckStatuType) ToString() string {
-	return string(res.ToByte())
+	return base64.StdEncoding.EncodeToString(res.ToByte())
+
 }
 
 //Byte To CheckStatuType
 func ByteToCheckStatuType(retByte []byte) CheckStatuType {
 	var retVal CheckStatuType
-	json.Unmarshal(retByte, &retVal)
+	bBuf := bytes.Buffer{}
+	bBuf.Write(retByte)
+	gobDe := gob.NewDecoder(&bBuf)
+	gobDe.Decode(&retVal)
 	return retVal
 }
 
 //String To CheckStatuType
 func StringToCheckStatuType(retStr string) CheckStatuType {
-	return ByteToCheckStatuType([]byte(retStr))
+	bStr, _ := base64.StdEncoding.DecodeString(retStr)
+	return ByteToCheckStatuType(bStr)
 }

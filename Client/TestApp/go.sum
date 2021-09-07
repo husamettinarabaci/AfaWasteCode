@@ -8,6 +8,8 @@ github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a h1:
 github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a/go.mod h1:KS1SGJxBYmoQS1jcpvROdAkXJUG4+1o28t+qiIJOJ6I=
 github.com/aws/aws-sdk-go v1.40.31 h1:RqozVt+A4tqH8Nv9ITw8eRWtKLkIUAqqZm2Sh2ayMA4=
 github.com/aws/aws-sdk-go v1.40.31/go.mod h1:585smgzpB/KqRA+K3y/NL/oYRqQvpNJYvLm+LY1U59Q=
+github.com/aws/aws-sdk-go v1.40.37 h1:I+Q6cLctkFyMMrKukcDnj+i2kjrQ37LGiOM6xmsxC48=
+github.com/aws/aws-sdk-go v1.40.37/go.mod h1:585smgzpB/KqRA+K3y/NL/oYRqQvpNJYvLm+LY1U59Q=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=
 github.com/jmespath/go-jmespath v0.4.0/go.mod h1:T8mJZnbsbmF+m6zOOFylbeCJqk5+pHWvzYPziyZiYoo=

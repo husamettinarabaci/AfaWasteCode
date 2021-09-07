@@ -37,3 +37,8 @@ mkdir /home/pi/WAIT_THERM
 
 ##Build Code
 env GOOS=linux GOARCH=arm GOARM=5 go build
+
+###
+#Gps Test
+# Relay Test
+# Gpio Pin Conf

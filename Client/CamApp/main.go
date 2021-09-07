@@ -24,11 +24,6 @@ var integratedPortInt = 1
 var currentUser string
 var lastCamRelayTime time.Time
 
-type rfType struct {
-	TagID string `json:"TagID"`
-	UID   string `json:"UID"`
-}
-
 func initStart() {
 	time.Sleep(5 * time.Second)
 
@@ -56,31 +51,28 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
+
 	opType := req.FormValue("OPTYPE")
 	WasteLibrary.LogStr(opType)
 
 	resultVal.Result = "FAIL"
 	if opType == "RF" {
-		var readerDataTypeVal WasteLibrary.ReaderDataType = WasteLibrary.StringToReaderDataType(req.FormValue("DATA"))
-		var currentCamDataType WasteLibrary.CamDataType
-		currentCamDataType.UID = readerDataTypeVal.UID
-		currentCamDataType.TagID = readerDataTypeVal.TagID
+		var readerDataTypeVal WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
 		if integratedPortInt == 3 {
 			integratedPortInt = 1
 		}
-		doRecord(currentCamDataType, strconv.Itoa(integratedPortInt), true)
+		go doRecord(readerDataTypeVal, strconv.Itoa(integratedPortInt), true)
 		resultVal.Result = "OK"
 	} else {
 		resultVal.Result = "FAIL"
 	}
-
 	w.Write(resultVal.ToByte())
 }
 
-func doRecord(currentCamDataType WasteLibrary.CamDataType, integratedPort string, repeat bool) {
+func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, repeat bool) {
 	WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
-	WasteLibrary.LogStr("Do Record : " + currentCamDataType.TagID + " - " + integratedPort + " - " + currentCamDataType.UID + " - " + strconv.FormatBool(repeat))
-	cmd := exec.Command("timeout", "30", "ffmpeg", "-y", "-v", "0", "-loglevel", "0", "-hide_banner", "-f", "mpegts", "-i", "udp://localhost:1000"+integratedPort, "-t", "7", "-vb", "128k", "-threads", "7", "-map", "0:0", "-map", "-0:1", "-map", "-0:2", "-c:v", "libx264", "-pix_fmt", "yuvj420p", "-f", "mp4", "WAIT_CAM/"+currentCamDataType.UID+".mp4")
+	WasteLibrary.LogStr("Do Record : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.UID + " - " + strconv.FormatBool(repeat))
+	cmd := exec.Command("timeout", "30", "ffmpeg", "-y", "-v", "0", "-loglevel", "0", "-hide_banner", "-f", "mpegts", "-i", "udp://localhost:1000"+integratedPort, "-t", "7", "-vb", "128k", "-threads", "7", "-map", "0:0", "-map", "-0:1", "-map", "-0:2", "-c:v", "libx264", "-pix_fmt", "yuvj420p", "-f", "mp4", "WAIT_CAM/"+readerDataTypeVal.UID+".mp4")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
@@ -88,49 +80,53 @@ func doRecord(currentCamDataType WasteLibrary.CamDataType, integratedPort string
 	if err != nil && !strings.Contains(err.Error(), "124") {
 		WasteLibrary.LogErr(err)
 		if repeat {
-			WasteLibrary.LogStr("Do Record repeat for err : " + currentCamDataType.TagID + " - " + integratedPort + " - " + currentCamDataType.UID + " - " + strconv.FormatBool(repeat))
-			doRecord(currentCamDataType, integratedPort, false)
+			WasteLibrary.LogStr("Do Record repeat for err : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.UID + " - " + strconv.FormatBool(repeat))
+			doRecord(readerDataTypeVal, integratedPort, false)
 			return
 		}
 	} else {
 		time.Sleep(5 * time.Second)
 
-		if WasteLibrary.IsFileExists("WAIT_CAM/" + currentCamDataType.UID + ".mp4") {
-			fi, err := os.Stat("WAIT_CAM/" + currentCamDataType.UID + ".mp4")
+		if WasteLibrary.IsFileExists("WAIT_CAM/" + readerDataTypeVal.UID + ".mp4") {
+			fi, err := os.Stat("WAIT_CAM/" + readerDataTypeVal.UID + ".mp4")
 			if err != nil {
 				if repeat {
-					WasteLibrary.LogStr("Do Record repeat for not file : " + currentCamDataType.TagID + " - " + integratedPort + " - " + currentCamDataType.UID + " - " + strconv.FormatBool(repeat))
-					doRecord(currentCamDataType, integratedPort, false)
+					WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.UID + " - " + strconv.FormatBool(repeat))
+					doRecord(readerDataTypeVal, integratedPort, false)
 					return
 				}
 			}
 			size := fi.Size()
 			if size < 10000 {
 				if repeat {
-					WasteLibrary.LogStr("Do Record repeat for file size : " + currentCamDataType.TagID + " - " + integratedPort + " - " + currentCamDataType.UID + " - " + strconv.FormatBool(repeat))
-					doRecord(currentCamDataType, integratedPort, false)
+					WasteLibrary.LogStr("Do Record repeat for file size : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.UID + " - " + strconv.FormatBool(repeat))
+					doRecord(readerDataTypeVal, integratedPort, false)
 					return
 				}
 			} else {
+
+				cmdPic := exec.Command("ffmpeg", "-y", "-i", "WAIT_CAM/"+readerDataTypeVal.UID+".mp4", "-vf", "thumbnail,scale=150:100", "-frames:v", "1", "WAIT_CAM/"+readerDataTypeVal.UID+".png")
+				cmdPic.Run()
+
 				WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
-				sendCam(currentCamDataType)
+				sendCam(readerDataTypeVal)
 			}
 		} else {
 			if repeat {
-				WasteLibrary.LogStr("Do Record repeat for not file : " + currentCamDataType.TagID + " - " + integratedPort + " - " + currentCamDataType.UID + " - " + strconv.FormatBool(repeat))
-				doRecord(currentCamDataType, integratedPort, false)
+				WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.UID + " - " + strconv.FormatBool(repeat))
+				doRecord(readerDataTypeVal, integratedPort, false)
 				return
 			}
 		}
 	}
 }
 
-func sendCam(currentCamDataType WasteLibrary.CamDataType) devafatekresult.ResultType {
+func sendCam(readerDataTypeVal WasteLibrary.TagType) devafatekresult.ResultType {
 	var resultVal devafatekresult.ResultType
 
 	data := url.Values{
 		"OPTYPE": {"CAM"},
-		"DATA":   {currentCamDataType.ToString()},
+		"DATA":   {readerDataTypeVal.ToString()},
 	}
 
 	resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)

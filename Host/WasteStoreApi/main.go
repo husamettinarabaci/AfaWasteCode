@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
@@ -24,6 +23,7 @@ var ctx = context.Background()
 var sumDb *sql.DB
 var bulkDb *sql.DB
 var staticDb *sql.DB
+var readerDb *sql.DB
 var err error
 
 func initStart() {
@@ -81,6 +81,18 @@ func main() {
 	err = staticDb.Ping()
 	WasteLibrary.LogErr(err)
 
+	var readerDbHost string = "waste-readerdb-cluster-ip"
+	readerDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		readerDbHost, port, user, password, dbname)
+
+	readerDb, err = sql.Open("postgres", readerDbInfo)
+	WasteLibrary.LogErr(err)
+	defer readerDb.Close()
+
+	err = readerDb.Ping()
+	WasteLibrary.LogErr(err)
+
 	WasteLibrary.LogStr("Start")
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
@@ -89,6 +101,8 @@ func main() {
 	http.HandleFunc("/setkey", setkey)
 	http.HandleFunc("/saveBulkDbMain", saveBulkDbMain)
 	http.HandleFunc("/saveStaticDbMain", saveStaticDbMain)
+	http.HandleFunc("/saveReaderDbMain", saveReaderDbMain)
+	http.HandleFunc("/getStaticDbMain", getStaticDbMain)
 	http.ListenAndServe(":80", nil)
 	WasteLibrary.LogStr("Finished")
 }
@@ -100,19 +114,15 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	appTypeVal := req.FormValue("APPTYPE")
-	didVal := req.FormValue("DID")
-	dataTypeVal := req.FormValue("DATATYPE")
-	timeVal := req.FormValue("TIME")
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 	dataVal := req.FormValue("DATA")
-	customerIdVal, _ := strconv.Atoi(req.FormValue("CUSTOMERID"))
-	WasteLibrary.LogStr("Insert BulkDb : " + appTypeVal + " - " + didVal + " - " + dataTypeVal + " - " + timeVal + " - " + dataVal + "-" + string(customerIdVal))
+	WasteLibrary.LogStr(currentHttpHeader.ToString())
+	WasteLibrary.LogStr(dataVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata(
-		app_type,serial_number,data_type,data,customer_id,data_time)
-	   VALUES ('%s','%s','%s','%s',%d,'%s');`, appTypeVal, didVal, dataTypeVal, dataVal, customerIdVal, timeVal)
+		app_type,device_id,optype,data,customer_id,data_time)
+	   VALUES ('%s',%f,'%s','%s',%f,'%s');`, currentHttpHeader.AppType, currentHttpHeader.DeviceId, currentHttpHeader.OpType, dataVal, currentHttpHeader.CustomerId, currentHttpHeader.Time)
 	WasteLibrary.LogStr(insertSQL)
 	_, errDb := bulkDb.Exec(insertSQL)
-	WasteLibrary.LogErr(errDb)
 	if errDb != nil {
 		WasteLibrary.LogErr(err)
 		resultVal.Result = "FAIL"
@@ -130,241 +140,287 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	appTypeVal := req.FormValue("APPTYPE")
-	opTypeVal := req.FormValue("OPTYPE")
-	WasteLibrary.LogStr(appTypeVal + " - " + opTypeVal)
-	if appTypeVal == "RFID" {
-
-		didVal := req.FormValue("DID")
-		dataTypeVal := req.FormValue("DATATYPE")
-		dataTime := req.FormValue("TIME")
-		repeat := req.FormValue("REPEAT")
-		customerIdVal, _ := strconv.Atoi(req.FormValue("CUSTOMERID"))
-
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	WasteLibrary.LogStr(currentHttpHeader.ToString())
+	if currentHttpHeader.AppType == "RFID" {
 		var execSQL string = ""
-		if opTypeVal == "RF" {
-
-			tagId := req.FormValue("TAGID")
-			uId := req.FormValue("UID")
-			latitude := req.FormValue("LATITUDE")
-			longitude := req.FormValue("LONGITUDE")
-			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + latitude + " - " + longitude)
-
-			var fLatitude float64 = 0
-			var fLongitude float64 = 0
-			if latitude != "" {
-				if s, err := strconv.ParseFloat(latitude, 32); err == nil {
-					fLatitude = s
-				}
-			}
-			if longitude != "" {
-				if s, err := strconv.ParseFloat(longitude, 32); err == nil {
-					fLongitude = s
-				}
-			}
+		if currentHttpHeader.OpType == "RF" {
+			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
 
 			var selectSQL string = fmt.Sprintf(`SELECT tag_id
-			FROM public.tags WHERE epc='%s' AND customer_id=%d;`, tagId, customerIdVal)
+			FROM public.tags WHERE epc='%s' AND customer_id=%f;`, currentData.Epc, currentHttpHeader.CustomerId)
 			rows, errSel := staticDb.Query(selectSQL)
-			WasteLibrary.LogErr(errSel)
-			var tagsID int = 0
-			for rows.Next() {
-				rows.Scan(&tagsID)
+			if errSel != nil {
+				WasteLibrary.LogErr(errSel)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
 			}
-			if tagsID != 0 {
-				if latitude == "" || longitude == "" {
+			var tagID int = 0
+			for rows.Next() {
+				rows.Scan(&tagID)
+			}
+			if tagID != 0 {
+				if currentData.Latitude == 0 || currentData.Longitude == 0 {
 					execSQL = fmt.Sprintf(`UPDATE public.tags
-					SET uid='%s',read_time='%s',statu='1'
-				   WHERE epc='%s' AND customer_id=%d;`, uId, dataTime, tagId, customerIdVal)
+					SET uid='%s',read_time='%s',statu='1',device_id=%f
+				   WHERE epc='%s' AND customer_id=%f 
+				   RETURNING tag_id;`, currentData.UID, currentData.ReadTime,
+						currentHttpHeader.DeviceId, currentData.Epc, currentHttpHeader.CustomerId)
 					WasteLibrary.LogStr(execSQL)
 				} else {
 					execSQL = fmt.Sprintf(`UPDATE public.tags
-					SET uid='%s',read_time='%s',statu='1',latitude=%f,longitude=%f,gps_time='%s'
-				   WHERE epc='%s' AND customer_id=%d;`, uId, dataTime, fLatitude, fLongitude, dataTime, tagId, customerIdVal)
+					SET uid='%s',read_time='%s',latitude=%f,longitude=%f,device_id=%f
+				   WHERE epc='%s' AND customer_id=%f 
+				   RETURNING tag_id;`, currentData.UID, currentData.ReadTime,
+						currentData.Latitude, currentData.Longitude,
+						currentHttpHeader.DeviceId, currentData.Epc, currentHttpHeader.CustomerId)
 					WasteLibrary.LogStr(execSQL)
 				}
 			} else {
 
 				execSQL = fmt.Sprintf(`INSERT INTO public.tags(
-			   app_type,serial_number,customer_id,epc,uid,container_no,latitude,longitude,statu)
-			  VALUES ('%s','%s',%d,'%s','%s','%s',%f,%f,'1');`, appTypeVal, didVal, customerIdVal, tagId, uId, tagId, fLatitude, fLongitude)
+			   epc,device_id,customer_id,uid,latitude,longitude)
+			  VALUES ('%s',%f,%f,'%s',%f,%f)  
+			  RETURNING tag_id;`, currentData.Epc, currentHttpHeader.DeviceId,
+					currentHttpHeader.CustomerId, currentData.UID,
+					currentData.Latitude, currentData.Longitude)
 				WasteLibrary.LogStr(execSQL)
 			}
-
-		} else if opTypeVal == "GPS" {
-
-			latitude := req.FormValue("LATITUDE")
-			longitude := req.FormValue("LONGITUDE")
-			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + latitude + " - " + longitude)
-
-			var fLatitude float64 = 0
-			var fLongitude float64 = 0
-			if latitude != "" {
-				if s, err := strconv.ParseFloat(latitude, 32); err == nil {
-					fLatitude = s
-				}
+			tagID = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&tagID)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
 			}
-			if longitude != "" {
-				if s, err := strconv.ParseFloat(longitude, 32); err == nil {
-					fLongitude = s
-				}
-			}
+
+			currentData.TagID = float64(tagID)
+			resultVal.Retval = currentData.ToIdString()
+
+		} else if currentHttpHeader.OpType == "GPS" {
+
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
-			   SET gps_time='%s',latitude=%f,longitude=%f
-			   WHERE serial_number='%s' AND customer_id=%d;`, dataTime, fLatitude, fLongitude, didVal, customerIdVal)
+			   SET gps_time='%s',latitude=%f,longitude=%f,speed=%f
+			   WHERE device_id=%f AND customer_id=%f 
+			   RETURNING device_id;`, currentData.GpsTime,
+				currentData.Latitude, currentData.Longitude, currentData.Speed,
+				currentHttpHeader.DeviceId, currentHttpHeader.CustomerId)
 			WasteLibrary.LogStr(execSQL)
+			var deviceID = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
+			}
 
-		} else if opTypeVal == "STATUS" {
+			currentData.DeviceId = float64(deviceID)
+			resultVal.Retval = currentData.ToIdString()
 
-			readerAppStatus := req.FormValue("READERAPPSTATUS")
-			readerConnStatus := req.FormValue("READERCONNSTATUS")
-			readerStatus := req.FormValue("READERSTATUS")
-			camAppStatus := req.FormValue("CAMAPPSTATUS")
-			camConnStatus := req.FormValue("CAMCONNSTATUS")
-			camStatus := req.FormValue("CAMSTATUS")
-			gpsAppStatus := req.FormValue("GPSAPPSTATUS")
-			gpsConnStatus := req.FormValue("GPSCONNSTATUS")
-			gpsStatus := req.FormValue("GPSSTATUS")
-			thermAppStatus := req.FormValue("THERMAPSTATUS")
-			transferAppStatus := req.FormValue("TRANSFERAPP")
-			aliveStatus := req.FormValue("ALIVESTATUS")
-			contactStatus := req.FormValue("CONTACTSTATUS")
-			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + readerAppStatus + " - " + readerConnStatus + " - " + readerStatus + " - " + camAppStatus + " - " + camConnStatus + " - " + camStatus + " - " + gpsAppStatus + " - " + gpsConnStatus + " - " + gpsStatus + " - " + thermAppStatus + " - " + transferAppStatus + " - " + aliveStatus + " - " + contactStatus)
+		} else if currentHttpHeader.OpType == "ARVENTO" {
+
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
+
+			execSQL = fmt.Sprintf(`UPDATE public.devices
+			   SET latitude=%f,longitude=%f,speed=%f
+			   WHERE device_id=%f AND customer_id=%f 
+			   RETURNING device_id;`,
+				currentData.Latitude, currentData.Longitude, currentData.Speed,
+				currentData.DeviceId, currentData.CustomerId)
+			WasteLibrary.LogStr(execSQL)
+			var deviceID = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
+			}
+
+			currentData.DeviceId = float64(deviceID)
+			resultVal.Retval = currentData.ToIdString()
+
+		} else if currentHttpHeader.OpType == "STATUS" {
+
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
+			var execSqlExt = ""
+			if currentData.ReaderAppStatus == "1" {
+				execSqlExt += ",reader_app_last_ok_time='" + currentData.ReaderAppLastOkTime + "'"
+			}
+			if currentData.ReaderConnStatus == "1" {
+				execSqlExt += ",reader_conn_last_ok_time='" + currentData.ReaderConnLastOkTime + "'"
+			}
+			if currentData.ReaderStatus == "1" {
+				execSqlExt += ",reader_last_ok_time='" + currentData.ReaderLastOkTime + "'"
+			}
+
+			if currentData.CamAppStatus == "1" {
+				execSqlExt += ",cam_app_last_ok_time='" + currentData.CamAppLastOkTime + "'"
+			}
+			if currentData.CamConnStatus == "1" {
+				execSqlExt += ",cam_conn_last_ok_time='" + currentData.CamConnLastOkTime + "'"
+			}
+			if currentData.CamStatus == "1" {
+				execSqlExt += ",cam_last_ok_time='" + currentData.CamLastOkTime + "'"
+			}
+
+			if currentData.GpsAppStatus == "1" {
+				execSqlExt += ",gps_app_last_ok_time='" + currentData.GpsAppLastOkTime + "'"
+			}
+			if currentData.GpsConnStatus == "1" {
+				execSqlExt += ",gps_conn_last_ok_time='" + currentData.GpsConnLastOkTime + "'"
+			}
+			if currentData.GpsStatus == "1" {
+				execSqlExt += ",gps_last_ok_time='" + currentData.GpsLastOkTime + "'"
+			}
+
+			if currentData.ThermAppStatus == "1" {
+				execSqlExt += ",therm_app_last_ok_time='" + currentData.ThermAppLastOkTime + "'"
+			}
+			if currentData.TransferAppStatus == "1" {
+				execSqlExt += ",transfer_app_last_ok_time='" + currentData.TransferAppLastOkTime + "'"
+			}
+			if currentData.AliveStatus == "1" {
+				execSqlExt += ",alive_last_ok_time='" + currentData.AliveLastOkTime + "'"
+			}
+			if currentData.ContactStatus == "1" {
+				execSqlExt += ",contact_last_ok_time='" + currentData.ContactLastOkTime + "'"
+			}
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 				SET status_time='%s',
 				reader_app_status='%s',reader_conn_status='%s',reader_status='%s',cam_app_status='%s',cam_conn_status='%s',
 				cam_status='%s',gps_app_status='%s',gps_conn_status='%s',gps_status='%s',therm_app_status='%s',
-				transfer_app_status='%s',alive_status='%s',contact_status='%s'
-			   WHERE serial_number='%s' AND customer_id=%d;
-			   `, dataTime, readerAppStatus, readerConnStatus, readerStatus, camAppStatus, camConnStatus, camStatus, gpsAppStatus, gpsConnStatus, gpsStatus, thermAppStatus, transferAppStatus, aliveStatus, contactStatus, didVal, customerIdVal)
+				transfer_app_status='%s',alive_status='%s',contact_status='%s'`+execSqlExt+`
+			   WHERE device_id=%f AND customer_id=%f 
+			   RETURNING device_id;`, currentData.StatusTime,
+				currentData.ReaderAppStatus, currentData.ReaderConnStatus, currentData.ReaderStatus,
+				currentData.CamAppStatus, currentData.CamConnStatus, currentData.CamStatus,
+				currentData.GpsAppStatus, currentData.GpsConnStatus, currentData.GpsStatus,
+				currentData.ThermAppStatus, currentData.TransferAppStatus, currentData.AliveStatus,
+				currentData.ContactStatus, currentHttpHeader.DeviceId, currentHttpHeader.CustomerId)
+
 			WasteLibrary.LogStr(execSQL)
+			var deviceID = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
+			}
 
-		} else if opTypeVal == "THERM" {
+			currentData.DeviceId = float64(deviceID)
+			resultVal.Retval = currentData.ToIdString()
 
-			therm := req.FormValue("THERM")
-			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + therm)
+		} else if currentHttpHeader.OpType == "THERM" {
+
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 			   SET therm='%s',therm_time='%s'
-			   WHERE serial_number='%s' AND customer_id=%d;`, therm, dataTime, didVal, customerIdVal)
+			   WHERE device_id=%f AND customer_id=%f 
+			   RETURNING device_id;`,
+				currentData.Therm, currentData.ThermTime, currentHttpHeader.DeviceId, currentHttpHeader.CustomerId)
 			WasteLibrary.LogStr(execSQL)
+			var deviceID = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
+			}
 
-		} else if opTypeVal == "CAM_IMAGE" {
-
-			uId := req.FormValue("UID")
-			tagId := req.FormValue("TAGID")
-			imageStatu := req.FormValue("IMAGE")
-			WasteLibrary.LogStr(repeat + " - " + dataTypeVal + " - " + tagId + " - " + uId + " - " + imageStatu)
-
-			execSQL = fmt.Sprintf(`UPDATE public.tags
-			   SET image_statu='%s'
-			   WHERE tag_id='%s' AND customer_id=%d;`, imageStatu, tagId, customerIdVal)
-			WasteLibrary.LogStr(execSQL)
+			currentData.DeviceId = float64(deviceID)
+			resultVal.Retval = currentData.ToIdString()
 
 		} else {
 			resultVal.Result = "FAIL"
 		}
 
-		if execSQL != "" {
-			_, errDb := staticDb.Exec(execSQL)
-			WasteLibrary.LogErr(errDb)
-			if errDb != nil {
-				WasteLibrary.LogErr(err)
-			} else {
-				resultVal.Result = "OK"
-			}
-		}
-	} else if appTypeVal == "ULT" {
+	} else if currentHttpHeader.AppType == "ULT" {
 		resultVal.Result = "OK"
-	} else if appTypeVal == "RECY" {
+	} else if currentHttpHeader.AppType == "RECY" {
 		resultVal.Result = "OK"
-	} else if appTypeVal == "ADMIN" {
+	} else if currentHttpHeader.AppType == "ADMIN" {
 		var execSQL string = ""
-		if opTypeVal == "CUSTOMER" {
+		if currentHttpHeader.OpType == "CUSTOMER" {
 
-			currentCustomer := WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentCustomer.ToIdString() + " - " + currentCustomer.CustomerName + " - " + currentCustomer.Domain + " - " + currentCustomer.RfIdApp + " - " + currentCustomer.UltApp + " - " + currentCustomer.RecyApp)
+			var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
 
-			if currentCustomer.CustomerId != 0 {
+			if currentData.CustomerId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.customers
-					SET customer_name='%s',domain='%s',rfid_app='%s',ult_app='%s',recy_app='%s'
-				   WHERE customer_id=%f  RETURNING customer_id;`, currentCustomer.CustomerName, currentCustomer.Domain, currentCustomer.RfIdApp, currentCustomer.UltApp, currentCustomer.RecyApp, currentCustomer.CustomerId)
+					SET customer_name='%s',admin_link='%s',web_link='%s',rfid_app='%s',ult_app='%s',recy_app='%s'
+				   WHERE customer_id=%f  RETURNING customer_id;`,
+					currentData.CustomerName, currentData.AdminLink, currentData.WebLink, currentData.RfIdApp,
+					currentData.UltApp, currentData.RecyApp, currentData.CustomerId)
 				WasteLibrary.LogStr(execSQL)
 			} else {
 
 				execSQL = fmt.Sprintf(`INSERT INTO public.customers(
-					customer_name,domain,rfid_app,ult_app,recy_app)
-			  VALUES ('%s','%s','%s','%s','%s')  RETURNING customer_id;`, currentCustomer.CustomerName, currentCustomer.Domain, currentCustomer.RfIdApp, currentCustomer.UltApp, currentCustomer.RecyApp)
+					customer_name,admin_link,web_link,rfid_app,ult_app,recy_app)
+			  VALUES ('%s','%s','%s','%s','%s','%s')  RETURNING customer_id;`,
+					currentData.CustomerName, currentData.AdminLink, currentData.WebLink, currentData.RfIdApp,
+					currentData.UltApp, currentData.RecyApp)
 				WasteLibrary.LogStr(execSQL)
 			}
-			var id int = 0
-			errDb := staticDb.QueryRow(execSQL).Scan(&id)
-			WasteLibrary.LogErr(errDb)
+			var customerId int = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&customerId)
 			if errDb != nil {
-				WasteLibrary.LogErr(err)
-			}
-
-			var customerRetVal WasteLibrary.CustomerType
-			var selectSQL string = fmt.Sprintf(`SELECT 
-			customer_id,customer_name,domain,rfid_app,ult_app,recy_app,active,create_time
-			 FROM public.customers WHERE customer_id=%d;`, id)
-			rows, errSel := staticDb.Query(selectSQL)
-			WasteLibrary.LogErr(errSel)
-			for rows.Next() {
-				rows.Scan(&customerRetVal.CustomerId, &customerRetVal.CustomerName, &customerRetVal.Domain, &customerRetVal.RfIdApp, &customerRetVal.UltApp,
-					&customerRetVal.RecyApp, &customerRetVal.Active, &customerRetVal.CreateTime)
-			}
-			if customerRetVal.CustomerId != 0 {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
 				resultVal.Result = "OK"
-				resultVal.Retval = customerRetVal.ToString()
 			}
 
-			WasteLibrary.LogStr("CustomerType : " + customerRetVal.ToString())
+			currentData.CustomerId = float64(customerId)
+			resultVal.Retval = currentData.ToIdString()
 
-		} else if opTypeVal == "DEVICE" {
+		} else if currentHttpHeader.OpType == "DEVICE" {
 
-			currentDevice := WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentDevice.ToIdString() + " - " + currentDevice.DeviceType + " - " + currentDevice.SerialNumber + " - " + currentDevice.DeviceName + " - " + currentDevice.ToCustomerIdString())
-
-			if currentDevice.DeviceId != 0 {
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
+			if currentData.DeviceId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.devices 
 				SET device_type='%s',serial_number='%s',device_name='%s',customer_id=%f 
 	  			WHERE device_id=%f  
-				RETURNING device_id;`, currentDevice.DeviceType, currentDevice.SerialNumber, currentDevice.DeviceName, currentDevice.CustomerId, currentDevice.DeviceId)
+				RETURNING device_id;`,
+					currentData.DeviceType, currentData.SerialNumber, currentData.DeviceName,
+					currentData.CustomerId, currentData.DeviceId)
 				WasteLibrary.LogStr(execSQL)
 			} else {
 
 				execSQL = fmt.Sprintf(`INSERT INTO public.devices 
 				(device_type,serial_number,device_name,customer_id) 
   				VALUES ('%s','%s','%s',%f)   
-  				RETURNING device_id;`, currentDevice.DeviceType, currentDevice.SerialNumber, currentDevice.DeviceName, currentDevice.CustomerId)
+  				RETURNING device_id;`,
+					currentData.DeviceType, currentData.SerialNumber, currentData.DeviceName,
+					currentData.CustomerId)
 				WasteLibrary.LogStr(execSQL)
 			}
-			var id int = 0
-			errDb := staticDb.QueryRow(execSQL).Scan(&id)
-			WasteLibrary.LogErr(errDb)
+			var deviceId int = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
 			if errDb != nil {
-				WasteLibrary.LogErr(err)
-			}
-
-			var deviceRetVal WasteLibrary.DeviceType
-			var selectSQL string = fmt.Sprintf(`SELECT 
-device_id,device_type,serial_number,device_name,customer_id,active,create_time
- FROM public.devices WHERE device_id=%d;`, id)
-			rows, errSel := staticDb.Query(selectSQL)
-			WasteLibrary.LogErr(errSel)
-			for rows.Next() {
-				rows.Scan(&deviceRetVal.DeviceId, &deviceRetVal.DeviceType, &deviceRetVal.SerialNumber, &deviceRetVal.DeviceName,
-					&deviceRetVal.CustomerId, &deviceRetVal.Active, &deviceRetVal.CreateTime)
-			}
-			if deviceRetVal.DeviceId != 0 {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
 				resultVal.Result = "OK"
-				resultVal.Retval = deviceRetVal.ToString()
 			}
 
-			WasteLibrary.LogStr("DeviceType : " + deviceRetVal.ToString())
+			currentData.DeviceId = float64(deviceId)
+			resultVal.Retval = currentData.ToIdString()
 
 		} else {
 			resultVal.Result = "FAIL"
@@ -372,6 +428,281 @@ device_id,device_type,serial_number,device_name,customer_id,active,create_time
 	} else {
 		resultVal.Result = "OK"
 	}
+	w.Write(resultVal.ToByte())
+}
+
+func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	if err := req.ParseForm(); err != nil {
+		WasteLibrary.LogErr(err)
+		return
+	}
+
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	WasteLibrary.LogStr(currentHttpHeader.ToString())
+	if currentHttpHeader.AppType == "RFID" {
+		var execSQL string = ""
+		if currentHttpHeader.OpType == "TAG" {
+
+			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
+
+			execSQL = fmt.Sprintf(`INSERT INTO public.tagdata 
+				(tag_id,customer_id,device_id,epc,
+				uid,container_no,latitude, longitude, 
+				statu,image_statu,active,
+				read_time,check_time,create_time) 
+  				VALUES (%f,%f,%f,'%s''%s''%s',%f,%f,'%s','%s','%s','%s','%s','%s')   
+  				RETURNING data_id;`,
+				currentData.TagID, currentData.CustomerId, currentData.DeviceId,
+				currentData.Epc, currentData.UID, currentData.ContainerNo,
+				currentData.Latitude, currentData.Longitude,
+				currentData.Statu, currentData.ImageStatu, currentData.Active,
+				currentData.ReadTime, currentData.CheckTime, currentData.CreateTime)
+			WasteLibrary.LogStr(execSQL)
+
+			var deviceId int = 0
+			errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
+			}
+
+			currentData.DeviceId = float64(deviceId)
+			resultVal.Retval = currentData.ToIdString()
+
+		} else if currentHttpHeader.OpType == "DEVICE" {
+
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			WasteLibrary.LogStr(currentData.ToString())
+
+			execSQL = fmt.Sprintf(`INSERT INTO public.devicedata 
+				(device_id,device_type,serial_number,device_name,customer_id,
+					reader_app_status,reader_conn_status,reader_status,
+					cam_app_status,cam_conn_status,cam_status,
+					gps_app_status,gps_conn_status,gps_status,
+					therm_app_status,transfer_app_status,alive_status,contact_status,
+					therm,latitude, longitude,speed, active, 
+					therm_time, gps_time, status_time,
+					reader_app_last_ok_time,reader_conn_last_ok_time,reader_last_ok_time,
+					gps_app_last_ok_time,gps_conn_last_ok_time,gps_last_ok_time,
+					cam_app_last_ok_time,cam_conn_last_ok_time,cam_last_ok_time,
+					therm_app_last_ok_time,transfer_app_last_ok_time,alive_last_ok_time,
+					contact_last_ok_time,create_time) 
+  				VALUES (%f,'%s','%s','%s',%f,'%s','%s','%s','%s','%s','%s','%s','%s','%s',
+				  '%s','%s','%s','%s','%s',%f,%f,%f,'%s','%s','%s','%s',
+				  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')   
+  				RETURNING device_id;`,
+				currentData.DeviceId, currentData.DeviceType, currentData.SerialNumber, currentData.DeviceName, currentData.CustomerId,
+				currentData.ReaderAppStatus, currentData.ReaderConnStatus, currentData.ReaderStatus,
+				currentData.CamAppStatus, currentData.CamConnStatus, currentData.CamStatus,
+				currentData.GpsAppStatus, currentData.GpsConnStatus, currentData.GpsStatus,
+				currentData.ThermAppStatus, currentData.TransferAppStatus, currentData.AliveStatus, currentData.ContactStatus,
+				currentData.Therm, currentData.Latitude, currentData.Longitude, currentData.Speed, currentData.Active,
+				currentData.ThermTime, currentData.GpsTime, currentData.StatusTime,
+				currentData.ReaderAppLastOkTime, currentData.ReaderConnLastOkTime, currentData.ReaderLastOkTime,
+				currentData.GpsAppLastOkTime, currentData.GpsConnLastOkTime, currentData.GpsLastOkTime,
+				currentData.CamAppLastOkTime, currentData.CamConnLastOkTime, currentData.CamLastOkTime,
+				currentData.ThermAppLastOkTime, currentData.TransferAppLastOkTime, currentData.AliveLastOkTime,
+				currentData.ContactLastOkTime, currentData.CreateTime)
+
+			WasteLibrary.LogStr(execSQL)
+
+			var deviceId int = 0
+			errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
+			}
+
+			currentData.DeviceId = float64(deviceId)
+			resultVal.Retval = currentData.ToIdString()
+
+		} else {
+			resultVal.Result = "FAIL"
+		}
+	} else {
+		resultVal.Result = "OK"
+	}
+	w.Write(resultVal.ToByte())
+}
+
+func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	if err := req.ParseForm(); err != nil {
+		WasteLibrary.LogErr(err)
+		return
+	}
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	WasteLibrary.LogStr(currentHttpHeader.ToString())
+	var execSQL string = ""
+	if currentHttpHeader.BaseDataType == "CUSTOMER" {
+
+		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
+		WasteLibrary.LogStr(currentData.ToString())
+
+		if currentData.CustomerId != 0 {
+			execSQL = fmt.Sprintf(`SELECT 
+			customer_name,
+			admin_link,
+			web_link,
+			rfid_app,
+			ult_app,
+			recy_app,
+			active,
+			create_time
+			FROM public.customers
+				   WHERE customer_id=%f ;`, currentData.CustomerId)
+			WasteLibrary.LogStr(execSQL)
+		}
+
+		errDb := staticDb.QueryRow(execSQL).Scan(&currentData.CustomerName,
+			&currentData.AdminLink,
+			&currentData.WebLink,
+			&currentData.RfIdApp,
+			&currentData.UltApp,
+			&currentData.RecyApp,
+			&currentData.Active,
+			&currentData.CreateTime)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = "FAIL"
+		} else {
+			resultVal.Result = "OK"
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.BaseDataType == "DEVICE" {
+
+		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+		WasteLibrary.LogStr(currentData.ToString())
+
+		if currentData.DeviceId != 0 {
+			execSQL = fmt.Sprintf(`SELECT 
+			device_type,
+			serial_number,
+			device_name,
+			customer_id,
+			reader_app_status,
+			reader_conn_status,
+			reader_status,
+			cam_app_status,
+			cam_conn_status,
+			cam_status,
+			gps_app_status,
+			gps_conn_status,
+			gps_status,
+			therm_app_status,
+			transfer_app_status,
+			alive_status,
+			contact_status,
+			therm,
+			latitude, 
+			longitude, 
+			speed,
+			active, 
+			therm_time, 
+			gps_time, 
+			status_time, 
+			create_time
+			FROM public.devices
+				   WHERE device_id=%f ;`, currentData.DeviceId)
+			WasteLibrary.LogStr(execSQL)
+		}
+
+		errDb := staticDb.QueryRow(execSQL).Scan(&currentData.DeviceType,
+			&currentData.SerialNumber,
+			&currentData.DeviceName,
+			&currentData.CustomerId,
+			&currentData.ReaderAppStatus,
+			&currentData.ReaderConnStatus,
+			&currentData.ReaderStatus,
+			&currentData.CamAppStatus,
+			&currentData.CamConnStatus,
+			&currentData.CamStatus,
+			&currentData.GpsAppStatus,
+			&currentData.GpsConnStatus,
+			&currentData.GpsStatus,
+			&currentData.ThermAppStatus,
+			&currentData.TransferAppStatus,
+			&currentData.AliveStatus,
+			&currentData.ContactStatus,
+			&currentData.Therm,
+			&currentData.Latitude,
+			&currentData.Longitude,
+			&currentData.Speed,
+			&currentData.Active,
+			&currentData.ThermTime,
+			&currentData.GpsTime,
+			&currentData.StatusTime,
+			&currentData.CreateTime)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = "FAIL"
+		} else {
+			resultVal.Result = "OK"
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.BaseDataType == "TAG" {
+
+		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+		WasteLibrary.LogStr(currentData.ToString())
+
+		if currentData.TagID != 0 {
+			execSQL = fmt.Sprintf(`SELECT 
+			customer_id,
+			device_id,
+			epc,
+			uid,
+			container_no,
+			latitude, 
+			longitude, 
+			statu,
+			image_statu,
+			active,
+			read_time, 
+			check_time, 
+			create_time
+			FROM public.tags
+				   WHERE tag_id=%f ;`, currentData.TagID)
+			WasteLibrary.LogStr(execSQL)
+		}
+
+		errDb := staticDb.QueryRow(execSQL).Scan(&currentData.CustomerId,
+			&currentData.DeviceId,
+			&currentData.Epc,
+			&currentData.UID,
+			&currentData.ContainerNo,
+			&currentData.Latitude,
+			&currentData.Longitude,
+			&currentData.Statu,
+			&currentData.ImageStatu,
+			&currentData.Active,
+			&currentData.ReadTime,
+			&currentData.CheckTime,
+			&currentData.CreateTime)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = "FAIL"
+		} else {
+			resultVal.Result = "OK"
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else {
+		resultVal.Result = "FAIL"
+	}
+
 	w.Write(resultVal.ToByte())
 }
 

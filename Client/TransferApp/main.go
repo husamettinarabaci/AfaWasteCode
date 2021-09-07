@@ -62,31 +62,12 @@ func main() {
 	go fileCheck("STATUS")
 	wg.Add(1)
 
-	http.HandleFunc("/status", status)
+	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/trans", trans)
 	http.ListenAndServe(":10000", nil)
 
 	wg.Wait()
 
-}
-
-func status(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
-
-	if err := req.ParseForm(); err != nil {
-		WasteLibrary.LogErr(err)
-		return
-	}
-	opType := req.FormValue("OPTYPE")
-	WasteLibrary.LogStr(opType)
-
-	resultVal.Result = "FAIL"
-	if opType == "APP" {
-		resultVal.Result = "OK"
-	} else {
-		resultVal.Result = "FAIL"
-	}
-	w.Write(resultVal.ToByte())
 }
 
 func trans(w http.ResponseWriter, req *http.Request) {
@@ -108,8 +89,9 @@ func trans(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 		if opType == "CAM" {
+			var curretnTagType WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
 
-			sendFileToServer(req.FormValue("UID"))
+			sendFileToServer(curretnTagType.UID)
 		}
 		resultVal.Result = "OK"
 	}
@@ -126,6 +108,13 @@ func sendFileToServer(fileName string) {
 			WasteLibrary.LogErr(err)
 		} else {
 			WasteLibrary.RemoveFile("WAIT_CAM/" + fileName + ".mp4")
+		}
+
+		err = uploadFile(session, "WAIT_CAM/"+fileName+".png")
+		if err != nil {
+			WasteLibrary.LogErr(err)
+		} else {
+			WasteLibrary.RemoveFile("WAIT_CAM/" + fileName + ".png")
 		}
 	}
 }
@@ -156,15 +145,20 @@ func uploadFile(session *session.Session, uploadFileDir string) error {
 	return err
 }
 
-func sendDataToServer(datatype string, sendData string, dataTime string, repeat string) devafatekresult.ResultType {
+func sendDataToServer(opType string, sendData string, dataTime string, repeat string) devafatekresult.ResultType {
 	var resultVal devafatekresult.ResultType
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
+		AppType:    applicationType,
+		DeviceNo:   serialNumber,
+		OpType:     opType,
+		Time:       dataTime,
+		Repeat:     repeat,
+		DeviceId:   0,
+		CustomerId: 0,
+	}
 	data := url.Values{
-		"APPTYPE":  {applicationType},
-		"DID":      {serialNumber},
-		"DATATYPE": {datatype},
-		"TIME":     {dataTime},
-		"DATA":     {sendData},
-		"REPEAT":   {repeat},
+		"HEADER": {currentHttpHeader.ToString()},
+		"DATA":   {sendData},
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://aws.afatek.com.tr/data", data)
 	return resultVal
