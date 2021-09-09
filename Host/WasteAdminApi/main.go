@@ -21,8 +21,11 @@ func main() {
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/setCustomer", setCustomer)
 	http.HandleFunc("/setDevice", setDevice)
-	http.HandleFunc("/setConfig", setConfig)
+	//http.HandleFunc("/setCustomerConfig", setCustomerConfig)
+	//http.HandleFunc("/setAdminConfig", setAdminConfig)
+	//http.HandleFunc("/setLocalConfig", setLocalConfig)
 	http.HandleFunc("/getCustomer", getCustomer)
+	//http.HandleFunc("/getCustomers", getCustomers)
 	http.HandleFunc("/getDevice", getDevice)
 	http.HandleFunc("/getDevices", getDevices)
 	http.HandleFunc("/getCustomerConfig", getCustomerConfig)
@@ -92,10 +95,18 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 			WasteLibrary.LogStr("CustomerDevices : " + currentCustomerDevices.ToString())
 			WasteLibrary.LogStr("CustomerTags : " + currentCustomerTags.ToString())
 			if resultVal.Result == "OK" {
-				resultVal = WasteLibrary.GetRedisForStoreApi("", "customers")
-				var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
+				resultVal = WasteLibrary.GetRedisForStoreApi("customers", "customers")
+				var currentCustomers WasteLibrary.CustomersType
+				if resultVal.Result == "OK" {
+					currentCustomers = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
+
+				} else {
+					currentCustomers = WasteLibrary.CustomersType{
+						Customers: make(map[float64]float64),
+					}
+				}
 				currentCustomers.Customers[currentCustomer.CustomerId] = currentCustomer.CustomerId
-				resultVal = WasteLibrary.SaveRedisForStoreApi("", "customers", currentCustomers.ToString())
+				resultVal = WasteLibrary.SaveRedisForStoreApi("customers", "customers", currentCustomers.ToString())
 			}
 			resultVal = WasteLibrary.SaveRedisForStoreApi("customer-devices", currentCustomerDevices.ToIdString(), currentCustomerDevices.ToString())
 			resultVal = WasteLibrary.SaveRedisForStoreApi("customer-tags", currentCustomerTags.ToIdString(), currentCustomerTags.ToString())
@@ -154,7 +165,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("HEADER"))
+	var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+	WasteLibrary.LogStr("Data : " + currentData.ToString())
 	data := url.Values{
 		"HEADER": {currentHttpHeader.ToString()},
 		"DATA":   {currentData.ToString()},

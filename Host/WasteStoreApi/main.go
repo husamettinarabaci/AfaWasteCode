@@ -116,8 +116,8 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 	dataVal := req.FormValue("DATA")
-	WasteLibrary.LogStr(currentHttpHeader.ToString())
-	WasteLibrary.LogStr(dataVal)
+	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Data : " + dataVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata(
 		app_type,device_id,optype,data,customer_id,data_time)
 	   VALUES ('%s',%f,'%s','%s',%f,'%s');`, currentHttpHeader.AppType, currentHttpHeader.DeviceId, currentHttpHeader.OpType, dataVal, currentHttpHeader.CustomerId, currentHttpHeader.Time)
@@ -141,12 +141,13 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	WasteLibrary.LogStr(currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Data : " + req.FormValue("DATA"))
 	if currentHttpHeader.AppType == "RFID" {
 		var execSQL string = ""
 		if currentHttpHeader.OpType == "RF" {
 			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			var selectSQL string = fmt.Sprintf(`SELECT tag_id
 			FROM public.tags WHERE epc='%s' AND customer_id=%f;`, currentData.Epc, currentHttpHeader.CustomerId)
@@ -203,7 +204,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		} else if currentHttpHeader.OpType == "GPS" {
 
 			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 			   SET gps_time='%s',latitude=%f,longitude=%f,speed=%f
@@ -227,7 +228,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		} else if currentHttpHeader.OpType == "ARVENTO" {
 
 			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 			   SET latitude=%f,longitude=%f,speed=%f
@@ -251,7 +252,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		} else if currentHttpHeader.OpType == "STATUS" {
 
 			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			var execSqlExt = ""
 			if currentData.ReaderAppStatus == "1" {
 				execSqlExt += ",reader_app_last_ok_time='" + currentData.ReaderAppLastOkTime + "'"
@@ -325,7 +326,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		} else if currentHttpHeader.OpType == "THERM" {
 
 			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
 			   SET therm='%s',therm_time='%s'
@@ -358,7 +359,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		if currentHttpHeader.OpType == "CUSTOMER" {
 
 			var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			if currentData.CustomerId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.customers
@@ -391,7 +392,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		} else if currentHttpHeader.OpType == "DEVICE" {
 
 			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			if currentData.DeviceId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.devices 
 				SET device_type='%s',serial_number='%s',device_name='%s',customer_id=%f 
@@ -440,13 +441,14 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	WasteLibrary.LogStr(currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Data : " + req.FormValue("DATA"))
 	if currentHttpHeader.AppType == "RFID" {
 		var execSQL string = ""
 		if currentHttpHeader.OpType == "TAG" {
 
 			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`INSERT INTO public.tagdata 
 				(tag_id,customer_id,device_id,epc,
@@ -477,7 +479,7 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		} else if currentHttpHeader.OpType == "DEVICE" {
 
 			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-			WasteLibrary.LogStr(currentData.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`INSERT INTO public.devicedata 
 				(device_id,device_type,serial_number,device_name,customer_id,
@@ -540,12 +542,13 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	WasteLibrary.LogStr(currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Data : " + req.FormValue("DATA"))
 	var execSQL string = ""
 	if currentHttpHeader.BaseDataType == "CUSTOMER" {
 
 		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
-		WasteLibrary.LogStr(currentData.ToString())
+		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.CustomerId != 0 {
 			execSQL = fmt.Sprintf(`SELECT 
@@ -582,7 +585,7 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	} else if currentHttpHeader.BaseDataType == "DEVICE" {
 
 		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-		WasteLibrary.LogStr(currentData.ToString())
+		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.DeviceId != 0 {
 			execSQL = fmt.Sprintf(`SELECT 
@@ -655,7 +658,7 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	} else if currentHttpHeader.BaseDataType == "TAG" {
 
 		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
-		WasteLibrary.LogStr(currentData.ToString())
+		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.TagID != 0 {
 			execSQL = fmt.Sprintf(`SELECT 
@@ -811,6 +814,7 @@ func getKeyDb(hKey string, sKey string) devafatekresult.ResultType {
 	if kVal == "NOT" {
 		resultVal.Result = "FAIL"
 	} else {
+		resultVal.Retval = kVal
 		resultVal.Result = "OK"
 	}
 	WasteLibrary.LogStr("KeyValue : " + kVal)

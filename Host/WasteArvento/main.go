@@ -11,6 +11,10 @@ import (
 	"github.com/devafatek/WasteLibrary"
 )
 
+var currentCustomerList WasteLibrary.CustomersType = WasteLibrary.CustomersType{
+	Customers: make(map[float64]float64),
+}
+
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
@@ -20,7 +24,8 @@ func main() {
 
 	initStart()
 
-	go mainProc()
+	//go mainProc()
+	go setCustomerList()
 
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
@@ -28,36 +33,57 @@ func main() {
 	http.ListenAndServe(":80", nil)
 }
 
-func mainProc() {
-
+func setCustomerList() {
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
 	for {
-		time.Sleep(20 * time.Second)
-		resultVal = WasteLibrary.GetRedisForStoreApi("", "customers")
+		time.Sleep(60 * 60 * time.Second)
+		resultVal = WasteLibrary.GetRedisForStoreApi("customers", "customers")
 		var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
 		for _, customerId := range currentCustomers.Customers {
-			resultVal = WasteLibrary.GetRedisForStoreApi("customer-customerconfig", WasteLibrary.Float64IdToString(customerId))
-			if resultVal.Result == "OK" {
-				var currentCustomerConfig WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
-				if currentCustomerConfig.ArventoApp == "1" {
-					go arventoProc(currentCustomerConfig)
-				}
+			if _, ok := currentCustomerList.Customers[customerId]; !ok {
+				currentCustomerList.Customers[customerId] = customerId
+				go customerProc(customerId)
+
 			}
 		}
-	}
 
+	}
 }
 
-func arventoProc(currentCustomerConfig WasteLibrary.CustomerConfigType) {
+func customerProc(customerId float64) {
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-devices", currentCustomerConfig.ToIdString())
+	var loopCount = 0
+	var currentCustomerConfig WasteLibrary.CustomerConfigType
+	var currentCustomerDevices WasteLibrary.CustomerDevicesType
+	var plateDevice map[string]string
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-customerconfig", WasteLibrary.Float64IdToString(customerId))
+
 	if resultVal.Result == "OK" {
-		var currentCustomerDevices = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
-		resultVal = getDevice(currentCustomerConfig)
-		if resultVal.Result == "OK" {
-			var plateDevice map[string]string = resultVal.Retval.(map[string]string)
+		currentCustomerConfig = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
+	}
+	for {
+		if currentCustomerConfig.ArventoApp == "1" {
+			if loopCount == 180 {
+				loopCount = 0
+			}
+			if loopCount == 0 {
+				loopCount = 0
+				resultVal = WasteLibrary.GetRedisForStoreApi("customer-customerconfig", WasteLibrary.Float64IdToString(customerId))
+				if resultVal.Result == "OK" {
+					currentCustomerConfig = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
+				}
+				resultVal = WasteLibrary.GetRedisForStoreApi("customer-devices", currentCustomerConfig.ToIdString())
+				if resultVal.Result == "OK" {
+					currentCustomerDevices = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
+				}
+				resultVal = getDevice(currentCustomerConfig)
+				if resultVal.Result == "OK" {
+					plateDevice = resultVal.Retval.(map[string]string)
+				}
+			}
+
 			resultVal = getLocation(currentCustomerConfig)
 			if resultVal.Result == "OK" {
 				var deviceLocations WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.StringToArventoDeviceGpsListType(resultVal.Retval.(string))
@@ -79,15 +105,29 @@ func arventoProc(currentCustomerConfig WasteLibrary.CustomerConfigType) {
 									"HEADER": {newCurrentHttpHeader.ToString()},
 									"DATA":   {currentDevice.ToString()},
 								}
-								WasteLibrary.SaveStaticDbMainForStoreApi(data)
+								resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+
+								if resultVal.Result == "OK" {
+									resultVal = WasteLibrary.SaveRedisForStoreApi("devices", currentDevice.ToIdString(), currentDevice.ToString())
+								}
+								if currentDevice.Speed == 0 {
+									//TO DO
+									//Speed Op
+								}
+
 							}
 						}
 					}
 				}
 			}
-		}
-	}
 
+			time.Sleep(20 * time.Second)
+		} else {
+			delete(currentCustomerList.Customers, customerId)
+			break
+		}
+		loopCount++
+	}
 }
 
 func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) devafatekresult.ResultType {

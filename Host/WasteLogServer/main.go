@@ -48,8 +48,9 @@ func log(w http.ResponseWriter, req *http.Request) {
 	}
 	container := req.FormValue("CONTAINER")
 	logType := req.FormValue("LOGTYPE")
+	funcVal := req.FormValue("FUNC")
 	logVal := req.FormValue("LOG")
-	logStr("Time : " + time.Now().String() + " - Container : " + container + " - LogType : " + logType + " - Log : " + logVal + " - IP : " + req.RemoteAddr)
+	logStr("Time : " + time.Now().String() + " - Container : " + container + " - LogType : " + logType + " - Func : " + funcVal + " - Log : " + logVal + " - IP : " + req.RemoteAddr)
 	w.Write(resultVal.ToByte())
 }
 

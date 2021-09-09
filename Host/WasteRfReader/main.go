@@ -34,7 +34,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 	if currentHttpHeader.Repeat == "0" {
 		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
-		WasteLibrary.LogStr(currentHttpHeader.ToString() + " - " + currentData.ToString())
+		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+		WasteLibrary.LogStr("Data : " + currentData.ToString())
 		var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetRedisForStoreApi("devices", currentHttpHeader.ToDeviceIdString()).Retval.(string))
 		currentData.Latitude = currentDevice.Latitude
 		currentData.Longitude = currentDevice.Longitude

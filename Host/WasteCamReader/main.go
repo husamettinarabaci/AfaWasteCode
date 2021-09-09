@@ -34,7 +34,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 	if currentHttpHeader.Repeat == "0" {
 		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
-		WasteLibrary.LogStr(currentHttpHeader.ToString() + " - " + currentData.ToString())
+		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		//TO DO
 		//Set ImageStatu
