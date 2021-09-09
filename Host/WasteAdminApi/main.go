@@ -21,11 +21,9 @@ func main() {
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/setCustomer", setCustomer)
 	http.HandleFunc("/setDevice", setDevice)
-	//http.HandleFunc("/setCustomerConfig", setCustomerConfig)
-	//http.HandleFunc("/setAdminConfig", setAdminConfig)
-	//http.HandleFunc("/setLocalConfig", setLocalConfig)
+	http.HandleFunc("/setConfig", setConfig)
 	http.HandleFunc("/getCustomer", getCustomer)
-	//http.HandleFunc("/getCustomers", getCustomers)
+	http.HandleFunc("/getCustomers", getCustomers)
 	http.HandleFunc("/getDevice", getDevice)
 	http.HandleFunc("/getDevices", getDevices)
 	http.HandleFunc("/getCustomerConfig", getCustomerConfig)
@@ -144,7 +142,7 @@ func setConfig(w http.ResponseWriter, req *http.Request) {
 		var currentData WasteLibrary.LocalConfigType = WasteLibrary.StringToLocalConfigType(req.FormValue("DATA"))
 		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-localconfig", currentData.ToIdString(), currentData.ToString())
 	} else {
-
+		resultVal.Result = "FAIL"
 	}
 
 	w.Write(resultVal.ToByte())
@@ -212,6 +210,26 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 	var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
 	resultVal = WasteLibrary.GetRedisForStoreApi("customers", currentData.ToIdString())
+
+	w.Write(resultVal.ToByte())
+}
+
+func getCustomers(w http.ResponseWriter, req *http.Request) {
+
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	if err := req.ParseForm(); err != nil {
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = checkAuth(req.Form)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	//var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
+	resultVal = WasteLibrary.GetRedisForStoreApi("customers", "customers")
 
 	w.Write(resultVal.ToByte())
 }
