@@ -195,20 +195,20 @@ func readerDbSet() {
 }
 
 func staticDbSet() {
-	var sumDbHost string = "waste-staticdb-cluster-ip"
+	var staticDbHost string = "waste-staticdb-cluster-ip"
 	var port int = 5432
 	var user string = os.Getenv("POSTGRES_USER")
 	var password string = os.Getenv("POSTGRES_PASSWORD")
 	var dbname string = os.Getenv("POSTGRES_DB")
-	sumDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+	staticDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		sumDbHost, port, user, password, dbname)
+		staticDbHost, port, user, password, dbname)
 
-	sumDb, err := sql.Open("postgres", sumDbInfo)
+	staticDb, err := sql.Open("postgres", staticDbInfo)
 	WasteLibrary.LogErr(err)
-	defer sumDb.Close()
+	defer staticDb.Close()
 
-	err = sumDb.Ping()
+	err = staticDb.Ping()
 	WasteLibrary.LogErr(err)
 	var createSQL string
 
@@ -228,7 +228,7 @@ func staticDbSet() {
 		check_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
-	_, err = sumDb.Exec(createSQL)
+	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS devices ( 
@@ -273,7 +273,7 @@ func staticDbSet() {
 		contact_last_ok_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
-	_, err = sumDb.Exec(createSQL)
+	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS customers ( 
@@ -281,13 +281,25 @@ func staticDbSet() {
 		customer_name varchar(50) NOT NULL DEFAULT '',
 		admin_link varchar(50) NOT NULL DEFAULT '',
 		web_link varchar(50) NOT NULL DEFAULT '',
+		report_link varchar(50) NOT NULL DEFAULT '',
 		rfid_app varchar(50) NOT NULL DEFAULT '0',
 		ult_app varchar(50) NOT NULL DEFAULT '0',
 		recy_app varchar(50) NOT NULL DEFAULT '0',
 		active varchar(50) NOT NULL DEFAULT '1',
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
-	_, err = sumDb.Exec(createSQL)
+	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
-	sumDb.Close()
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS users ( 
+		user_id serial PRIMARY KEY,
+		user_type varchar(50) NOT NULL DEFAULT '',
+		email varchar(50) NOT NULL DEFAULT '',
+		user_name varchar(50) NOT NULL DEFAULT '',
+		customer_id INT NOT NULL DEFAULT -1,
+		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+	staticDb.Close()
 }

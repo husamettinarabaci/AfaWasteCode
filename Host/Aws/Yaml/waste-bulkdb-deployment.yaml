@@ -5,6 +5,7 @@ metadata:
   namespace: waste-system
   labels:
     app: waste-bulkdb
+    apptype: waste-dbapp
 spec:
   replicas: 1
   selector:

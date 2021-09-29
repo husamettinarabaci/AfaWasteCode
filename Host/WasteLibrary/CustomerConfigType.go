@@ -1,9 +1,7 @@
 package WasteLibrary
 
 import (
-	"bytes"
 	"encoding/base64"
-	"encoding/gob"
 	"fmt"
 )
 
@@ -27,11 +25,8 @@ func (res CustomerConfigType) ToIdString() string {
 
 //ToByte
 func (res CustomerConfigType) ToByte() []byte {
+	return InterfaceToGobBytes(res)
 
-	bBuf := bytes.Buffer{}
-	gobEn := gob.NewEncoder(&bBuf)
-	gobEn.Encode(res)
-	return bBuf.Bytes()
 }
 
 //ToString Get JSON
@@ -43,10 +38,7 @@ func (res CustomerConfigType) ToString() string {
 //Byte To CustomerConfigType
 func ByteToCustomerConfigType(retByte []byte) CustomerConfigType {
 	var retVal CustomerConfigType
-	bBuf := bytes.Buffer{}
-	bBuf.Write(retByte)
-	gobDe := gob.NewDecoder(&bBuf)
-	gobDe.Decode(&retVal)
+	GobBytestoInterface(retByte, &retVal)
 	return retVal
 }
 

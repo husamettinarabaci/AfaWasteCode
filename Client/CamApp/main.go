@@ -58,10 +58,11 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 	resultVal.Result = "FAIL"
 	if opType == "RF" {
 		var readerDataTypeVal WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
-		if integratedPortInt == 3 {
+		if integratedPortInt == 4 {
 			integratedPortInt = 1
 		}
 		go doRecord(readerDataTypeVal, strconv.Itoa(integratedPortInt), true)
+		integratedPortInt++
 		resultVal.Result = "OK"
 	} else {
 		resultVal.Result = "FAIL"

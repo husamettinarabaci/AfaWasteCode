@@ -1,4 +1,4 @@
-module github.com/devafatek/TcpTest
+module github.com/devafatek/WasteWebApi
 
 go 1.14
 

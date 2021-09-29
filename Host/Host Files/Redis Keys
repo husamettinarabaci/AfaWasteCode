@@ -4,7 +4,11 @@
 "customer-devices" customerID CustomerDevicesType
 "customers" customerID CustomerType
 "customers" []customerID
-"tags" tagID TagType
 "customer-customerconfig" customerID CustomerConfigType
 "customer-adminconfig" customerID AdminConfigType
 "customer-localconfig" customerID LocalConfigType
+"customer-weblink" weblink customerID
+"customer-adminlink" adminlink customerID
+"customer-reportlink" reportlink customerID
+"users"  userId UserType
+"customer-users" customerID CustomerUsersType

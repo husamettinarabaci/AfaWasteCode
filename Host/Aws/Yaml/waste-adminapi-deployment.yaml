@@ -5,11 +5,13 @@ metadata:
   namespace: waste-system
   labels:
     app: waste-adminapi
+    apptype: waste-coreapp   
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: waste-adminapi
+        
   template:
     metadata:
       labels:

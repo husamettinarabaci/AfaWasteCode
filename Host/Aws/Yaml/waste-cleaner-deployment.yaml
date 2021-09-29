@@ -5,6 +5,7 @@ metadata:
   namespace: waste-system
   labels:
     app: waste-cleaner
+    apptype: waste-coreapp
 spec:
   replicas: 1
   selector:

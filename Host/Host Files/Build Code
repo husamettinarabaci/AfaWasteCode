@@ -1,6 +1,5 @@
 cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
 cd WasteAdminApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteAdminUI && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteCamReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteDbCreator && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhc && go get "github.com/devafatek/WasteLibrary" && cd .. &&
@@ -15,7 +14,6 @@ cd WasteArvento && go get "github.com/devafatek/WasteLibrary" && cd ..
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
 sudo docker build -f WasteAdminApi/Dockerfile -t devafatek/wasteadminapi . && docker push devafatek/wasteadminapi &&
-sudo docker build -f WasteAdminUI/Dockerfile -t devafatek/wasteadminui . && docker push devafatek/wasteadminui &&
 sudo docker build -f WasteCamReader/Dockerfile -t devafatek/wastecamreader . && docker push devafatek/wastecamreader &&
 sudo docker build -f WasteDbCreator/Dockerfile -t devafatek/wastedbcreator . && docker push devafatek/wastedbcreator &&
 sudo docker build -f WasteEnhc/Dockerfile -t devafatek/wasteenhc . && docker push devafatek/wasteenhc &&
@@ -27,10 +25,10 @@ sudo docker build -f WasteStatusReader/Dockerfile -t devafatek/wastestatusreader
 sudo docker build -f WasteStoreApi/Dockerfile -t devafatek/wastestoreapi . && docker push devafatek/wastestoreapi &&
 sudo docker build -f WasteThermReader/Dockerfile -t devafatek/wastethermreader . && docker push devafatek/wastethermreader &&
 sudo docker build -f WasteArvento/Dockerfile -t devafatek/wastearvento . && docker push devafatek/wastearvento
+sudo docker build -f WasteAdminUI/Dockerfile -t devafatek/wasteadminui . && docker push devafatek/wasteadminui
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/Aws/Yaml &&
 kubectl create -f waste-adminapi-deployment.yaml &&
-kubectl create -f waste-adminui-deployment.yaml &&
 kubectl create -f waste-camreader-deployment.yaml &&
 kubectl create -f waste-dbcreator-pod.yaml &&
 kubectl create -f waste-enhc-deployment.yaml &&
@@ -43,3 +41,4 @@ kubectl create -f waste-storeapi-deployment.yaml &&
 kubectl create -f waste-thermreader-deployment.yaml &&
 kubectl create -f waste-arvento-deployment.yaml
 kubectl create -f waste-redis-deployment.yaml
+kubectl create -f waste-adminui-deployment.yaml

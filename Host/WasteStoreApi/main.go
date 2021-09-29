@@ -363,17 +363,17 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 
 			if currentData.CustomerId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.customers
-					SET customer_name='%s',admin_link='%s',web_link='%s',rfid_app='%s',ult_app='%s',recy_app='%s'
+					SET customer_name='%s',admin_link='%s',web_link='%s',report_link='%s',rfid_app='%s',ult_app='%s',recy_app='%s'
 				   WHERE customer_id=%f  RETURNING customer_id;`,
-					currentData.CustomerName, currentData.AdminLink, currentData.WebLink, currentData.RfIdApp,
+					currentData.CustomerName, currentData.AdminLink, currentData.WebLink, currentData.ReportLink, currentData.RfIdApp,
 					currentData.UltApp, currentData.RecyApp, currentData.CustomerId)
 				WasteLibrary.LogStr(execSQL)
 			} else {
 
 				execSQL = fmt.Sprintf(`INSERT INTO public.customers(
-					customer_name,admin_link,web_link,rfid_app,ult_app,recy_app)
-			  VALUES ('%s','%s','%s','%s','%s','%s')  RETURNING customer_id;`,
-					currentData.CustomerName, currentData.AdminLink, currentData.WebLink, currentData.RfIdApp,
+					customer_name,admin_link,web_link,report_link,rfid_app,ult_app,recy_app)
+			  VALUES ('%s','%s','%s','%s','%s','%s','%s')  RETURNING customer_id;`,
+					currentData.CustomerName, currentData.AdminLink, currentData.WebLink, currentData.ReportLink, currentData.RfIdApp,
 					currentData.UltApp, currentData.RecyApp)
 				WasteLibrary.LogStr(execSQL)
 			}
@@ -421,6 +421,40 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			}
 
 			currentData.DeviceId = float64(deviceId)
+			resultVal.Retval = currentData.ToIdString()
+
+		} else if currentHttpHeader.OpType == "USER" {
+
+			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue("DATA"))
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
+			if currentData.UserId != 0 {
+				execSQL = fmt.Sprintf(`UPDATE public.users 
+				SET user_type='%s',email='%s',user_name='%s',customer_id=%f 
+	  			WHERE user_id=%f  
+				RETURNING user_id;`,
+					currentData.UserType, currentData.Email, currentData.UserName,
+					currentData.CustomerId, currentData.UserId)
+				WasteLibrary.LogStr(execSQL)
+			} else {
+
+				execSQL = fmt.Sprintf(`INSERT INTO public.users 
+				(user_type,email,user_name,customer_id) 
+  				VALUES ('%s','%s','%s',%f)   
+  				RETURNING user_id;`,
+					currentData.UserType, currentData.Email, currentData.UserName,
+					currentData.CustomerId)
+				WasteLibrary.LogStr(execSQL)
+			}
+			var userId int = 0
+			errDb := staticDb.QueryRow(execSQL).Scan(&userId)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = "FAIL"
+			} else {
+				resultVal.Result = "OK"
+			}
+
+			currentData.UserId = float64(userId)
 			resultVal.Retval = currentData.ToIdString()
 
 		} else {
@@ -555,6 +589,7 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			customer_name,
 			admin_link,
 			web_link,
+			report_link,
 			rfid_app,
 			ult_app,
 			recy_app,
@@ -568,6 +603,7 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		errDb := staticDb.QueryRow(execSQL).Scan(&currentData.CustomerName,
 			&currentData.AdminLink,
 			&currentData.WebLink,
+			&currentData.ReportLink,
 			&currentData.RfIdApp,
 			&currentData.UltApp,
 			&currentData.RecyApp,
@@ -645,6 +681,39 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.ThermTime,
 			&currentData.GpsTime,
 			&currentData.StatusTime,
+			&currentData.CreateTime)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = "FAIL"
+		} else {
+			resultVal.Result = "OK"
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.BaseDataType == "USER" {
+
+		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue("DATA"))
+		WasteLibrary.LogStr("Data : " + currentData.ToString())
+
+		if currentData.UserId != 0 {
+			execSQL = fmt.Sprintf(`SELECT 
+			user_type,
+			email,
+			user_name,
+			customer_id,
+			create_time
+			FROM public.users
+				   WHERE user_id=%f ;`, currentData.UserId)
+			WasteLibrary.LogStr(execSQL)
+		}
+
+		errDb := staticDb.QueryRow(execSQL).Scan(&currentData.UserType,
+			&currentData.Email,
+			&currentData.UserName,
+			&currentData.CustomerId,
+			&currentData.Token,
+			&currentData.TokenEndTime,
 			&currentData.CreateTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)

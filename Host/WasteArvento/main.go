@@ -24,7 +24,6 @@ func main() {
 
 	initStart()
 
-	//go mainProc()
 	go setCustomerList()
 
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
@@ -37,17 +36,19 @@ func setCustomerList() {
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
 	for {
-		time.Sleep(60 * 60 * time.Second)
+
 		resultVal = WasteLibrary.GetRedisForStoreApi("customers", "customers")
 		var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
 		for _, customerId := range currentCustomers.Customers {
-			if _, ok := currentCustomerList.Customers[customerId]; !ok {
-				currentCustomerList.Customers[customerId] = customerId
-				go customerProc(customerId)
-
+			if customerId != 0 {
+				if _, ok := currentCustomerList.Customers[customerId]; !ok {
+					WasteLibrary.LogStr("Add Customer : " + WasteLibrary.Float64IdToString(customerId))
+					currentCustomerList.Customers[customerId] = customerId
+					go customerProc(customerId)
+				}
 			}
 		}
-
+		time.Sleep(60 * 60 * time.Second)
 	}
 }
 
@@ -76,6 +77,7 @@ func customerProc(customerId float64) {
 				}
 				resultVal = WasteLibrary.GetRedisForStoreApi("customer-devices", currentCustomerConfig.ToIdString())
 				if resultVal.Result == "OK" {
+					WasteLibrary.LogStr("Add Devices : " + WasteLibrary.Float64IdToString(customerId))
 					currentCustomerDevices = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
 				}
 				resultVal = getDevice(currentCustomerConfig)
@@ -88,33 +90,37 @@ func customerProc(customerId float64) {
 			if resultVal.Result == "OK" {
 				var deviceLocations WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.StringToArventoDeviceGpsListType(resultVal.Retval.(string))
 				for _, vDevice := range currentCustomerDevices.Devices {
+					if vDevice == 0 {
+						continue
+					}
 					resultVal = WasteLibrary.GetRedisForStoreApi("devices", WasteLibrary.Float64IdToString(vDevice))
 					if resultVal.Result == "OK" {
 						var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
 						if currentDevice.DeviceType == "RFID" {
 							var arventoId string = plateDevice[currentDevice.DeviceName]
 							if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
-								currentDevice.Latitude = currentDeviceLocation.Latitude
-								currentDevice.Longitude = currentDeviceLocation.Longitude
-								currentDevice.Speed = currentDeviceLocation.Speed
+								if currentDevice.Latitude != 0 && currentDevice.Longitude != 0 {
+									currentDevice.Latitude = currentDeviceLocation.Latitude
+									currentDevice.Longitude = currentDeviceLocation.Longitude
+									currentDevice.Speed = currentDeviceLocation.Speed
+									WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Speed))
+									var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
+									newCurrentHttpHeader.AppType = "RFID"
+									newCurrentHttpHeader.OpType = "ARVENTO"
+									data := url.Values{
+										"HEADER": {newCurrentHttpHeader.ToString()},
+										"DATA":   {currentDevice.ToString()},
+									}
+									resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
 
-								var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
-								newCurrentHttpHeader.AppType = "RFID"
-								newCurrentHttpHeader.OpType = "ARVENTO"
-								data := url.Values{
-									"HEADER": {newCurrentHttpHeader.ToString()},
-									"DATA":   {currentDevice.ToString()},
+									if resultVal.Result == "OK" {
+										resultVal = WasteLibrary.SaveRedisForStoreApi("devices", currentDevice.ToIdString(), currentDevice.ToString())
+									}
+									if currentDevice.Speed == 0 {
+										//TO DO
+										//Speed Op
+									}
 								}
-								resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-
-								if resultVal.Result == "OK" {
-									resultVal = WasteLibrary.SaveRedisForStoreApi("devices", currentDevice.ToIdString(), currentDevice.ToString())
-								}
-								if currentDevice.Speed == 0 {
-									//TO DO
-									//Speed Op
-								}
-
 							}
 						}
 					}
@@ -133,7 +139,10 @@ func customerProc(customerId float64) {
 func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) devafatekresult.ResultType {
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
-	var deviceLocation WasteLibrary.ArventoDeviceGpsListType
+	var deviceLocation WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.ArventoDeviceGpsListType{
+		ArventoDeviceGpsList: make(map[string]WasteLibrary.ArventoDeviceGpsType),
+	}
+
 	resp, err := http.Get("http://ws.arvento.com/v1/report.asmx/GetVehicleStatus?Username=" + currentCustomerConfig.ArventoUserName + "&PIN1=" + currentCustomerConfig.ArventoPin1 + "&PIN2=" + currentCustomerConfig.ArventoPin2 + "&Language=tr")
 	if err != nil {
 		WasteLibrary.LogErr(err)
@@ -152,26 +161,26 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) devafate
 	var longitude string = ""
 	var speed string = ""
 	for {
+
 		if strings.Index(bodys, "<Device_x0020_No>") > -1 {
 			deviceID = bodys[strings.Index(bodys, "<Device_x0020_No>")+17 : strings.Index(bodys, "</Device_x0020_No>")]
 			latitude = bodys[strings.Index(bodys, "<Latitude>")+10 : strings.Index(bodys, "</Latitude>")]
 			longitude = bodys[strings.Index(bodys, "<Longitude>")+11 : strings.Index(bodys, "</Longitude>")]
 			speed = bodys[strings.Index(bodys, "<Speed>")+7 : strings.Index(bodys, "</Speed>")]
 			bodys = bodys[strings.Index(bodys, "</Longitude>")+1:]
-
 			var currrentArventoDeviceGpsType WasteLibrary.ArventoDeviceGpsType
 			if latitude != "" {
-				currrentArventoDeviceGpsType.Latitude = WasteLibrary.StringIdToFloat64(latitude)
+				currrentArventoDeviceGpsType.Latitude = WasteLibrary.StringToFloat64(latitude)
 			} else {
 				currrentArventoDeviceGpsType.Latitude = 0
 			}
 			if longitude != "" {
-				currrentArventoDeviceGpsType.Longitude = WasteLibrary.StringIdToFloat64(longitude)
+				currrentArventoDeviceGpsType.Longitude = WasteLibrary.StringToFloat64(longitude)
 			} else {
 				currrentArventoDeviceGpsType.Longitude = 0
 			}
 			if speed != "" {
-				currrentArventoDeviceGpsType.Speed = WasteLibrary.StringIdToFloat64(speed)
+				currrentArventoDeviceGpsType.Speed = WasteLibrary.StringToFloat64(speed)
 			} else {
 				currrentArventoDeviceGpsType.Speed = 0
 			}
@@ -183,7 +192,7 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) devafate
 	}
 
 	resultVal.Result = "OK"
-	resultVal.Retval = deviceLocation
+	resultVal.Retval = deviceLocation.ToString()
 	return resultVal
 
 }

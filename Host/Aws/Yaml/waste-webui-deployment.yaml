@@ -5,6 +5,7 @@ metadata:
   namespace: waste-system
   labels:
     app: waste-webui
+    apptype: waste-coreapp
 spec:
   replicas: 1
   selector:
@@ -20,13 +21,13 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
-      - name: wait-for-wastestoreapi
+      - name: wait-for-wastewebapi
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
-        args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApi...'; done"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-webapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteWebApi...'; done"]
       containers:
       - name: waste-webui
-        image: devafatek/tcptest
+        image: devafatek/wastewebui
         ports:
         - containerPort: 80
         livenessProbe:

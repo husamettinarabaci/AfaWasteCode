@@ -1,9 +1,7 @@
 package WasteLibrary
 
 import (
-	"bytes"
 	"encoding/base64"
-	"encoding/gob"
 	"fmt"
 )
 
@@ -64,10 +62,7 @@ func (res DeviceType) ToCustomerIdString() string {
 //ToByte
 func (res DeviceType) ToByte() []byte {
 
-	bBuf := bytes.Buffer{}
-	gobEn := gob.NewEncoder(&bBuf)
-	gobEn.Encode(res)
-	return bBuf.Bytes()
+	return InterfaceToGobBytes(res)
 }
 
 //ToString Get JSON
@@ -79,10 +74,7 @@ func (res DeviceType) ToString() string {
 //Byte To DeviceType
 func ByteToDeviceType(retByte []byte) DeviceType {
 	var retVal DeviceType
-	bBuf := bytes.Buffer{}
-	bBuf.Write(retByte)
-	gobDe := gob.NewDecoder(&bBuf)
-	gobDe.Decode(&retVal)
+	GobBytestoInterface(retByte, &retVal)
 	return retVal
 }
 

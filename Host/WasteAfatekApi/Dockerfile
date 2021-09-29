@@ -6,13 +6,13 @@ LABEL maintainer="Afatek Developers <developer@afatek.com.tr>"
 WORKDIR /app
 RUN mkdir ../WasteLibrary
 COPY WasteLibrary/ ../WasteLibrary
-COPY WasteAdminUI/go.* ./
+COPY WasteAfatekApi/go.* ./
 
 RUN go mod download
 
-COPY WasteAdminUI/ .
+COPY WasteAfatekApi/ .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o WasteAdminUI .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o WasteAfatekApi .
 
 
 ######## Start a new stage from scratch #######
@@ -27,11 +27,11 @@ ARG LOG_DATA=/tmp/log_data
 RUN mkdir -p ${LOG_DATA}
 ENV LOG_FOLDER=${LOG_DATA}
 
-ENV CONTAINER_TYPE=wasteadminui
+ENV CONTAINER_TYPE=wasteafatekapi
 
-COPY --from=builder /app/WasteAdminUI .
+COPY --from=builder /app/WasteAfatekApi .
 
 VOLUME ${LOG_DATA}
 
 ENV DEBUG=1
-CMD ["./WasteAdminUI"]
+CMD ["./WasteAfatekApi"]

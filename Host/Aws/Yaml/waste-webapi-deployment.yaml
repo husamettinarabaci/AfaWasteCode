@@ -5,11 +5,13 @@ metadata:
   namespace: waste-system
   labels:
     app: waste-webapi
+    apptype: waste-coreapp   
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: waste-webapi
+        
   template:
     metadata:
       labels:
@@ -26,7 +28,7 @@ spec:
         args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApi...'; done"]
       containers:
       - name: waste-webapi
-        image: devafatek/tcptest
+        image: devafatek/wastewebapi
         ports:
         - containerPort: 80
         livenessProbe:
