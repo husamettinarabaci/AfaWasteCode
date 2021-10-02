@@ -1,7 +1,7 @@
 package WasteLibrary
 
 import (
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -19,25 +19,25 @@ func (res AdminConfigType) ToIdString() string {
 
 //ToByte
 func (res AdminConfigType) ToByte() []byte {
-	return InterfaceToGobBytes(res)
+	jData, _ := json.Marshal(res)
+	return jData
 
 }
 
 //ToString Get JSON
 func (res AdminConfigType) ToString() string {
-	return base64.StdEncoding.EncodeToString(res.ToByte())
+	return string(res.ToByte())
 
 }
 
 //Byte To AdminConfigType
 func ByteToAdminConfigType(retByte []byte) AdminConfigType {
 	var retVal AdminConfigType
-	GobBytestoInterface(retByte, &retVal)
+	json.Unmarshal(retByte, &retVal)
 	return retVal
 }
 
 //String To AdminConfigType
 func StringToAdminConfigType(retStr string) AdminConfigType {
-	bStr, _ := base64.StdEncoding.DecodeString(retStr)
-	return ByteToAdminConfigType(bStr)
+	return ByteToAdminConfigType([]byte(retStr))
 }

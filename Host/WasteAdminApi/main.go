@@ -250,7 +250,7 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 	resultVal = WasteLibrary.GetRedisForStoreApi("customer-tags", customerId)
 	if resultVal.Result == "OK" {
 		var currentCustomerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
-		currentData = currentCustomerTags.Tags[currentData.TagID]
+		currentData = currentCustomerTags.Tags[currentData.ToIdString()]
 		resultVal.Retval = currentData.ToString()
 	}
 	w.Write(resultVal.ToByte())
@@ -344,7 +344,7 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 		if resultVal.Result == "OK" {
 			WasteLibrary.LogStr("Customer-Users : " + resultVal.Retval.(string))
 			var currentCustomerUsers WasteLibrary.CustomerUsersType = WasteLibrary.StringToCustomerUsersType(resultVal.Retval.(string))
-			currentCustomerUsers.Users[currentUser.UserId] = currentUser.UserId
+			currentCustomerUsers.Users[currentUser.ToIdString()] = currentUser.UserId
 			WasteLibrary.LogStr("New Customer-Users : " + currentCustomerUsers.ToString())
 			resultVal = WasteLibrary.SaveRedisForStoreApi("customer-users", currentCustomerUsers.ToIdString(), currentCustomerUsers.ToString())
 		}

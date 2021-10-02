@@ -212,7 +212,7 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 	resultVal = WasteLibrary.GetRedisForStoreApi("customer-tags", customerId)
 	if resultVal.Result == "OK" {
 		var currentCustomerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
-		currentData = currentCustomerTags.Tags[currentData.TagID]
+		currentData = currentCustomerTags.Tags[currentData.ToIdString()]
 		resultVal.Retval = currentData.ToString()
 	}
 	w.Write(resultVal.ToByte())

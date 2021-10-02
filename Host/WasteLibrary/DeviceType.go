@@ -1,7 +1,7 @@
 package WasteLibrary
 
 import (
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -42,6 +42,18 @@ type DeviceType struct {
 	Latitude              float64
 	Longitude             float64
 	Speed                 float64
+	UltRange              float64
+	UltStatus             string
+	DeviceStatus          string
+	AlarmStatus           string
+	TotalGlassCount       float64
+	TotalPlasticCount     float64
+	TotalMetalCount       float64
+	UltTime               string
+	AlarmTime             string
+	AlarmType             string
+	Alarm                 string
+	RecyTime              string
 	Active                string
 	ThermTime             string
 	GpsTime               string
@@ -61,25 +73,24 @@ func (res DeviceType) ToCustomerIdString() string {
 
 //ToByte
 func (res DeviceType) ToByte() []byte {
-
-	return InterfaceToGobBytes(res)
+	jData, _ := json.Marshal(res)
+	return jData
 }
 
 //ToString Get JSON
 func (res DeviceType) ToString() string {
-	return base64.StdEncoding.EncodeToString(res.ToByte())
+	return string(res.ToByte())
 
 }
 
 //Byte To DeviceType
 func ByteToDeviceType(retByte []byte) DeviceType {
 	var retVal DeviceType
-	GobBytestoInterface(retByte, &retVal)
+	json.Unmarshal(retByte, &retVal)
 	return retVal
 }
 
 //String To DeviceType
 func StringToDeviceType(retStr string) DeviceType {
-	bStr, _ := base64.StdEncoding.DecodeString(retStr)
-	return ByteToDeviceType(bStr)
+	return ByteToDeviceType([]byte(retStr))
 }

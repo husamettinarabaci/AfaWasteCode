@@ -1,7 +1,7 @@
 package WasteLibrary
 
 import (
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -19,25 +19,24 @@ func (res LocalConfigType) ToIdString() string {
 
 //ToByte
 func (res LocalConfigType) ToByte() []byte {
-	return InterfaceToGobBytes(res)
-
+	jData, _ := json.Marshal(res)
+	return jData
 }
 
 //ToString Get JSON
 func (res LocalConfigType) ToString() string {
-	return base64.StdEncoding.EncodeToString(res.ToByte())
+	return string(res.ToByte())
 
 }
 
 //Byte To LocalConfigType
 func ByteToLocalConfigType(retByte []byte) LocalConfigType {
 	var retVal LocalConfigType
-	GobBytestoInterface(retByte, &retVal)
+	json.Unmarshal(retByte, &retVal)
 	return retVal
 }
 
 //String To LocalConfigType
 func StringToLocalConfigType(retStr string) LocalConfigType {
-	bStr, _ := base64.StdEncoding.DecodeString(retStr)
-	return ByteToLocalConfigType(bStr)
+	return ByteToLocalConfigType([]byte(retStr))
 }

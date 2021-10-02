@@ -58,7 +58,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			resultVal = WasteLibrary.GetRedisForStoreApi("customer-tags", currentTag.ToCustomerIdString())
 			if resultVal.Result == "OK" {
 				var currentCustomerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
-				currentCustomerTags.Tags[currentTag.TagID] = currentTag
+				currentCustomerTags.Tags[currentTag.ToIdString()] = currentTag
 				resultVal = WasteLibrary.SaveRedisForStoreApi("customer-tags", currentCustomerTags.ToIdString(), currentCustomerTags.ToString())
 			}
 

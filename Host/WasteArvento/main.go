@@ -12,7 +12,7 @@ import (
 )
 
 var currentCustomerList WasteLibrary.CustomersType = WasteLibrary.CustomersType{
-	Customers: make(map[float64]float64),
+	Customers: make(map[string]float64),
 }
 
 func initStart() {
@@ -41,9 +41,9 @@ func setCustomerList() {
 		var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
 		for _, customerId := range currentCustomers.Customers {
 			if customerId != 0 {
-				if _, ok := currentCustomerList.Customers[customerId]; !ok {
+				if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
 					WasteLibrary.LogStr("Add Customer : " + WasteLibrary.Float64IdToString(customerId))
-					currentCustomerList.Customers[customerId] = customerId
+					currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)] = customerId
 					go customerProc(customerId)
 				}
 			}
@@ -129,7 +129,7 @@ func customerProc(customerId float64) {
 
 			time.Sleep(20 * time.Second)
 		} else {
-			delete(currentCustomerList.Customers, customerId)
+			delete(currentCustomerList.Customers, WasteLibrary.Float64IdToString(customerId))
 			break
 		}
 		loopCount++

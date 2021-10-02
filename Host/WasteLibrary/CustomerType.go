@@ -1,7 +1,7 @@
 package WasteLibrary
 
 import (
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -26,25 +26,25 @@ func (res CustomerType) ToIdString() string {
 
 //ToByte
 func (res CustomerType) ToByte() []byte {
-	return InterfaceToGobBytes(res)
+	jData, _ := json.Marshal(res)
+	return jData
 
 }
 
 //ToString Get JSON
 func (res CustomerType) ToString() string {
-	return base64.StdEncoding.EncodeToString(res.ToByte())
+	return string(res.ToByte())
 
 }
 
 //Byte To CustomerType
 func ByteToCustomerType(retByte []byte) CustomerType {
 	var retVal CustomerType
-	GobBytestoInterface(retByte, &retVal)
+	json.Unmarshal(retByte, &retVal)
 	return retVal
 }
 
 //String To CustomerType
 func StringToCustomerType(retStr string) CustomerType {
-	bStr, _ := base64.StdEncoding.DecodeString(retStr)
-	return ByteToCustomerType(bStr)
+	return ByteToCustomerType([]byte(retStr))
 }

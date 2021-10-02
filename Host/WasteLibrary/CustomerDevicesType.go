@@ -1,14 +1,14 @@
 package WasteLibrary
 
 import (
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
 //CustomerDevicesType
 type CustomerDevicesType struct {
 	CustomerId float64
-	Devices    map[float64]float64
+	Devices    map[string]float64
 }
 
 //ToId String
@@ -18,25 +18,25 @@ func (res CustomerDevicesType) ToIdString() string {
 
 //ToByte
 func (res CustomerDevicesType) ToByte() []byte {
-	return InterfaceToGobBytes(res)
+	jData, _ := json.Marshal(res)
+	return jData
 
 }
 
 //ToString Get JSON
 func (res CustomerDevicesType) ToString() string {
-	return base64.StdEncoding.EncodeToString(res.ToByte())
+	return string(res.ToByte())
 
 }
 
 //Byte To CustomerDevicesType
 func ByteToCustomerDevicesType(retByte []byte) CustomerDevicesType {
 	var retVal CustomerDevicesType
-	GobBytestoInterface(retByte, &retVal)
+	json.Unmarshal(retByte, &retVal)
 	return retVal
 }
 
 //String To CustomerDevicesType
 func StringToCustomerDevicesType(retStr string) CustomerDevicesType {
-	bStr, _ := base64.StdEncoding.DecodeString(retStr)
-	return ByteToCustomerDevicesType(bStr)
+	return ByteToCustomerDevicesType([]byte(retStr))
 }

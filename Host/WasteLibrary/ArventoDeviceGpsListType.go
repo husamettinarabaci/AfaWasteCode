@@ -1,7 +1,7 @@
 package WasteLibrary
 
 import (
-	"encoding/base64"
+	"encoding/json"
 )
 
 //ArventoDeviceGpsListType
@@ -11,25 +11,25 @@ type ArventoDeviceGpsListType struct {
 
 //ToByte
 func (res ArventoDeviceGpsListType) ToByte() []byte {
-	return InterfaceToGobBytes(res)
+	jData, _ := json.Marshal(res)
+	return jData
 
 }
 
 //ToString Get JSON
 func (res ArventoDeviceGpsListType) ToString() string {
-	return base64.StdEncoding.EncodeToString(res.ToByte())
+	return string(res.ToByte())
 
 }
 
 //Byte To ArventoDeviceGpsListType
 func ByteToArventoDeviceGpsListType(retByte []byte) ArventoDeviceGpsListType {
 	var retVal ArventoDeviceGpsListType
-	GobBytestoInterface(retByte, &retVal)
+	json.Unmarshal(retByte, &retVal)
 	return retVal
 }
 
 //String To ArventoDeviceGpsListType
 func StringToArventoDeviceGpsListType(retStr string) ArventoDeviceGpsListType {
-	bStr, _ := base64.StdEncoding.DecodeString(retStr)
-	return ByteToArventoDeviceGpsListType(bStr)
+	return ByteToArventoDeviceGpsListType([]byte(retStr))
 }

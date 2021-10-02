@@ -650,8 +650,20 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			therm_time, 
 			gps_time, 
 			status_time, 
-			create_time
-			FROM public.devices
+			create_time,
+			ult_range,
+			ult_status,
+			device_status,
+			total_glass_count,
+			total_metal_count,
+			total_plastic_count,
+			ult_time, 
+			alarm_time, 
+			alarm_status,
+			alarm_type,
+			alarm,
+			recy_time 
+			 FROM public.devices
 				   WHERE device_id=%f ;`, currentData.DeviceId)
 			WasteLibrary.LogStr(execSQL)
 		}
@@ -681,7 +693,19 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.ThermTime,
 			&currentData.GpsTime,
 			&currentData.StatusTime,
-			&currentData.CreateTime)
+			&currentData.CreateTime,
+			&currentData.UltRange,
+			&currentData.UltStatus,
+			&currentData.DeviceStatus,
+			&currentData.TotalGlassCount,
+			&currentData.TotalPlasticCount,
+			&currentData.TotalMetalCount,
+			&currentData.UltTime,
+			&currentData.AlarmTime,
+			&currentData.AlarmStatus,
+			&currentData.AlarmType,
+			&currentData.Alarm,
+			&currentData.RecyTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
 			resultVal.Result = "FAIL"

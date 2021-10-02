@@ -1,8 +1,6 @@
 package WasteLibrary
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"os"
 	"strconv"
@@ -44,19 +42,4 @@ func StringToFloat64(latLong string) float64 {
 		fVal = s
 	}
 	return fVal
-}
-
-func InterfaceToGobBytes(res interface{}) []byte {
-	bBuf := bytes.Buffer{}
-	gobEn := gob.NewEncoder(&bBuf)
-	gobEn.Encode(res)
-	return bBuf.Bytes()
-}
-
-func GobBytestoInterface(retByte []byte, res interface{}) {
-	bBuf := bytes.Buffer{}
-	bBuf.Write(retByte)
-	gobDe := gob.NewDecoder(&bBuf)
-	gobDe.Decode(res)
-
 }

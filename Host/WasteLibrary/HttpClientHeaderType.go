@@ -1,7 +1,7 @@
 package WasteLibrary
 
 import (
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
 )
 
@@ -29,25 +29,24 @@ func (res HttpClientHeaderType) ToDeviceIdString() string {
 
 //ToByte
 func (res HttpClientHeaderType) ToByte() []byte {
-	return InterfaceToGobBytes(res)
-
+	jData, _ := json.Marshal(res)
+	return jData
 }
 
 //ToString Get JSON
 func (res HttpClientHeaderType) ToString() string {
-	return base64.StdEncoding.EncodeToString(res.ToByte())
+	return string(res.ToByte())
 
 }
 
 //Byte To HttpClientHeaderType
 func ByteToHttpClientHeaderType(retByte []byte) HttpClientHeaderType {
 	var retVal HttpClientHeaderType
-	GobBytestoInterface(retByte, &retVal)
+	json.Unmarshal(retByte, &retVal)
 	return retVal
 }
 
 //String To HttpClientHeaderType
 func StringToHttpClientHeaderType(retStr string) HttpClientHeaderType {
-	bStr, _ := base64.StdEncoding.DecodeString(retStr)
-	return ByteToHttpClientHeaderType(bStr)
+	return ByteToHttpClientHeaderType([]byte(retStr))
 }

@@ -22,19 +22,19 @@ func SaveStaticDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
 	return resultVal
 }
 
-//SaveReaderDbMainForStoreApi
-func SaveReaderDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
-	resultVal.Result = "FAIL"
-	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveReaderDbMain", data)
-	return resultVal
-}
-
 //GetStaticDbMainForStoreApi
 func GetStaticDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
 	var resultVal devafatekresult.ResultType
 	resultVal.Result = "FAIL"
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getStaticDbMain", data)
+	return resultVal
+}
+
+//SaveReaderDbMainForStoreApi
+func SaveReaderDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
+	var resultVal devafatekresult.ResultType
+	resultVal.Result = "FAIL"
+	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveReaderDbMain", data)
 	return resultVal
 }
 

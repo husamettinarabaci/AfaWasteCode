@@ -1,5 +1,7 @@
 cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
 cd WasteAdminApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteAfatekApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteWebApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteCamReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteDbCreator && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhc && go get "github.com/devafatek/WasteLibrary" && cd .. &&
@@ -24,11 +26,13 @@ sudo docker build -f WasteRfReader/Dockerfile -t devafatek/wasterfreader . && do
 sudo docker build -f WasteStatusReader/Dockerfile -t devafatek/wastestatusreader . && docker push devafatek/wastestatusreader &&
 sudo docker build -f WasteStoreApi/Dockerfile -t devafatek/wastestoreapi . && docker push devafatek/wastestoreapi &&
 sudo docker build -f WasteThermReader/Dockerfile -t devafatek/wastethermreader . && docker push devafatek/wastethermreader &&
+sudo docker build -f WasteWebApi/Dockerfile -t devafatek/wastewebapi . && docker push devafatek/wastewebapi &&
+sudo docker build -f WasteAfatekApi/Dockerfile -t devafatek/wasteafatekapi . && docker push devafatek/wasteafatekapi &&
 sudo docker build -f WasteArvento/Dockerfile -t devafatek/wastearvento . && docker push devafatek/wastearvento
-sudo docker build -f WasteAdminUI/Dockerfile -t devafatek/wasteadminui . && docker push devafatek/wasteadminui
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/Aws/Yaml &&
 kubectl create -f waste-adminapi-deployment.yaml &&
+kubectl create -f waste-webapi-deployment.yaml &&
 kubectl create -f waste-camreader-deployment.yaml &&
 kubectl create -f waste-dbcreator-pod.yaml &&
 kubectl create -f waste-enhc-deployment.yaml &&
@@ -41,4 +45,3 @@ kubectl create -f waste-storeapi-deployment.yaml &&
 kubectl create -f waste-thermreader-deployment.yaml &&
 kubectl create -f waste-arvento-deployment.yaml
 kubectl create -f waste-redis-deployment.yaml
-kubectl create -f waste-adminui-deployment.yaml

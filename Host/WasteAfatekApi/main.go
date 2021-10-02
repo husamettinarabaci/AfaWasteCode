@@ -68,14 +68,14 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 		if !isCustomerExist {
 			var currentCustomerDevices WasteLibrary.CustomerDevicesType = WasteLibrary.CustomerDevicesType{
 				CustomerId: currentCustomer.CustomerId,
-				Devices:    make(map[float64]float64),
+				Devices:    make(map[string]float64),
 			}
-			currentCustomerDevices.Devices[0] = 0
+			currentCustomerDevices.Devices["0"] = 0
 
 			var currentCustomerTags WasteLibrary.CustomerTagsType
 			currentCustomerTags.CustomerId = currentCustomer.CustomerId
-			currentCustomerTags.Tags = make(map[float64]WasteLibrary.TagType)
-			currentCustomerTags.Tags[0] = WasteLibrary.TagType{TagID: 0}
+			currentCustomerTags.Tags = make(map[string]WasteLibrary.TagType)
+			currentCustomerTags.Tags["0"] = WasteLibrary.TagType{TagID: 0}
 
 			var currentCustomerConfig WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{
 				CustomerId: currentCustomer.CustomerId,
@@ -97,10 +97,10 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 
 				} else {
 					currentCustomers = WasteLibrary.CustomersType{
-						Customers: make(map[float64]float64),
+						Customers: make(map[string]float64),
 					}
 				}
-				currentCustomers.Customers[currentCustomer.CustomerId] = currentCustomer.CustomerId
+				currentCustomers.Customers[currentCustomer.ToIdString()] = currentCustomer.CustomerId
 				resultVal = WasteLibrary.SaveRedisForStoreApi("customers", "customers", currentCustomers.ToString())
 			}
 			resultVal = WasteLibrary.SaveRedisForStoreApi("customer-devices", currentCustomerDevices.ToIdString(), currentCustomerDevices.ToString())
@@ -183,7 +183,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		if resultVal.Result == "OK" {
 			WasteLibrary.LogStr("Customer-Devices : " + resultVal.Retval.(string))
 			var currentCustomerDevices WasteLibrary.CustomerDevicesType = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
-			currentCustomerDevices.Devices[currentDevice.DeviceId] = currentDevice.DeviceId
+			currentCustomerDevices.Devices[currentDevice.ToIdString()] = currentDevice.DeviceId
 			WasteLibrary.LogStr("New Customer-Devices : " + currentCustomerDevices.ToString())
 			resultVal = WasteLibrary.SaveRedisForStoreApi("customer-devices", currentCustomerDevices.ToIdString(), currentCustomerDevices.ToString())
 		}

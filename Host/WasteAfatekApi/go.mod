@@ -1,4 +1,4 @@
-module github.com/devafatek/WasteAdminApi
+module github.com/devafatek/WasteAfatekApi
 
 go 1.14
 
