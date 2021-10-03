@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
@@ -13,7 +14,7 @@ import (
 
 func main() {
 	var resultVal devafatekresult.ResultType
-	var opType string = "TEST"
+	var opType string = "NO"
 	WasteLibrary.Debug = true
 	if opType == "CUSTOMER" {
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
@@ -31,8 +32,7 @@ func main() {
 		var currentCustomer WasteLibrary.CustomerType = WasteLibrary.CustomerType{
 			CustomerId:   float64(customerId),
 			CustomerName: "Afatek",
-			AdminLink:    "admin.aws.afatek.com.tr",
-			WebLink:      "web.aws.afatek.com.tr",
+			CustomerLink: "afatek.aws.afatek.com.tr",
 			RfIdApp:      "1",
 			UltApp:       "0",
 			RecyApp:      "1",
@@ -190,8 +190,39 @@ func main() {
 		}
 	} else {
 
-		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType("/gLX/4EDAQEKRGV2aWNlVHlwZQH/ggABKAEIRGV2aWNlSWQBCAABCkN1c3RvbWVySWQBCAABCkRldmljZU5hbWUBDAABCkRldmljZVR5cGUBDAABDFNlcmlhbE51bWJlcgEMAAEPUmVhZGVyQXBwU3RhdHVzAQwAARNSZWFkZXJBcHBMYXN0T2tUaW1lAQwAARBSZWFkZXJDb25uU3RhdHVzAQwAARRSZWFkZXJDb25uTGFzdE9rVGltZQEMAAEMUmVhZGVyU3RhdHVzAQwAARBSZWFkZXJMYXN0T2tUaW1lAQwAAQxDYW1BcHBTdGF0dXMBDAABEENhbUFwcExhc3RPa1RpbWUBDAABDUNhbUNvbm5TdGF0dXMBDAABEUNhbUNvbm5MYXN0T2tUaW1lAQwAAQlDYW1TdGF0dXMBDAABDUNhbUxhc3RPa1RpbWUBDAABDEdwc0FwcFN0YXR1cwEMAAEQR3BzQXBwTGFzdE9rVGltZQEMAAENR3BzQ29ublN0YXR1cwEMAAERR3BzQ29ubkxhc3RPa1RpbWUBDAABCUdwc1N0YXR1cwEMAAENR3BzTGFzdE9rVGltZQEMAAEOVGhlcm1BcHBTdGF0dXMBDAABElRoZXJtQXBwTGFzdE9rVGltZQEMAAERVHJhbnNmZXJBcHBTdGF0dXMBDAABFVRyYW5zZmVyQXBwTGFzdE9rVGltZQEMAAELQWxpdmVTdGF0dXMBDAABD0FsaXZlTGFzdE9rVGltZQEMAAENQ29udGFjdFN0YXR1cwEMAAERQ29udGFjdExhc3RPa1RpbWUBDAABBVRoZXJtAQwAAQhMYXRpdHVkZQEIAAEJTG9uZ2l0dWRlAQgAAQVTcGVlZAEIAAEGQWN0aXZlAQwAAQlUaGVybVRpbWUBDAABB0dwc1RpbWUBDAABClN0YXR1c1RpbWUBDAABCkNyZWF0ZVRpbWUBDAAAAAf/ggH+FEAA")
-		fmt.Println(currentData)
+		strEcho := "ULT#SENS#864450040594790#40#3241#E32.12345#N032.45678#10341#09872#11234#10341#09872#11234#10341#09872#11234#11234"
+		servAddr := "listener.aws.afatek.com.tr:20000"
+		tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
+		if err != nil {
+			println("ResolveTCPAddr failed:", err.Error())
+			os.Exit(1)
+		}
+
+		conn, err := net.DialTCP("tcp", nil, tcpAddr)
+		if err != nil {
+			println("Dial failed:", err.Error())
+			os.Exit(1)
+		}
+
+		_, err = conn.Write([]byte(strEcho))
+		if err != nil {
+			println("Write to server failed:", err.Error())
+			os.Exit(1)
+		}
+
+		println("write to server = ", strEcho)
+
+		reply := make([]byte, 1024)
+
+		_, err = conn.Read(reply)
+		if err != nil {
+			println("Write to server failed:", err.Error())
+			os.Exit(1)
+		}
+
+		println("reply from server=", string(reply))
+
+		conn.Close()
 	}
 
 }

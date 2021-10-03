@@ -160,7 +160,7 @@ func sendDataToServer(opType string, sendData string, dataTime string, repeat st
 		"HEADER": {currentHttpHeader.ToString()},
 		"DATA":   {sendData},
 	}
-	resultVal = WasteLibrary.HttpPostReq("http://aws.afatek.com.tr/data", data)
+	resultVal = WasteLibrary.HttpPostReq("http://listener.aws.afatek.com.tr/data", data)
 	return resultVal
 }
 

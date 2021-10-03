@@ -53,7 +53,7 @@ func setConfig(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -91,7 +91,7 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -117,7 +117,7 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -151,7 +151,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -177,7 +177,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -212,7 +212,7 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -238,7 +238,7 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -270,7 +270,7 @@ func getUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -304,7 +304,7 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
@@ -366,7 +366,7 @@ func getUsers(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminlink", req.Host)
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return

@@ -36,9 +36,9 @@ func StringIdToFloat64(id string) float64 {
 }
 
 //StringToFloat64
-func StringToFloat64(latLong string) float64 {
+func StringToFloat64(sVal string) float64 {
 	var fVal float64 = 0
-	if s, err := strconv.ParseFloat(latLong, 32); err == nil {
+	if s, err := strconv.ParseFloat(sVal, 32); err == nil {
 		fVal = s
 	}
 	return fVal

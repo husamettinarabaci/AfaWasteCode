@@ -36,11 +36,27 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
+
 	resultVal = checkAuth(req.Form)
 	if resultVal.Result != "OK" {
 		w.Write(resultVal.ToByte())
 		return
 	}
+
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	if customerId != "1" {
+		resultVal.Result = "FAIL"
+		resultVal.Retval = ""
+		w.Write(resultVal.ToByte())
+		return
+	}
+
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
 	var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
 	data := url.Values{
@@ -62,9 +78,7 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 		var currentCustomer WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(WasteLibrary.GetStaticDbMainForStoreApi(data).Retval.(string))
 
 		resultVal = WasteLibrary.SaveRedisForStoreApi("customers", currentCustomer.ToIdString(), currentCustomer.ToString())
-		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-weblink", currentCustomer.WebLink, currentCustomer.ToIdString())
-		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-reportlink", currentCustomer.ReportLink, currentCustomer.ToIdString())
-		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-adminlink", currentCustomer.AdminLink, currentCustomer.ToIdString())
+		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-link", currentCustomer.CustomerLink, currentCustomer.ToIdString())
 		if !isCustomerExist {
 			var currentCustomerDevices WasteLibrary.CustomerDevicesType = WasteLibrary.CustomerDevicesType{
 				CustomerId: currentCustomer.CustomerId,
@@ -114,37 +128,6 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 	w.Write(resultVal.ToByte())
 }
 
-func setConfig(w http.ResponseWriter, req *http.Request) {
-
-	var resultVal devafatekresult.ResultType
-	resultVal.Result = "FAIL"
-	if err := req.ParseForm(); err != nil {
-		WasteLibrary.LogErr(err)
-		return
-	}
-	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
-		w.Write(resultVal.ToByte())
-		return
-	}
-
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	if currentHttpHeader.OpType == "CUSTOMER" {
-		var currentData WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(req.FormValue("DATA"))
-		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-customerconfig", currentData.ToIdString(), currentData.ToString())
-	} else if currentHttpHeader.OpType == "ADMIN" {
-		var currentData WasteLibrary.AdminConfigType = WasteLibrary.StringToAdminConfigType(req.FormValue("DATA"))
-		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-adminconfig", currentData.ToIdString(), currentData.ToString())
-	} else if currentHttpHeader.OpType == "LOCAL" {
-		var currentData WasteLibrary.LocalConfigType = WasteLibrary.StringToLocalConfigType(req.FormValue("DATA"))
-		resultVal = WasteLibrary.SaveRedisForStoreApi("customer-localconfig", currentData.ToIdString(), currentData.ToString())
-	} else {
-		resultVal.Result = "FAIL"
-	}
-
-	w.Write(resultVal.ToByte())
-}
-
 func setDevice(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal devafatekresult.ResultType
@@ -153,8 +136,23 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
+
 	resultVal = checkAuth(req.Form)
 	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	if customerId != "1" {
+		resultVal.Result = "FAIL"
+		resultVal.Retval = ""
 		w.Write(resultVal.ToByte())
 		return
 	}
@@ -204,7 +202,21 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 		return
 	}
-	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	if customerId != "1" {
+		resultVal.Result = "FAIL"
+		resultVal.Retval = ""
+		w.Write(resultVal.ToByte())
+		return
+	}
+
 	var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
 	resultVal = WasteLibrary.GetRedisForStoreApi("customers", currentData.ToIdString())
 
@@ -224,8 +236,21 @@ func getCustomers(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 		return
 	}
-	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	//var currentData WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(req.FormValue("DATA"))
+
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	if customerId != "1" {
+		resultVal.Result = "FAIL"
+		resultVal.Retval = ""
+		w.Write(resultVal.ToByte())
+		return
+	}
+
 	resultVal = WasteLibrary.GetRedisForStoreApi("customers", "customers")
 
 	w.Write(resultVal.ToByte())
@@ -245,7 +270,20 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	if customerId != "1" {
+		resultVal.Result = "FAIL"
+		resultVal.Retval = ""
+		w.Write(resultVal.ToByte())
+		return
+	}
+
 	var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
 	resultVal = WasteLibrary.GetRedisForStoreApi("devices", currentData.ToIdString())
 
@@ -266,82 +304,22 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
+	if resultVal.Result != "OK" {
+		w.Write(resultVal.ToByte())
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	if customerId != "1" {
+		resultVal.Result = "FAIL"
+		resultVal.Retval = ""
+		w.Write(resultVal.ToByte())
+		return
+	}
+
 	var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
 	resultVal = WasteLibrary.GetRedisForStoreApi("customer-devices", currentData.ToIdString())
-
-	w.Write(resultVal.ToByte())
-}
-
-func getConfig(w http.ResponseWriter, req *http.Request) {
-
-	var resultVal devafatekresult.ResultType
-	resultVal.Result = "FAIL"
-	if err := req.ParseForm(); err != nil {
-		WasteLibrary.LogErr(err)
-		return
-	}
-	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
-		w.Write(resultVal.ToByte())
-		return
-	}
-
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	if currentHttpHeader.OpType == "CUSTOMER" {
-		var currentData WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(req.FormValue("DATA"))
-		resultVal = WasteLibrary.GetRedisForStoreApi("customer-customerconfig", currentData.ToIdString())
-	} else if currentHttpHeader.OpType == "ADMIN" {
-		var currentData WasteLibrary.AdminConfigType = WasteLibrary.StringToAdminConfigType(req.FormValue("DATA"))
-		resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminconfig", currentData.ToIdString())
-	} else if currentHttpHeader.OpType == "LOCAL" {
-		var currentData WasteLibrary.LocalConfigType = WasteLibrary.StringToLocalConfigType(req.FormValue("DATA"))
-		resultVal = WasteLibrary.GetRedisForStoreApi("customer-localconfig", currentData.ToIdString())
-	} else {
-		resultVal.Result = "FAIL"
-	}
-
-	w.Write(resultVal.ToByte())
-}
-
-func getTags(w http.ResponseWriter, req *http.Request) {
-
-	var resultVal devafatekresult.ResultType
-	resultVal.Result = "FAIL"
-	if err := req.ParseForm(); err != nil {
-		WasteLibrary.LogErr(err)
-		return
-	}
-	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
-		w.Write(resultVal.ToByte())
-		return
-	}
-
-	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-tags", currentData.ToIdString())
-
-	w.Write(resultVal.ToByte())
-}
-
-func getTag(w http.ResponseWriter, req *http.Request) {
-
-	var resultVal devafatekresult.ResultType
-	resultVal.Result = "FAIL"
-	if err := req.ParseForm(); err != nil {
-		WasteLibrary.LogErr(err)
-		return
-	}
-	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
-		w.Write(resultVal.ToByte())
-		return
-	}
-
-	//var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
-	resultVal = WasteLibrary.GetRedisForStoreApi("tags", currentData.ToIdString())
 
 	w.Write(resultVal.ToByte())
 }

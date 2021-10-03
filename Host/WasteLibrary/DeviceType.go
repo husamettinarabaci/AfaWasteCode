@@ -39,6 +39,9 @@ type DeviceType struct {
 	ContactStatus         string
 	ContactLastOkTime     string
 	Therm                 string
+	ThermStatus           string
+	Battery               string
+	BatteryStatus         string
 	Latitude              float64
 	Longitude             float64
 	Speed                 float64
@@ -56,6 +59,7 @@ type DeviceType struct {
 	RecyTime              string
 	Active                string
 	ThermTime             string
+	BatteryTime           string
 	GpsTime               string
 	StatusTime            string
 	CreateTime            string

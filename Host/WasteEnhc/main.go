@@ -33,7 +33,35 @@ func data(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	var deviceIdStr = WasteLibrary.GetRedisForStoreApi("serial-device", currentHttpHeader.DeviceNo).Retval.(string)
+	resultVal = WasteLibrary.GetRedisForStoreApi("serial-device", currentHttpHeader.DeviceNo)
+	if resultVal.Result == "FAIL" {
+
+		var createHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
+			AppType:      "ADMIN",
+			DeviceNo:     "",
+			OpType:       "DEVICE",
+			Time:         WasteLibrary.GetTime(),
+			Repeat:       "0",
+			DeviceId:     0,
+			CustomerId:   0,
+			BaseDataType: "DEVICE",
+		}
+
+		var createDevice WasteLibrary.DeviceType = WasteLibrary.DeviceType{
+			DeviceId:     0,
+			CustomerId:   -1,
+			SerialNumber: currentHttpHeader.DeviceNo,
+		}
+		WasteLibrary.LogStr(createDevice.ToString())
+		data := url.Values{
+			"HEADER": {createHttpHeader.ToString()},
+			"DATA":   {createDevice.ToString()},
+		}
+
+		resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+		resultVal = WasteLibrary.GetRedisForStoreApi("serial-device", currentHttpHeader.DeviceNo)
+	}
+	var deviceIdStr = resultVal.Retval.(string)
 	var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetRedisForStoreApi("devices", deviceIdStr).Retval.(string))
 	currentHttpHeader.CustomerId = currentDevice.CustomerId
 	currentHttpHeader.DeviceId = currentDevice.DeviceId
@@ -70,7 +98,24 @@ func data(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = "FAIL"
 		}
 	} else if currentHttpHeader.AppType == "ULT" {
-		resultVal.Result = "OK"
+		if currentHttpHeader.OpType == "SENS" {
+
+			currentHttpHeader.BaseDataType = "DEVICE"
+			serviceClusterIp = "waste-ultreader-cluster-ip"
+
+		} else if currentHttpHeader.OpType == "ATMP" {
+
+			currentHttpHeader.BaseDataType = "DEVICE"
+			serviceClusterIp = "waste-alarmreader-cluster-ip"
+
+		} else if currentHttpHeader.OpType == "AGPS" {
+
+			currentHttpHeader.BaseDataType = "DEVICE"
+			serviceClusterIp = "waste-alarmreader-cluster-ip"
+
+		} else {
+			resultVal.Result = "FAIL"
+		}
 	} else if currentHttpHeader.AppType == "RECY" {
 		resultVal.Result = "OK"
 	} else {

@@ -9,9 +9,7 @@ import (
 type CustomerType struct {
 	CustomerId   float64
 	CustomerName string
-	AdminLink    string
-	WebLink      string
-	ReportLink   string
+	CustomerLink string
 	RfIdApp      string
 	UltApp       string
 	RecyApp      string
