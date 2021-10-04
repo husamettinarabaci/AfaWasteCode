@@ -74,21 +74,21 @@ func gpsCheck() {
 			serialPort, err = devafatekserial.Open(serialOptions0)
 			if err != nil {
 				WasteLibrary.LogErr(err)
-				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
+				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_PASSIVE
 			} else {
-				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.ACTIVE
+				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_ACTIVE
 			}
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.PASSIVE {
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.STATU_PASSIVE {
 				serialPort, err = devafatekserial.Open(serialOptions1)
 				if err != nil {
 					WasteLibrary.LogErr(err)
-					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
+					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_PASSIVE
 				} else {
-					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.ACTIVE
+					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_ACTIVE
 				}
 			}
 
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.ACTIVE {
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.STATU_ACTIVE {
 				reader := bufio.NewReader(serialPort)
 				scanner := bufio.NewScanner(reader)
 				WasteLibrary.LogStr("Device OK")
@@ -110,11 +110,11 @@ func gpsCheck() {
 							} else {
 								currentDeviceType.Longitude = 0
 							}
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.ACTIVE
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_ACTIVE
 						} else {
 							currentDeviceType.Latitude = 0
 							currentDeviceType.Longitude = 0
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.PASSIVE
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_PASSIVE
 						}
 						currentDeviceType.Speed = -1
 					}
@@ -131,8 +131,8 @@ func sendGps() {
 	for {
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			WasteLibrary.OPTYPE: {WasteLibrary.GPS},
-			WasteLibrary.DATA:   {currentDeviceType.ToString()},
+			WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_GPS},
+			WasteLibrary.HTTP_DATA:   {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

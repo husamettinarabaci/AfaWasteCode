@@ -24,14 +24,14 @@ func main() {
 
 func statusHandler1(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.OK
+	resultVal.Result = WasteLibrary.RESULT_OK
 	WasteLibrary.LogStr("status 1")
 	w.Write(resultVal.ToByte())
 }
 
 func statusHandler2(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.OK
+	resultVal.Result = WasteLibrary.RESULT_OK
 	WasteLibrary.LogStr("status 1")
 	w.Write(resultVal.ToByte())
 }

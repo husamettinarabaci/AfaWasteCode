@@ -23,7 +23,7 @@ func main() {
 			DeviceNo:     "",
 			OpType:       WasteLibrary.CUSTOMER,
 			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.PASSIVE,
+			Repeat:       WasteLibrary.STATU_PASSIVE,
 			DeviceId:     0,
 			CustomerId:   0,
 			BaseDataType: WasteLibrary.CUSTOMER,
@@ -34,14 +34,14 @@ func main() {
 			CustomerId:   float64(customerId),
 			CustomerName: "Afatek",
 			CustomerLink: "afatek.aws.afatek.com.tr",
-			RfIdApp:      WasteLibrary.ACTIVE,
-			UltApp:       WasteLibrary.PASSIVE,
-			RecyApp:      WasteLibrary.ACTIVE,
+			RfIdApp:      WasteLibrary.STATU_ACTIVE,
+			UltApp:       WasteLibrary.STATU_PASSIVE,
+			RecyApp:      WasteLibrary.STATU_ACTIVE,
 		}
 
 		data := url.Values{
-			WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.DATA:   {currentCustomer.ToString()},
+			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.HTTP_DATA:   {currentCustomer.ToString()},
 		}
 
 		client := http.Client{
@@ -66,7 +66,7 @@ func main() {
 			DeviceNo:     "",
 			OpType:       WasteLibrary.DEVICE,
 			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.PASSIVE,
+			Repeat:       WasteLibrary.STATU_PASSIVE,
 			DeviceId:     0,
 			CustomerId:   0,
 			BaseDataType: WasteLibrary.DEVICE,
@@ -83,8 +83,8 @@ func main() {
 		}
 		WasteLibrary.LogStr(currentDevice.ToString())
 		data := url.Values{
-			WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.DATA:   {currentDevice.ToString()},
+			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
 		}
 
 		client := http.Client{
@@ -109,7 +109,7 @@ func main() {
 			DeviceNo:     "",
 			OpType:       WasteLibrary.CUSTOMER,
 			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.PASSIVE,
+			Repeat:       WasteLibrary.STATU_PASSIVE,
 			DeviceId:     0,
 			CustomerId:   0,
 			BaseDataType: WasteLibrary.DEVICE,
@@ -118,19 +118,19 @@ func main() {
 		var customerId int = 1
 		var currentData WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{
 			CustomerId:      float64(customerId),
-			ArventoApp:      WasteLibrary.ACTIVE,
+			ArventoApp:      WasteLibrary.STATU_ACTIVE,
 			ArventoUserName: "afatekbilisim",
 			ArventoPin1:     "Amca151200!Furkan",
 			ArventoPin2:     "Amca151200!Furkan",
-			SystemProblem:   WasteLibrary.ACTIVE,
-			TruckStopTrace:  WasteLibrary.ACTIVE,
-			Active:          WasteLibrary.ACTIVE,
+			SystemProblem:   WasteLibrary.STATU_ACTIVE,
+			TruckStopTrace:  WasteLibrary.STATU_ACTIVE,
+			Active:          WasteLibrary.STATU_ACTIVE,
 			CreateTime:      WasteLibrary.GetTime(),
 		}
 		WasteLibrary.LogStr(currentData.ToString())
 		data := url.Values{
-			WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.DATA:   {currentData.ToString()},
+			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 		}
 
 		client := http.Client{
@@ -227,7 +227,7 @@ func main() {
 	} else {
 		var test1 TestType = TestType{
 			TagID:  45,
-			Status: WasteLibrary.OK,
+			Status: WasteLibrary.RESULT_OK,
 			Tags:   make(map[string]WasteLibrary.TagType),
 		}
 
@@ -249,14 +249,14 @@ func main() {
 		fmt.Println(test2)
 		fmt.Println(test2.ToString())
 
-		var conval = WasteLibrary.CONNECTED
+		var conval = WasteLibrary.OPTYPE_CONNECTED
 		if conval == "CONNECTED" {
 			fmt.Println("1")
 		} else {
 			fmt.Println("2")
 		}
 
-		test123(WasteLibrary.OPTYPE)
+		test123(WasteLibrary.HTTP_OPTYPE)
 
 	}
 

@@ -25,25 +25,25 @@ func main() {
 func data(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_DEVICE, currentHttpHeader.DeviceNo)
-	if resultVal.Result == WasteLibrary.FAIL {
+	if resultVal.Result == WasteLibrary.RESULT_FAIL {
 
 		var createHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      WasteLibrary.ADMIN,
+			AppType:      WasteLibrary.APPTYPE_ADMIN,
 			DeviceNo:     "",
-			OpType:       WasteLibrary.DEVICE,
+			OpType:       WasteLibrary.OPTYPE_DEVICE,
 			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.PASSIVE,
+			Repeat:       WasteLibrary.STATU_PASSIVE,
 			DeviceId:     0,
 			CustomerId:   0,
-			BaseDataType: WasteLibrary.DEVICE,
+			BaseDataType: WasteLibrary.BASETYPE_DEVICE,
 		}
 
 		var createDevice WasteLibrary.DeviceType = WasteLibrary.DeviceType{
@@ -53,8 +53,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 		}
 		WasteLibrary.LogStr(createDevice.ToString())
 		data := url.Values{
-			WasteLibrary.HEADER: {createHttpHeader.ToString()},
-			WasteLibrary.DATA:   {createDevice.ToString()},
+			WasteLibrary.HTTP_HEADER: {createHttpHeader.ToString()},
+			WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
 		}
 
 		resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
@@ -66,64 +66,64 @@ func data(w http.ResponseWriter, req *http.Request) {
 	currentHttpHeader.DeviceId = currentDevice.DeviceId
 
 	var serviceClusterIp string = ""
-	if currentHttpHeader.AppType == WasteLibrary.RFID {
+	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RFID {
 
-		if currentHttpHeader.OpType == WasteLibrary.RF {
+		if currentHttpHeader.OpType == WasteLibrary.OPTYPE_RF {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.TAG
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_TAG
 			serviceClusterIp = "waste-rfreader-cluster-ip"
 
-		} else if currentHttpHeader.OpType == WasteLibrary.GPS {
+		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_GPS {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.DEVICE
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 			serviceClusterIp = "waste-gpsreader-cluster-ip"
 
-		} else if currentHttpHeader.OpType == WasteLibrary.STATUS {
+		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_STATUS {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.DEVICE
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 			serviceClusterIp = "waste-statusreader-cluster-ip"
 
-		} else if currentHttpHeader.OpType == WasteLibrary.THERM {
+		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_THERM {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.DEVICE
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 			serviceClusterIp = "waste-thermreader-cluster-ip"
 
-		} else if currentHttpHeader.OpType == WasteLibrary.CAM {
+		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_CAM {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.TAG
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_TAG
 			serviceClusterIp = "waste-camreader-cluster-ip"
 
 		} else {
-			resultVal.Result = WasteLibrary.FAIL
+			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}
-	} else if currentHttpHeader.AppType == WasteLibrary.ULT {
-		if currentHttpHeader.OpType == WasteLibrary.SENS {
+	} else if currentHttpHeader.AppType == WasteLibrary.APPTYPE_ULT {
+		if currentHttpHeader.OpType == WasteLibrary.OPTYPE_SENS {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.DEVICE
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 			serviceClusterIp = "waste-ultreader-cluster-ip"
 
-		} else if currentHttpHeader.OpType == WasteLibrary.ATMP {
+		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_ATMP {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.DEVICE
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 			serviceClusterIp = "waste-alarmreader-cluster-ip"
 
-		} else if currentHttpHeader.OpType == WasteLibrary.AGPS {
+		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_AGPS {
 
-			currentHttpHeader.BaseDataType = WasteLibrary.DEVICE
+			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 			serviceClusterIp = "waste-alarmreader-cluster-ip"
 
 		} else {
-			resultVal.Result = WasteLibrary.FAIL
+			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}
-	} else if currentHttpHeader.AppType == WasteLibrary.RECY {
-		resultVal.Result = WasteLibrary.OK
+	} else if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RECY {
+		resultVal.Result = WasteLibrary.RESULT_OK
 	} else {
-		resultVal.Result = WasteLibrary.FAIL
+		resultVal.Result = WasteLibrary.RESULT_FAIL
 	}
 
 	data := url.Values{
-		WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-		WasteLibrary.DATA:   {req.FormValue(WasteLibrary.DATA)},
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {req.FormValue(WasteLibrary.HTTP_DATA)},
 	}
 
 	resultVal = WasteLibrary.SaveBulkDbMainForStoreApi(data)

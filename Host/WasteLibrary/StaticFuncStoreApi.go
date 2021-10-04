@@ -7,7 +7,7 @@ import (
 //SaveBulkDbMainForStoreApi
 func SaveBulkDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
-	resultVal.Result = FAIL
+	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveBulkDbMain", data)
 	return resultVal
 }
@@ -15,7 +15,7 @@ func SaveBulkDbMainForStoreApi(data url.Values) ResultType {
 //SaveStaticDbMainForStoreApi
 func SaveStaticDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
-	resultVal.Result = FAIL
+	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveStaticDbMain", data)
 	return resultVal
 }
@@ -23,7 +23,7 @@ func SaveStaticDbMainForStoreApi(data url.Values) ResultType {
 //GetStaticDbMainForStoreApi
 func GetStaticDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
-	resultVal.Result = FAIL
+	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getStaticDbMain", data)
 	return resultVal
 }
@@ -31,7 +31,7 @@ func GetStaticDbMainForStoreApi(data url.Values) ResultType {
 //SaveReaderDbMainForStoreApi
 func SaveReaderDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
-	resultVal.Result = FAIL
+	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveReaderDbMain", data)
 	return resultVal
 }
@@ -39,11 +39,11 @@ func SaveReaderDbMainForStoreApi(data url.Values) ResultType {
 //SaveRedisForStoreApi
 func SaveRedisForStoreApi(hKey string, sKey string, kVal string) ResultType {
 	var resultVal ResultType
-	resultVal.Result = FAIL
+	resultVal.Result = RESULT_FAIL
 	data := url.Values{
-		HASHKEY:  {hKey},
-		SUBKEY:   {sKey},
-		KEYVALUE: {kVal},
+		REDIS_HASHKEY:  {hKey},
+		REDIS_SUBKEY:   {sKey},
+		REDIS_KEYVALUE: {kVal},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/setkey", data)
 	return resultVal
@@ -52,10 +52,10 @@ func SaveRedisForStoreApi(hKey string, sKey string, kVal string) ResultType {
 //GetRedisForStoreApi
 func GetRedisForStoreApi(hKey string, sKey string) ResultType {
 	var resultVal ResultType
-	resultVal.Result = FAIL
+	resultVal.Result = RESULT_FAIL
 	data := url.Values{
-		HASHKEY: {hKey},
-		SUBKEY:  {sKey},
+		REDIS_HASHKEY: {hKey},
+		REDIS_SUBKEY:  {sKey},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getkey", data)
 	return resultVal

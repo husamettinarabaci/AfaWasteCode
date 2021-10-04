@@ -11,14 +11,14 @@ import (
 //LogErr
 func LogErr(err error) {
 	if err != nil {
-		SendLogServer(ERROR, err.Error())
+		SendLogServer(LOGGER_ERROR, err.Error())
 	}
 }
 
 //LogStr
 func LogStr(value string) {
 	if Debug {
-		SendLogServer(INFO, value)
+		SendLogServer(LOGGER_INFO, value)
 	}
 }
 
@@ -30,10 +30,10 @@ func SendLogServer(logType string, logVal string) {
 		}
 	} else {
 		data := url.Values{
-			CONTAINER: {Container},
-			LOGTYPE:   {logType},
-			FUNC:      {GetFuncName(2).Function},
-			LOG:       {logVal},
+			LOGGER_CONTAINER: {Container},
+			LOGGER_LOGTYPE:   {logType},
+			LOGGER_FUNC:      {GetFuncName(2).Function},
+			LOGGER_LOG:       {logVal},
 		}
 		client := http.Client{
 			Timeout: 10 * time.Second,

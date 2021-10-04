@@ -25,30 +25,30 @@ func status(w http.ResponseWriter, req *http.Request) {
 		logErr(err)
 		return
 	}
-	opType := req.FormValue(WasteLibrary.OPTYPE)
+	opType := req.FormValue(WasteLibrary.HTTP_OPTYPE)
 	logStr(opType)
-	resultVal.Result = WasteLibrary.FAIL
-	if opType == WasteLibrary.TYPE {
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	if opType == WasteLibrary.OPTYPE_TYPE {
 		resultVal.Result = "WasteLogServer"
-	} else if opType == WasteLibrary.APP {
-		resultVal.Result = WasteLibrary.OK
+	} else if opType == WasteLibrary.OPTYPE_APP {
+		resultVal.Result = WasteLibrary.RESULT_OK
 	} else {
-		resultVal.Result = WasteLibrary.FAIL
+		resultVal.Result = WasteLibrary.RESULT_FAIL
 	}
 	w.Write(resultVal.ToByte())
 }
 
 func log(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.OK
+	resultVal.Result = WasteLibrary.RESULT_OK
 	if err := req.ParseForm(); err != nil {
 		logErr(err)
 		return
 	}
-	container := req.FormValue(WasteLibrary.CONTAINER)
-	logType := req.FormValue(WasteLibrary.LOGTYPE)
-	funcVal := req.FormValue(WasteLibrary.FUNC)
-	logVal := req.FormValue(WasteLibrary.LOG)
+	container := req.FormValue(WasteLibrary.LOGGER_CONTAINER)
+	logType := req.FormValue(WasteLibrary.LOGGER_LOGTYPE)
+	funcVal := req.FormValue(WasteLibrary.LOGGER_FUNC)
+	logVal := req.FormValue(WasteLibrary.LOGGER_LOG)
 	logStr("Time : " + time.Now().String() + " - Container : " + container + " - LogType : " + logType + " - Func : " + funcVal + " - Log : " + logVal + " - IP : " + req.RemoteAddr)
 	w.Write(resultVal.ToByte())
 }

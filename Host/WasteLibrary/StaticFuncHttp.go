@@ -8,13 +8,13 @@ import (
 )
 
 //AppStatus
-var AppStatus string = ACTIVE
+var AppStatus string = STATU_ACTIVE
 
 //ConnStatus
-var ConnStatus string = PASSIVE
+var ConnStatus string = STATU_PASSIVE
 
 //DeviceStatus
-var DeviceStatus string = PASSIVE
+var DeviceStatus string = STATU_PASSIVE
 
 //HealthHandler
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
@@ -31,32 +31,32 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 	var resultVal ResultType
 	if err := req.ParseForm(); err != nil {
 		LogErr(err)
-		resultVal.Result = FAIL
+		resultVal.Result = RESULT_FAIL
 	} else {
 
-		opType := req.FormValue(OPTYPE)
+		opType := req.FormValue(HTTP_OPTYPE)
 		LogStr(opType)
-		resultVal.Result = FAIL
-		if opType == APP {
-			if CurrentCheckStatu.AppStatu == ACTIVE {
-				resultVal.Result = OK
+		resultVal.Result = RESULT_FAIL
+		if opType == OPTYPE_APP {
+			if CurrentCheckStatu.AppStatu == STATU_ACTIVE {
+				resultVal.Result = RESULT_OK
 			} else {
-				resultVal.Result = FAIL
+				resultVal.Result = RESULT_FAIL
 			}
-		} else if opType == CONN {
-			if CurrentCheckStatu.ConnStatu == ACTIVE {
-				resultVal.Result = OK
+		} else if opType == OPTYPE_CONN {
+			if CurrentCheckStatu.ConnStatu == STATU_ACTIVE {
+				resultVal.Result = RESULT_OK
 			} else {
-				resultVal.Result = FAIL
+				resultVal.Result = RESULT_FAIL
 			}
-		} else if opType == CAM {
-			if CurrentCheckStatu.DeviceStatu == ACTIVE {
-				resultVal.Result = OK
+		} else if opType == OPTYPE_CAM {
+			if CurrentCheckStatu.DeviceStatu == STATU_ACTIVE {
+				resultVal.Result = RESULT_OK
 			} else {
-				resultVal.Result = FAIL
+				resultVal.Result = RESULT_FAIL
 			}
 		} else {
-			resultVal.Result = FAIL
+			resultVal.Result = RESULT_FAIL
 		}
 	}
 	w.Write(resultVal.ToByte())
@@ -65,7 +65,7 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 //HttpPostReq
 func HttpPostReq(url string, data url.Values) ResultType {
 	var resultVal ResultType
-	resultVal.Result = FAIL
+	resultVal.Result = RESULT_FAIL
 	client := http.Client{
 		Timeout: 10 * time.Second,
 	}

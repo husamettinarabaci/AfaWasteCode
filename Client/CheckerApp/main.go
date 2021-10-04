@@ -16,19 +16,19 @@ var opInterval time.Duration = 5 * 60
 var contactPort string = os.Getenv("CONTACT_PORT")
 var currentUser string
 var currentDeviceType WasteLibrary.DeviceType = WasteLibrary.DeviceType{
-	ReaderAppStatus:   WasteLibrary.PASSIVE,
-	ReaderConnStatus:  WasteLibrary.PASSIVE,
-	ReaderStatus:      WasteLibrary.PASSIVE,
-	CamAppStatus:      WasteLibrary.PASSIVE,
-	CamConnStatus:     WasteLibrary.PASSIVE,
-	CamStatus:         WasteLibrary.PASSIVE,
-	GpsAppStatus:      WasteLibrary.PASSIVE,
-	GpsConnStatus:     WasteLibrary.PASSIVE,
-	GpsStatus:         WasteLibrary.PASSIVE,
-	ThermAppStatus:    WasteLibrary.PASSIVE,
-	TransferAppStatus: WasteLibrary.PASSIVE,
-	AliveStatus:       WasteLibrary.ACTIVE,
-	ContactStatus:     WasteLibrary.PASSIVE,
+	ReaderAppStatus:   WasteLibrary.STATU_PASSIVE,
+	ReaderConnStatus:  WasteLibrary.STATU_PASSIVE,
+	ReaderStatus:      WasteLibrary.STATU_PASSIVE,
+	CamAppStatus:      WasteLibrary.STATU_PASSIVE,
+	CamConnStatus:     WasteLibrary.STATU_PASSIVE,
+	CamStatus:         WasteLibrary.STATU_PASSIVE,
+	GpsAppStatus:      WasteLibrary.STATU_PASSIVE,
+	GpsConnStatus:     WasteLibrary.STATU_PASSIVE,
+	GpsStatus:         WasteLibrary.STATU_PASSIVE,
+	ThermAppStatus:    WasteLibrary.STATU_PASSIVE,
+	TransferAppStatus: WasteLibrary.STATU_PASSIVE,
+	AliveStatus:       WasteLibrary.STATU_ACTIVE,
+	ContactStatus:     WasteLibrary.STATU_PASSIVE,
 }
 
 type statusType struct {
@@ -40,67 +40,67 @@ type statusType struct {
 var statusTypes []statusType = []statusType{
 	{
 		Name: "readerAppStatus",
-		Key:  WasteLibrary.APP,
+		Key:  WasteLibrary.OPTYPE_APP,
 		Port: "10001",
 	},
 	{
 		Name: "readerConnStatus",
-		Key:  WasteLibrary.CONN,
+		Key:  WasteLibrary.OPTYPE_CONN,
 		Port: "10001",
 	},
 	{
 		Name: "readerStatus",
-		Key:  WasteLibrary.READER,
+		Key:  WasteLibrary.OPTYPE_READER,
 		Port: "10001",
 	},
 	{
 		Name: "camAppStatus",
-		Key:  WasteLibrary.APP,
+		Key:  WasteLibrary.OPTYPE_APP,
 		Port: "10002",
 	},
 	{
 		Name: "camConnStatus",
-		Key:  WasteLibrary.CONN,
+		Key:  WasteLibrary.OPTYPE_CONN,
 		Port: "10002",
 	},
 	{
 		Name: "camStatus",
-		Key:  WasteLibrary.CAM,
+		Key:  WasteLibrary.OPTYPE_CAM,
 		Port: "10002",
 	},
 	{
 		Name: "gpsAppStatus",
-		Key:  WasteLibrary.APP,
+		Key:  WasteLibrary.OPTYPE_APP,
 		Port: "10003",
 	},
 	{
 		Name: "gpsConnStatus",
-		Key:  WasteLibrary.CONN,
+		Key:  WasteLibrary.OPTYPE_CONN,
 		Port: "10003",
 	},
 	{
 		Name: "gpsStatus",
-		Key:  WasteLibrary.GPS,
+		Key:  WasteLibrary.OPTYPE_GPS,
 		Port: "10003",
 	},
 	{
 		Name: "thermAppStatus",
-		Key:  WasteLibrary.APP,
+		Key:  WasteLibrary.OPTYPE_APP,
 		Port: "10004",
 	},
 	{
 		Name: "transferAppStatus",
-		Key:  WasteLibrary.APP,
+		Key:  WasteLibrary.OPTYPE_APP,
 		Port: "10000",
 	},
 	{
 		Name: "aliveStatus",
-		Key:  WasteLibrary.NONE,
+		Key:  WasteLibrary.OPTYPE_NONE,
 		Port: "",
 	},
 	{
 		Name: "contactStatus",
-		Key:  WasteLibrary.NONE,
+		Key:  WasteLibrary.OPTYPE_NONE,
 		Port: "",
 	},
 }
@@ -117,7 +117,7 @@ func main() {
 	initStart()
 
 	for i := range statusTypes {
-		if statusTypes[i].Key == WasteLibrary.NONE {
+		if statusTypes[i].Key == WasteLibrary.OPTYPE_NONE {
 			continue
 		}
 		go statusCheck(i)
@@ -137,15 +137,15 @@ func main() {
 func statusCheck(statusTypeIndex int) {
 	var resultVal WasteLibrary.ResultType
 	for {
-		var lastStatus = WasteLibrary.PASSIVE
+		var lastStatus = WasteLibrary.STATU_PASSIVE
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			WasteLibrary.OPTYPE: {statusTypes[statusTypeIndex].Key},
+			WasteLibrary.HTTP_OPTYPE: {statusTypes[statusTypeIndex].Key},
 		}
 
 		resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:"+statusTypes[statusTypeIndex].Port+"/status", data)
-		if resultVal.Result == WasteLibrary.OK {
-			lastStatus = WasteLibrary.ACTIVE
+		if resultVal.Result == WasteLibrary.RESULT_OK {
+			lastStatus = WasteLibrary.STATU_ACTIVE
 		}
 
 		if statusTypes[statusTypeIndex].Name == "readerAppStatus" {
@@ -189,9 +189,9 @@ func contactCheck() {
 			pin := rpio.Pin(conPort)
 			var tempData = rpio.ReadPin(pin) == 1
 			if tempData {
-				currentDeviceType.ContactStatus = WasteLibrary.ACTIVE
+				currentDeviceType.ContactStatus = WasteLibrary.STATU_ACTIVE
 			} else {
-				currentDeviceType.ContactStatus = WasteLibrary.PASSIVE
+				currentDeviceType.ContactStatus = WasteLibrary.STATU_PASSIVE
 			}
 			rpio.Close()
 		}
@@ -204,8 +204,8 @@ func sendStatus() {
 		time.Sleep(opInterval * time.Second)
 
 		data := url.Values{
-			WasteLibrary.OPTYPE: {WasteLibrary.STATUS},
-			WasteLibrary.DATA:   {currentDeviceType.ToString()},
+			WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_STATUS},
+			WasteLibrary.HTTP_DATA:   {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

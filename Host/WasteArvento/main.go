@@ -33,7 +33,7 @@ func main() {
 
 func setCustomerList() {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	for {
 
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, WasteLibrary.REDIS_CUSTOMERS)
@@ -53,49 +53,49 @@ func setCustomerList() {
 
 func customerProc(customerId float64) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var loopCount = 0
 	var currentCustomerConfig WasteLibrary.CustomerConfigType
 	var currentCustomerDevices WasteLibrary.CustomerDevicesType
 	var plateDevice map[string]string
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, WasteLibrary.Float64IdToString(customerId))
 
-	if resultVal.Result == WasteLibrary.OK {
+	if resultVal.Result == WasteLibrary.RESULT_OK {
 		currentCustomerConfig = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
 	}
 	for {
-		if currentCustomerConfig.ArventoApp == WasteLibrary.ACTIVE {
+		if currentCustomerConfig.ArventoApp == WasteLibrary.STATU_ACTIVE {
 			if loopCount == 180 {
 				loopCount = 0
 			}
 			if loopCount == 0 {
 				loopCount = 0
 				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, WasteLibrary.Float64IdToString(customerId))
-				if resultVal.Result == WasteLibrary.OK {
+				if resultVal.Result == WasteLibrary.RESULT_OK {
 					currentCustomerConfig = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
 				}
 				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_DEVICES, currentCustomerConfig.ToIdString())
-				if resultVal.Result == WasteLibrary.OK {
+				if resultVal.Result == WasteLibrary.RESULT_OK {
 					WasteLibrary.LogStr("Add Devices : " + WasteLibrary.Float64IdToString(customerId))
 					currentCustomerDevices = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
 				}
 				resultVal = getDevice(currentCustomerConfig)
-				if resultVal.Result == WasteLibrary.OK {
+				if resultVal.Result == WasteLibrary.RESULT_OK {
 					plateDevice = resultVal.Retval.(map[string]string)
 				}
 			}
 
 			resultVal = getLocation(currentCustomerConfig)
-			if resultVal.Result == WasteLibrary.OK {
+			if resultVal.Result == WasteLibrary.RESULT_OK {
 				var deviceLocations WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.StringToArventoDeviceGpsListType(resultVal.Retval.(string))
 				for _, vDevice := range currentCustomerDevices.Devices {
 					if vDevice == 0 {
 						continue
 					}
 					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, WasteLibrary.Float64IdToString(vDevice))
-					if resultVal.Result == WasteLibrary.OK {
+					if resultVal.Result == WasteLibrary.RESULT_OK {
 						var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
-						if currentDevice.DeviceType == WasteLibrary.RFID {
+						if currentDevice.DeviceType == WasteLibrary.APPTYPE_RFID {
 							var arventoId string = plateDevice[currentDevice.DeviceName]
 							if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
 								if currentDevice.Latitude != 0 && currentDevice.Longitude != 0 {
@@ -104,15 +104,15 @@ func customerProc(customerId float64) {
 									currentDevice.Speed = currentDeviceLocation.Speed
 									WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Speed))
 									var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
-									newCurrentHttpHeader.AppType = WasteLibrary.RFID
-									newCurrentHttpHeader.OpType = WasteLibrary.ARVENTO
+									newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_RFID
+									newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_ARVENTO
 									data := url.Values{
-										WasteLibrary.HEADER: {newCurrentHttpHeader.ToString()},
-										WasteLibrary.DATA:   {currentDevice.ToString()},
+										WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
+										WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
 									}
 									resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
 
-									if resultVal.Result == WasteLibrary.OK {
+									if resultVal.Result == WasteLibrary.RESULT_OK {
 										resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
 									}
 									if currentDevice.Speed == 0 {
@@ -137,7 +137,7 @@ func customerProc(customerId float64) {
 
 func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var deviceLocation WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.ArventoDeviceGpsListType{
 		ArventoDeviceGpsList: make(map[string]WasteLibrary.ArventoDeviceGpsType),
 	}
@@ -190,7 +190,7 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLib
 		}
 	}
 
-	resultVal.Result = WasteLibrary.OK
+	resultVal.Result = WasteLibrary.RESULT_OK
 	resultVal.Retval = deviceLocation.ToString()
 	return resultVal
 
@@ -198,7 +198,7 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLib
 
 func getDevice(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var plateDevice map[string]string = make(map[string]string)
 	resp, err := http.Get("http://ws.arvento.com/v1/report.asmx/GetLicensePlateNodeMappings?Username=" + currentCustomerConfig.ArventoUserName + "&PIN1=" + currentCustomerConfig.ArventoPin1 + "&PIN2=" + currentCustomerConfig.ArventoPin2 + "&Language=tr")
 	if err != nil {
@@ -225,7 +225,7 @@ func getDevice(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLibra
 			break
 		}
 	}
-	resultVal.Result = WasteLibrary.OK
+	resultVal.Result = WasteLibrary.RESULT_OK
 	resultVal.Retval = plateDevice
 	return resultVal
 }

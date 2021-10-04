@@ -11,6 +11,11 @@ cd WasteLogServer && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteRfReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteStatusReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteStoreApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForBulkDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForStaticDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForReaderDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForConfigDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForRedis && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteThermReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteArvento && go get "github.com/devafatek/WasteLibrary" && cd .. 
 
@@ -25,6 +30,11 @@ sudo docker build -f WasteLogServer/Dockerfile -t devafatek/wastelogserver:1.0 .
 sudo docker build -f WasteRfReader/Dockerfile -t devafatek/wasterfreader:1.0 . && docker push devafatek/wasterfreader:1.0 &&
 sudo docker build -f WasteStatusReader/Dockerfile -t devafatek/wastestatusreader:1.0 . && docker push devafatek/wastestatusreader:1.0 &&
 sudo docker build -f WasteStoreApi/Dockerfile -t devafatek/wastestoreapi:1.0 . && docker push devafatek/wastestoreapi:1.0 &&
+sudo docker build -f WasteStoreApiForBulkDB/Dockerfile -t devafatek/wastestoreapiforbulkdb:1.0 . && docker push devafatek/wastestoreapiforbulkdb:1.0 &&
+sudo docker build -f WasteStoreApiForStaticDB/Dockerfile -t devafatek/wastestoreapiforstaticdb:1.0 . && docker push devafatek/wastestoreapiforstaticdb:1.0 &&
+sudo docker build -f WasteStoreApiForReaderDB/Dockerfile -t devafatek/wastestoreapiforreaderdb:1.0 . && docker push devafatek/wastestoreapiforreaderdb:1.0 &&
+sudo docker build -f WasteStoreApiForConfigDB/Dockerfile -t devafatek/wastestoreapiforconfigdb:1.0 . && docker push devafatek/wastestoreapiforconfigdb:1.0 &&
+sudo docker build -f WasteStoreApiForRedis/Dockerfile -t devafatek/wastestoreapiforredis:1.0 . && docker push devafatek/wastestoreapiforredis:1.0 &&
 sudo docker build -f WasteThermReader/Dockerfile -t devafatek/wastethermreader:1.0 . && docker push devafatek/wastethermreader:1.0 &&
 sudo docker build -f WasteWebApi/Dockerfile -t devafatek/wastewebapi:1.0 . && docker push devafatek/wastewebapi:1.0 &&
 sudo docker build -f WasteAfatekApi/Dockerfile -t devafatek/wasteafatekapi:1.0 . && docker push devafatek/wasteafatekapi:1.0 &&
@@ -42,6 +52,11 @@ kubectl create -f waste-logserver-deployment.yaml &&
 kubectl create -f waste-rfreader-deployment.yaml &&
 kubectl create -f waste-statusreader-deployment.yaml &&
 kubectl create -f waste-storeapi-deployment.yaml &&
+kubectl create -f waste-storeapiforbulkdb-deployment.yaml &&
+kubectl create -f waste-storeapiforstaticdb-deployment.yaml &&
+kubectl create -f waste-storeapiforreaderdb-deployment.yaml &&
+kubectl create -f waste-storeapiforconfigdb-deployment.yaml &&
+kubectl create -f waste-storeapiforredis-deployment.yaml &&
 kubectl create -f waste-thermreader-deployment.yaml &&
 kubectl create -f waste-arvento-deployment.yaml
 kubectl create -f waste-redis-deployment.yaml

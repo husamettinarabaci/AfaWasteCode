@@ -17,7 +17,7 @@ import (
 	"github.com/devafatek/WasteLibrary"
 )
 
-var applicationType = WasteLibrary.RFID
+var applicationType = WasteLibrary.APPTYPE_RFID
 var serialNumber = "0"
 var currentUser string
 var opInterval time.Duration = 5 * 60
@@ -42,23 +42,23 @@ func main() {
 	initStart()
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.RF)
+	go fileCheck(WasteLibrary.OPTYPE_RF)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.CAM)
+	go fileCheck(WasteLibrary.OPTYPE_CAM)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.GPS)
+	go fileCheck(WasteLibrary.OPTYPE_GPS)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.THERM)
+	go fileCheck(WasteLibrary.OPTYPE_THERM)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.STATUS)
+	go fileCheck(WasteLibrary.OPTYPE_STATUS)
 	wg.Add(1)
 
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
@@ -74,25 +74,25 @@ func trans(w http.ResponseWriter, req *http.Request) {
 
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
-		resultVal.Result = WasteLibrary.FAIL
+		resultVal.Result = WasteLibrary.RESULT_FAIL
 
 	} else {
 
-		opType := req.FormValue(WasteLibrary.OPTYPE)
-		dataVal := req.FormValue(WasteLibrary.DATA)
-		resultVal = sendDataToServer(opType, dataVal, WasteLibrary.GetTime(), WasteLibrary.PASSIVE)
+		opType := req.FormValue(WasteLibrary.HTTP_OPTYPE)
+		dataVal := req.FormValue(WasteLibrary.HTTP_DATA)
+		resultVal = sendDataToServer(opType, dataVal, WasteLibrary.GetTime(), WasteLibrary.STATU_PASSIVE)
 		WasteLibrary.LogStr("Send Data To Server : " + resultVal.ToString())
-		if resultVal.Result != WasteLibrary.OK {
-			if opType != WasteLibrary.CAM {
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			if opType != WasteLibrary.OPTYPE_CAM {
 				storeData(opType, dataVal)
 			}
 		}
-		if opType == WasteLibrary.CAM {
-			var curretnTagType WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
+		if opType == WasteLibrary.OPTYPE_CAM {
+			var curretnTagType WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 			sendFileToServer(curretnTagType.UID)
 		}
-		resultVal.Result = WasteLibrary.OK
+		resultVal.Result = WasteLibrary.RESULT_OK
 	}
 	w.Write(resultVal.ToByte())
 }
@@ -156,8 +156,8 @@ func sendDataToServer(opType string, sendData string, dataTime string, repeat st
 		CustomerId: 0,
 	}
 	data := url.Values{
-		WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-		WasteLibrary.DATA:   {sendData},
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {sendData},
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://listener.aws.afatek.com.tr/data", data)
 	return resultVal
@@ -172,7 +172,7 @@ func storeData(dataType string, sendData string) {
 
 func resendData(opType string, fileName string) {
 	var resultVal WasteLibrary.ResultType
-	if opType == WasteLibrary.CAM {
+	if opType == WasteLibrary.OPTYPE_CAM {
 		sendFileToServer(fileName)
 	} else {
 
@@ -188,9 +188,9 @@ func resendData(opType string, fileName string) {
 
 			WasteLibrary.LogStr("Read File : " + dataJSON)
 
-			resultVal = sendDataToServer(opType, string(dataJSON), dataTime, WasteLibrary.ACTIVE)
+			resultVal = sendDataToServer(opType, string(dataJSON), dataTime, WasteLibrary.STATU_ACTIVE)
 			WasteLibrary.LogStr("Send Data To Server Again : " + resultVal.ToString())
-			if resultVal.Result == WasteLibrary.OK {
+			if resultVal.Result == WasteLibrary.RESULT_OK {
 				WasteLibrary.RemoveFile("WAIT_" + opType + "/" + fileName)
 			}
 		}
@@ -219,7 +219,7 @@ func fileCheck(opType string) {
 			second := time.Since(file.ModTime()).Seconds()
 			if second > 60*60 && second < 24*60*60 {
 				var fileName string = file.Name()
-				if opType == WasteLibrary.CAM {
+				if opType == WasteLibrary.OPTYPE_CAM {
 					spData := strings.Split(strings.TrimSpace(file.Name()), ".")
 					fileName = spData[0]
 				}

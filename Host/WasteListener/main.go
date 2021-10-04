@@ -82,8 +82,8 @@ func handleTcpRequest(conn net.Conn) {
 			r10 := WasteLibrary.StringToFloat64(split[16])
 			var ultrange = math.Mod((r1+r2+r3+r4+r5+r6+r7+r8+r9+r10)/10, 10)
 
-			if appType == WasteLibrary.ULT && (opType == WasteLibrary.SENS || opType == WasteLibrary.ATMP || opType == WasteLibrary.AGPS) {
-				conn.Write([]byte(WasteLibrary.OK))
+			if appType == WasteLibrary.APPTYPE_ULT && (opType == WasteLibrary.OPTYPE_SENS || opType == WasteLibrary.OPTYPE_ATMP || opType == WasteLibrary.OPTYPE_AGPS) {
+				conn.Write([]byte(WasteLibrary.RESULT_OK))
 				conn.Close()
 
 				var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{}
@@ -91,56 +91,56 @@ func handleTcpRequest(conn net.Conn) {
 				currentHttpHeader.OpType = opType
 				currentHttpHeader.DeviceNo = serialNo
 				currentHttpHeader.Time = time.Now().String()
-				currentHttpHeader.Repeat = WasteLibrary.PASSIVE
+				currentHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
 				currentHttpHeader.DeviceId = 0
 				currentHttpHeader.CustomerId = 0
 				var currentDevice WasteLibrary.DeviceType = WasteLibrary.DeviceType{}
 				currentDevice.DeviceType = appType
 				currentDevice.SerialNumber = serialNo
-				currentDevice.TransferAppStatus = WasteLibrary.ACTIVE
+				currentDevice.TransferAppStatus = WasteLibrary.STATU_ACTIVE
 				currentDevice.TransferAppLastOkTime = time.Now().String()
-				currentDevice.AliveStatus = WasteLibrary.ACTIVE
+				currentDevice.AliveStatus = WasteLibrary.STATU_ACTIVE
 				currentDevice.AliveLastOkTime = time.Now().String()
 
 				if lat != "00.00000" && long != "000.00000" {
-					currentDevice.GpsAppStatus = WasteLibrary.ACTIVE
+					currentDevice.GpsAppStatus = WasteLibrary.STATU_ACTIVE
 					currentDevice.GpsAppLastOkTime = time.Now().String()
-					currentDevice.GpsConnStatus = WasteLibrary.ACTIVE
+					currentDevice.GpsConnStatus = WasteLibrary.STATU_ACTIVE
 					currentDevice.GpsConnLastOkTime = time.Now().String()
-					currentDevice.GpsStatus = WasteLibrary.ACTIVE
+					currentDevice.GpsStatus = WasteLibrary.STATU_ACTIVE
 					currentDevice.GpsLastOkTime = time.Now().String()
 					currentDevice.Latitude = WasteLibrary.StringToFloat64(lat)
 					currentDevice.Longitude = WasteLibrary.StringToFloat64(long)
 					currentDevice.GpsTime = time.Now().String()
 				}
 				if temp != "00" {
-					currentDevice.ThermAppStatus = WasteLibrary.ACTIVE
+					currentDevice.ThermAppStatus = WasteLibrary.STATU_ACTIVE
 					currentDevice.ThermAppLastOkTime = time.Now().String()
 					currentDevice.Therm = temp
 					currentDevice.ThermTime = time.Now().String()
-					currentDevice.ThermStatus = WasteLibrary.ACTIVE
+					currentDevice.ThermStatus = WasteLibrary.STATU_ACTIVE
 				}
 				if battery != "0000" {
 					currentDevice.Battery = battery
 					currentDevice.BatteryTime = time.Now().String()
 
 					if WasteLibrary.StringToFloat64(battery) > 3200 {
-						currentDevice.BatteryStatus = WasteLibrary.ACTIVE
+						currentDevice.BatteryStatus = WasteLibrary.STATU_ACTIVE
 					} else {
 						currentDevice.BatteryStatus = "2"
 					}
 
 				}
 
-				currentDevice.DeviceStatus = WasteLibrary.ACTIVE
+				currentDevice.DeviceStatus = WasteLibrary.STATU_ACTIVE
 				currentDevice.StatusTime = time.Now().String()
 				if ultrange != 0 {
 					currentDevice.UltRange = ultrange
-					currentDevice.UltStatus = WasteLibrary.PASSIVE
+					currentDevice.UltStatus = WasteLibrary.STATU_PASSIVE
 					currentDevice.UltTime = time.Now().String()
 				}
-				if opType == WasteLibrary.ATMP || opType == WasteLibrary.AGPS {
-					currentDevice.AlarmStatus = WasteLibrary.ACTIVE
+				if opType == WasteLibrary.OPTYPE_ATMP || opType == WasteLibrary.OPTYPE_AGPS {
+					currentDevice.AlarmStatus = WasteLibrary.STATU_ACTIVE
 					currentDevice.AlarmTime = time.Now().String()
 					currentDevice.AlarmType = opType
 					currentDevice.Alarm = opType
@@ -148,28 +148,28 @@ func handleTcpRequest(conn net.Conn) {
 				WasteLibrary.LogStr(currentHttpHeader.ToString())
 				WasteLibrary.LogStr(currentDevice.ToString())
 				/*data := url.Values{
-					WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-					WasteLibrary.DATA:   {currentDevice.ToString()},
+					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+					WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
 				}*/
 				//resultVal := WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", data)
 				//WasteLibrary.LogStr(resultVal.ToString())
 			} else {
-				conn.Write([]byte(WasteLibrary.FAIL))
+				conn.Write([]byte(WasteLibrary.RESULT_FAIL))
 				conn.Close()
 			}
 		} else {
-			conn.Write([]byte(WasteLibrary.FAIL))
+			conn.Write([]byte(WasteLibrary.RESULT_FAIL))
 			conn.Close()
 		}
 	} else {
-		conn.Write([]byte(WasteLibrary.FAIL))
+		conn.Write([]byte(WasteLibrary.RESULT_FAIL))
 		conn.Close()
 	}
 }
 
 func data(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return

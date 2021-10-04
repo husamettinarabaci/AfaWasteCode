@@ -25,89 +25,89 @@ func main() {
 func reader(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 
-	if currentHttpHeader.Repeat == WasteLibrary.PASSIVE {
-		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
+	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
+		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 		currentData.StatusTime = currentHttpHeader.Time
 		data := url.Values{
-			WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.DATA:   {currentData.ToString()},
+			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 		}
 		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
 
-		if resultVal.Result == WasteLibrary.OK {
+		if resultVal.Result == WasteLibrary.RESULT_OK {
 			currentData.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			if currentData.ReaderAppStatus == WasteLibrary.ACTIVE {
+			if currentData.ReaderAppStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.ReaderAppLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.ReaderConnStatus == WasteLibrary.ACTIVE {
+			if currentData.ReaderConnStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.ReaderConnLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.ReaderStatus == WasteLibrary.ACTIVE {
+			if currentData.ReaderStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.ReaderLastOkTime = currentHttpHeader.Time
 			}
 
-			if currentData.CamAppStatus == WasteLibrary.ACTIVE {
+			if currentData.CamAppStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.CamAppLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.CamConnStatus == WasteLibrary.ACTIVE {
+			if currentData.CamConnStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.CamConnLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.CamStatus == WasteLibrary.ACTIVE {
+			if currentData.CamStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.CamLastOkTime = currentHttpHeader.Time
 			}
 
-			if currentData.GpsAppStatus == WasteLibrary.ACTIVE {
+			if currentData.GpsAppStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.GpsAppLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.GpsConnStatus == WasteLibrary.ACTIVE {
+			if currentData.GpsConnStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.GpsConnLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.GpsStatus == WasteLibrary.ACTIVE {
+			if currentData.GpsStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.GpsLastOkTime = currentHttpHeader.Time
 			}
 
-			if currentData.ThermAppStatus == WasteLibrary.ACTIVE {
+			if currentData.ThermAppStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.ThermAppLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.TransferAppStatus == WasteLibrary.ACTIVE {
+			if currentData.TransferAppStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.TransferAppLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.AliveStatus == WasteLibrary.ACTIVE {
+			if currentData.AliveStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.AliveLastOkTime = currentHttpHeader.Time
 			}
-			if currentData.ContactStatus == WasteLibrary.ACTIVE {
+			if currentData.ContactStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.ContactLastOkTime = currentHttpHeader.Time
 			}
 
 			data := url.Values{
-				WasteLibrary.HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.DATA:   {currentData.ToString()},
+				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 			var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetStaticDbMainForStoreApi(data).Retval.(string))
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
 
 			var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
-			newCurrentHttpHeader.AppType = WasteLibrary.RFID
-			newCurrentHttpHeader.OpType = WasteLibrary.DEVICE
+			newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_RFID
+			newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
 			data = url.Values{
-				WasteLibrary.HEADER: {newCurrentHttpHeader.ToString()},
-				WasteLibrary.DATA:   {currentDevice.ToString()},
+				WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
 			}
 			WasteLibrary.SaveReaderDbMainForStoreApi(data)
 		}
 
 	} else {
-		resultVal.Result = WasteLibrary.OK
+		resultVal.Result = WasteLibrary.RESULT_OK
 	}
 	w.Write(resultVal.ToByte())
 }

@@ -21,31 +21,26 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
-      - name: wait-for-wastebulkdb
-        image: postgres:9.6.5
-        command: ['sh', '-c', 'until pg_isready -h waste-bulkdb-cluster-ip -p 5432; do echo waiting for wastebulkdb; sleep 2; done;']
-      - name: wait-for-wastesumdb
-        image: postgres:9.6.5
-        command: ['sh', '-c', 'until pg_isready -h waste-sumdb-cluster-ip -p 5432; do echo waiting for wastesumdb; sleep 2; done;']
-      - name: wait-for-wastereaderdb
-        image: postgres:9.6.5
-        command: ['sh', '-c', 'until pg_isready -h waste-readerdb-cluster-ip -p 5432; do echo waiting for wastereaderdb; sleep 2; done;']
-      - name: wait-for-wasteconfigdb
-        image: postgres:9.6.5
-        command: ['sh', '-c', 'until pg_isready -h waste-configdb-cluster-ip -p 5432; do echo waiting for wasteconfigdb; sleep 2; done;']
-      - name: wait-for-wastestaticdb
-        image: postgres:9.6.5
-        command: ['sh', '-c', 'until pg_isready -h waste-staticdb-cluster-ip -p 5432; do echo waiting for wastestaticdb; sleep 2; done;']
-      - name: wait-for-wasteredis
-        image: busybox
-        command:
-        - /bin/sh
-        - -c
-        - >
-          set -x;
-          until ((printf "PING\r\n"; sleep 1) | nc waste-redis-cluster-ip 6379);
-          do echo waiting for waste-redis;
-          sleep 2; done
+      - name: wait-for-wastestoreapiforbulkdb
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapiforbulkdb-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApiForBulkDb...'; done"]
+      - name: wait-for-wastestoreapiforstaticdb
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapiforstaticdb-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApiForStaticDb...'; done"]
+      - name: wait-for-wastestoreapiforreaderdb
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapiforreaderdb-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApiForReaderDb...'; done"]
+      - name: wait-for-wastestoreapiforconfigdb
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapiforconfigdb-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApiForConfigDb...'; done"]
+      - name: wait-for-wastestoreapiforredis
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapiforredis-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApiForRedis...'; done"]
       containers:
       - name: waste-storeapi
         image: devafatek/wastestoreapi:1.0
