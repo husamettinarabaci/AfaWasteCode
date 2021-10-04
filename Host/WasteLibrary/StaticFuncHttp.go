@@ -30,7 +30,7 @@ func ReadinessHandler(w http.ResponseWriter, r *http.Request) {
 
 //StaStatusHandlertus
 func StatusHandler(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	if err := req.ParseForm(); err != nil {
 		LogErr(err)
 		resultVal.Result = "FAIL"
@@ -65,8 +65,8 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 //HttpPostReq
-func HttpPostReq(url string, data url.Values) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func HttpPostReq(url string, data url.Values) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	client := http.Client{
 		Timeout: 10 * time.Second,

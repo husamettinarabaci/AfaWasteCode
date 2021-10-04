@@ -7,7 +7,6 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -21,7 +20,7 @@ func main() {
 }
 
 func status(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	if err := req.ParseForm(); err != nil {
 		logErr(err)
 		return
@@ -40,7 +39,7 @@ func status(w http.ResponseWriter, req *http.Request) {
 }
 
 func log(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "OK"
 	if err := req.ParseForm(); err != nil {
 		logErr(err)

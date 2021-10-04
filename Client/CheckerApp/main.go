@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"gitee.com/wiseai/go-rpio"
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -136,7 +135,7 @@ func main() {
 }
 
 func statusCheck(statusTypeIndex int) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	for {
 		var lastStatus = "0"
 		time.Sleep(opInterval * time.Second)

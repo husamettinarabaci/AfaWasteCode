@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -24,14 +23,14 @@ func main() {
 }
 
 func statusHandler1(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "OK"
 	WasteLibrary.LogStr("status 1")
 	w.Write(resultVal.ToByte())
 }
 
 func statusHandler2(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "OK"
 	WasteLibrary.LogStr("status 1")
 	w.Write(resultVal.ToByte())

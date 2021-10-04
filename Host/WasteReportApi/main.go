@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -31,7 +30,7 @@ func main() {
 
 func getLink(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 
 	var linkVal string = req.Host
@@ -41,7 +40,7 @@ func getLink(w http.ResponseWriter, req *http.Request) {
 
 func getCustomer(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -67,7 +66,7 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 
 func getDevice(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -101,7 +100,7 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 
 func getDevices(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -127,7 +126,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 
 func getConfig(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -162,7 +161,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 
 func getTags(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -188,7 +187,7 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 
 func getTag(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -218,8 +217,8 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 	w.Write(resultVal.ToByte())
 }
 
-func checkAuth(data url.Values) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func checkAuth(data url.Values) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	resultVal.Result = "OK"
 	return resultVal

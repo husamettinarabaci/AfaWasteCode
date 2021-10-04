@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -33,7 +32,7 @@ func main() {
 }
 
 func setCustomerList() {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	for {
 
@@ -53,7 +52,7 @@ func setCustomerList() {
 }
 
 func customerProc(customerId float64) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	var loopCount = 0
 	var currentCustomerConfig WasteLibrary.CustomerConfigType
@@ -136,8 +135,8 @@ func customerProc(customerId float64) {
 	}
 }
 
-func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	var deviceLocation WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.ArventoDeviceGpsListType{
 		ArventoDeviceGpsList: make(map[string]WasteLibrary.ArventoDeviceGpsType),
@@ -197,8 +196,8 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) devafate
 
 }
 
-func getDevice(currentCustomerConfig WasteLibrary.CustomerConfigType) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func getDevice(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	var plateDevice map[string]string = make(map[string]string)
 	resp, err := http.Get("http://ws.arvento.com/v1/report.asmx/GetLicensePlateNodeMappings?Username=" + currentCustomerConfig.ArventoUserName + "&PIN1=" + currentCustomerConfig.ArventoPin1 + "&PIN2=" + currentCustomerConfig.ArventoPin2 + "&Language=tr")

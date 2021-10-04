@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 	"github.com/go-redis/redis/v8"
 	_ "github.com/lib/pq"
@@ -108,7 +107,7 @@ func main() {
 }
 
 func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -133,7 +132,7 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 }
 
 func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -467,7 +466,7 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 }
 
 func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -668,7 +667,7 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 }
 
 func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -935,7 +934,7 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 }
 
 func getkey(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -956,7 +955,7 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 }
 
 func setkey(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -978,8 +977,8 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 	w.Write(resultVal.ToByte())
 }
 
-func getKeyRedis(hKey string, sKey string) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func getKeyRedis(hKey string, sKey string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	var val string = ""
 	var err error
@@ -1022,8 +1021,8 @@ func setKeyRedis(hKey string, sKey string, kVal string) {
 	}
 }
 
-func getKeyDb(hKey string, sKey string) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	WasteLibrary.LogStr("Serach Db : " + hKey + " - " + sKey)
 
@@ -1046,8 +1045,8 @@ func getKeyDb(hKey string, sKey string) devafatekresult.ResultType {
 	return resultVal
 }
 
-func insertKeyDb(hKey string, sKey string, kVal string) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func insertKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	WasteLibrary.LogStr("Insert Db : " + hKey + " - " + sKey + " - " + kVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.redisdata(
@@ -1059,8 +1058,8 @@ func insertKeyDb(hKey string, sKey string, kVal string) devafatekresult.ResultTy
 	return resultVal
 }
 
-func updateKeyDb(hKey string, sKey string, kVal string) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func updateKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	WasteLibrary.LogStr("Update Db : " + hKey + " - " + sKey + " - " + kVal)
 	var updateSQL string = fmt.Sprintf(`UPDATE public.redisdata SET keyvalue='%s' WHERE hashkey='%s' AND subkey='%s';`, kVal, hKey, sKey)

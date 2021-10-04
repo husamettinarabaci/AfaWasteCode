@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -92,7 +91,7 @@ func handleTcpRequest(conn net.Conn) {
 				currentHttpHeader.OpType = opType
 				currentHttpHeader.DeviceNo = serialNo
 				currentHttpHeader.Time = time.Now().String()
-				currentHttpHeader.Repeat = 0
+				currentHttpHeader.Repeat = "0"
 				currentHttpHeader.DeviceId = 0
 				currentHttpHeader.CustomerId = 0
 				var currentDevice WasteLibrary.DeviceType = WasteLibrary.DeviceType{}
@@ -169,7 +168,7 @@ func handleTcpRequest(conn net.Conn) {
 }
 
 func data(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)

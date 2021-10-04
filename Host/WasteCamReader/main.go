@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -24,7 +23,7 @@ func main() {
 
 func reader(w http.ResponseWriter, req *http.Request) {
 
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)

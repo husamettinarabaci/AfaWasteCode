@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -13,7 +15,7 @@ import (
 )
 
 func main() {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	var opType string = "NO"
 	WasteLibrary.Debug = true
 	if opType == "CUSTOMER" {
@@ -188,7 +190,7 @@ func main() {
 			resultVal = devafatekresult.ByteToResultType(bodyBytes)
 			WasteLibrary.LogStr(resultVal.ToString())
 		}
-	} else {
+	} else if opType == "TCP" {
 
 		strEcho := "ULT#SENS#864450040594790#40#3241#E32.12345#N032.45678#10341#09872#11234#10341#09872#11234#10341#09872#11234#11234"
 		servAddr := "listener.aws.afatek.com.tr:20000"
@@ -223,6 +225,69 @@ func main() {
 		println("reply from server=", string(reply))
 
 		conn.Close()
+	} else {
+		var test1 TestType = TestType{
+			TagID:  45,
+			Status: WasteLibrary.OK,
+			Tags:   make(map[string]WasteLibrary.TagType),
+		}
+
+		var tag0 WasteLibrary.TagType = WasteLibrary.TagType{
+			TagID: 1,
+		}
+		var tag1 WasteLibrary.TagType = WasteLibrary.TagType{
+			TagID: 2,
+		}
+
+		test1.Tags[tag0.ToIdString()] = tag0
+		test1.Tags[tag1.ToIdString()] = tag1
+
+		fmt.Println(test1)
+		fmt.Println(test1.ToString())
+
+		var test2 = StringToTestType(test1.ToString())
+
+		fmt.Println(test2)
+		fmt.Println(test2.ToString())
+
+		var conval = WasteLibrary.CONNECTED
+		if conval == "CONNECTED" {
+			fmt.Println("1")
+		} else {
+			fmt.Println("2")
+		}
+
 	}
 
+}
+
+type TestType struct {
+	TagID  float64
+	Status WasteLibrary.StatusType
+	Tags   map[string]WasteLibrary.TagType
+}
+
+func (res TestType) ToIdString() string {
+	return fmt.Sprintf("%.0f", res.TagID)
+}
+
+func (res TestType) ToByte() []byte {
+	jData, _ := json.Marshal(res)
+	return jData
+
+}
+
+func (res TestType) ToString() string {
+	return string(res.ToByte())
+
+}
+
+func ByteToTestType(retByte []byte) TestType {
+	var retVal TestType
+	json.Unmarshal(retByte, &retVal)
+	return retVal
+}
+
+func StringToTestType(retStr string) TestType {
+	return ByteToTestType([]byte(retStr))
 }

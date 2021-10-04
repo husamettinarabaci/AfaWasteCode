@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: waste-logserver
-        image: devafatek/wastelogserver
+        image: devafatek/wastelogserver:1.0
         ports:
         - containerPort: 80
         livenessProbe:

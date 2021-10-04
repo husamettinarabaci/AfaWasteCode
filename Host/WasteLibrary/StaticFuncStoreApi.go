@@ -2,45 +2,43 @@ package WasteLibrary
 
 import (
 	"net/url"
-
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 )
 
 //SaveBulkDbMainForStoreApi
-func SaveBulkDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func SaveBulkDbMainForStoreApi(data url.Values) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveBulkDbMain", data)
 	return resultVal
 }
 
 //SaveStaticDbMainForStoreApi
-func SaveStaticDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func SaveStaticDbMainForStoreApi(data url.Values) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveStaticDbMain", data)
 	return resultVal
 }
 
 //GetStaticDbMainForStoreApi
-func GetStaticDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func GetStaticDbMainForStoreApi(data url.Values) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getStaticDbMain", data)
 	return resultVal
 }
 
 //SaveReaderDbMainForStoreApi
-func SaveReaderDbMainForStoreApi(data url.Values) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func SaveReaderDbMainForStoreApi(data url.Values) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveReaderDbMain", data)
 	return resultVal
 }
 
 //SaveRedisForStoreApi
-func SaveRedisForStoreApi(hKey string, sKey string, kVal string) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func SaveRedisForStoreApi(hKey string, sKey string, kVal string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	data := url.Values{
 		"HASHKEY":  {hKey},
@@ -52,8 +50,8 @@ func SaveRedisForStoreApi(hKey string, sKey string, kVal string) devafatekresult
 }
 
 //GetRedisForStoreApi
-func GetRedisForStoreApi(hKey string, sKey string) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func GetRedisForStoreApi(hKey string, sKey string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	resultVal.Result = "FAIL"
 	data := url.Values{
 		"HASHKEY": {hKey},

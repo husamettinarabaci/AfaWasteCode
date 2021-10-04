@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"gitee.com/wiseai/go-rpio"
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -46,13 +45,13 @@ func main() {
 }
 
 func trigger(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 
-	opType := req.FormValue("OPTYPE")
+	opType := req.FormValue(WasteLibrary.OPTYPE)
 	WasteLibrary.LogStr(opType)
 
 	resultVal.Result = "FAIL"
@@ -122,8 +121,8 @@ func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, rep
 	}
 }
 
-func sendCam(readerDataTypeVal WasteLibrary.TagType) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func sendCam(readerDataTypeVal WasteLibrary.TagType) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 
 	data := url.Values{
 		"OPTYPE": {"CAM"},

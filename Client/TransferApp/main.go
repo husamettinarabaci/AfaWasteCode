@@ -11,7 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -71,7 +70,7 @@ func main() {
 }
 
 func trans(w http.ResponseWriter, req *http.Request) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
@@ -145,8 +144,8 @@ func uploadFile(session *session.Session, uploadFileDir string) error {
 	return err
 }
 
-func sendDataToServer(opType string, sendData string, dataTime string, repeat string) devafatekresult.ResultType {
-	var resultVal devafatekresult.ResultType
+func sendDataToServer(opType string, sendData string, dataTime string, repeat string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
 		AppType:    applicationType,
 		DeviceNo:   serialNumber,
@@ -172,7 +171,7 @@ func storeData(dataType string, sendData string) {
 }
 
 func resendData(opType string, fileName string) {
-	var resultVal devafatekresult.ResultType
+	var resultVal WasteLibrary.ResultType
 	if opType == "CAM" {
 		sendFileToServer(fileName)
 	} else {
