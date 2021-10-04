@@ -16,19 +16,19 @@ var opInterval time.Duration = 5 * 60
 var contactPort string = os.Getenv("CONTACT_PORT")
 var currentUser string
 var currentDeviceType WasteLibrary.DeviceType = WasteLibrary.DeviceType{
-	ReaderAppStatus:   "1",
-	ReaderConnStatus:  "0",
-	ReaderStatus:      "0",
-	CamAppStatus:      "1",
-	CamConnStatus:     "0",
-	CamStatus:         "0",
-	GpsAppStatus:      "1",
-	GpsConnStatus:     "0",
-	GpsStatus:         "0",
-	ThermAppStatus:    "1",
-	TransferAppStatus: "1",
-	AliveStatus:       "1",
-	ContactStatus:     "0",
+	ReaderAppStatus:   WasteLibrary.PASSIVE,
+	ReaderConnStatus:  WasteLibrary.PASSIVE,
+	ReaderStatus:      WasteLibrary.PASSIVE,
+	CamAppStatus:      WasteLibrary.PASSIVE,
+	CamConnStatus:     WasteLibrary.PASSIVE,
+	CamStatus:         WasteLibrary.PASSIVE,
+	GpsAppStatus:      WasteLibrary.PASSIVE,
+	GpsConnStatus:     WasteLibrary.PASSIVE,
+	GpsStatus:         WasteLibrary.PASSIVE,
+	ThermAppStatus:    WasteLibrary.PASSIVE,
+	TransferAppStatus: WasteLibrary.PASSIVE,
+	AliveStatus:       WasteLibrary.ACTIVE,
+	ContactStatus:     WasteLibrary.PASSIVE,
 }
 
 type statusType struct {
@@ -40,67 +40,67 @@ type statusType struct {
 var statusTypes []statusType = []statusType{
 	{
 		Name: "readerAppStatus",
-		Key:  "APP",
+		Key:  WasteLibrary.APP,
 		Port: "10001",
 	},
 	{
 		Name: "readerConnStatus",
-		Key:  "CONN",
+		Key:  WasteLibrary.CONN,
 		Port: "10001",
 	},
 	{
 		Name: "readerStatus",
-		Key:  "READER",
+		Key:  WasteLibrary.READER,
 		Port: "10001",
 	},
 	{
 		Name: "camAppStatus",
-		Key:  "APP",
+		Key:  WasteLibrary.APP,
 		Port: "10002",
 	},
 	{
 		Name: "camConnStatus",
-		Key:  "CONN",
+		Key:  WasteLibrary.CONN,
 		Port: "10002",
 	},
 	{
 		Name: "camStatus",
-		Key:  "CAM",
+		Key:  WasteLibrary.CAM,
 		Port: "10002",
 	},
 	{
 		Name: "gpsAppStatus",
-		Key:  "APP",
+		Key:  WasteLibrary.APP,
 		Port: "10003",
 	},
 	{
 		Name: "gpsConnStatus",
-		Key:  "CONN",
+		Key:  WasteLibrary.CONN,
 		Port: "10003",
 	},
 	{
 		Name: "gpsStatus",
-		Key:  "GPS",
+		Key:  WasteLibrary.GPS,
 		Port: "10003",
 	},
 	{
 		Name: "thermAppStatus",
-		Key:  "APP",
+		Key:  WasteLibrary.APP,
 		Port: "10004",
 	},
 	{
 		Name: "transferAppStatus",
-		Key:  "APP",
+		Key:  WasteLibrary.APP,
 		Port: "10000",
 	},
 	{
 		Name: "aliveStatus",
-		Key:  "NONE",
+		Key:  WasteLibrary.NONE,
 		Port: "",
 	},
 	{
 		Name: "contactStatus",
-		Key:  "NONE",
+		Key:  WasteLibrary.NONE,
 		Port: "",
 	},
 }
@@ -117,7 +117,7 @@ func main() {
 	initStart()
 
 	for i := range statusTypes {
-		if statusTypes[i].Key == "NONE" {
+		if statusTypes[i].Key == WasteLibrary.NONE {
 			continue
 		}
 		go statusCheck(i)
@@ -137,15 +137,15 @@ func main() {
 func statusCheck(statusTypeIndex int) {
 	var resultVal WasteLibrary.ResultType
 	for {
-		var lastStatus = "0"
+		var lastStatus = WasteLibrary.PASSIVE
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			"OPTYPE": {statusTypes[statusTypeIndex].Key},
+			WasteLibrary.OPTYPE: {statusTypes[statusTypeIndex].Key},
 		}
 
 		resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:"+statusTypes[statusTypeIndex].Port+"/status", data)
-		if resultVal.Result == "OK" {
-			lastStatus = "1"
+		if resultVal.Result == WasteLibrary.OK {
+			lastStatus = WasteLibrary.ACTIVE
 		}
 
 		if statusTypes[statusTypeIndex].Name == "readerAppStatus" {
@@ -189,9 +189,9 @@ func contactCheck() {
 			pin := rpio.Pin(conPort)
 			var tempData = rpio.ReadPin(pin) == 1
 			if tempData {
-				currentDeviceType.ContactStatus = "1"
+				currentDeviceType.ContactStatus = WasteLibrary.ACTIVE
 			} else {
-				currentDeviceType.ContactStatus = "0"
+				currentDeviceType.ContactStatus = WasteLibrary.PASSIVE
 			}
 			rpio.Close()
 		}
@@ -204,8 +204,8 @@ func sendStatus() {
 		time.Sleep(opInterval * time.Second)
 
 		data := url.Values{
-			"OPTYPE": {"STATUS"},
-			"DATA":   {currentDeviceType.ToString()},
+			WasteLibrary.OPTYPE: {WasteLibrary.STATUS},
+			WasteLibrary.DATA:   {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

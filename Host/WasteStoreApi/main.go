@@ -108,13 +108,13 @@ func main() {
 
 func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	dataVal := req.FormValue("DATA")
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
+	dataVal := req.FormValue(WasteLibrary.DATA)
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 	WasteLibrary.LogStr("Data : " + dataVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata(
@@ -124,28 +124,28 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	_, errDb := bulkDb.Exec(insertSQL)
 	if errDb != nil {
 		WasteLibrary.LogErr(err)
-		resultVal.Result = "FAIL"
+		resultVal.Result = WasteLibrary.FAIL
 	} else {
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 	}
 	w.Write(resultVal.ToByte())
 }
 
 func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue("DATA"))
-	if currentHttpHeader.AppType == "RFID" {
+	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.DATA))
+	if currentHttpHeader.AppType == WasteLibrary.RFID {
 		var execSQL string = ""
-		if currentHttpHeader.OpType == "RF" {
-			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+		if currentHttpHeader.OpType == WasteLibrary.RF {
+			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			var selectSQL string = fmt.Sprintf(`SELECT tag_id
@@ -153,9 +153,9 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			rows, errSel := staticDb.Query(selectSQL)
 			if errSel != nil {
 				WasteLibrary.LogErr(errSel)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 			var tagID int = 0
 			for rows.Next() {
@@ -164,9 +164,9 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			if tagID != 0 {
 				if currentData.Latitude == 0 || currentData.Longitude == 0 {
 					execSQL = fmt.Sprintf(`UPDATE public.tags
-					SET uid='%s',read_time='%s',statu='1',device_id=%f
+					SET uid='%s',read_time='%s',statu='%s',device_id=%f
 				   WHERE epc='%s' AND customer_id=%f 
-				   RETURNING tag_id;`, currentData.UID, currentData.ReadTime,
+				   RETURNING tag_id;`, currentData.UID, currentData.ReadTime, WasteLibrary.ACTIVE,
 						currentHttpHeader.DeviceId, currentData.Epc, currentHttpHeader.CustomerId)
 					WasteLibrary.LogStr(execSQL)
 				} else {
@@ -192,17 +192,17 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&tagID)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.TagID = float64(tagID)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == "GPS" {
+		} else if currentHttpHeader.OpType == WasteLibrary.GPS {
 
-			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
@@ -216,17 +216,17 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.DeviceId = float64(deviceID)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == "ARVENTO" {
+		} else if currentHttpHeader.OpType == WasteLibrary.ARVENTO {
 
-			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
@@ -240,59 +240,59 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.DeviceId = float64(deviceID)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == "STATUS" {
+		} else if currentHttpHeader.OpType == WasteLibrary.STATUS {
 
-			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			var execSqlExt = ""
-			if currentData.ReaderAppStatus == "1" {
+			if currentData.ReaderAppStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",reader_app_last_ok_time='" + currentData.ReaderAppLastOkTime + "'"
 			}
-			if currentData.ReaderConnStatus == "1" {
+			if currentData.ReaderConnStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",reader_conn_last_ok_time='" + currentData.ReaderConnLastOkTime + "'"
 			}
-			if currentData.ReaderStatus == "1" {
+			if currentData.ReaderStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",reader_last_ok_time='" + currentData.ReaderLastOkTime + "'"
 			}
 
-			if currentData.CamAppStatus == "1" {
+			if currentData.CamAppStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",cam_app_last_ok_time='" + currentData.CamAppLastOkTime + "'"
 			}
-			if currentData.CamConnStatus == "1" {
+			if currentData.CamConnStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",cam_conn_last_ok_time='" + currentData.CamConnLastOkTime + "'"
 			}
-			if currentData.CamStatus == "1" {
+			if currentData.CamStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",cam_last_ok_time='" + currentData.CamLastOkTime + "'"
 			}
 
-			if currentData.GpsAppStatus == "1" {
+			if currentData.GpsAppStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",gps_app_last_ok_time='" + currentData.GpsAppLastOkTime + "'"
 			}
-			if currentData.GpsConnStatus == "1" {
+			if currentData.GpsConnStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",gps_conn_last_ok_time='" + currentData.GpsConnLastOkTime + "'"
 			}
-			if currentData.GpsStatus == "1" {
+			if currentData.GpsStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",gps_last_ok_time='" + currentData.GpsLastOkTime + "'"
 			}
 
-			if currentData.ThermAppStatus == "1" {
+			if currentData.ThermAppStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",therm_app_last_ok_time='" + currentData.ThermAppLastOkTime + "'"
 			}
-			if currentData.TransferAppStatus == "1" {
+			if currentData.TransferAppStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",transfer_app_last_ok_time='" + currentData.TransferAppLastOkTime + "'"
 			}
-			if currentData.AliveStatus == "1" {
+			if currentData.AliveStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",alive_last_ok_time='" + currentData.AliveLastOkTime + "'"
 			}
-			if currentData.ContactStatus == "1" {
+			if currentData.ContactStatus == WasteLibrary.ACTIVE {
 				execSqlExt += ",contact_last_ok_time='" + currentData.ContactLastOkTime + "'"
 			}
 
@@ -314,17 +314,17 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.DeviceId = float64(deviceID)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == "THERM" {
+		} else if currentHttpHeader.OpType == WasteLibrary.THERM {
 
-			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`UPDATE public.devices
@@ -337,27 +337,27 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&deviceID)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.DeviceId = float64(deviceID)
 			resultVal.Retval = currentData.ToIdString()
 
 		} else {
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		}
 
-	} else if currentHttpHeader.AppType == "ULT" {
-		resultVal.Result = "OK"
-	} else if currentHttpHeader.AppType == "RECY" {
-		resultVal.Result = "OK"
-	} else if currentHttpHeader.AppType == "ADMIN" {
+	} else if currentHttpHeader.AppType == WasteLibrary.ULT {
+		resultVal.Result = WasteLibrary.OK
+	} else if currentHttpHeader.AppType == WasteLibrary.RECY {
+		resultVal.Result = WasteLibrary.OK
+	} else if currentHttpHeader.AppType == WasteLibrary.ADMIN {
 		var execSQL string = ""
-		if currentHttpHeader.OpType == "CUSTOMER" {
+		if currentHttpHeader.OpType == WasteLibrary.CUSTOMER {
 
-			var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
+			var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			if currentData.CustomerId != 0 {
@@ -380,17 +380,17 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&customerId)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.CustomerId = float64(customerId)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == "DEVICE" {
+		} else if currentHttpHeader.OpType == WasteLibrary.DEVICE {
 
-			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			if currentData.DeviceId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.devices 
@@ -414,17 +414,17 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.DeviceId = float64(deviceId)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == "USER" {
+		} else if currentHttpHeader.OpType == WasteLibrary.USER {
 
-			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue("DATA"))
+			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			if currentData.UserId != 0 {
 				execSQL = fmt.Sprintf(`UPDATE public.users 
@@ -448,39 +448,39 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := staticDb.QueryRow(execSQL).Scan(&userId)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.UserId = float64(userId)
 			resultVal.Retval = currentData.ToIdString()
 
 		} else {
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		}
 	} else {
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 	}
 	w.Write(resultVal.ToByte())
 }
 
 func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue("DATA"))
-	if currentHttpHeader.AppType == "RFID" {
+	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.DATA))
+	if currentHttpHeader.AppType == WasteLibrary.RFID {
 		var execSQL string = ""
-		if currentHttpHeader.OpType == "TAG" {
+		if currentHttpHeader.OpType == WasteLibrary.TAG {
 
-			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`INSERT INTO public.tagdata 
@@ -501,17 +501,17 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.DeviceId = float64(deviceId)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == "DEVICE" {
+		} else if currentHttpHeader.OpType == WasteLibrary.DEVICE {
 
-			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = fmt.Sprintf(`INSERT INTO public.devicedata 
@@ -649,37 +649,37 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 			errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
 			if errDb != nil {
 				WasteLibrary.LogErr(errDb)
-				resultVal.Result = "FAIL"
+				resultVal.Result = WasteLibrary.FAIL
 			} else {
-				resultVal.Result = "OK"
+				resultVal.Result = WasteLibrary.OK
 			}
 
 			currentData.DeviceId = float64(deviceId)
 			resultVal.Retval = currentData.ToIdString()
 
 		} else {
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		}
 	} else {
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 	}
 	w.Write(resultVal.ToByte())
 }
 
 func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue("DATA"))
+	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.DATA))
 	var execSQL string = ""
-	if currentHttpHeader.BaseDataType == "CUSTOMER" {
+	if currentHttpHeader.BaseDataType == WasteLibrary.CUSTOMER {
 
-		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue("DATA"))
+		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.DATA))
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.CustomerId != 0 {
@@ -705,16 +705,16 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.CreateTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		} else {
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 		}
 
 		resultVal.Retval = currentData.ToString()
 
-	} else if currentHttpHeader.BaseDataType == "DEVICE" {
+	} else if currentHttpHeader.BaseDataType == WasteLibrary.DEVICE {
 
-		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.DeviceId != 0 {
@@ -839,16 +839,16 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.CreateTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		} else {
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 		}
 
 		resultVal.Retval = currentData.ToString()
 
-	} else if currentHttpHeader.BaseDataType == "USER" {
+	} else if currentHttpHeader.BaseDataType == WasteLibrary.USER {
 
-		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue("DATA"))
+		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.DATA))
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.UserId != 0 {
@@ -872,16 +872,16 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.CreateTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		} else {
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 		}
 
 		resultVal.Retval = currentData.ToString()
 
-	} else if currentHttpHeader.BaseDataType == "TAG" {
+	} else if currentHttpHeader.BaseDataType == WasteLibrary.TAG {
 
-		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.TagID != 0 {
@@ -919,15 +919,15 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.CreateTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		} else {
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 		}
 
 		resultVal.Retval = currentData.ToString()
 
 	} else {
-		resultVal.Result = "FAIL"
+		resultVal.Result = WasteLibrary.FAIL
 	}
 
 	w.Write(resultVal.ToByte())
@@ -935,19 +935,19 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 
 func getkey(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	hKey := req.FormValue("HASHKEY")
-	sKey := req.FormValue("SUBKEY")
+	hKey := req.FormValue(WasteLibrary.HASHKEY)
+	sKey := req.FormValue(WasteLibrary.SUBKEY)
 	WasteLibrary.LogStr("GetKey : " + hKey + " - " + sKey)
 	resultVal = getKeyRedis(hKey, sKey)
 	WasteLibrary.LogStr("RetValByRedis : " + resultVal.ToString())
-	if resultVal.Result == "FAIL" {
+	if resultVal.Result == WasteLibrary.FAIL {
 		resultVal = getKeyDb(hKey, sKey)
-		if resultVal.Result != "FAIL" {
+		if resultVal.Result != WasteLibrary.FAIL {
 			setKeyRedis(hKey, sKey, resultVal.Retval.(string))
 		}
 	}
@@ -956,18 +956,18 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 
 func setkey(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	hKey := req.FormValue("HASHKEY")
-	sKey := req.FormValue("SUBKEY")
-	kVal := req.FormValue("KEYVALUE")
+	hKey := req.FormValue(WasteLibrary.HASHKEY)
+	sKey := req.FormValue(WasteLibrary.SUBKEY)
+	kVal := req.FormValue(WasteLibrary.KEYVALUE)
 	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
 	resultVal = getKeyDb(hKey, sKey)
 	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
-	if resultVal.Result == "FAIL" {
+	if resultVal.Result == WasteLibrary.FAIL {
 		resultVal = insertKeyDb(hKey, sKey, kVal)
 	} else {
 		resultVal = updateKeyDb(hKey, sKey, kVal)
@@ -979,7 +979,7 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 
 func getKeyRedis(hKey string, sKey string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	var val string = ""
 	var err error
 	if hKey != "" {
@@ -990,14 +990,14 @@ func getKeyRedis(hKey string, sKey string) WasteLibrary.ResultType {
 	switch {
 	case err == redis.Nil:
 		WasteLibrary.LogStr("Not Found")
-		resultVal.Result = "FAIL"
+		resultVal.Result = WasteLibrary.FAIL
 	case err != nil:
 		WasteLibrary.LogErr(err)
 	case val == "":
 		WasteLibrary.LogStr("Not Found")
-		resultVal.Result = "FAIL"
+		resultVal.Result = WasteLibrary.FAIL
 	case val != "":
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 		resultVal.Retval = val
 		WasteLibrary.LogStr(resultVal.ToString())
 	}
@@ -1023,23 +1023,23 @@ func setKeyRedis(hKey string, sKey string, kVal string) {
 
 func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	WasteLibrary.LogStr("Serach Db : " + hKey + " - " + sKey)
 
 	var selectSQL string = fmt.Sprintf(`SELECT keyvalue 
 	FROM public.redisdata WHERE hashkey='%s' AND subkey='%s';`, hKey, sKey)
 	rows, errSel := sumDb.Query(selectSQL)
 	WasteLibrary.LogErr(errSel)
-	var kVal string = "NOT"
+	var kVal string = WasteLibrary.NOT
 	for rows.Next() {
 		rows.Scan(&kVal)
 	}
 
-	if kVal == "NOT" {
-		resultVal.Result = "FAIL"
+	if kVal == WasteLibrary.NOT {
+		resultVal.Result = WasteLibrary.FAIL
 	} else {
 		resultVal.Retval = kVal
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 	}
 	WasteLibrary.LogStr("KeyValue : " + kVal)
 	return resultVal
@@ -1047,24 +1047,24 @@ func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 
 func insertKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	WasteLibrary.LogStr("Insert Db : " + hKey + " - " + sKey + " - " + kVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.redisdata(
 		hashkey,subkey,keyvalue)
 	   VALUES ('%s','%s','%s');`, hKey, sKey, kVal)
 	_, errDb := sumDb.Exec(insertSQL)
 	WasteLibrary.LogErr(errDb)
-	resultVal.Result = "OK"
+	resultVal.Result = WasteLibrary.OK
 	return resultVal
 }
 
 func updateKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	WasteLibrary.LogStr("Update Db : " + hKey + " - " + sKey + " - " + kVal)
 	var updateSQL string = fmt.Sprintf(`UPDATE public.redisdata SET keyvalue='%s' WHERE hashkey='%s' AND subkey='%s';`, kVal, hKey, sKey)
 	_, errDb := sumDb.Exec(updateSQL)
 	WasteLibrary.LogErr(errDb)
-	resultVal.Result = "OK"
+	resultVal.Result = WasteLibrary.OK
 	return resultVal
 }

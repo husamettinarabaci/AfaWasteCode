@@ -54,23 +54,23 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 	opType := req.FormValue(WasteLibrary.OPTYPE)
 	WasteLibrary.LogStr(opType)
 
-	resultVal.Result = "FAIL"
-	if opType == "RF" {
-		var readerDataTypeVal WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+	resultVal.Result = WasteLibrary.FAIL
+	if opType == WasteLibrary.RF {
+		var readerDataTypeVal WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
 		if integratedPortInt == 4 {
 			integratedPortInt = 1
 		}
 		go doRecord(readerDataTypeVal, strconv.Itoa(integratedPortInt), true)
 		integratedPortInt++
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 	} else {
-		resultVal.Result = "FAIL"
+		resultVal.Result = WasteLibrary.FAIL
 	}
 	w.Write(resultVal.ToByte())
 }
 
 func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, repeat bool) {
-	WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
+	WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.PASSIVE
 	WasteLibrary.LogStr("Do Record : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.UID + " - " + strconv.FormatBool(repeat))
 	cmd := exec.Command("timeout", "30", "ffmpeg", "-y", "-v", "0", "-loglevel", "0", "-hide_banner", "-f", "mpegts", "-i", "udp://localhost:1000"+integratedPort, "-t", "7", "-vb", "128k", "-threads", "7", "-map", "0:0", "-map", "-0:1", "-map", "-0:2", "-c:v", "libx264", "-pix_fmt", "yuvj420p", "-f", "mp4", "WAIT_CAM/"+readerDataTypeVal.UID+".mp4")
 	cmd.Stderr = os.Stderr
@@ -108,7 +108,7 @@ func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, rep
 				cmdPic := exec.Command("ffmpeg", "-y", "-i", "WAIT_CAM/"+readerDataTypeVal.UID+".mp4", "-vf", "thumbnail,scale=150:100", "-frames:v", "1", "WAIT_CAM/"+readerDataTypeVal.UID+".png")
 				cmdPic.Run()
 
-				WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
+				WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.ACTIVE
 				sendCam(readerDataTypeVal)
 			}
 		} else {
@@ -125,8 +125,8 @@ func sendCam(readerDataTypeVal WasteLibrary.TagType) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 
 	data := url.Values{
-		"OPTYPE": {"CAM"},
-		"DATA":   {readerDataTypeVal.ToString()},
+		WasteLibrary.OPTYPE: {WasteLibrary.CAM},
+		WasteLibrary.DATA:   {readerDataTypeVal.ToString()},
 	}
 
 	resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
@@ -139,15 +139,15 @@ func camCheck() {
 		ifaces, err := net.Interfaces()
 		if err != nil {
 			WasteLibrary.LogErr(err)
-			WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+			WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
 		}
 
-		WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+		WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
 		for _, i := range ifaces {
 			addrs, err := i.Addrs()
 			if err != nil {
 				WasteLibrary.LogErr(err)
-				WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
 			}
 			for _, addr := range addrs {
 				var ip net.IP
@@ -160,12 +160,12 @@ func camCheck() {
 				ipStr := fmt.Sprintf("%s", ip)
 				WasteLibrary.LogStr(ipStr)
 				if ipStr == "10.0.0.1" {
-					WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
+					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.ACTIVE
 				}
 			}
 		}
 
-		if time.Since(lastCamRelayTime).Seconds() > 60*60 && WasteLibrary.CurrentCheckStatu.ConnStatu == "0" {
+		if time.Since(lastCamRelayTime).Seconds() > 60*60 && WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.PASSIVE {
 
 			lastCamRelayTime = time.Now()
 			WasteLibrary.LogStr("Restart cam...")

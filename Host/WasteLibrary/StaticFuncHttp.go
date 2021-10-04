@@ -5,18 +5,16 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 )
 
 //AppStatus
-var AppStatus string = "1"
+var AppStatus string = ACTIVE
 
 //ConnStatus
-var ConnStatus string = "0"
+var ConnStatus string = PASSIVE
 
 //DeviceStatus
-var DeviceStatus string = "0"
+var DeviceStatus string = PASSIVE
 
 //HealthHandler
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,44 +28,44 @@ func ReadinessHandler(w http.ResponseWriter, r *http.Request) {
 
 //StaStatusHandlertus
 func StatusHandler(w http.ResponseWriter, req *http.Request) {
-	var resultVal WasteLibrary.ResultType
+	var resultVal ResultType
 	if err := req.ParseForm(); err != nil {
 		LogErr(err)
-		resultVal.Result = "FAIL"
+		resultVal.Result = FAIL
 	} else {
 
-		opType := req.FormValue("OPTYPE")
+		opType := req.FormValue(OPTYPE)
 		LogStr(opType)
-		resultVal.Result = "FAIL"
-		if opType == "APP" {
-			if CurrentCheckStatu.AppStatu == "1" {
-				resultVal.Result = "OK"
+		resultVal.Result = FAIL
+		if opType == APP {
+			if CurrentCheckStatu.AppStatu == ACTIVE {
+				resultVal.Result = OK
 			} else {
-				resultVal.Result = "FAIL"
+				resultVal.Result = FAIL
 			}
-		} else if opType == "CONN" {
-			if CurrentCheckStatu.ConnStatu == "1" {
-				resultVal.Result = "OK"
+		} else if opType == CONN {
+			if CurrentCheckStatu.ConnStatu == ACTIVE {
+				resultVal.Result = OK
 			} else {
-				resultVal.Result = "FAIL"
+				resultVal.Result = FAIL
 			}
-		} else if opType == "CAM" {
-			if CurrentCheckStatu.DeviceStatu == "1" {
-				resultVal.Result = "OK"
+		} else if opType == CAM {
+			if CurrentCheckStatu.DeviceStatu == ACTIVE {
+				resultVal.Result = OK
 			} else {
-				resultVal.Result = "FAIL"
+				resultVal.Result = FAIL
 			}
 		} else {
-			resultVal.Result = "FAIL"
+			resultVal.Result = FAIL
 		}
 	}
 	w.Write(resultVal.ToByte())
 }
 
 //HttpPostReq
-func HttpPostReq(url string, data url.Values) WasteLibrary.ResultType {
-	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+func HttpPostReq(url string, data url.Values) ResultType {
+	var resultVal ResultType
+	resultVal.Result = FAIL
 	client := http.Client{
 		Timeout: 10 * time.Second,
 	}
@@ -80,7 +78,7 @@ func HttpPostReq(url string, data url.Values) WasteLibrary.ResultType {
 		if err != nil {
 			LogErr(err)
 		}
-		resultVal = devafatekresult.ByteToResultType(bodyBytes)
+		resultVal = ByteToResultType(bodyBytes)
 		LogStr(resultVal.ToString())
 	}
 

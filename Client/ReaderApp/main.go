@@ -86,24 +86,24 @@ func rfCheck() {
 			serialPort, err = devafatekserial.Open(serialOptions0)
 			if err != nil {
 				WasteLibrary.LogErr(err)
-				WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
 			} else {
-				WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
+				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.ACTIVE
 			}
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == "0" {
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.PASSIVE {
 				serialPort, err = devafatekserial.Open(serialOptions1)
 				if err != nil {
 					WasteLibrary.LogErr(err)
-					WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
 				} else {
-					WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
+					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.ACTIVE
 				}
 			}
 
 			var data string = ""
 			var tempData string = ""
 
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == "1" {
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.ACTIVE {
 				for {
 					WasteLibrary.LogStr("Device OK")
 					buf := make([]byte, 256)
@@ -121,15 +121,15 @@ func rfCheck() {
 						data = strings.ToUpper(data)
 						WasteLibrary.LogStr(data)
 
-						if strings.Contains(data, "5379") || strings.Contains(data, "4354") {
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
+						if strings.Contains(data, WasteLibrary.READEROKBIT) || strings.Contains(data, WasteLibrary.READERSTARTBIT) {
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.ACTIVE
 						} else {
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.PASSIVE
 						}
 
 						tempData += data
 
-						if len(tempData) == 64 && tempData[:4] == "4354" && tempData[10:12] == "45" && tempData[36:50] == "AFA09012018AFA" {
+						if len(tempData) == 64 && tempData[:4] == WasteLibrary.READERSTARTBIT && tempData[10:12] == "45" && tempData[36:50] == WasteLibrary.TAGPATTERN {
 							if time.Since(readTags[tempData[36:60]]).Seconds() > 15*60 {
 								lastRfTag = tempData[36:60]
 								nid, _ := uuid.NewUUID()
@@ -156,8 +156,8 @@ func rfCheck() {
 
 func sendRf() {
 	data := url.Values{
-		"OPTYPE": {"RF"},
-		"DATA":   {currentTagDataType.ToString()},
+		WasteLibrary.OPTYPE: {WasteLibrary.RF},
+		WasteLibrary.DATA:   {currentTagDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 }
@@ -165,8 +165,8 @@ func sendRf() {
 func sendRfToCam() {
 
 	data := url.Values{
-		"OPTYPE": {"RF"},
-		"DATA":   {currentTagDataType.ToString()},
+		WasteLibrary.OPTYPE: {WasteLibrary.RF},
+		WasteLibrary.DATA:   {currentTagDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10002/trigger", data)
 }

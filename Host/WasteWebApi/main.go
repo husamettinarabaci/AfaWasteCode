@@ -34,7 +34,7 @@ func main() {
 func getLink(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 
 	var linkVal string = req.Host
 	WasteLibrary.LogStr("Get Link : " + linkVal)
@@ -44,13 +44,13 @@ func getLink(w http.ResponseWriter, req *http.Request) {
 func getCustomer(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
@@ -60,27 +60,27 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 			CustomerId:   1,
 			CustomerName: "Afatek",
 			CustomerLink: "afatek.aws.afatek.com.tr",
-			RfIdApp:      "1",
-			UltApp:       "1",
-			RecyApp:      "1",
-			Active:       "1",
+			RfIdApp:      WasteLibrary.ACTIVE,
+			UltApp:       WasteLibrary.ACTIVE,
+			RecyApp:      WasteLibrary.ACTIVE,
+			Active:       WasteLibrary.ACTIVE,
 			CreateTime:   time.Now().String(),
 		}
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 		resultVal.Retval = retVal.ToString()
 
 		w.Write(resultVal.ToByte())
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
-	if resultVal.Result != "OK" {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customers", customerId)
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, customerId)
 
 	w.Write(resultVal.ToByte())
 }
@@ -88,188 +88,188 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 func getDevice(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	if testapp {
-		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
+		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
 		if currentData.DeviceId == 1 {
 			var retVal WasteLibrary.DeviceType = WasteLibrary.DeviceType{
 				DeviceId:              1,
 				CustomerId:            1,
 				DeviceName:            "06 AFA 001",
-				DeviceType:            "RFID",
+				DeviceType:            WasteLibrary.RFID,
 				SerialNumber:          "000001",
-				ReaderAppStatus:       "1",
-				ReaderAppLastOkTime:   "1",
-				ReaderConnStatus:      "1",
+				ReaderAppStatus:       WasteLibrary.ACTIVE,
+				ReaderAppLastOkTime:   WasteLibrary.ACTIVE,
+				ReaderConnStatus:      WasteLibrary.ACTIVE,
 				ReaderConnLastOkTime:  time.Now().String(),
-				ReaderStatus:          "1",
+				ReaderStatus:          WasteLibrary.ACTIVE,
 				ReaderLastOkTime:      time.Now().String(),
-				CamAppStatus:          "1",
+				CamAppStatus:          WasteLibrary.ACTIVE,
 				CamAppLastOkTime:      time.Now().String(),
-				CamConnStatus:         "1",
+				CamConnStatus:         WasteLibrary.ACTIVE,
 				CamConnLastOkTime:     time.Now().String(),
-				CamStatus:             "1",
+				CamStatus:             WasteLibrary.ACTIVE,
 				CamLastOkTime:         time.Now().String(),
-				GpsAppStatus:          "1",
+				GpsAppStatus:          WasteLibrary.ACTIVE,
 				GpsAppLastOkTime:      time.Now().String(),
-				GpsConnStatus:         "1",
+				GpsConnStatus:         WasteLibrary.ACTIVE,
 				GpsConnLastOkTime:     time.Now().String(),
-				GpsStatus:             "1",
+				GpsStatus:             WasteLibrary.ACTIVE,
 				GpsLastOkTime:         time.Now().String(),
-				ThermAppStatus:        "1",
+				ThermAppStatus:        WasteLibrary.ACTIVE,
 				ThermAppLastOkTime:    time.Now().String(),
-				TransferAppStatus:     "1",
+				TransferAppStatus:     WasteLibrary.ACTIVE,
 				TransferAppLastOkTime: time.Now().String(),
-				AliveStatus:           "1",
+				AliveStatus:           WasteLibrary.ACTIVE,
 				AliveLastOkTime:       time.Now().String(),
-				ContactStatus:         "1",
+				ContactStatus:         WasteLibrary.ACTIVE,
 				ContactLastOkTime:     time.Now().String(),
 				Therm:                 "39",
 				Latitude:              37.03633,
 				Longitude:             27.41585,
 				Speed:                 0,
 				UltRange:              4785,
-				UltStatus:             "1",
-				DeviceStatus:          "1",
-				AlarmStatus:           "1",
+				UltStatus:             WasteLibrary.ACTIVE,
+				DeviceStatus:          WasteLibrary.ACTIVE,
+				AlarmStatus:           WasteLibrary.ACTIVE,
 				TotalGlassCount:       345,
 				TotalPlasticCount:     567,
 				TotalMetalCount:       890,
 				UltTime:               time.Now().String(),
 				AlarmTime:             time.Now().String(),
-				AlarmType:             "THERM",
+				AlarmType:             WasteLibrary.THERM,
 				Alarm:                 "Therm : 85",
 				RecyTime:              time.Now().String(),
-				Active:                "1",
+				Active:                WasteLibrary.ACTIVE,
 				ThermTime:             time.Now().String(),
 				GpsTime:               time.Now().String(),
 				StatusTime:            time.Now().String(),
 				CreateTime:            time.Now().String(),
 			}
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
 		} else if currentData.DeviceId == 2 {
 			var retVal WasteLibrary.DeviceType = WasteLibrary.DeviceType{
 				DeviceId:              2,
 				CustomerId:            1,
 				DeviceName:            "000002",
-				DeviceType:            "ULT",
+				DeviceType:            WasteLibrary.ULT,
 				SerialNumber:          "000002",
-				ReaderAppStatus:       "1",
-				ReaderAppLastOkTime:   "1",
-				ReaderConnStatus:      "1",
+				ReaderAppStatus:       WasteLibrary.ACTIVE,
+				ReaderAppLastOkTime:   WasteLibrary.ACTIVE,
+				ReaderConnStatus:      WasteLibrary.ACTIVE,
 				ReaderConnLastOkTime:  time.Now().String(),
-				ReaderStatus:          "1",
+				ReaderStatus:          WasteLibrary.ACTIVE,
 				ReaderLastOkTime:      time.Now().String(),
-				CamAppStatus:          "1",
+				CamAppStatus:          WasteLibrary.ACTIVE,
 				CamAppLastOkTime:      time.Now().String(),
-				CamConnStatus:         "1",
+				CamConnStatus:         WasteLibrary.ACTIVE,
 				CamConnLastOkTime:     time.Now().String(),
-				CamStatus:             "1",
+				CamStatus:             WasteLibrary.ACTIVE,
 				CamLastOkTime:         time.Now().String(),
-				GpsAppStatus:          "1",
+				GpsAppStatus:          WasteLibrary.ACTIVE,
 				GpsAppLastOkTime:      time.Now().String(),
-				GpsConnStatus:         "1",
+				GpsConnStatus:         WasteLibrary.ACTIVE,
 				GpsConnLastOkTime:     time.Now().String(),
-				GpsStatus:             "1",
+				GpsStatus:             WasteLibrary.ACTIVE,
 				GpsLastOkTime:         time.Now().String(),
-				ThermAppStatus:        "1",
+				ThermAppStatus:        WasteLibrary.ACTIVE,
 				ThermAppLastOkTime:    time.Now().String(),
-				TransferAppStatus:     "1",
+				TransferAppStatus:     WasteLibrary.ACTIVE,
 				TransferAppLastOkTime: time.Now().String(),
-				AliveStatus:           "1",
+				AliveStatus:           WasteLibrary.ACTIVE,
 				AliveLastOkTime:       time.Now().String(),
-				ContactStatus:         "1",
+				ContactStatus:         WasteLibrary.ACTIVE,
 				ContactLastOkTime:     time.Now().String(),
 				Therm:                 "39",
 				Latitude:              37.03652,
 				Longitude:             27.42111,
 				Speed:                 0,
 				UltRange:              4785,
-				UltStatus:             "1",
-				DeviceStatus:          "1",
-				AlarmStatus:           "1",
+				UltStatus:             WasteLibrary.ACTIVE,
+				DeviceStatus:          WasteLibrary.ACTIVE,
+				AlarmStatus:           WasteLibrary.ACTIVE,
 				TotalGlassCount:       345,
 				TotalPlasticCount:     567,
 				TotalMetalCount:       890,
 				UltTime:               time.Now().String(),
 				AlarmTime:             time.Now().String(),
-				AlarmType:             "THERM",
+				AlarmType:             WasteLibrary.THERM,
 				Alarm:                 "Therm : 85",
 				RecyTime:              time.Now().String(),
-				Active:                "1",
+				Active:                WasteLibrary.ACTIVE,
 				ThermTime:             time.Now().String(),
 				GpsTime:               time.Now().String(),
 				StatusTime:            time.Now().String(),
 				CreateTime:            time.Now().String(),
 			}
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
 		} else if currentData.DeviceId == 3 {
 			var retVal WasteLibrary.DeviceType = WasteLibrary.DeviceType{
 				DeviceId:              3,
 				CustomerId:            1,
 				DeviceName:            "000003",
-				DeviceType:            "RECY",
+				DeviceType:            WasteLibrary.RECY,
 				SerialNumber:          "000003",
-				ReaderAppStatus:       "1",
-				ReaderAppLastOkTime:   "1",
-				ReaderConnStatus:      "1",
+				ReaderAppStatus:       WasteLibrary.ACTIVE,
+				ReaderAppLastOkTime:   WasteLibrary.ACTIVE,
+				ReaderConnStatus:      WasteLibrary.ACTIVE,
 				ReaderConnLastOkTime:  time.Now().String(),
-				ReaderStatus:          "1",
+				ReaderStatus:          WasteLibrary.ACTIVE,
 				ReaderLastOkTime:      time.Now().String(),
-				CamAppStatus:          "1",
+				CamAppStatus:          WasteLibrary.ACTIVE,
 				CamAppLastOkTime:      time.Now().String(),
-				CamConnStatus:         "1",
+				CamConnStatus:         WasteLibrary.ACTIVE,
 				CamConnLastOkTime:     time.Now().String(),
-				CamStatus:             "1",
+				CamStatus:             WasteLibrary.ACTIVE,
 				CamLastOkTime:         time.Now().String(),
-				GpsAppStatus:          "1",
+				GpsAppStatus:          WasteLibrary.ACTIVE,
 				GpsAppLastOkTime:      time.Now().String(),
-				GpsConnStatus:         "1",
+				GpsConnStatus:         WasteLibrary.ACTIVE,
 				GpsConnLastOkTime:     time.Now().String(),
-				GpsStatus:             "1",
+				GpsStatus:             WasteLibrary.ACTIVE,
 				GpsLastOkTime:         time.Now().String(),
-				ThermAppStatus:        "1",
+				ThermAppStatus:        WasteLibrary.ACTIVE,
 				ThermAppLastOkTime:    time.Now().String(),
-				TransferAppStatus:     "1",
+				TransferAppStatus:     WasteLibrary.ACTIVE,
 				TransferAppLastOkTime: time.Now().String(),
-				AliveStatus:           "1",
+				AliveStatus:           WasteLibrary.ACTIVE,
 				AliveLastOkTime:       time.Now().String(),
-				ContactStatus:         "1",
+				ContactStatus:         WasteLibrary.ACTIVE,
 				ContactLastOkTime:     time.Now().String(),
 				Therm:                 "39",
 				Latitude:              37.03732,
 				Longitude:             27.41609,
 				Speed:                 0,
 				UltRange:              4785,
-				UltStatus:             "1",
-				DeviceStatus:          "1",
-				AlarmStatus:           "1",
+				UltStatus:             WasteLibrary.ACTIVE,
+				DeviceStatus:          WasteLibrary.ACTIVE,
+				AlarmStatus:           WasteLibrary.ACTIVE,
 				TotalGlassCount:       345,
 				TotalPlasticCount:     567,
 				TotalMetalCount:       890,
 				UltTime:               time.Now().String(),
 				AlarmTime:             time.Now().String(),
-				AlarmType:             "THERM",
+				AlarmType:             WasteLibrary.THERM,
 				Alarm:                 "Therm : 85",
 				RecyTime:              time.Now().String(),
-				Active:                "1",
+				Active:                WasteLibrary.ACTIVE,
 				ThermTime:             time.Now().String(),
 				GpsTime:               time.Now().String(),
 				StatusTime:            time.Now().String(),
 				CreateTime:            time.Now().String(),
 			}
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
 		} else {
 		}
@@ -278,21 +278,21 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
-	if resultVal.Result != "OK" {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 
-	var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue("DATA"))
-	resultVal = WasteLibrary.GetRedisForStoreApi("devices", currentData.ToIdString())
+	var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.DATA))
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, currentData.ToIdString())
 
 	currentData = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
 	if currentData.ToCustomerIdString() == customerId {
 		w.Write(resultVal.ToByte())
 	} else {
-		resultVal.Result = "FAIL"
+		resultVal.Result = WasteLibrary.FAIL
 		resultVal.Retval = ""
 		w.Write(resultVal.ToByte())
 	}
@@ -301,13 +301,13 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 func getDevices(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
@@ -323,51 +323,51 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 			DeviceId:              1,
 			CustomerId:            1,
 			DeviceName:            "06 AFA 001",
-			DeviceType:            "RFID",
+			DeviceType:            WasteLibrary.RFID,
 			SerialNumber:          "000001",
-			ReaderAppStatus:       "1",
-			ReaderAppLastOkTime:   "1",
-			ReaderConnStatus:      "1",
+			ReaderAppStatus:       WasteLibrary.ACTIVE,
+			ReaderAppLastOkTime:   WasteLibrary.ACTIVE,
+			ReaderConnStatus:      WasteLibrary.ACTIVE,
 			ReaderConnLastOkTime:  time.Now().String(),
-			ReaderStatus:          "1",
+			ReaderStatus:          WasteLibrary.ACTIVE,
 			ReaderLastOkTime:      time.Now().String(),
-			CamAppStatus:          "1",
+			CamAppStatus:          WasteLibrary.ACTIVE,
 			CamAppLastOkTime:      time.Now().String(),
-			CamConnStatus:         "1",
+			CamConnStatus:         WasteLibrary.ACTIVE,
 			CamConnLastOkTime:     time.Now().String(),
-			CamStatus:             "1",
+			CamStatus:             WasteLibrary.ACTIVE,
 			CamLastOkTime:         time.Now().String(),
-			GpsAppStatus:          "1",
+			GpsAppStatus:          WasteLibrary.ACTIVE,
 			GpsAppLastOkTime:      time.Now().String(),
-			GpsConnStatus:         "1",
+			GpsConnStatus:         WasteLibrary.ACTIVE,
 			GpsConnLastOkTime:     time.Now().String(),
-			GpsStatus:             "1",
+			GpsStatus:             WasteLibrary.ACTIVE,
 			GpsLastOkTime:         time.Now().String(),
-			ThermAppStatus:        "1",
+			ThermAppStatus:        WasteLibrary.ACTIVE,
 			ThermAppLastOkTime:    time.Now().String(),
-			TransferAppStatus:     "1",
+			TransferAppStatus:     WasteLibrary.ACTIVE,
 			TransferAppLastOkTime: time.Now().String(),
-			AliveStatus:           "1",
+			AliveStatus:           WasteLibrary.ACTIVE,
 			AliveLastOkTime:       time.Now().String(),
-			ContactStatus:         "1",
+			ContactStatus:         WasteLibrary.ACTIVE,
 			ContactLastOkTime:     time.Now().String(),
 			Therm:                 "39",
 			Latitude:              37.03633,
 			Longitude:             27.41585,
 			Speed:                 0,
 			UltRange:              4785,
-			UltStatus:             "1",
-			DeviceStatus:          "1",
-			AlarmStatus:           "1",
+			UltStatus:             WasteLibrary.ACTIVE,
+			DeviceStatus:          WasteLibrary.ACTIVE,
+			AlarmStatus:           WasteLibrary.ACTIVE,
 			TotalGlassCount:       345,
 			TotalPlasticCount:     567,
 			TotalMetalCount:       890,
 			UltTime:               time.Now().String(),
 			AlarmTime:             time.Now().String(),
-			AlarmType:             "THERM",
+			AlarmType:             WasteLibrary.THERM,
 			Alarm:                 "Therm : 85",
 			RecyTime:              time.Now().String(),
-			Active:                "1",
+			Active:                WasteLibrary.ACTIVE,
 			ThermTime:             time.Now().String(),
 			GpsTime:               time.Now().String(),
 			StatusTime:            time.Now().String(),
@@ -378,51 +378,51 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 			DeviceId:              2,
 			CustomerId:            1,
 			DeviceName:            "000002",
-			DeviceType:            "ULT",
+			DeviceType:            WasteLibrary.ULT,
 			SerialNumber:          "000002",
-			ReaderAppStatus:       "1",
-			ReaderAppLastOkTime:   "1",
-			ReaderConnStatus:      "1",
+			ReaderAppStatus:       WasteLibrary.ACTIVE,
+			ReaderAppLastOkTime:   WasteLibrary.ACTIVE,
+			ReaderConnStatus:      WasteLibrary.ACTIVE,
 			ReaderConnLastOkTime:  time.Now().String(),
-			ReaderStatus:          "1",
+			ReaderStatus:          WasteLibrary.ACTIVE,
 			ReaderLastOkTime:      time.Now().String(),
-			CamAppStatus:          "1",
+			CamAppStatus:          WasteLibrary.ACTIVE,
 			CamAppLastOkTime:      time.Now().String(),
-			CamConnStatus:         "1",
+			CamConnStatus:         WasteLibrary.ACTIVE,
 			CamConnLastOkTime:     time.Now().String(),
-			CamStatus:             "1",
+			CamStatus:             WasteLibrary.ACTIVE,
 			CamLastOkTime:         time.Now().String(),
-			GpsAppStatus:          "1",
+			GpsAppStatus:          WasteLibrary.ACTIVE,
 			GpsAppLastOkTime:      time.Now().String(),
-			GpsConnStatus:         "1",
+			GpsConnStatus:         WasteLibrary.ACTIVE,
 			GpsConnLastOkTime:     time.Now().String(),
-			GpsStatus:             "1",
+			GpsStatus:             WasteLibrary.ACTIVE,
 			GpsLastOkTime:         time.Now().String(),
-			ThermAppStatus:        "1",
+			ThermAppStatus:        WasteLibrary.ACTIVE,
 			ThermAppLastOkTime:    time.Now().String(),
-			TransferAppStatus:     "1",
+			TransferAppStatus:     WasteLibrary.ACTIVE,
 			TransferAppLastOkTime: time.Now().String(),
-			AliveStatus:           "1",
+			AliveStatus:           WasteLibrary.ACTIVE,
 			AliveLastOkTime:       time.Now().String(),
-			ContactStatus:         "1",
+			ContactStatus:         WasteLibrary.ACTIVE,
 			ContactLastOkTime:     time.Now().String(),
 			Therm:                 "39",
 			Latitude:              37.03652,
 			Longitude:             27.42111,
 			Speed:                 0,
 			UltRange:              4785,
-			UltStatus:             "1",
-			DeviceStatus:          "1",
-			AlarmStatus:           "1",
+			UltStatus:             WasteLibrary.ACTIVE,
+			DeviceStatus:          WasteLibrary.ACTIVE,
+			AlarmStatus:           WasteLibrary.ACTIVE,
 			TotalGlassCount:       345,
 			TotalPlasticCount:     567,
 			TotalMetalCount:       890,
 			UltTime:               time.Now().String(),
 			AlarmTime:             time.Now().String(),
-			AlarmType:             "THERM",
+			AlarmType:             WasteLibrary.THERM,
 			Alarm:                 "Therm : 85",
 			RecyTime:              time.Now().String(),
-			Active:                "1",
+			Active:                WasteLibrary.ACTIVE,
 			ThermTime:             time.Now().String(),
 			GpsTime:               time.Now().String(),
 			StatusTime:            time.Now().String(),
@@ -433,51 +433,51 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 			DeviceId:              3,
 			CustomerId:            1,
 			DeviceName:            "000003",
-			DeviceType:            "RECY",
+			DeviceType:            WasteLibrary.RECY,
 			SerialNumber:          "000003",
-			ReaderAppStatus:       "1",
-			ReaderAppLastOkTime:   "1",
-			ReaderConnStatus:      "1",
+			ReaderAppStatus:       WasteLibrary.ACTIVE,
+			ReaderAppLastOkTime:   WasteLibrary.ACTIVE,
+			ReaderConnStatus:      WasteLibrary.ACTIVE,
 			ReaderConnLastOkTime:  time.Now().String(),
-			ReaderStatus:          "1",
+			ReaderStatus:          WasteLibrary.ACTIVE,
 			ReaderLastOkTime:      time.Now().String(),
-			CamAppStatus:          "1",
+			CamAppStatus:          WasteLibrary.ACTIVE,
 			CamAppLastOkTime:      time.Now().String(),
-			CamConnStatus:         "1",
+			CamConnStatus:         WasteLibrary.ACTIVE,
 			CamConnLastOkTime:     time.Now().String(),
-			CamStatus:             "1",
+			CamStatus:             WasteLibrary.ACTIVE,
 			CamLastOkTime:         time.Now().String(),
-			GpsAppStatus:          "1",
+			GpsAppStatus:          WasteLibrary.ACTIVE,
 			GpsAppLastOkTime:      time.Now().String(),
-			GpsConnStatus:         "1",
+			GpsConnStatus:         WasteLibrary.ACTIVE,
 			GpsConnLastOkTime:     time.Now().String(),
-			GpsStatus:             "1",
+			GpsStatus:             WasteLibrary.ACTIVE,
 			GpsLastOkTime:         time.Now().String(),
-			ThermAppStatus:        "1",
+			ThermAppStatus:        WasteLibrary.ACTIVE,
 			ThermAppLastOkTime:    time.Now().String(),
-			TransferAppStatus:     "1",
+			TransferAppStatus:     WasteLibrary.ACTIVE,
 			TransferAppLastOkTime: time.Now().String(),
-			AliveStatus:           "1",
+			AliveStatus:           WasteLibrary.ACTIVE,
 			AliveLastOkTime:       time.Now().String(),
-			ContactStatus:         "1",
+			ContactStatus:         WasteLibrary.ACTIVE,
 			ContactLastOkTime:     time.Now().String(),
 			Therm:                 "39",
 			Latitude:              37.03732,
 			Longitude:             27.41609,
 			Speed:                 0,
 			UltRange:              4785,
-			UltStatus:             "1",
-			DeviceStatus:          "1",
-			AlarmStatus:           "1",
+			UltStatus:             WasteLibrary.ACTIVE,
+			DeviceStatus:          WasteLibrary.ACTIVE,
+			AlarmStatus:           WasteLibrary.ACTIVE,
 			TotalGlassCount:       345,
 			TotalPlasticCount:     567,
 			TotalMetalCount:       890,
 			UltTime:               time.Now().String(),
 			AlarmTime:             time.Now().String(),
-			AlarmType:             "THERM",
+			AlarmType:             WasteLibrary.THERM,
 			Alarm:                 "Therm : 85",
 			RecyTime:              time.Now().String(),
-			Active:                "1",
+			Active:                WasteLibrary.ACTIVE,
 			ThermTime:             time.Now().String(),
 			GpsTime:               time.Now().String(),
 			StatusTime:            time.Now().String(),
@@ -488,7 +488,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		retVal.Devices[retVal2.ToIdString()] = retVal2
 		retVal.Devices[retVal3.ToIdString()] = retVal3
 
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 		resultVal.Retval = retVal.ToString()
 
 		w.Write(resultVal.ToByte())
@@ -496,16 +496,16 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
-	if resultVal.Result != "OK" {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-devices", customerId)
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_DEVICES, customerId)
 
-	if resultVal.Result == "OK" {
+	if resultVal.Result == WasteLibrary.OK {
 
 		var customerDevices WasteLibrary.CustomerDevicesType = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
 		var customerDevicesList WasteLibrary.CustomerDevicesListType = WasteLibrary.CustomerDevicesListType{
@@ -515,15 +515,15 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
-				resultVal = WasteLibrary.GetRedisForStoreApi("devices", WasteLibrary.Float64IdToString(deviceId))
-				if resultVal.Result == "OK" {
+				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, WasteLibrary.Float64IdToString(deviceId))
+				if resultVal.Result == WasteLibrary.OK {
 					var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
 					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
 			}
 		}
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 		resultVal.Retval = customerDevicesList.ToString()
 	}
 
@@ -533,73 +533,73 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 func getConfig(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	if testapp {
 
-		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-		if currentHttpHeader.OpType == "CUSTOMER" {
+		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
+		if currentHttpHeader.OpType == WasteLibrary.CUSTOMER {
 			var retVal WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{
 				CustomerId:      1,
-				ArventoApp:      "1",
+				ArventoApp:      WasteLibrary.ACTIVE,
 				ArventoUserName: "test1",
 				ArventoPin1:     "pin1",
 				ArventoPin2:     "pin2",
-				SystemProblem:   "1",
-				TruckStopTrace:  "1",
-				Active:          "1",
+				SystemProblem:   WasteLibrary.ACTIVE,
+				TruckStopTrace:  WasteLibrary.ACTIVE,
+				Active:          WasteLibrary.ACTIVE,
 				CreateTime:      time.Now().String(),
 			}
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
-		} else if currentHttpHeader.OpType == "ADMIN" {
+		} else if currentHttpHeader.OpType == WasteLibrary.ADMIN {
 			var retVal WasteLibrary.AdminConfigType = WasteLibrary.AdminConfigType{
 				CustomerId: 1,
-				Active:     "1",
+				Active:     WasteLibrary.ACTIVE,
 				CreateTime: time.Now().String(),
 			}
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
-		} else if currentHttpHeader.OpType == "LOCAL" {
+		} else if currentHttpHeader.OpType == WasteLibrary.LOCAL {
 			var retVal WasteLibrary.LocalConfigType = WasteLibrary.LocalConfigType{
 				CustomerId: 1,
-				Active:     "1",
+				Active:     WasteLibrary.ACTIVE,
 				CreateTime: time.Now().String(),
 			}
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
 		} else {
-			resultVal.Result = "FAIL"
+			resultVal.Result = WasteLibrary.FAIL
 		}
 
 		w.Write(resultVal.ToByte())
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
-	if resultVal.Result != "OK" {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
-	if currentHttpHeader.OpType == "CUSTOMER" {
-		resultVal = WasteLibrary.GetRedisForStoreApi("customer-customerconfig", customerId)
-	} else if currentHttpHeader.OpType == "ADMIN" {
-		resultVal = WasteLibrary.GetRedisForStoreApi("customer-adminconfig", customerId)
-	} else if currentHttpHeader.OpType == "LOCAL" {
-		resultVal = WasteLibrary.GetRedisForStoreApi("customer-localconfig", customerId)
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
+	if currentHttpHeader.OpType == WasteLibrary.CUSTOMER {
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, customerId)
+	} else if currentHttpHeader.OpType == WasteLibrary.ADMIN {
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_ADMINCONFIG, customerId)
+	} else if currentHttpHeader.OpType == WasteLibrary.LOCAL {
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LOCALCONFIG, customerId)
 	} else {
-		resultVal.Result = "FAIL"
+		resultVal.Result = WasteLibrary.FAIL
 	}
 
 	w.Write(resultVal.ToByte())
@@ -608,13 +608,13 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 func getTags(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
@@ -635,9 +635,9 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 			ContainerNo: "00058",
 			Latitude:    37.03780,
 			Longitude:   27.41151,
-			Statu:       "0",
-			ImageStatu:  "1",
-			Active:      "1",
+			Statu:       WasteLibrary.ACTIVE,
+			ImageStatu:  WasteLibrary.ACTIVE,
+			Active:      WasteLibrary.ACTIVE,
 			ReadTime:    time.Now().String(),
 			CheckTime:   time.Now().String(),
 			CreateTime:  time.Now().String(),
@@ -652,9 +652,9 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 			ContainerNo: "00059",
 			Latitude:    37.03899,
 			Longitude:   27.42267,
-			Statu:       "1",
-			ImageStatu:  "1",
-			Active:      "1",
+			Statu:       WasteLibrary.ACTIVE,
+			ImageStatu:  WasteLibrary.ACTIVE,
+			Active:      WasteLibrary.ACTIVE,
 			ReadTime:    time.Now().String(),
 			CheckTime:   time.Now().String(),
 			CreateTime:  time.Now().String(),
@@ -670,8 +670,8 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 			Latitude:    37.03528,
 			Longitude:   27.41040,
 			Statu:       "2",
-			ImageStatu:  "1",
-			Active:      "1",
+			ImageStatu:  WasteLibrary.ACTIVE,
+			Active:      WasteLibrary.ACTIVE,
 			ReadTime:    time.Now().String(),
 			CheckTime:   time.Now().String(),
 			CreateTime:  time.Now().String(),
@@ -681,7 +681,7 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 		retVal.Tags[retVal2.ToIdString()] = retVal2
 		retVal.Tags[retVal3.ToIdString()] = retVal3
 
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 		resultVal.Retval = retVal.ToString()
 
 		w.Write(resultVal.ToByte())
@@ -689,14 +689,14 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
-	if resultVal.Result != "OK" {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-tags", customerId)
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, customerId)
 
 	w.Write(resultVal.ToByte())
 }
@@ -704,19 +704,19 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 func getTag(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = checkAuth(req.Form)
-	if resultVal.Result != "OK" {
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 
 	if testapp {
-		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
 		if currentData.TagID == 1 {
 
 			var retVal WasteLibrary.TagType = WasteLibrary.TagType{
@@ -728,15 +728,15 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 				ContainerNo: "00058",
 				Latitude:    37.03780,
 				Longitude:   27.41151,
-				Statu:       "0",
-				ImageStatu:  "1",
-				Active:      "1",
+				Statu:       WasteLibrary.ACTIVE,
+				ImageStatu:  WasteLibrary.ACTIVE,
+				Active:      WasteLibrary.ACTIVE,
 				ReadTime:    time.Now().String(),
 				CheckTime:   time.Now().String(),
 				CreateTime:  time.Now().String(),
 			}
 
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
 		} else if currentData.TagID == 2 {
 
@@ -749,15 +749,15 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 				ContainerNo: "00059",
 				Latitude:    37.03899,
 				Longitude:   27.42267,
-				Statu:       "1",
-				ImageStatu:  "1",
-				Active:      "1",
+				Statu:       WasteLibrary.ACTIVE,
+				ImageStatu:  WasteLibrary.ACTIVE,
+				Active:      WasteLibrary.ACTIVE,
 				ReadTime:    time.Now().String(),
 				CheckTime:   time.Now().String(),
 				CreateTime:  time.Now().String(),
 			}
 
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
 		} else if currentData.TagID == 3 {
 
@@ -771,13 +771,13 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 				Latitude:    37.03528,
 				Longitude:   27.41040,
 				Statu:       "2",
-				ImageStatu:  "1",
-				Active:      "1",
+				ImageStatu:  WasteLibrary.ACTIVE,
+				Active:      WasteLibrary.ACTIVE,
 				ReadTime:    time.Now().String(),
 				CheckTime:   time.Now().String(),
 				CreateTime:  time.Now().String(),
 			}
-			resultVal.Result = "OK"
+			resultVal.Result = WasteLibrary.OK
 			resultVal.Retval = retVal.ToString()
 		} else {
 		}
@@ -786,17 +786,17 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-link", req.Host)
-	if resultVal.Result != "OK" {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.OK {
 		w.Write(resultVal.ToByte())
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 
-	var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+	var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
 
-	resultVal = WasteLibrary.GetRedisForStoreApi("customer-tags", customerId)
-	if resultVal.Result == "OK" {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, customerId)
+	if resultVal.Result == WasteLibrary.OK {
 		var currentCustomerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
 		currentData = currentCustomerTags.Tags[currentData.ToIdString()]
 		resultVal.Retval = currentData.ToString()
@@ -806,7 +806,7 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 
 func checkAuth(data url.Values) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
-	resultVal.Result = "OK"
+	resultVal.Result = WasteLibrary.FAIL
+	resultVal.Result = WasteLibrary.OK
 	return resultVal
 }

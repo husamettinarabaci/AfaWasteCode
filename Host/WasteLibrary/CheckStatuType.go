@@ -12,9 +12,9 @@ type CheckStatuType struct {
 }
 
 var CurrentCheckStatu CheckStatuType = CheckStatuType{
-	AppStatu:    "1",
-	ConnStatu:   "0",
-	DeviceStatu: "0",
+	AppStatu:    ACTIVE,
+	ConnStatu:   PASSIVE,
+	DeviceStatu: PASSIVE,
 }
 
 //ToByte

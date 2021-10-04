@@ -24,22 +24,22 @@ func main() {
 func reader(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = "FAIL"
+	resultVal.Result = WasteLibrary.FAIL
 	if err := req.ParseForm(); err != nil {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue("HEADER"))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HEADER))
 
-	if currentHttpHeader.Repeat == "0" {
-		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue("DATA"))
+	if currentHttpHeader.Repeat == WasteLibrary.PASSIVE {
+		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.DATA))
 		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		//TO DO
 		//Set ImageStatu
 	} else {
-		resultVal.Result = "OK"
+		resultVal.Result = WasteLibrary.OK
 	}
 	w.Write(resultVal.ToByte())
 }

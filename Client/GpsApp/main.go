@@ -74,21 +74,21 @@ func gpsCheck() {
 			serialPort, err = devafatekserial.Open(serialOptions0)
 			if err != nil {
 				WasteLibrary.LogErr(err)
-				WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
 			} else {
-				WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
+				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.ACTIVE
 			}
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == "0" {
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.PASSIVE {
 				serialPort, err = devafatekserial.Open(serialOptions1)
 				if err != nil {
 					WasteLibrary.LogErr(err)
-					WasteLibrary.CurrentCheckStatu.ConnStatu = "0"
+					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.PASSIVE
 				} else {
-					WasteLibrary.CurrentCheckStatu.ConnStatu = "1"
+					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.ACTIVE
 				}
 			}
 
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == "1" {
+			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.ACTIVE {
 				reader := bufio.NewReader(serialPort)
 				scanner := bufio.NewScanner(reader)
 				WasteLibrary.LogStr("Device OK")
@@ -110,11 +110,11 @@ func gpsCheck() {
 							} else {
 								currentDeviceType.Longitude = 0
 							}
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = "1"
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.ACTIVE
 						} else {
 							currentDeviceType.Latitude = 0
 							currentDeviceType.Longitude = 0
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = "0"
+							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.PASSIVE
 						}
 						currentDeviceType.Speed = -1
 					}
@@ -131,8 +131,8 @@ func sendGps() {
 	for {
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			"OPTYPE": {"GPS"},
-			"DATA":   {currentDeviceType.ToString()},
+			WasteLibrary.OPTYPE: {WasteLibrary.GPS},
+			WasteLibrary.DATA:   {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

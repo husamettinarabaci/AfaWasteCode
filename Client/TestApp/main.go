@@ -10,7 +10,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/AfatekDevelopers/result_lib_go/devafatekresult"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -18,16 +17,16 @@ func main() {
 	var resultVal WasteLibrary.ResultType
 	var opType string = "NO"
 	WasteLibrary.Debug = true
-	if opType == "CUSTOMER" {
+	if opType == WasteLibrary.CUSTOMER {
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      "ADMIN",
+			AppType:      WasteLibrary.ADMIN,
 			DeviceNo:     "",
-			OpType:       "CUSTOMER",
+			OpType:       WasteLibrary.CUSTOMER,
 			Time:         WasteLibrary.GetTime(),
-			Repeat:       "0",
+			Repeat:       WasteLibrary.PASSIVE,
 			DeviceId:     0,
 			CustomerId:   0,
-			BaseDataType: "CUSTOMER",
+			BaseDataType: WasteLibrary.CUSTOMER,
 		}
 
 		var customerId int = 0
@@ -35,14 +34,14 @@ func main() {
 			CustomerId:   float64(customerId),
 			CustomerName: "Afatek",
 			CustomerLink: "afatek.aws.afatek.com.tr",
-			RfIdApp:      "1",
-			UltApp:       "0",
-			RecyApp:      "1",
+			RfIdApp:      WasteLibrary.ACTIVE,
+			UltApp:       WasteLibrary.PASSIVE,
+			RecyApp:      WasteLibrary.ACTIVE,
 		}
 
 		data := url.Values{
-			"HEADER": {currentHttpHeader.ToString()},
-			"DATA":   {currentCustomer.ToString()},
+			WasteLibrary.HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.DATA:   {currentCustomer.ToString()},
 		}
 
 		client := http.Client{
@@ -58,19 +57,19 @@ func main() {
 			if err != nil {
 				WasteLibrary.LogErr(err)
 			}
-			resultVal = devafatekresult.ByteToResultType(bodyBytes)
+			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
 			WasteLibrary.LogStr(resultVal.ToString())
 		}
-	} else if opType == "DEVICE" {
+	} else if opType == WasteLibrary.DEVICE {
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      "ADMIN",
+			AppType:      WasteLibrary.ADMIN,
 			DeviceNo:     "",
-			OpType:       "DEVICE",
+			OpType:       WasteLibrary.DEVICE,
 			Time:         WasteLibrary.GetTime(),
-			Repeat:       "0",
+			Repeat:       WasteLibrary.PASSIVE,
 			DeviceId:     0,
 			CustomerId:   0,
-			BaseDataType: "DEVICE",
+			BaseDataType: WasteLibrary.DEVICE,
 		}
 
 		var deviceId int = 0
@@ -79,13 +78,13 @@ func main() {
 			DeviceId:     float64(deviceId),
 			CustomerId:   float64(customerId),
 			DeviceName:   "07 MVS 33",
-			DeviceType:   "RFID",
+			DeviceType:   WasteLibrary.RFID,
 			SerialNumber: "00000000c1b1d188",
 		}
 		WasteLibrary.LogStr(currentDevice.ToString())
 		data := url.Values{
-			"HEADER": {currentHttpHeader.ToString()},
-			"DATA":   {currentDevice.ToString()},
+			WasteLibrary.HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.DATA:   {currentDevice.ToString()},
 		}
 
 		client := http.Client{
@@ -101,37 +100,37 @@ func main() {
 			if err != nil {
 				WasteLibrary.LogErr(err)
 			}
-			resultVal = devafatekresult.ByteToResultType(bodyBytes)
+			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
 			WasteLibrary.LogStr(resultVal.ToString())
 		}
 	} else if opType == "CUSTOMERCONFIG" {
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      "ADMIN",
+			AppType:      WasteLibrary.ADMIN,
 			DeviceNo:     "",
-			OpType:       "CUSTOMER",
+			OpType:       WasteLibrary.CUSTOMER,
 			Time:         WasteLibrary.GetTime(),
-			Repeat:       "0",
+			Repeat:       WasteLibrary.PASSIVE,
 			DeviceId:     0,
 			CustomerId:   0,
-			BaseDataType: "DEVICE",
+			BaseDataType: WasteLibrary.DEVICE,
 		}
 
 		var customerId int = 1
 		var currentData WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{
 			CustomerId:      float64(customerId),
-			ArventoApp:      "1",
+			ArventoApp:      WasteLibrary.ACTIVE,
 			ArventoUserName: "afatekbilisim",
 			ArventoPin1:     "Amca151200!Furkan",
 			ArventoPin2:     "Amca151200!Furkan",
-			SystemProblem:   "1",
-			TruckStopTrace:  "1",
-			Active:          "1",
+			SystemProblem:   WasteLibrary.ACTIVE,
+			TruckStopTrace:  WasteLibrary.ACTIVE,
+			Active:          WasteLibrary.ACTIVE,
 			CreateTime:      WasteLibrary.GetTime(),
 		}
 		WasteLibrary.LogStr(currentData.ToString())
 		data := url.Values{
-			"HEADER": {currentHttpHeader.ToString()},
-			"DATA":   {currentData.ToString()},
+			WasteLibrary.HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.DATA:   {currentData.ToString()},
 		}
 
 		client := http.Client{
@@ -147,7 +146,7 @@ func main() {
 			if err != nil {
 				WasteLibrary.LogErr(err)
 			}
-			resultVal = devafatekresult.ByteToResultType(bodyBytes)
+			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
 			WasteLibrary.LogStr(resultVal.ToString())
 		}
 	} else if opType == "INGRESS" {
@@ -167,7 +166,7 @@ func main() {
 			if err != nil {
 				WasteLibrary.LogErr(err)
 			}
-			resultVal = devafatekresult.ByteToResultType(bodyBytes)
+			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
 			WasteLibrary.LogStr(resultVal.ToString())
 		}
 	} else if opType == "TEST" {
@@ -187,7 +186,7 @@ func main() {
 			if err != nil {
 				WasteLibrary.LogErr(err)
 			}
-			resultVal = devafatekresult.ByteToResultType(bodyBytes)
+			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
 			WasteLibrary.LogStr(resultVal.ToString())
 		}
 	} else if opType == "TCP" {
@@ -257,8 +256,14 @@ func main() {
 			fmt.Println("2")
 		}
 
+		test123(WasteLibrary.OPTYPE)
+
 	}
 
+}
+
+func test123(testt string) {
+	fmt.Println((testt))
 }
 
 type TestType struct {

@@ -67,8 +67,8 @@ func sendTherm() {
 	for {
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			"OPTYPE": {"THERM"},
-			"DATA":   {currentThermDataType.ToString()},
+			WasteLibrary.OPTYPE: {WasteLibrary.THERM},
+			WasteLibrary.DATA:   {currentThermDataType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}
