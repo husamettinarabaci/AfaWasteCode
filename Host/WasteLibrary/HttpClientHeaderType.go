@@ -15,6 +15,7 @@ type HttpClientHeaderType struct {
 	DeviceId     float64
 	CustomerId   float64
 	BaseDataType string
+	Token        string
 }
 
 //ToCustomerId String

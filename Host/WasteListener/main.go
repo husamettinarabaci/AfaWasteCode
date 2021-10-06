@@ -53,6 +53,8 @@ func tcpServer() {
 }
 
 func handleTcpRequest(conn net.Conn) {
+	//TO DO
+	// proc tcp socket
 	buf := make([]byte, 1024)
 	reqLen, err := conn.Read(buf)
 	if err != nil {
@@ -171,9 +173,18 @@ func data(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+		w.Write(resultVal.ToByte())
+		return
+	}
 	w.Write(resultVal.ToByte())
 }

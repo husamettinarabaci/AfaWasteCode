@@ -75,6 +75,19 @@ func configDbSet() {
 	err = configDb.Ping()
 	WasteLibrary.LogErr(err)
 
+	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS users ( 
+		user_id serial PRIMARY KEY,
+		customer_id INT NOT NULL DEFAULT -1,
+		user_name varchar(50) NOT NULL DEFAULT '',
+		user_role varchar(50) NOT NULL DEFAULT '` + WasteLibrary.USER_ROLE_GUEST + `',
+		password varchar(50) NOT NULL DEFAULT '',
+		email varchar(50) NOT NULL DEFAULT '',
+		active varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_ACTIVE + `',
+		  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = configDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	configDb.Close()
 }
 
@@ -128,7 +141,7 @@ func readerDbSet() {
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tagdata ( 
 		data_id serial PRIMARY KEY,
-		tag_id serial PRIMARY KEY,
+		tag_id INT NOT NULL DEFAULT -1,
 		customer_id INT NOT NULL DEFAULT -1,
 		device_id INT NOT NULL DEFAULT -1,
 		epc varchar(50) NOT NULL DEFAULT '',
@@ -148,7 +161,7 @@ func readerDbSet() {
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS devicedata ( 
 		data_id serial PRIMARY KEY,
-		device_id serial PRIMARY KEY,
+		device_id INT NOT NULL DEFAULT -1,
 		device_type varchar(50) NOT NULL DEFAULT '',
 		serial_number varchar(50) NOT NULL DEFAULT '',
 		device_name varchar(50) NOT NULL DEFAULT '',
@@ -315,18 +328,6 @@ func staticDbSet() {
 		rfid_app varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		ult_app varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		recy_app varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
-		active varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_ACTIVE + `',
-		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-		);`)
-	_, err = staticDb.Exec(createSQL)
-	WasteLibrary.LogErr(err)
-
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS users (
-		user_id serial PRIMARY KEY,
-		user_type varchar(50) NOT NULL DEFAULT '` + WasteLibrary.USER_GUEST + `',
-		email varchar(50) NOT NULL DEFAULT '',
-		user_name varchar(50) NOT NULL DEFAULT '',
-		customer_id INT NOT NULL DEFAULT -1,
 		active varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_ACTIVE + `',
 		create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)

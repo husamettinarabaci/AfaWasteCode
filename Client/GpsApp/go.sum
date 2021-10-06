@@ -6,5 +6,7 @@ github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085 h1:
 github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085/go.mod h1:Tn+zmza68qM3WRUBoD+qiyuxb+Hu4ufudcq0yJChWvs=
 github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a h1:oNZW9Z2KNR1brtrdGwOPiUrzbBgi+ltn0bzFGfoD5Kg=
 github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a/go.mod h1:KS1SGJxBYmoQS1jcpvROdAkXJUG4+1o28t+qiIJOJ6I=
+golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 h1:7I4JAnoQBe7ZtJcBaYHi5UtiO8tQHbUSXxL+pnGRANg=
+golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
 golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55 h1:rw6UNGRMfarCepjI8qOepea/SXwIBVfTKjztZ5gBbq4=
 golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=

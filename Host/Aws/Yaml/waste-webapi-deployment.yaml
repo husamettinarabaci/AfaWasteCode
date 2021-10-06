@@ -28,7 +28,7 @@ spec:
         args: ["while [ $(curl -sw '%{http_code}' http://waste-storeapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteStoreApi...'; done"]
       containers:
       - name: waste-webapi
-        image: devafatek/wastewebapi:1.0
+        image: devafatek/wastewebapi:2.0
         ports:
         - containerPort: 80
         livenessProbe:

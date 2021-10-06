@@ -1,20 +1,13 @@
 package main
 
 import (
-	"encoding/json"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
-	"io/ioutil"
-	"net"
-	"net/http"
-	"net/url"
-	"os"
-	"time"
-
-	"github.com/devafatek/WasteLibrary"
 )
 
 func main() {
-	var resultVal WasteLibrary.ResultType
+	/*var resultVal WasteLibrary.ResultType
 	var opType string = "NO"
 	WasteLibrary.Debug = true
 	if opType == WasteLibrary.CUSTOMER {
@@ -224,44 +217,21 @@ func main() {
 		println("reply from server=", string(reply))
 
 		conn.Close()
-	} else {
-		var test1 TestType = TestType{
-			TagID:  45,
-			Status: WasteLibrary.RESULT_OK,
-			Tags:   make(map[string]WasteLibrary.TagType),
-		}
+	} else {*/
 
-		var tag0 WasteLibrary.TagType = WasteLibrary.TagType{
-			TagID: 1,
-		}
-		var tag1 WasteLibrary.TagType = WasteLibrary.TagType{
-			TagID: 2,
-		}
+	testVal := GetMD5Hash("123")
+	fmt.Println(testVal)
 
-		test1.Tags[tag0.ToIdString()] = tag0
-		test1.Tags[tag1.ToIdString()] = tag1
-
-		fmt.Println(test1)
-		fmt.Println(test1.ToString())
-
-		var test2 = StringToTestType(test1.ToString())
-
-		fmt.Println(test2)
-		fmt.Println(test2.ToString())
-
-		var conval = WasteLibrary.OPTYPE_CONNECTED
-		if conval == "CONNECTED" {
-			fmt.Println("1")
-		} else {
-			fmt.Println("2")
-		}
-
-		test123(WasteLibrary.HTTP_OPTYPE)
-
-	}
+	//}
 
 }
 
+func GetMD5Hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return hex.EncodeToString(hash[:])
+}
+
+/*
 func test123(testt string) {
 	fmt.Println((testt))
 }
@@ -296,3 +266,4 @@ func ByteToTestType(retByte []byte) TestType {
 func StringToTestType(retStr string) TestType {
 	return ByteToTestType([]byte(retStr))
 }
+*/

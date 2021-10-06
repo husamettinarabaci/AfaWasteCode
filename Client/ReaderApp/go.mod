@@ -10,5 +10,6 @@ require (
 	github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a // indirect
 	github.com/devafatek/WasteLibrary v0.0.0-00010101000000-000000000000 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55 // indirect
 )

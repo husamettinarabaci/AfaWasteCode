@@ -27,6 +27,9 @@ func data(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -34,7 +37,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_DEVICE, currentHttpHeader.DeviceNo)
 	if resultVal.Result == WasteLibrary.RESULT_FAIL {
-
+		//TO DO
+		// insert new device
 		var createHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
 			AppType:      WasteLibrary.APPTYPE_ADMIN,
 			DeviceNo:     "",
@@ -58,7 +62,19 @@ func data(w http.ResponseWriter, req *http.Request) {
 		}
 
 		resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+			w.Write(resultVal.ToByte())
+			return
+		}
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_DEVICE, currentHttpHeader.DeviceNo)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
+			w.Write(resultVal.ToByte())
+			return
+		}
 	}
 	var deviceIdStr = resultVal.Retval.(string)
 	var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, deviceIdStr).Retval.(string))
@@ -127,9 +143,20 @@ func data(w http.ResponseWriter, req *http.Request) {
 	}
 
 	resultVal = WasteLibrary.SaveBulkDbMainForStoreApi(data)
-
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
 	if serviceClusterIp != "" {
 		resultVal = WasteLibrary.HttpPostReq("http://"+serviceClusterIp+"/reader", data)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+			w.Write(resultVal.ToByte())
+			return
+		}
 	}
 	w.Write(resultVal.ToByte())
 }

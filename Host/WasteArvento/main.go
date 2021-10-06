@@ -37,13 +37,16 @@ func setCustomerList() {
 	for {
 
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, WasteLibrary.REDIS_CUSTOMERS)
-		var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
-		for _, customerId := range currentCustomers.Customers {
-			if customerId != 0 {
-				if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
-					WasteLibrary.LogStr("Add Customer : " + WasteLibrary.Float64IdToString(customerId))
-					currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)] = customerId
-					go customerProc(customerId)
+		if resultVal.Result == WasteLibrary.RESULT_OK {
+
+			var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
+			for _, customerId := range currentCustomers.Customers {
+				if customerId != 0 {
+					if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
+						WasteLibrary.LogStr("Add Customer : " + WasteLibrary.Float64IdToString(customerId))
+						currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)] = customerId
+						go customerProc(customerId)
+					}
 				}
 			}
 		}

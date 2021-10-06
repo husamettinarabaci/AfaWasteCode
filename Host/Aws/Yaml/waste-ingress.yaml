@@ -30,10 +30,10 @@ spec:
             pathType: Prefix
           - backend:
               service:
-                name: waste-adminui-cluster-ip
+                name: waste-ui-cluster-ip
                 port:
                   number: 80
-            path: /adminui(/|$)(.*)
+            path: /ui(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
@@ -44,24 +44,10 @@ spec:
             pathType: Prefix
           - backend:
               service:
-                name: waste-webui-cluster-ip
-                port:
-                  number: 80
-            path: /webui(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
                 name: waste-trackapi-cluster-ip
                 port:
                   number: 80
             path: /trackapi(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
-                name: waste-trackui-cluster-ip
-                port:
-                  number: 80
-            path: /trackui(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
@@ -72,24 +58,10 @@ spec:
             pathType: Prefix
           - backend:
               service:
-                name: waste-reportui-cluster-ip
-                port:
-                  number: 80
-            path: /reportui(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
                 name: waste-afatekapi-cluster-ip
                 port:
                   number: 80
             path: /afatekapi(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
-                name: waste-afatekui-cluster-ip
-                port:
-                  number: 80
-            path: /afatekui(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
@@ -100,8 +72,8 @@ spec:
             pathType: Prefix
           - backend:
               service:
-                name: waste-lmsui-cluster-ip
+                name: waste-authapi-cluster-ip
                 port:
                   number: 80
-            path: /lmsui(/|$)(.*)
+            path: /authapi(/|$)(.*)
             pathType: Prefix

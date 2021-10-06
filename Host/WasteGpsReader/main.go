@@ -27,6 +27,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -43,7 +46,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 				currentData.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 				data := url.Values{
@@ -52,7 +54,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				}
 				var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetStaticDbMainForStoreApi(data).Retval.(string))
 				resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
-
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+					w.Write(resultVal.ToByte())
+					return
+				}
 				var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
 				newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_RFID
 				newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE

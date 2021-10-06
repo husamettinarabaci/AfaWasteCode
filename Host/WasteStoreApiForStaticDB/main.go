@@ -49,13 +49,15 @@ func main() {
 	http.HandleFunc("/saveStaticDbMain", saveStaticDbMain)
 	http.HandleFunc("/getStaticDbMain", getStaticDbMain)
 	http.ListenAndServe(":80", nil)
-	WasteLibrary.LogStr("Finished")
 }
 
 func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -343,40 +345,6 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			currentData.DeviceId = float64(deviceId)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_USER {
-
-			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
-			if currentData.UserId != 0 {
-				execSQL = fmt.Sprintf(`UPDATE public.users 
-				SET user_type='%s',email='%s',user_name='%s',customer_id=%f 
-	  			WHERE user_id=%f  
-				RETURNING user_id;`,
-					currentData.UserType, currentData.Email, currentData.UserName,
-					currentData.CustomerId, currentData.UserId)
-				WasteLibrary.LogStr(execSQL)
-			} else {
-
-				execSQL = fmt.Sprintf(`INSERT INTO public.users 
-				(user_type,email,user_name,customer_id) 
-  				VALUES ('%s','%s','%s',%f)   
-  				RETURNING user_id;`,
-					currentData.UserType, currentData.Email, currentData.UserName,
-					currentData.CustomerId)
-				WasteLibrary.LogStr(execSQL)
-			}
-			var userId int = 0
-			errDb := staticDb.QueryRow(execSQL).Scan(&userId)
-			if errDb != nil {
-				WasteLibrary.LogErr(errDb)
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-			} else {
-				resultVal.Result = WasteLibrary.RESULT_OK
-			}
-
-			currentData.UserId = float64(userId)
-			resultVal.Retval = currentData.ToIdString()
-
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}
@@ -390,6 +358,9 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -556,39 +527,6 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.TransferAppLastOkTime,
 			&currentData.AliveLastOkTime,
 			&currentData.ContactLastOkTime,
-			&currentData.CreateTime)
-		if errDb != nil {
-			WasteLibrary.LogErr(errDb)
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-		} else {
-			resultVal.Result = WasteLibrary.RESULT_OK
-		}
-
-		resultVal.Retval = currentData.ToString()
-
-	} else if currentHttpHeader.BaseDataType == WasteLibrary.BASETYPE_USER {
-
-		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
-		WasteLibrary.LogStr("Data : " + currentData.ToString())
-
-		if currentData.UserId != 0 {
-			execSQL = fmt.Sprintf(`SELECT 
-			user_type,
-			email,
-			user_name,
-			customer_id,
-			create_time
-			FROM public.users
-				   WHERE user_id=%f ;`, currentData.UserId)
-			WasteLibrary.LogStr(execSQL)
-		}
-
-		errDb := staticDb.QueryRow(execSQL).Scan(&currentData.UserType,
-			&currentData.Email,
-			&currentData.UserName,
-			&currentData.CustomerId,
-			&currentData.Token,
-			&currentData.TokenEndTime,
 			&currentData.CreateTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)

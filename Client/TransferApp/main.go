@@ -73,8 +73,11 @@ func trans(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
 
 	if err := req.ParseForm(); err != nil {
-		WasteLibrary.LogErr(err)
 		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+		WasteLibrary.LogErr(err)
+		return
 
 	} else {
 

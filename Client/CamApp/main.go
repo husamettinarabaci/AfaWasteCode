@@ -47,6 +47,9 @@ func main() {
 func trigger(w http.ResponseWriter, req *http.Request) {
 	var resultVal WasteLibrary.ResultType
 	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -65,6 +68,9 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_OPTYPE
+		w.Write(resultVal.ToByte())
+		return
 	}
 	w.Write(resultVal.ToByte())
 }
@@ -121,16 +127,14 @@ func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, rep
 	}
 }
 
-func sendCam(readerDataTypeVal WasteLibrary.TagType) WasteLibrary.ResultType {
-	var resultVal WasteLibrary.ResultType
+func sendCam(readerDataTypeVal WasteLibrary.TagType) {
 
 	data := url.Values{
 		WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_CAM},
 		WasteLibrary.HTTP_DATA:   {readerDataTypeVal.ToString()},
 	}
 
-	resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
-	return resultVal
+	WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 }
 
 func camCheck() {

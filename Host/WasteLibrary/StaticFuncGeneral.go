@@ -1,6 +1,8 @@
 package WasteLibrary
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"strconv"
@@ -16,7 +18,24 @@ var Container string = os.Getenv("CONTAINER_TYPE")
 //GetTime
 func GetTime() string {
 	currentTime := time.Now()
-	return currentTime.Format("2006.01.02 15:04:05")
+	return currentTime.Format(time.RFC3339)
+}
+
+//GetTimePlus
+func GetTimePlus(plus time.Duration) string {
+	plusTime := time.Now().Add(plus)
+	return plusTime.Format(time.RFC3339)
+}
+
+//StringToTime
+func StringToTime(timeStr string) time.Time {
+	currentTime, _ := time.Parse(time.RFC3339, timeStr)
+	return currentTime
+}
+
+//TimeToString
+func TimeToString(timeVal time.Time) string {
+	return timeVal.Format(time.RFC3339)
 }
 
 //Float64IdToString String
@@ -42,4 +61,10 @@ func StringToFloat64(sVal string) float64 {
 		fVal = s
 	}
 	return fVal
+}
+
+//GetMD5Hash
+func GetMD5Hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return hex.EncodeToString(hash[:])
 }

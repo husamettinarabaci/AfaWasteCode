@@ -1,2 +1,4 @@
 github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085 h1:+R4bIn6VsTgzCG5yOf22HitjaEl6bWE1ByS/IkB8nyQ=
 github.com/AfatekDevelopers/result_lib_go v0.0.0-20210831140827-985022b03085/go.mod h1:Tn+zmza68qM3WRUBoD+qiyuxb+Hu4ufudcq0yJChWvs=
+golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 h1:7I4JAnoQBe7ZtJcBaYHi5UtiO8tQHbUSXxL+pnGRANg=
+golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=

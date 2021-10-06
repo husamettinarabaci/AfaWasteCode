@@ -7,14 +7,13 @@ import (
 
 //UserType
 type UserType struct {
-	UserId       float64
-	CustomerId   float64
-	UserName     string
-	UserType     string
-	Email        string
-	Token        string
-	TokenEndTime string
-	CreateTime   string
+	UserId     float64
+	CustomerId float64
+	UserName   string
+	UserRole   string
+	Password   string
+	Email      string
+	CreateTime string
 }
 
 //ToId String

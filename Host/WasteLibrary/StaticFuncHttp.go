@@ -32,6 +32,7 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 	if err := req.ParseForm(); err != nil {
 		LogErr(err)
 		resultVal.Result = RESULT_FAIL
+		resultVal.Retval = RESULT_ERROR_HTTP_PARSE
 	} else {
 
 		opType := req.FormValue(HTTP_OPTYPE)
