@@ -22,6 +22,10 @@ func main() {
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL

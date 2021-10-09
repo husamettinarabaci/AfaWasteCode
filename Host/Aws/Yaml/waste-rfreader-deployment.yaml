@@ -28,6 +28,7 @@ spec:
       containers:
       - name: waste-rfreader
         image: devafatek/wasterfreader:1.0
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 80
         livenessProbe:

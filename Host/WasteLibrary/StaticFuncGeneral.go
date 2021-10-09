@@ -11,6 +11,7 @@ import (
 
 //Debug Mode
 var Debug bool = os.Getenv("DEBUG") == "1"
+var AllowCors bool = true
 
 //Container
 var Container string = os.Getenv("CONTAINER_TYPE")
@@ -25,6 +26,12 @@ func GetTime() string {
 func GetTimePlus(plus time.Duration) string {
 	plusTime := time.Now().Add(plus)
 	return plusTime.Format(time.RFC3339)
+}
+
+//AddTimePlus
+func AddTimeToBase(base time.Time, plus time.Duration) time.Time {
+	plusTime := base.Add(plus)
+	return plusTime
 }
 
 //StringToTime

@@ -46,3 +46,35 @@ func ByteToCustomerType(retByte []byte) CustomerType {
 func StringToCustomerType(retStr string) CustomerType {
 	return ByteToCustomerType([]byte(retStr))
 }
+
+//SelectSQL
+func (res CustomerType) SelectSQL() string {
+	return fmt.Sprintf(`SELECT 
+	CustomerName,
+	CustomerLink,
+	RfIdApp,
+	UltApp,
+	RecyApp,
+	Active,
+	CreateTime 
+	FROM public.customers 
+	WHERE CustomerId=%f ;`, res.CustomerId)
+}
+
+//InsertSQL
+func (res CustomerType) InsertSQL() string {
+	return fmt.Sprintf(`INSERT INTO public.customers(
+		CustomerName,CustomerLink,RfIdApp,UltApp,RecyApp)
+  VALUES ('%s','%s','%s','%s','%s')  RETURNING CustomerId;`,
+		res.CustomerName, res.CustomerLink, res.RfIdApp,
+		res.UltApp, res.RecyApp)
+}
+
+//UpdateSQL
+func (res CustomerType) UpdateSQL() string {
+	return fmt.Sprintf(`UPDATE public.customers
+		 SET CustomerName='%s',CustomerLink='%s',RfIdApp='%s',UltApp='%s',RecyApp='%s'
+		 WHERE CustomerId=%f  RETURNING CustomerId;`,
+		res.CustomerName, res.CustomerLink, res.RfIdApp,
+		res.UltApp, res.RecyApp, res.CustomerId)
+}

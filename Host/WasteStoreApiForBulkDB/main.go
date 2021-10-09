@@ -51,6 +51,10 @@ func main() {
 }
 
 func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
@@ -65,8 +69,8 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 	WasteLibrary.LogStr("Data : " + dataVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata(
-		app_type,device_id,optype,data,customer_id,data_time)
-	   VALUES ('%s',%f,'%s','%s',%f,'%s');`, currentHttpHeader.AppType, currentHttpHeader.DeviceId, currentHttpHeader.OpType, dataVal, currentHttpHeader.CustomerId, currentHttpHeader.Time)
+	AppType,DeviceId,OpType,Data,CustomerId,DataTime) 
+	 VALUES ('%s',%f,'%s','%s',%f,'%s');`, currentHttpHeader.AppType, currentHttpHeader.DeviceId, currentHttpHeader.OpType, dataVal, currentHttpHeader.CustomerId, currentHttpHeader.Time)
 	WasteLibrary.LogStr(insertSQL)
 	_, errDb := bulkDb.Exec(insertSQL)
 	if errDb != nil {

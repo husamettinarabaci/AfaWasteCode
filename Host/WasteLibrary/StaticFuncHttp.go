@@ -28,6 +28,10 @@ func ReadinessHandler(w http.ResponseWriter, r *http.Request) {
 
 //StaStatusHandlertus
 func StatusHandler(w http.ResponseWriter, req *http.Request) {
+	if AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal ResultType
 	if err := req.ParseForm(); err != nil {
 		LogErr(err)

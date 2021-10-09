@@ -64,6 +64,10 @@ func main() {
 }
 
 func getkey(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
@@ -88,6 +92,10 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 }
 
 func setkey(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
@@ -162,8 +170,8 @@ func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	WasteLibrary.LogStr("Serach Db : " + hKey + " - " + sKey)
 
-	var selectSQL string = fmt.Sprintf(`SELECT keyvalue 
-	FROM public.redisdata WHERE hashkey='%s' AND subkey='%s';`, hKey, sKey)
+	var selectSQL string = fmt.Sprintf(`SELECT KeyValue 
+	FROM public.redisdata WHERE HashKey='%s' AND SubKey='%s';`, hKey, sKey)
 	rows, errSel := sumDb.Query(selectSQL)
 	WasteLibrary.LogErr(errSel)
 	var kVal string = WasteLibrary.RESULT_NOT
@@ -186,7 +194,7 @@ func insertKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType 
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	WasteLibrary.LogStr("Insert Db : " + hKey + " - " + sKey + " - " + kVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.redisdata(
-		hashkey,subkey,keyvalue)
+		HashKey,SubKey,KeyValue)
 	   VALUES ('%s','%s','%s');`, hKey, sKey, kVal)
 	_, errDb := sumDb.Exec(insertSQL)
 	WasteLibrary.LogErr(errDb)
@@ -198,7 +206,7 @@ func updateKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	WasteLibrary.LogStr("Update Db : " + hKey + " - " + sKey + " - " + kVal)
-	var updateSQL string = fmt.Sprintf(`UPDATE public.redisdata SET keyvalue='%s' WHERE hashkey='%s' AND subkey='%s';`, kVal, hKey, sKey)
+	var updateSQL string = fmt.Sprintf(`UPDATE public.redisdata SET KeyValue='%s' WHERE HashKey='%s' AND SubKey='%s';`, kVal, hKey, sKey)
 	_, errDb := sumDb.Exec(updateSQL)
 	WasteLibrary.LogErr(errDb)
 	resultVal.Result = WasteLibrary.RESULT_OK

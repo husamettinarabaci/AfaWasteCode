@@ -13,6 +13,7 @@ type UserType struct {
 	UserRole   string
 	Password   string
 	Email      string
+	Active     string
 	CreateTime string
 }
 
@@ -48,4 +49,38 @@ func ByteToUserType(retByte []byte) UserType {
 //String To UserType
 func StringToUserType(retStr string) UserType {
 	return ByteToUserType([]byte(retStr))
+}
+
+//SelectSQL
+func (res UserType) SelectSQL() string {
+	return fmt.Sprintf(`SELECT 
+			CustomerId,
+			UserName,
+			UserRole,
+			Password,
+			Email,
+			Active,
+			CreateTime 
+			 FROM public.users 
+			 WHERE UserId=%f ;`, res.UserId)
+}
+
+//InsertSQL
+func (res UserType) InsertSQL() string {
+	return fmt.Sprintf(`INSERT INTO public.users 
+	(UserRole,Email,UserName,CustomerId,Password) 
+	  VALUES ('%s','%s','%s',%f,'%s')   
+	  RETURNING UserId;`,
+		res.UserRole, res.Email, res.UserName,
+		res.CustomerId, res.Password)
+}
+
+//UpdateSQL
+func (res UserType) UpdateSQL() string {
+	return fmt.Sprintf(`UPDATE public.users 
+	SET UserRole='%s',Email='%s',UserName='%s',CustomerId=%f,Password='%s',Active='%s'
+	  WHERE UserId=%f  
+	RETURNING UserId;`,
+		res.UserRole, res.Email, res.UserName,
+		res.CustomerId, res.Password, res.Active, res.UserId)
 }

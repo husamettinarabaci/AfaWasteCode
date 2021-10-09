@@ -16,11 +16,6 @@ func (res CustomerUsersType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
-//ToCustomerId String
-func (res CustomerUsersType) ToCustomerIdString() string {
-	return fmt.Sprintf("%.0f", res.CustomerId)
-}
-
 //ToByte
 func (res CustomerUsersType) ToByte() []byte {
 	jData, _ := json.Marshal(res)

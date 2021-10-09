@@ -28,6 +28,7 @@ spec:
       containers:
       - name: waste-camreader
         image: devafatek/wastecamreader:1.0
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 80
         livenessProbe:

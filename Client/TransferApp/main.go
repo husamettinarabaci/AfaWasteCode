@@ -70,6 +70,10 @@ func main() {
 }
 
 func trans(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 
 	if err := req.ParseForm(); err != nil {

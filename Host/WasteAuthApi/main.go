@@ -26,6 +26,10 @@ func main() {
 }
 
 func register(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -82,7 +86,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 	currentUser.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
 	currentUser.Password = WasteLibrary.GetMD5Hash(currentUser.Password)
 
-	var httpHeaderForUserInsert WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
 		AppType:      WasteLibrary.APPTYPE_ADMIN,
 		DeviceNo:     "",
 		OpType:       WasteLibrary.OPTYPE_USER,
@@ -93,7 +97,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 		BaseDataType: WasteLibrary.BASETYPE_USER,
 	}
 	data := url.Values{
-		WasteLibrary.HTTP_HEADER: {httpHeaderForUserInsert.ToString()},
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 		WasteLibrary.HTTP_DATA:   {currentUser.ToString()},
 	}
 	resultVal = WasteLibrary.SaveConfigDbMainForStoreApi(data)
@@ -103,6 +107,20 @@ func register(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 		return
 	}
+
+	currentUser.UserId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentUser.ToString()},
+	}
+	resultVal = WasteLibrary.GetConfigDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+		w.Write(resultVal.ToByte())
+		return
+	}
+
 	currentUser = WasteLibrary.StringToUserType(resultVal.Retval.(string))
 	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USERS, currentUser.ToIdString(), currentUser.ToString())
 	if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -112,7 +130,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	currentCustomerUsers.Users[currentUser.ToIdString()] = currentUser.UserId
-	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_USERS, currentCustomerUsers.ToCustomerIdString(), currentCustomerUsers.ToString())
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_USERS, currentCustomerUsers.ToIdString(), currentCustomerUsers.ToString())
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -123,6 +141,10 @@ func register(w http.ResponseWriter, req *http.Request) {
 }
 
 func login(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -199,6 +221,10 @@ func login(w http.ResponseWriter, req *http.Request) {
 }
 
 func checkAuth(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL

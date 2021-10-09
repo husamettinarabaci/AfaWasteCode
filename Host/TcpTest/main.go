@@ -23,6 +23,10 @@ func main() {
 }
 
 func statusHandler1(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_OK
 	WasteLibrary.LogStr("status 1")
@@ -30,6 +34,10 @@ func statusHandler1(w http.ResponseWriter, req *http.Request) {
 }
 
 func statusHandler2(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_OK
 	WasteLibrary.LogStr("status 1")

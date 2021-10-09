@@ -9,6 +9,7 @@ type ArventoDeviceGpsType struct {
 	Latitude  float64
 	Longitude float64
 	Speed     float64
+	GpsTime   string
 }
 
 //ToByte

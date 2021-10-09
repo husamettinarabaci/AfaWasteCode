@@ -23,6 +23,10 @@ func main() {
 }
 
 func data(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -71,13 +75,20 @@ func data(w http.ResponseWriter, req *http.Request) {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_DEVICE, currentHttpHeader.DeviceNo)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
 			return
 		}
 	}
 	var deviceIdStr = resultVal.Retval.(string)
-	var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, deviceIdStr).Retval.(string))
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, deviceIdStr)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+		w.Write(resultVal.ToByte())
+		return
+	}
+	var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
 	currentHttpHeader.CustomerId = currentDevice.CustomerId
 	currentHttpHeader.DeviceId = currentDevice.DeviceId
 

@@ -28,6 +28,7 @@ spec:
       containers:
       - name: waste-thermreader
         image: devafatek/wastethermreader:1.0
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 80
         livenessProbe:

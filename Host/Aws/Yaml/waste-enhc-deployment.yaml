@@ -48,6 +48,7 @@ spec:
       containers:
       - name: waste-enhc
         image: devafatek/wasteenhc:1.0
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 80
         livenessProbe:

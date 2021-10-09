@@ -44,6 +44,7 @@ spec:
       containers:
       - name: waste-storeapi
         image: devafatek/wastestoreapi:1.0
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 80
         envFrom:

@@ -104,6 +104,7 @@ func customerProc(customerId float64) {
 								if currentDevice.Latitude != 0 && currentDevice.Longitude != 0 {
 									currentDevice.Latitude = currentDeviceLocation.Latitude
 									currentDevice.Longitude = currentDeviceLocation.Longitude
+									currentDevice.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
 									currentDevice.Speed = currentDeviceLocation.Speed
 									WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Speed))
 									var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
@@ -162,10 +163,12 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLib
 	var latitude string = ""
 	var longitude string = ""
 	var speed string = ""
+	var gpstime string = ""
 	for {
 
 		if strings.Index(bodys, "<Device_x0020_No>") > -1 {
 			deviceID = bodys[strings.Index(bodys, "<Device_x0020_No>")+17 : strings.Index(bodys, "</Device_x0020_No>")]
+			gpstime = bodys[strings.Index(bodys, "<GMT_x0020_Date_x002F_Time>")+27 : strings.Index(bodys, "</GMT_x0020_Date_x002F_Time>")]
 			latitude = bodys[strings.Index(bodys, "<Latitude>")+10 : strings.Index(bodys, "</Latitude>")]
 			longitude = bodys[strings.Index(bodys, "<Longitude>")+11 : strings.Index(bodys, "</Longitude>")]
 			speed = bodys[strings.Index(bodys, "<Speed>")+7 : strings.Index(bodys, "</Speed>")]
@@ -186,6 +189,7 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLib
 			} else {
 				currrentArventoDeviceGpsType.Speed = 0
 			}
+			currrentArventoDeviceGpsType.GpsTime = gpstime
 			deviceLocation.ArventoDeviceGpsList[deviceID] = currrentArventoDeviceGpsType
 
 		} else {

@@ -19,6 +19,7 @@ spec:
       containers:
       - name: waste-logserver
         image: devafatek/wastelogserver:1.0
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 80
         livenessProbe:

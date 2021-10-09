@@ -1,269 +1,359 @@
 package main
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
+	"net/url"
+
+	"github.com/devafatek/WasteLibrary"
 )
 
 func main() {
-	/*var resultVal WasteLibrary.ResultType
-	var opType string = "NO"
-	WasteLibrary.Debug = true
-	if opType == WasteLibrary.CUSTOMER {
-		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      WasteLibrary.ADMIN,
-			DeviceNo:     "",
-			OpType:       WasteLibrary.CUSTOMER,
-			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.STATU_PASSIVE,
-			DeviceId:     0,
-			CustomerId:   0,
-			BaseDataType: WasteLibrary.CUSTOMER,
-		}
 
-		var customerId int = 0
-		var currentCustomer WasteLibrary.CustomerType = WasteLibrary.CustomerType{
-			CustomerId:   float64(customerId),
-			CustomerName: "Afatek",
-			CustomerLink: "afatek.aws.afatek.com.tr",
-			RfIdApp:      WasteLibrary.STATU_ACTIVE,
-			UltApp:       WasteLibrary.STATU_PASSIVE,
-			RecyApp:      WasteLibrary.STATU_ACTIVE,
-		}
+	var opType string = "CUSTOMER"
+	var opType2 string = "SET_CUSTOMER"
+	var currentHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{}
+	var urlVal string = "afatek.aws.afatek.com.tr"
+	var path1 string = "webapi"
+	var path2 string = "getLink"
+	data := url.Values{}
+	var deviceId float64 = 0
+	var customerId float64 = 0
+	var userId float64 = 0
+	currentHeader.DeviceId = deviceId
+	currentHeader.CustomerId = customerId
+	currentHeader.Token = ""
 
-		data := url.Values{
-			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {currentCustomer.ToString()},
-		}
-
-		client := http.Client{
-			Timeout: 10 * time.Second,
-		}
-		resp, err := client.PostForm("http://a579dddf21ea745a49c7237860760244-1808420299.eu-central-1.elb.amazonaws.com/setCustomer", data)
-
-		if err != nil {
-			WasteLibrary.LogErr(err)
-
-		} else {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				WasteLibrary.LogErr(err)
+	if opType == "DEVICE" {
+		if opType2 == "GET_DEVICE_WEB" {
+			path1 = "webapi"
+			path2 = "getDevice"
+			//currentData - DeviceType
+			//currentData.DevıceId - deviceId
+			//HTTP_DATA : currentData
+			var currentData WasteLibrary.DeviceType = WasteLibrary.DeviceType{
+				DeviceId: deviceId,
 			}
-			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
-			WasteLibrary.LogStr(resultVal.ToString())
-		}
-	} else if opType == WasteLibrary.DEVICE {
-		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      WasteLibrary.ADMIN,
-			DeviceNo:     "",
-			OpType:       WasteLibrary.DEVICE,
-			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.STATU_PASSIVE,
-			DeviceId:     0,
-			CustomerId:   0,
-			BaseDataType: WasteLibrary.DEVICE,
-		}
 
-		var deviceId int = 0
-		var customerId int = 1
-		var currentDevice WasteLibrary.DeviceType = WasteLibrary.DeviceType{
-			DeviceId:     float64(deviceId),
-			CustomerId:   float64(customerId),
-			DeviceName:   "07 MVS 33",
-			DeviceType:   WasteLibrary.RFID,
-			SerialNumber: "00000000c1b1d188",
-		}
-		WasteLibrary.LogStr(currentDevice.ToString())
-		data := url.Values{
-			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
-		}
-
-		client := http.Client{
-			Timeout: 10 * time.Second,
-		}
-		resp, err := client.PostForm("http://a579dddf21ea745a49c7237860760244-1808420299.eu-central-1.elb.amazonaws.com/setDevice", data)
-
-		if err != nil {
-			WasteLibrary.LogErr(err)
-
-		} else {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				WasteLibrary.LogErr(err)
+			data = url.Values{
+				WasteLibrary.HTTP_DATA: {currentData.ToString()},
 			}
-			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
-			WasteLibrary.LogStr(resultVal.ToString())
-		}
-	} else if opType == "CUSTOMERCONFIG" {
-		var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      WasteLibrary.ADMIN,
-			DeviceNo:     "",
-			OpType:       WasteLibrary.CUSTOMER,
-			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.STATU_PASSIVE,
-			DeviceId:     0,
-			CustomerId:   0,
-			BaseDataType: WasteLibrary.DEVICE,
-		}
+		} else if opType2 == "GET_DEVICE_AFATEK" {
+			path1 = "afatekapi"
+			path2 = "getDevice"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.DevıceId - deviceId
+			//currentHeader.CustomerId - customerId
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - DeviceType
+			//currentData.DevıceId - deviceId
+			//HTTP_DATA : currentData
 
-		var customerId int = 1
-		var currentData WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{
-			CustomerId:      float64(customerId),
-			ArventoApp:      WasteLibrary.STATU_ACTIVE,
-			ArventoUserName: "afatekbilisim",
-			ArventoPin1:     "Amca151200!Furkan",
-			ArventoPin2:     "Amca151200!Furkan",
-			SystemProblem:   WasteLibrary.STATU_ACTIVE,
-			TruckStopTrace:  WasteLibrary.STATU_ACTIVE,
-			Active:          WasteLibrary.STATU_ACTIVE,
-			CreateTime:      WasteLibrary.GetTime(),
-		}
-		WasteLibrary.LogStr(currentData.ToString())
-		data := url.Values{
-			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-		}
-
-		client := http.Client{
-			Timeout: 10 * time.Second,
-		}
-		resp, err := client.PostForm("http://a579dddf21ea745a49c7237860760244-1808420299.eu-central-1.elb.amazonaws.com/setConfig", data)
-
-		if err != nil {
-			WasteLibrary.LogErr(err)
-
-		} else {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				WasteLibrary.LogErr(err)
+			var currentData WasteLibrary.DeviceType = WasteLibrary.DeviceType{
+				DeviceId: deviceId,
 			}
-			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
-			WasteLibrary.LogStr(resultVal.ToString())
-		}
-	} else if opType == "INGRESS" {
 
-		data := url.Values{}
-
-		client := http.Client{
-			Timeout: 10 * time.Second,
-		}
-		resp, err := client.PostForm("http://a36dca1ff41a94299939de76fcf7f5e3-535996505.eu-central-1.elb.amazonaws.com/status1", data)
-
-		if err != nil {
-			WasteLibrary.LogErr(err)
-
-		} else {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				WasteLibrary.LogErr(err)
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
-			WasteLibrary.LogStr(resultVal.ToString())
-		}
-	} else if opType == "TEST" {
 
-		data := url.Values{}
+		} else if opType2 == "SET_DEVICE" {
+			path1 = "afatekapi"
+			path2 = "setDevice"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.DevıceId - deviceId
+			//currentHeader.CustomerId - customerId
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - DeviceType
+			//currentData.DevıceId - [0,deviceId]
+			//currentData.[All]
+			//HTTP_DATA : currentData
 
-		client := http.Client{
-			Timeout: 10 * time.Second,
-		}
-		resp, err := client.PostForm("http://aa594028d9f43457ea027f6f0928e021-567581812.eu-central-1.elb.amazonaws.com/setConfig", data)
-
-		if err != nil {
-			WasteLibrary.LogErr(err)
-
-		} else {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				WasteLibrary.LogErr(err)
+			var currentData WasteLibrary.DeviceType = WasteLibrary.DeviceType{
+				DeviceId: deviceId,
 			}
-			resultVal = WasteLibrary.ByteToResultType(bodyBytes)
-			WasteLibrary.LogStr(resultVal.ToString())
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+
+		} else if opType2 == "GET_DEVICES_WEB" {
+			path1 = "webapi"
+			path2 = "getDevices"
+
+			data = url.Values{}
+		} else if opType2 == "GET_DEVICES_AFATEK" {
+			path1 = "afatekapi"
+			path2 = "getDevices"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.CustomerId - customerId
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else {
+
 		}
-	} else if opType == "TCP" {
+	} else if opType == "CUSTOMER" {
+		if opType2 == "GET_CUSTOMER_WEB" {
+			path1 = "webapi"
+			path2 = "getCustomer"
 
-		strEcho := "ULT#SENS#864450040594790#40#3241#E32.12345#N032.45678#10341#09872#11234#10341#09872#11234#10341#09872#11234#11234"
-		servAddr := "listener.aws.afatek.com.tr:20000"
-		tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
-		if err != nil {
-			println("ResolveTCPAddr failed:", err.Error())
-			os.Exit(1)
+			data = url.Values{}
+		} else if opType2 == "GET_CUSTOMER_ADMIN" {
+			path1 = "adminapi"
+			path2 = "getCustomer"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else if opType2 == "GET_CUSTOMER_AFATEK" {
+			path1 = "afatekapi"
+			path2 = "getCustomer"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - CustomerType
+			//currentData.CustomerId - customerId
+			//HTTP_DATA : currentData
+
+			var currentData WasteLibrary.CustomerType = WasteLibrary.CustomerType{
+				CustomerId: customerId,
+			}
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+		} else if opType2 == "SET_CUSTOMER" {
+			path1 = "afatekapi"
+			path2 = "setCustomer"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - CustomerType
+			//currentData.CustomerId - [0,customerId]
+			//currentData.[All]
+			//HTTP_DATA : currentData
+
+			var currentData WasteLibrary.CustomerType = WasteLibrary.CustomerType{
+				CustomerId: customerId,
+			}
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+		} else if opType2 == "GET_CUSTOMERS" {
+			path1 = "afatekapi"
+			path2 = "getCustomers"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else {
+
 		}
+	} else if opType == "USER" {
+		if opType2 == "GET_USER" {
+			path1 = "adminapi"
+			path2 = "getUser"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - UserType
+			//currentData.UserId - userId
+			//HTTP_DATA : currentData
 
-		conn, err := net.DialTCP("tcp", nil, tcpAddr)
-		if err != nil {
-			println("Dial failed:", err.Error())
-			os.Exit(1)
+			var currentData WasteLibrary.UserType = WasteLibrary.UserType{
+				UserId: userId,
+			}
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+		} else if opType2 == "SET_USER" {
+			path1 = "adminapi"
+			path2 = "setUser"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - UserType
+			//currentData.UserId - [0,userId]
+			//currentData.[All]
+			//HTTP_DATA : currentData
+
+			var currentData WasteLibrary.UserType = WasteLibrary.UserType{
+				UserId: userId,
+			}
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+		} else if opType2 == "LOGIN" {
+			path1 = "authapi"
+			path2 = "login"
+		} else if opType2 == "REGISTER" {
+			path1 = "authapi"
+			path2 = "register"
+		} else if opType2 == "GET_USERS" {
+			path1 = "adminapi"
+			path2 = "getUsers"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else {
+
 		}
+	} else if opType == "CONFIG" {
+		if opType2 == "GET_ADMINCONFIG_ADMIN" {
+			path1 = "adminapi"
+			path2 = "getConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//currentHeader.OpType - OPTYPE_ADMINCONFIG
+			//HTTP_HEADER : currentHeader
 
-		_, err = conn.Write([]byte(strEcho))
-		if err != nil {
-			println("Write to server failed:", err.Error())
-			os.Exit(1)
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else if opType2 == "SET_ADMINCONFIG_ADMIN" {
+			path1 = "adminapi"
+			path2 = "setConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//currentHeader.OpType - OPTYPE_ADMINCONFIG
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - AdminConfigType
+			//currentData.[All]
+			//HTTP_DATA : currentData
+
+			var currentData WasteLibrary.AdminConfigType = WasteLibrary.AdminConfigType{}
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+		} else if opType2 == "GET_LOCALCONFIG_ADMIN" {
+			path1 = "adminapi"
+			path2 = "getConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//currentHeader.OpType - OPTYPE_LOCALCONFIG
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else if opType2 == "SET_LOCALCONFIG_ADMIN" {
+			path1 = "adminapi"
+			path2 = "setConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//currentHeader.OpType - OPTYPE_LOCALCONFIG
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - LocalConfigType
+			//currentData.[All]
+			//HTTP_DATA : currentData
+
+			var currentData WasteLibrary.LocalConfigType = WasteLibrary.LocalConfigType{}
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+		} else if opType2 == "GET_CUSTOMERCONFIG_ADMIN" {
+			path1 = "adminapi"
+			path2 = "getConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//currentHeader.OpType - OPTYPE_CUSTOMERCONFIG
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else if opType2 == "SET_CUSTOMERCONFIG_ADMIN" {
+			path1 = "adminapi"
+			path2 = "setConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.Token - token
+			//currentHeader.OpType - OPTYPE_CUSTOMERCONFIG
+			//HTTP_HEADER : currentHeader
+			//
+			//currentData - CustomerConfigType
+			//currentData.[All]
+			//HTTP_DATA : currentData
+
+			var currentData WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{}
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
+		} else if opType2 == "GET_ADMINCONFIG_WEB" {
+			path1 = "webapi"
+			path2 = "getConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.OpType - OPTYPE_ADMINCONFIG
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else if opType2 == "GET_LOCALCONFIG_WEB" {
+			path1 = "webapi"
+			path2 = "getConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.OpType - OPTYPE_LOCALCONFIG
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else if opType2 == "GET_CUSTOMERCONFIG_WEB" {
+			path1 = "webapi"
+			path2 = "getConfig"
+			//currentHeader - HttpClientHeaderType
+			//currentHeader.OpType - OPTYPE_CUSTOMERCONFIG
+			//HTTP_HEADER : currentHeader
+
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+			}
+		} else {
+
 		}
+	} else {
 
-		println("write to server = ", strEcho)
+	}
 
-		reply := make([]byte, 1024)
-
-		_, err = conn.Read(reply)
-		if err != nil {
-			println("Write to server failed:", err.Error())
-			os.Exit(1)
-		}
-
-		println("reply from server=", string(reply))
-
-		conn.Close()
-	} else {*/
-
-	testVal := GetMD5Hash("123")
-	fmt.Println(testVal)
-
-	//}
+	resultVal := WasteLibrary.HttpPostReq(urlVal+"/"+path1+"/"+path2, data)
+	fmt.Println(resultVal)
 
 }
-
-func GetMD5Hash(text string) string {
-	hash := md5.Sum([]byte(text))
-	return hex.EncodeToString(hash[:])
-}
-
-/*
-func test123(testt string) {
-	fmt.Println((testt))
-}
-
-type TestType struct {
-	TagID  float64
-	Status WasteLibrary.StatusType
-	Tags   map[string]WasteLibrary.TagType
-}
-
-func (res TestType) ToIdString() string {
-	return fmt.Sprintf("%.0f", res.TagID)
-}
-
-func (res TestType) ToByte() []byte {
-	jData, _ := json.Marshal(res)
-	return jData
-
-}
-
-func (res TestType) ToString() string {
-	return string(res.ToByte())
-
-}
-
-func ByteToTestType(retByte []byte) TestType {
-	var retVal TestType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-func StringToTestType(retStr string) TestType {
-	return ByteToTestType([]byte(retStr))
-}
-*/

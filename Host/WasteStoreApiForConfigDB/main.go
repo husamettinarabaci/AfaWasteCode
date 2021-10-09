@@ -53,6 +53,10 @@ func main() {
 }
 
 func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
@@ -73,21 +77,11 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			if currentData.UserId != 0 {
-				execSQL = fmt.Sprintf(`UPDATE public.users 
-				SET user_role='%s',email='%s',user_name='%s',customer_id=%f,password='%s' 
-	  			WHERE user_id=%f  
-				RETURNING user_id;`,
-					currentData.UserRole, currentData.Email, currentData.UserName,
-					currentData.CustomerId, currentData.Password, currentData.UserId)
+				execSQL = currentData.UpdateSQL()
 				WasteLibrary.LogStr(execSQL)
 			} else {
 
-				execSQL = fmt.Sprintf(`INSERT INTO public.users 
-				(user_role,email,user_name,customer_id,password) 
-  				VALUES ('%s','%s','%s',%f,'%s')   
-  				RETURNING user_id;`,
-					currentData.UserRole, currentData.Email, currentData.UserName,
-					currentData.CustomerId, currentData.Password)
+				execSQL = currentData.InsertSQL()
 				WasteLibrary.LogStr(execSQL)
 			}
 			var userId int = 0
@@ -112,6 +106,10 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 }
 
 func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
@@ -131,23 +129,16 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		if currentData.UserId != 0 {
-			execSQL = fmt.Sprintf(`SELECT 
-			user_role,
-			email,
-			user_name,
-			customer_id,
-			password,
-			create_time
-			FROM public.users
-				   WHERE user_id=%f ;`, currentData.UserId)
+			execSQL = currentData.SelectSQL()
 			WasteLibrary.LogStr(execSQL)
 		}
 
-		errDb := configDb.QueryRow(execSQL).Scan(&currentData.UserRole,
-			&currentData.Email,
+		errDb := configDb.QueryRow(execSQL).Scan(&currentData.CustomerId,
 			&currentData.UserName,
-			&currentData.CustomerId,
+			&currentData.UserRole,
 			&currentData.Password,
+			&currentData.Email,
+			&currentData.Active,
 			&currentData.CreateTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)

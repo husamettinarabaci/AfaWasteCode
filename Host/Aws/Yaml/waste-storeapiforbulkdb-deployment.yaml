@@ -27,6 +27,7 @@ spec:
       containers:
       - name: waste-storeapiforbulkdb
         image: devafatek/wastestoreapiforbulkdb:1.0
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 80
         envFrom:

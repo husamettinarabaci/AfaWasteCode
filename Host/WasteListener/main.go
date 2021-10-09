@@ -1,12 +1,10 @@
 package main
 
 import (
-	"math"
 	"net"
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -67,7 +65,7 @@ func handleTcpRequest(conn net.Conn) {
 		if len(split) == 17 {
 			appType := split[0]
 			opType := split[1]
-			serialNo := split[2]
+			/*serialNo := split[2]
 			temp := split[3]
 			battery := split[4]
 			lat := split[5]
@@ -82,13 +80,13 @@ func handleTcpRequest(conn net.Conn) {
 			r8 := WasteLibrary.StringToFloat64(split[14])
 			r9 := WasteLibrary.StringToFloat64(split[15])
 			r10 := WasteLibrary.StringToFloat64(split[16])
-			var ultrange = math.Mod((r1+r2+r3+r4+r5+r6+r7+r8+r9+r10)/10, 10)
+			var ultrange = math.Mod((r1+r2+r3+r4+r5+r6+r7+r8+r9+r10)/10, 10)*/
 
 			if appType == WasteLibrary.APPTYPE_ULT && (opType == WasteLibrary.OPTYPE_SENS || opType == WasteLibrary.OPTYPE_ATMP || opType == WasteLibrary.OPTYPE_AGPS) {
 				conn.Write([]byte(WasteLibrary.RESULT_OK))
 				conn.Close()
 
-				var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{}
+				/*var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{}
 				currentHttpHeader.AppType = appType
 				currentHttpHeader.OpType = opType
 				currentHttpHeader.DeviceNo = serialNo
@@ -170,6 +168,10 @@ func handleTcpRequest(conn net.Conn) {
 }
 
 func data(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if err := req.ParseForm(); err != nil {
