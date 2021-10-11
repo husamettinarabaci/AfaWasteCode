@@ -1,45 +1,68 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
+	"net"
+	"os"
+	"sync"
 
 	"github.com/devafatek/WasteLibrary"
 )
+
+var wg sync.WaitGroup
 
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
 }
+
+const (
+	CONN_HOST = "0.0.0.0"
+	CONN_PORT = "16663"
+	CONN_TYPE = "tcp"
+)
+
+var connCount = 0
+
 func main() {
 
 	initStart()
 
-	http.HandleFunc("/health", WasteLibrary.HealthHandler)
-	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
-	http.HandleFunc("/status", WasteLibrary.StatusHandler)
-	http.HandleFunc("/status1", statusHandler1)
-	http.HandleFunc("/status2", statusHandler2)
-	http.ListenAndServe(":80", nil)
+	go tcpServer()
+	wg.Add(1)
+
+	wg.Wait()
+
 }
 
-func statusHandler1(w http.ResponseWriter, req *http.Request) {
-	if WasteLibrary.AllowCors {
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+func tcpServer() {
+	l, err := net.Listen(CONN_TYPE, CONN_HOST+":"+CONN_PORT)
+	if err != nil {
+		WasteLibrary.LogErr(err)
+		os.Exit(1)
 	}
-	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.RESULT_OK
-	WasteLibrary.LogStr("status 1")
-	w.Write(resultVal.ToByte())
+	defer l.Close()
+	WasteLibrary.LogStr("Listening on " + CONN_HOST + ":" + CONN_PORT)
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			WasteLibrary.LogErr(err)
+			os.Exit(1)
+		}
+		connCount++
+		fmt.Println(connCount)
+		go handleTcpRequest(conn)
+	}
+	wg.Done()
 }
 
-func statusHandler2(w http.ResponseWriter, req *http.Request) {
-	if WasteLibrary.AllowCors {
+func handleTcpRequest(conn net.Conn) {
 
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+	buf := make([]byte, 1024)
+	_, err := conn.Read(buf)
+	if err != nil {
+		WasteLibrary.LogErr(err)
 	}
-	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.RESULT_OK
-	WasteLibrary.LogStr("status 1")
-	w.Write(resultVal.ToByte())
+	var strBuf = string(buf)
+	fmt.Println(strBuf)
 }

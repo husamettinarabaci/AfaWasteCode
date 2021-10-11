@@ -2,9 +2,8 @@ package WasteLibrary
 
 import (
 	"encoding/base64"
-	"fmt"
-	"log"
 	"net/url"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -20,12 +19,23 @@ func CheckAuth(data url.Values, customerId string, userRole string) ResultType {
 }
 
 //GenerateToken
-func GenerateToken(tokenVal string) string {
+func GenerateToken(tokenVal string, userId string) string {
 	hash, err := bcrypt.GenerateFromPassword([]byte(tokenVal), bcrypt.DefaultCost)
 	if err != nil {
-		log.Fatal(err)
+		LogErr(err)
 	}
-	fmt.Println("Hash to store:", string(hash))
+	var lastHash string = userId + "#" + string(hash)
+	return base64.StdEncoding.EncodeToString([]byte(lastHash))
+}
 
-	return base64.StdEncoding.EncodeToString(hash)
+//DecodeToken
+func GetUserIdByToken(tokenVal string) string {
+	lastHash, err := base64.StdEncoding.DecodeString(tokenVal)
+	if err != nil {
+		LogErr(err)
+	}
+	spData := strings.Split(string(lastHash), "#")
+	userId := spData[0]
+
+	return userId
 }

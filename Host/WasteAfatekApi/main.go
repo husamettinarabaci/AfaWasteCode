@@ -43,7 +43,7 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, "1")
 	if resultVal.Result == WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
 		w.Write(resultVal.ToByte())
 		return
 	} else {
@@ -56,10 +56,10 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 		var currentData WasteLibrary.CustomerType
 		currentData.CustomerName = "AFATEK"
 		currentData.CustomerLink = "afatek.aws.afatek.com.tr"
-		currentData.RfIdApp = "0"
-		currentData.UltApp = "0"
-		currentData.RecyApp = "0"
-		currentData.Active = "1"
+		currentData.RfIdApp = WasteLibrary.STATU_ACTIVE
+		currentData.UltApp = WasteLibrary.STATU_ACTIVE
+		currentData.RecyApp = WasteLibrary.STATU_ACTIVE
+		currentData.Active = WasteLibrary.STATU_ACTIVE
 		data := url.Values{
 			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 			WasteLibrary.HTTP_DATA:   {currentData.ToString()},
@@ -422,10 +422,10 @@ func getCustomers(w http.ResponseWriter, req *http.Request) {
 		if customerId != 0 {
 			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, WasteLibrary.Float64IdToString(customerId))
 			if resultVal.Result == WasteLibrary.RESULT_OK {
+
 				var currentCustomer WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(resultVal.Retval.(string))
 				customersList.Customers[currentCustomer.ToIdString()] = currentCustomer
 			}
-
 		}
 	}
 
@@ -616,7 +616,6 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 				var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
 				customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 			}
-
 		}
 	}
 

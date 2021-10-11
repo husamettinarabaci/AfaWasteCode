@@ -12,6 +12,13 @@ type AdminConfigType struct {
 	CreateTime string
 }
 
+//New
+func (res AdminConfigType) New() {
+	res.CustomerId = 0
+	res.Active = STATU_ACTIVE
+	res.CreateTime = GetTime()
+}
+
 //ToId String
 func (res AdminConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

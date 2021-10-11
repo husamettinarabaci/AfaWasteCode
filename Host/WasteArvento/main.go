@@ -37,6 +37,7 @@ func setCustomerList() {
 	for {
 
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, WasteLibrary.REDIS_CUSTOMERS)
+
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
 			var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))

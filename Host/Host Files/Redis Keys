@@ -10,5 +10,5 @@
 "customer-link" CustomerLink customerID
 "users"  userId UserType
 "customer-users" customerID CustomerUsersType
-"token" token expDate
-"token-user" token userId
+"user_tokenendate" userId expDate
+"user_token" userId token

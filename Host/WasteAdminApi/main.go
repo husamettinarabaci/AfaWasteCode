@@ -106,7 +106,15 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
-	if currentData.ToCustomerIdString() != customerId {
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, currentData.ToIdString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_NOTFOUND
+		w.Write(resultVal.ToByte())
+		return
+	}
+	currentDbData := WasteLibrary.StringToUserType(resultVal.Retval.(string))
+	if currentDbData.ToCustomerIdString() != customerId {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_NOTFOUND
 		w.Write(resultVal.ToByte())
@@ -377,6 +385,7 @@ func getUsers(w http.ResponseWriter, req *http.Request) {
 		if userId != 0 {
 			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, WasteLibrary.Float64IdToString(userId))
 			if resultVal.Result == WasteLibrary.RESULT_OK {
+
 				var currentUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
 				customerUsersList.Users[currentUser.ToIdString()] = currentUser
 			}

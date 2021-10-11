@@ -78,9 +78,18 @@ func (res UserType) InsertSQL() string {
 //UpdateSQL
 func (res UserType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.users 
-	SET UserRole='%s',Email='%s',UserName='%s',CustomerId=%f,Password='%s',Active='%s'
+	SET UserRole='%s',Email='%s',UserName='%s',CustomerId=%f,Active='%s'
 	  WHERE UserId=%f  
 	RETURNING UserId;`,
 		res.UserRole, res.Email, res.UserName,
-		res.CustomerId, res.Password, res.Active, res.UserId)
+		res.CustomerId, res.Active, res.UserId)
+}
+
+//UpdatePasswordSQL
+func (res UserType) UpdatePasswordSQL() string {
+	return fmt.Sprintf(`UPDATE public.users 
+	SET Password='%s'
+	  WHERE UserId=%f  
+	RETURNING UserId;`,
+		res.Password, res.UserId)
 }

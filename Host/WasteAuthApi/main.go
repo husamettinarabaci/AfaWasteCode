@@ -61,13 +61,18 @@ func register(w http.ResponseWriter, req *http.Request) {
 	var currentCustomerUsers WasteLibrary.CustomerUsersType = WasteLibrary.StringToCustomerUsersType(resultVal.Retval.(string))
 
 	for _, userId := range currentCustomerUsers.Users {
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, WasteLibrary.Float64IdToString(userId))
-		var inRedisUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
-		if inRedisUser.UserName == currentUser.UserName {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_USERNAMEEXIST
-			w.Write(resultVal.ToByte())
-			return
+		if userId != 0 {
+			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, WasteLibrary.Float64IdToString(userId))
+			var inRedisUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
+			if resultVal.Result == WasteLibrary.RESULT_OK {
+
+				if inRedisUser.UserName == currentUser.UserName {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_USERNAMEEXIST
+					w.Write(resultVal.ToByte())
+					return
+				}
+			}
 		}
 	}
 	var userRole string = WasteLibrary.USER_ROLE_GUEST
@@ -177,18 +182,23 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 	var userExist bool = false
 	for _, userId := range currentCustomerUsers.Users {
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, WasteLibrary.Float64IdToString(userId))
-		var inRedisUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
-		if inRedisUser.UserName == currentUser.UserName {
-			userExist = true
+		if userId != 0 {
+			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, WasteLibrary.Float64IdToString(userId))
+			if resultVal.Result == WasteLibrary.RESULT_OK {
+				var inRedisUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
+				if inRedisUser.UserName == currentUser.UserName {
+					userExist = true
 
-			if WasteLibrary.GetMD5Hash(currentUser.Password) != inRedisUser.Password {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDPASSWORD
-				w.Write(resultVal.ToByte())
-				return
+					if WasteLibrary.GetMD5Hash(currentUser.Password) != inRedisUser.Password {
+						resultVal.Result = WasteLibrary.RESULT_FAIL
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDPASSWORD
+						w.Write(resultVal.ToByte())
+						return
+					}
+					currentUser = inRedisUser
+					break
+				}
 			}
-			break
 		}
 	}
 	if !userExist {
@@ -198,16 +208,16 @@ func login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var token string = WasteLibrary.GenerateToken(currentUser.UserName + currentUser.Password + currentUser.Email)
+	var token string = WasteLibrary.GenerateToken(currentUser.UserName+currentUser.Password+currentUser.Email+WasteLibrary.GetTime(), currentUser.ToIdString())
 	newDate := WasteLibrary.GetTimePlus(time.Hour * 1)
-	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TOKEN, token, newDate)
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USER_TOKEN, currentUser.ToIdString(), token)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
 		w.Write(resultVal.ToByte())
 		return
 	}
-	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TOKEN_USER, token, currentUser.ToIdString())
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USER_TOKENENDATE, currentUser.ToIdString(), newDate)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -237,7 +247,21 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TOKEN, currentHttpHeader.Token)
+	var userIdByToken string = WasteLibrary.GetUserIdByToken(currentHttpHeader.Token)
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USER_TOKEN, userIdByToken)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
+		w.Write(resultVal.ToByte())
+		return
+	}
+	if currentHttpHeader.Token != resultVal.Retval.(string) {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
+		w.Write(resultVal.ToByte())
+		return
+	}
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USER_TOKENENDATE, userIdByToken)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
@@ -246,10 +270,9 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 	}
 
 	endDate := WasteLibrary.StringToTime(resultVal.Retval.(string))
-
-	if time.Since(endDate).Seconds() > -1 {
+	if time.Since(endDate).Seconds() < -1 {
 		newDate := WasteLibrary.GetTimePlus(time.Hour * 1)
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TOKEN, currentHttpHeader.Token, newDate)
+		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USER_TOKENENDATE, userIdByToken, newDate)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -263,15 +286,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TOKEN_USER, currentHttpHeader.Token)
-	if resultVal.Result != WasteLibrary.RESULT_OK {
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
-		w.Write(resultVal.ToByte())
-		return
-	}
-
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, resultVal.Retval.(string))
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, userIdByToken)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDUSER
