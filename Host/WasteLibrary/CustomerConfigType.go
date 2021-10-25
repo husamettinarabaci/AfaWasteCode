@@ -18,6 +18,20 @@ type CustomerConfigType struct {
 	CreateTime      string
 }
 
+//New
+func (res CustomerConfigType) New() {
+	res.CustomerId = 0
+	res.ArventoApp = STATU_PASSIVE
+	res.ArventoUserName = ""
+	res.ArventoPin1 = ""
+	res.ArventoPin2 = ""
+	res.SystemProblem = STATU_PASSIVE
+	res.TruckStopTrace = STATU_PASSIVE
+	res.Active = STATU_ACTIVE
+	res.CreateTime = GetTime()
+
+}
+
 //ToId String
 func (res CustomerConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

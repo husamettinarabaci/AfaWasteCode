@@ -10,13 +10,12 @@ import (
 	"github.com/devafatek/WasteLibrary"
 )
 
-var currentCustomerList WasteLibrary.CustomersType = WasteLibrary.CustomersType{
-	Customers: make(map[string]float64),
-}
+var currentCustomerList WasteLibrary.CustomersType
 
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
+	currentCustomerList.New()
 }
 
 func main() {
@@ -143,9 +142,8 @@ func customerProc(customerId float64) {
 func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	var deviceLocation WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.ArventoDeviceGpsListType{
-		ArventoDeviceGpsList: make(map[string]WasteLibrary.ArventoDeviceGpsType),
-	}
+	var deviceLocation WasteLibrary.ArventoDeviceGpsListType
+	deviceLocation.New()
 
 	resp, err := http.Get("http://ws.arvento.com/v1/report.asmx/GetVehicleStatus?Username=" + currentCustomerConfig.ArventoUserName + "&PIN1=" + currentCustomerConfig.ArventoPin1 + "&PIN2=" + currentCustomerConfig.ArventoPin2 + "&Language=tr")
 	if err != nil {
@@ -175,6 +173,7 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLib
 			speed = bodys[strings.Index(bodys, "<Speed>")+7 : strings.Index(bodys, "</Speed>")]
 			bodys = bodys[strings.Index(bodys, "</Longitude>")+1:]
 			var currrentArventoDeviceGpsType WasteLibrary.ArventoDeviceGpsType
+			currrentArventoDeviceGpsType.New()
 			if latitude != "" {
 				currrentArventoDeviceGpsType.Latitude = WasteLibrary.StringToFloat64(latitude)
 			} else {

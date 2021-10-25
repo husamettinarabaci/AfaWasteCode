@@ -96,6 +96,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		if currentData.TransferAppStatus == WasteLibrary.STATU_ACTIVE {
 			currentData.TransferAppLastOkTime = currentHttpHeader.Time
 		}
+		if currentData.SystemAppStatus == WasteLibrary.STATU_ACTIVE {
+			currentData.SystemAppLastOkTime = currentHttpHeader.Time
+		}
+		if currentData.UpdaterAppStatus == WasteLibrary.STATU_ACTIVE {
+			currentData.UpdaterAppLastOkTime = currentHttpHeader.Time
+		}
 		if currentData.AliveStatus == WasteLibrary.STATU_ACTIVE {
 			currentData.AliveLastOkTime = currentHttpHeader.Time
 		}

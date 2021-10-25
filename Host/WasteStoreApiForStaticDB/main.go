@@ -377,7 +377,11 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 			&currentData.MotorAppLastOkTime,
 			&currentData.MotorConnStatus,
 			&currentData.MotorConnLastOkTime,
-			&currentData.MotorStatus)
+			&currentData.MotorStatus,
+			&currentData.UpdaterAppStatus,
+			&currentData.UpdaterAppLastOkTime,
+			&currentData.SystemAppStatus,
+			&currentData.SystemAppLastOkTime)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
 			resultVal.Result = WasteLibrary.RESULT_FAIL

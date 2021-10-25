@@ -17,6 +17,18 @@ type UserType struct {
 	CreateTime string
 }
 
+//New
+func (res UserType) New() {
+	res.UserId = 0
+	res.CustomerId = 0
+	res.UserName = ""
+	res.UserRole = USER_ROLE_GUEST
+	res.Password = ""
+	res.Email = ""
+	res.Active = STATU_ACTIVE
+	res.CreateTime = GetTime()
+}
+
 //ToId String
 func (res UserType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.UserId)

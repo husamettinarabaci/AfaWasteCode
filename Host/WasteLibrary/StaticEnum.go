@@ -52,6 +52,18 @@ const (
 	OPTYPE_TAG            = "TAG"
 	OPTYPE_ARVENTO        = "ARVENTO"
 	OPTYPE_CUSTOMER       = "CUSTOMER"
+	OPTYPE_UPDATE         = "UPDATE"
+)
+
+const (
+	RFID_APPTYPE_NONE     = "NONE"
+	RFID_APPTYPE_GPS      = "GpsApp"
+	RFID_APPTYPE_CHECKER  = "CheckerApp"
+	RFID_APPTYPE_READER   = "ReaderApp"
+	RFID_APPTYPE_TRANSFER = "TransferApp"
+	RFID_APPTYPE_CAM      = "CamApp"
+	RFID_APPTYPE_THERM    = "ThermApp"
+	RFID_APPTYPE_SYSTEM   = "SystemApp"
 )
 
 const (
@@ -70,6 +82,7 @@ const (
 )
 
 const (
+	APPTYPE_NONE   = "NONE"
 	APPTYPE_ULT    = "ULT"
 	APPTYPE_RFID   = "RFID"
 	APPTYPE_RECY   = "RECY"
@@ -77,6 +90,7 @@ const (
 	APPTYPE_AFATEK = "AFATEK"
 )
 const (
+	BASETYPE_NONE     = "NONE"
 	BASETYPE_CUSTOMER = "CUSTOMER"
 	BASETYPE_DEVICE   = "DEVICE"
 	BASETYPE_TAG      = "TAG"
@@ -137,8 +151,15 @@ const (
 const (
 	CONTAINER_TYPE_NONE = "NONE"
 )
+const (
+	DEVICE_TYPE_NONE = "NONE"
+	DEVICE_TYPE_RFID = "RFID"
+	DEVICE_TYPE_ULT  = "ULT"
+	DEVICE_TYPE_RECY = "RECY"
+)
 
 const (
+	TAG_STATU_NONE  = "NONE"
 	TAG_STATU_EMPTY = "EMPTY"
 )
 

@@ -133,10 +133,9 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var customerDevices WasteLibrary.CustomerDevicesType = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
-	var customerDevicesList WasteLibrary.CustomerDevicesListType = WasteLibrary.CustomerDevicesListType{
-		CustomerId: WasteLibrary.StringIdToFloat64(customerId),
-		Devices:    make(map[string]WasteLibrary.DeviceType),
-	}
+	var customerDevicesList WasteLibrary.CustomerDevicesListType
+	customerDevicesList.New()
+	customerDevicesList.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
 	for _, deviceId := range customerDevices.Devices {
 
 		if deviceId != 0 {

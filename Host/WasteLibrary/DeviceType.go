@@ -52,6 +52,10 @@ type DeviceType struct {
 	ThermAppLastOkTime    string
 	TransferAppStatus     string
 	TransferAppLastOkTime string
+	SystemAppStatus       string
+	SystemAppLastOkTime   string
+	UpdaterAppStatus      string
+	UpdaterAppLastOkTime  string
 	ContactStatus         string
 	ContactLastOkTime     string
 	Speed                 float64
@@ -73,6 +77,80 @@ type DeviceType struct {
 	MotorConnStatus       string
 	MotorConnLastOkTime   string
 	MotorStatus           string
+}
+
+//New
+func (res DeviceType) New() {
+	res.DeviceId = 0
+	res.CustomerId = 0
+	res.DeviceName = ""
+	res.ContainerNo = ""
+	res.ContainerType = CONTAINER_TYPE_NONE
+	res.DeviceType = DEVICE_TYPE_NONE
+	res.SerialNumber = ""
+	res.DeviceStatus = DEVICE_STATU_NONE
+	res.StatusTime = ""
+	res.AliveStatus = STATU_PASSIVE
+	res.AliveLastOkTime = ""
+	res.Latitude = 0
+	res.Longitude = 0
+	res.GpsTime = ""
+	res.AlarmStatus = ALARM_STATU_NONE
+	res.AlarmTime = ""
+	res.AlarmType = ALARM_NONE
+	res.Alarm = ""
+	res.Therm = "0"
+	res.ThermTime = ""
+	res.ThermStatus = THERM_STATU_NONE
+	res.Active = STATU_ACTIVE
+	res.CreateTime = ""
+	res.ReaderAppStatus = STATU_PASSIVE
+	res.ReaderAppLastOkTime = ""
+	res.ReaderConnStatus = STATU_PASSIVE
+	res.ReaderConnLastOkTime = ""
+	res.ReaderStatus = STATU_PASSIVE
+	res.ReaderLastOkTime = ""
+	res.CamAppStatus = STATU_PASSIVE
+	res.CamAppLastOkTime = ""
+	res.CamConnStatus = STATU_PASSIVE
+	res.CamConnLastOkTime = ""
+	res.CamStatus = STATU_PASSIVE
+	res.CamLastOkTime = ""
+	res.GpsAppStatus = STATU_PASSIVE
+	res.GpsAppLastOkTime = ""
+	res.GpsConnStatus = STATU_PASSIVE
+	res.GpsConnLastOkTime = ""
+	res.GpsStatus = STATU_PASSIVE
+	res.GpsLastOkTime = ""
+	res.ThermAppStatus = STATU_PASSIVE
+	res.ThermAppLastOkTime = ""
+	res.TransferAppStatus = STATU_PASSIVE
+	res.TransferAppLastOkTime = ""
+	res.SystemAppStatus = STATU_PASSIVE
+	res.SystemAppLastOkTime = ""
+	res.UpdaterAppStatus = STATU_PASSIVE
+	res.UpdaterAppLastOkTime = ""
+	res.ContactStatus = STATU_PASSIVE
+	res.ContactLastOkTime = ""
+	res.Speed = -1
+	res.Battery = "0"
+	res.BatteryStatus = BATTERY_STATU_NONE
+	res.BatteryTime = ""
+	res.UltTime = ""
+	res.UltRange = 0
+	res.UltStatus = ULT_STATU_NONE
+	res.TotalGlassCount = 0
+	res.TotalPlasticCount = 0
+	res.TotalMetalCount = 0
+	res.DailyGlassCount = 0
+	res.DailyPlasticCount = 0
+	res.DailyMetalCount = 0
+	res.RecyTime = ""
+	res.MotorAppStatus = STATU_PASSIVE
+	res.MotorAppLastOkTime = ""
+	res.MotorConnStatus = STATU_PASSIVE
+	res.MotorConnLastOkTime = ""
+	res.MotorStatus = STATU_PASSIVE
 }
 
 //ToId String
@@ -176,7 +254,11 @@ func (res DeviceType) SelectSQL() string {
 	MotorAppLastOkTime    ,
 	MotorConnStatus       ,
 	MotorConnLastOkTime   ,
-	MotorStatus           
+	MotorStatus           ,
+	UpdaterAppStatus     ,
+	UpdaterAppLastOkTime ,
+	SystemAppStatus     ,
+	SystemAppLastOkTime 
 	 FROM public.devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
@@ -257,7 +339,11 @@ func (res DeviceType) InsertDeviceDataSQL() string {
 		MotorAppLastOkTime    ,
 		MotorConnStatus       ,
 		MotorConnLastOkTime   ,
-		MotorStatus           
+		MotorStatus           ,
+		UpdaterAppStatus     ,
+		UpdaterAppLastOkTime ,
+		SystemAppStatus     ,
+		SystemAppLastOkTime 
 	) 
 	  VALUES (%f,%f,'%s','%s','%s','%s','%s','%s','%s','%s',
 	  '%s',%f,%f,'%s','%s','%s','%s','%s',
@@ -265,7 +351,7 @@ func (res DeviceType) InsertDeviceDataSQL() string {
 	  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',
 	  '%s','%s','%s','%s','%s','%s','%s',%f,'%s','%s',
 	  '%s','%s',%f,'%s',%f,%f,%f,%f,%f,%f,
-	  '%s','%s','%s','%s','%s','%s',) 
+	  '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s') 
 	  RETURNING DataId;`,
 		res.DeviceId,
 		res.CustomerId,
@@ -330,7 +416,11 @@ func (res DeviceType) InsertDeviceDataSQL() string {
 		res.MotorAppLastOkTime,
 		res.MotorConnStatus,
 		res.MotorConnLastOkTime,
-		res.MotorStatus)
+		res.MotorStatus,
+		res.UpdaterAppStatus,
+		res.UpdaterAppLastOkTime,
+		res.SystemAppStatus,
+		res.SystemAppLastOkTime)
 }
 
 //UpdateSQL
@@ -392,6 +482,12 @@ func (res DeviceType) UpdateStatuSQL() string {
 	if res.TransferAppStatus == STATU_ACTIVE {
 		execSqlExt += ",TransferAppLastOkTime='" + res.TransferAppLastOkTime + "'"
 	}
+	if res.SystemAppStatus == STATU_ACTIVE {
+		execSqlExt += ",SystemAppLastOkTime='" + res.SystemAppLastOkTime + "'"
+	}
+	if res.UpdaterAppStatus == STATU_ACTIVE {
+		execSqlExt += ",UpdaterAppLastOkTime='" + res.UpdaterAppLastOkTime + "'"
+	}
 	if res.AliveStatus == STATU_ACTIVE {
 		execSqlExt += ",AliveLastOkTime='" + res.AliveLastOkTime + "'"
 	}
@@ -403,14 +499,15 @@ func (res DeviceType) UpdateStatuSQL() string {
 	SET StatusTime='%s',
 	ReaderAppStatus='%s',ReaderConnStatus='%s',ReaderStatus='%s',CamAppStatus='%s',CamConnStatus='%s',
 	CamStatus='%s',GpsAppStatus='%s',GpsConnStatus='%s',GpsStatus='%s',ThermAppStatus='%s',
-	TransferAppStatus='%s',AliveStatus='%s',ContactStatus='%s'`+execSqlExt+`
+	TransferAppStatus='%s',AliveStatus='%s',ContactStatus='%s',
+	UpdaterAppStatus='%s',SystemAppStatus='%s'`+execSqlExt+`
    WHERE DeviceId=%f AND CustomerId=%f 
    RETURNING DeviceId;`, res.StatusTime,
 		res.ReaderAppStatus, res.ReaderConnStatus, res.ReaderStatus,
 		res.CamAppStatus, res.CamConnStatus, res.CamStatus,
 		res.GpsAppStatus, res.GpsConnStatus, res.GpsStatus,
 		res.ThermAppStatus, res.TransferAppStatus, res.AliveStatus,
-		res.ContactStatus, res.DeviceId, res.CustomerId)
+		res.ContactStatus, res.UpdaterAppStatus, res.SystemAppStatus, res.DeviceId, res.CustomerId)
 }
 
 //UpdateThermSQL

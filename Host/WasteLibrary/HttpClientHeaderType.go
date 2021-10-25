@@ -18,6 +18,19 @@ type HttpClientHeaderType struct {
 	Token        string
 }
 
+//New
+func (res HttpClientHeaderType) New() {
+	res.AppType = APPTYPE_NONE
+	res.DeviceNo = ""
+	res.OpType = OPTYPE_NONE
+	res.Time = GetTime()
+	res.Repeat = STATU_PASSIVE
+	res.DeviceId = 0
+	res.CustomerId = 0
+	res.BaseDataType = BASETYPE_NONE
+	res.Token = ""
+}
+
 //ToCustomerId String
 func (res HttpClientHeaderType) ToCustomerIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

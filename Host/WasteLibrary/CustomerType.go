@@ -17,6 +17,18 @@ type CustomerType struct {
 	CreateTime   string
 }
 
+//New
+func (res CustomerType) New() {
+	res.CustomerId = 0
+	res.CustomerName = ""
+	res.CustomerLink = ""
+	res.RfIdApp = STATU_PASSIVE
+	res.UltApp = STATU_PASSIVE
+	res.RecyApp = STATU_PASSIVE
+	res.Active = STATU_ACTIVE
+	res.CreateTime = GetTime()
+}
+
 //ToId String
 func (res CustomerType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

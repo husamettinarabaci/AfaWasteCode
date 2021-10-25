@@ -9,6 +9,11 @@ type CustomersListType struct {
 	Customers map[string]CustomerType
 }
 
+//New
+func (res CustomersListType) New() {
+	res.Customers = make(map[string]CustomerType)
+}
+
 //ToByte
 func (res CustomersListType) ToByte() []byte {
 	jData, _ := json.Marshal(res)

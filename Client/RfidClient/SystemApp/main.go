@@ -1,0 +1,47 @@
+package main
+
+import (
+	"net/http"
+	"sync"
+	"time"
+
+	"github.com/devafatek/WasteLibrary"
+)
+
+var currentUser string
+var opInterval time.Duration = 5 * 60
+var wg sync.WaitGroup
+var version = "1"
+
+func initStart() {
+
+	time.Sleep(5 * time.Second)
+	WasteLibrary.LogStr("Successfully connected!")
+	WasteLibrary.LogStr("Version : " + version)
+	currentUser = WasteLibrary.GetCurrentUser()
+	WasteLibrary.LogStr(currentUser)
+}
+func main() {
+
+	initStart()
+
+	time.Sleep(time.Second)
+	go systemCheck(WasteLibrary.RFID_APPTYPE_GPS)
+	wg.Add(1)
+
+	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.ListenAndServe(":10006", nil)
+
+	wg.Wait()
+
+}
+
+func systemCheck(appType string) {
+	if currentUser == "pi" {
+		for {
+
+			time.Sleep(opInterval * time.Second)
+		}
+	}
+	wg.Done()
+}

@@ -18,7 +18,7 @@ func initStart() {
 
 const (
 	CONN_HOST = "0.0.0.0"
-	CONN_PORT = "16663"
+	CONN_PORT = "20000"
 	CONN_TYPE = "tcp"
 )
 

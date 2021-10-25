@@ -102,16 +102,12 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 			w.Write(resultVal.ToByte())
 			return
 		}
-		var currentCustomerDevices WasteLibrary.CustomerDevicesType = WasteLibrary.CustomerDevicesType{
-			CustomerId: currentCustomer.CustomerId,
-			Devices:    make(map[string]float64),
-		}
+		var currentCustomerDevices WasteLibrary.CustomerDevicesType
+		currentCustomerDevices.New()
 		currentCustomerDevices.Devices["0"] = 0
 
-		var currentCustomerUsers WasteLibrary.CustomerUsersType = WasteLibrary.CustomerUsersType{
-			CustomerId: currentCustomer.CustomerId,
-			Users:      make(map[string]float64),
-		}
+		var currentCustomerUsers WasteLibrary.CustomerUsersType
+		currentCustomerUsers.New()
 		currentCustomerUsers.Users["0"] = 0
 
 		var currentCustomerTags WasteLibrary.CustomerTagsType
@@ -119,15 +115,17 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 		currentCustomerTags.Tags = make(map[string]WasteLibrary.TagType)
 		currentCustomerTags.Tags["0"] = WasteLibrary.TagType{TagID: 0}
 
-		var currentCustomerConfig WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{
-			CustomerId: currentCustomer.CustomerId,
-		}
-		var currentAdminConfig WasteLibrary.AdminConfigType = WasteLibrary.AdminConfigType{
-			CustomerId: currentCustomer.CustomerId,
-		}
-		var currentLocalConfig WasteLibrary.LocalConfigType = WasteLibrary.LocalConfigType{
-			CustomerId: currentCustomer.CustomerId,
-		}
+		var currentCustomerConfig WasteLibrary.CustomerConfigType
+		currentCustomerConfig.New()
+		currentCustomerConfig.CustomerId = currentCustomer.CustomerId
+
+		var currentAdminConfig WasteLibrary.AdminConfigType
+		currentAdminConfig.New()
+		currentAdminConfig.CustomerId = currentCustomer.CustomerId
+
+		var currentLocalConfig WasteLibrary.LocalConfigType
+		currentLocalConfig.New()
+		currentLocalConfig.CustomerId = currentCustomer.CustomerId
 
 		WasteLibrary.LogStr("CustomerDevices : " + currentCustomerDevices.ToString())
 		WasteLibrary.LogStr("CustomerUsers : " + currentCustomerUsers.ToString())
@@ -277,16 +275,12 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if !isCustomerExist {
-		var currentCustomerDevices WasteLibrary.CustomerDevicesType = WasteLibrary.CustomerDevicesType{
-			CustomerId: currentCustomer.CustomerId,
-			Devices:    make(map[string]float64),
-		}
+		var currentCustomerDevices WasteLibrary.CustomerDevicesType
+		currentCustomerDevices.New()
 		currentCustomerDevices.Devices["0"] = 0
 
-		var currentCustomerUsers WasteLibrary.CustomerUsersType = WasteLibrary.CustomerUsersType{
-			CustomerId: currentCustomer.CustomerId,
-			Users:      make(map[string]float64),
-		}
+		var currentCustomerUsers WasteLibrary.CustomerUsersType
+		currentCustomerUsers.New()
 		currentCustomerUsers.Users["0"] = 0
 
 		var currentCustomerTags WasteLibrary.CustomerTagsType
@@ -294,15 +288,17 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 		currentCustomerTags.Tags = make(map[string]WasteLibrary.TagType)
 		currentCustomerTags.Tags["0"] = WasteLibrary.TagType{TagID: 0}
 
-		var currentCustomerConfig WasteLibrary.CustomerConfigType = WasteLibrary.CustomerConfigType{
-			CustomerId: currentCustomer.CustomerId,
-		}
-		var currentAdminConfig WasteLibrary.AdminConfigType = WasteLibrary.AdminConfigType{
-			CustomerId: currentCustomer.CustomerId,
-		}
-		var currentLocalConfig WasteLibrary.LocalConfigType = WasteLibrary.LocalConfigType{
-			CustomerId: currentCustomer.CustomerId,
-		}
+		var currentCustomerConfig WasteLibrary.CustomerConfigType
+		currentCustomerConfig.New()
+		currentCustomerConfig.CustomerId = currentCustomer.CustomerId
+
+		var currentAdminConfig WasteLibrary.AdminConfigType
+		currentAdminConfig.New()
+		currentAdminConfig.CustomerId = currentCustomer.CustomerId
+
+		var currentLocalConfig WasteLibrary.LocalConfigType
+		currentLocalConfig.New()
+		currentLocalConfig.CustomerId = currentCustomer.CustomerId
 
 		WasteLibrary.LogStr("CustomerDevices : " + currentCustomerDevices.ToString())
 		WasteLibrary.LogStr("CustomerUsers : " + currentCustomerUsers.ToString())
@@ -414,9 +410,8 @@ func getCustomers(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var customers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
-	var customersList WasteLibrary.CustomersListType = WasteLibrary.CustomersListType{
-		Customers: make(map[string]WasteLibrary.CustomerType),
-	}
+	var customersList WasteLibrary.CustomersListType
+	customersList.New()
 	for _, customerId := range customers.Customers {
 
 		if customerId != 0 {

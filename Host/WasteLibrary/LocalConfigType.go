@@ -12,6 +12,13 @@ type LocalConfigType struct {
 	CreateTime string
 }
 
+//New
+func (res LocalConfigType) New() {
+	res.CustomerId = 0
+	res.Active = STATU_ACTIVE
+	res.CreateTime = GetTime()
+}
+
 //ToId String
 func (res LocalConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

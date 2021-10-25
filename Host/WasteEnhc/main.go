@@ -43,22 +43,21 @@ func data(w http.ResponseWriter, req *http.Request) {
 	if resultVal.Result == WasteLibrary.RESULT_FAIL {
 		//TO DO
 		// insert new device
-		var createHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{
-			AppType:      WasteLibrary.APPTYPE_ADMIN,
-			DeviceNo:     "",
-			OpType:       WasteLibrary.OPTYPE_DEVICE,
-			Time:         WasteLibrary.GetTime(),
-			Repeat:       WasteLibrary.STATU_PASSIVE,
-			DeviceId:     0,
-			CustomerId:   0,
-			BaseDataType: WasteLibrary.BASETYPE_DEVICE,
-		}
-
-		var createDevice WasteLibrary.DeviceType = WasteLibrary.DeviceType{
-			DeviceId:     0,
-			CustomerId:   -1,
-			SerialNumber: currentHttpHeader.DeviceNo,
-		}
+		var createHttpHeader WasteLibrary.HttpClientHeaderType
+		createHttpHeader.New()
+		createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
+		createHttpHeader.DeviceNo = ""
+		createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
+		createHttpHeader.Time = WasteLibrary.GetTime()
+		createHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
+		createHttpHeader.DeviceId = 0
+		createHttpHeader.CustomerId = 0
+		createHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
+		var createDevice WasteLibrary.DeviceType
+		createDevice.New()
+		createDevice.DeviceId = 0
+		createDevice.CustomerId = -1
+		createDevice.SerialNumber = currentHttpHeader.DeviceNo
 		WasteLibrary.LogStr(createDevice.ToString())
 		data := url.Values{
 			WasteLibrary.HTTP_HEADER: {createHttpHeader.ToString()},

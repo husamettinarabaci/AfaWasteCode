@@ -9,6 +9,12 @@ type ArventoDeviceGpsListType struct {
 	ArventoDeviceGpsList map[string]ArventoDeviceGpsType
 }
 
+//New
+func (res ArventoDeviceGpsListType) New() {
+	res.ArventoDeviceGpsList = make(map[string]ArventoDeviceGpsType)
+
+}
+
 //ToByte
 func (res ArventoDeviceGpsListType) ToByte() []byte {
 	jData, _ := json.Marshal(res)

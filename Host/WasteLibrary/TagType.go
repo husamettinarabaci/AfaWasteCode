@@ -24,6 +24,25 @@ type TagType struct {
 	CreateTime    string
 }
 
+//New
+func (res TagType) New() {
+	res.TagID = 0
+	res.CustomerId = 0
+	res.DeviceId = 0
+	res.UID = ""
+	res.Epc = ""
+	res.ContainerNo = ""
+	res.ContainerType = CONTAINER_TYPE_NONE
+	res.Latitude = 0
+	res.Longitude = 0
+	res.Statu = TAG_STATU_NONE
+	res.ImageStatu = STATU_PASSIVE
+	res.Active = STATU_ACTIVE
+	res.ReadTime = ""
+	res.CheckTime = ""
+	res.CreateTime = GetTime()
+}
+
 //ToId String
 func (res TagType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagID)

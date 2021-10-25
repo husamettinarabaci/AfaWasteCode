@@ -11,6 +11,12 @@ type CustomerDevicesListType struct {
 	Devices    map[string]DeviceType
 }
 
+//New
+func (res CustomerDevicesListType) New() {
+	res.CustomerId = 0
+	res.Devices = make(map[string]DeviceType)
+}
+
 //ToId String
 func (res CustomerDevicesListType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

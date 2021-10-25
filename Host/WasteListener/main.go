@@ -29,6 +29,7 @@ func main() {
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/data", data)
+	http.HandleFunc("/update", update)
 	http.ListenAndServe(":80", nil)
 }
 
@@ -58,9 +59,9 @@ func handleTcpRequest(conn net.Conn) {
 	if err != nil {
 		WasteLibrary.LogErr(err)
 	}
+	var strBuf = string(buf)
+	WasteLibrary.LogStr(strBuf)
 	if reqLen == 111 {
-		var strBuf = string(buf)
-		WasteLibrary.LogStr(strBuf)
 		split := strings.Split(strBuf, "#")
 		if len(split) == 17 {
 			appType := split[0]
@@ -188,5 +189,31 @@ func data(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 		return
 	}
+	w.Write(resultVal.ToByte())
+}
+
+func update(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	//TO DO
+	/*resultVal.Result = WasteLibrary.RESULT_FAIL
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/update", req.Form)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+		w.Write(resultVal.ToByte())
+		return
+	}*/
 	w.Write(resultVal.ToByte())
 }

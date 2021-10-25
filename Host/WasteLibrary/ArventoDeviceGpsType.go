@@ -12,6 +12,15 @@ type ArventoDeviceGpsType struct {
 	GpsTime   string
 }
 
+//New
+func (res ArventoDeviceGpsType) New() {
+	res.Latitude = 0
+	res.Longitude = 0
+	res.Speed = 0
+	res.GpsTime = ""
+
+}
+
 //ToByte
 func (res ArventoDeviceGpsType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
