@@ -124,10 +124,17 @@ const (
 )
 
 const (
-	REDIS_SERIAL_DEVICE           = "serial-device"
-	REDIS_DEVICES                 = "devices"
+	REDIS_SERIAL_RFID_DEVICE      = "serial-rfid-device"
+	REDIS_SERIAL_ULT_DEVICE       = "serial-ult-device"
+	REDIS_SERIAL_RECY_DEVICE      = "serial-recy-device"
+	REDIS_RFID_DEVICES            = "rfid-devices"
+	REDIS_ULT_DEVICES             = "ult-devices"
+	REDIS_RECY_DEVICES            = "recy-devices"
+	REDIS_TAGS                    = "tags"
 	REDIS_CUSTOMER_TAGS           = "customer-tags"
-	REDIS_CUSTOMER_DEVICES        = "customer-devices"
+	REDIS_CUSTOMER_RFID_DEVICES   = "customer-rfid-devices"
+	REDIS_CUSTOMER_RECY_DEVICES   = "customer-recy-devices"
+	REDIS_CUSTOMER_ULT_DEVICES    = "customer-ult-devices"
 	REDIS_CUSTOMERS               = "customers"
 	REDIS_CUSTOMER_CUSTOMERCONFIG = "customer-customerconfig"
 	REDIS_CUSTOMER_ADMINCONFIG    = "customer-adminconfig"
@@ -135,8 +142,8 @@ const (
 	REDIS_CUSTOMER_LINK           = "customer-link"
 	REDIS_USERS                   = "users"
 	REDIS_CUSTOMER_USERS          = "customer-users"
-	REDIS_USER_TOKENENDATE        = "user_tokenendate"
-	REDIS_USER_TOKEN              = "user_token"
+	REDIS_USER_TOKENENDATE        = "user-tokenendate"
+	REDIS_USER_TOKEN              = "user-token"
 	REDIS_HASHKEY                 = "HASHKEY"
 	REDIS_SUBKEY                  = "SUBKEY"
 	REDIS_KEYVALUE                = "KEYVALUE"
@@ -151,11 +158,28 @@ const (
 const (
 	CONTAINER_TYPE_NONE = "NONE"
 )
+
+const (
+	TRUCK_TYPE_NONE = "NONE"
+)
+
 const (
 	DEVICE_TYPE_NONE = "NONE"
 	DEVICE_TYPE_RFID = "RFID"
 	DEVICE_TYPE_ULT  = "ULT"
 	DEVICE_TYPE_RECY = "RECY"
+)
+
+const (
+	RFID_DEVICE_TYPE_NONE = "NONE"
+)
+
+const (
+	ULT_DEVICE_TYPE_NONE = "NONE"
+)
+
+const (
+	RECY_DEVICE_TYPE_NONE = "NONE"
 )
 
 const (

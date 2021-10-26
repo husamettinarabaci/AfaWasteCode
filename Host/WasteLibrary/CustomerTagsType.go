@@ -8,13 +8,13 @@ import (
 //CustomerTagsType
 type CustomerTagsType struct {
 	CustomerId float64
-	Tags       map[string]TagType
+	Tags       map[string]float64
 }
 
 //New
 func (res CustomerTagsType) New() {
 	res.CustomerId = 0
-	res.Tags = make(map[string]TagType)
+	res.Tags = make(map[string]float64)
 }
 
 //ToId String
@@ -26,6 +26,7 @@ func (res CustomerTagsType) ToIdString() string {
 func (res CustomerTagsType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
+
 }
 
 //ToString Get JSON

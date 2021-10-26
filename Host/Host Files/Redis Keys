@@ -1,14 +1,21 @@
-"serial-device" serialNo deviceId
-"devices" deviceId DeviceType
-"customer-tags" customerID CustomerTagsType
-"customer-devices" customerID CustomerDevicesType
-"customers" customerID CustomerType
-"customers" []customerID
-"customer-customerconfig" customerID CustomerConfigType
-"customer-adminconfig" customerID AdminConfigType
-"customer-localconfig" customerID LocalConfigType
-"customer-link" CustomerLink customerID
-"users"  userId UserType
-"customer-users" customerID CustomerUsersType
-"user_tokenendate" userId expDate
-"user_token" userId token
+
+	REDIS_SERIAL_RFID_DEVICE      = "serial-rfid-device" serialNo deviceId
+	REDIS_SERIAL_ULT_DEVICE       = "serial-ult-device" serialNo deviceId
+	REDIS_SERIAL_RECY_DEVICE      = "serial-recy-device" serialNo deviceId
+	REDIS_RFID_DEVICES            = "rfid-devices" deviceId RfidDeviceType
+	REDIS_ULT_DEVICES             = "ult-devices" deviceId UltDeviceType
+	REDIS_RECY_DEVICES            = "recy-devices" deviceId RecyDeviceType
+	REDIS_TAGS                    = "tags" tagId TagType
+	REDIS_CUSTOMER_TAGS           = "customer-tags" customerId CustomerTagsType
+	REDIS_CUSTOMER_RFID_DEVICES   = "customer-rfid-devices" customerID CustomerRfidDevicesType
+	REDIS_CUSTOMER_RECY_DEVICES   = "customer-recy-devices" customerID CustomerRecyDevicesType
+	REDIS_CUSTOMER_ULT_DEVICES    = "customer-ult-devices" customerID CustomerUltDevicesType
+	REDIS_CUSTOMERS               = "customers" customerID CustomerType , []customerID
+	REDIS_CUSTOMER_CUSTOMERCONFIG = "customer-customerconfig" customerID CustomerConfigType
+	REDIS_CUSTOMER_ADMINCONFIG    = "customer-adminconfig" customerID AdminConfigType
+	REDIS_CUSTOMER_LOCALCONFIG    = "customer-localconfig" customerID LocalConfigType
+	REDIS_CUSTOMER_LINK           = "customer-link" CustomerLink customerID
+	REDIS_USERS                   = "users" userId UserType
+	REDIS_CUSTOMER_USERS          = "customer-users" customerID CustomerUsersType
+	REDIS_USER_TOKENENDATE        = "user-tokenendate" userId expDate
+	REDIS_USER_TOKEN              = "user-token" userId token
