@@ -43,12 +43,10 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, "1")
 	if resultVal.Result == WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_APP_STARTED
 		w.Write(resultVal.ToByte())
 		return
 	} else {
-		//TO DO
-		// Add Version Config
 		WasteLibrary.LogStr("AfatekApi Start System Add Customer AFATEK")
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType
 		currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK

@@ -10,7 +10,7 @@ type ArventoDeviceGpsListType struct {
 }
 
 //New
-func (res ArventoDeviceGpsListType) New() {
+func (res *ArventoDeviceGpsListType) New() {
 	res.ArventoDeviceGpsList = make(map[string]ArventoDeviceGpsType)
 
 }

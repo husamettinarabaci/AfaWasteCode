@@ -234,6 +234,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		var customerDevicesList WasteLibrary.CustomerRecyDevicesListType
 		customerDevicesList.New()
 		customerDevicesList.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
+
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {

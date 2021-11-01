@@ -10,7 +10,7 @@ type CustomersType struct {
 }
 
 //New
-func (res CustomersType) New() {
+func (res *CustomersType) New() {
 	res.Customers = make(map[string]float64)
 }
 

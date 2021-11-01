@@ -13,7 +13,7 @@ type AdminConfigType struct {
 }
 
 //New
-func (res AdminConfigType) New() {
+func (res *AdminConfigType) New() {
 	res.CustomerId = 0
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()

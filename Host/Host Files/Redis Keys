@@ -18,3 +18,4 @@
 	REDIS_CUSTOMER_USERS          = "customer-users" customerID CustomerUsersType
 	REDIS_USER_TOKENENDATE        = "user-tokenendate" userId expDate
 	REDIS_USER_TOKEN              = "user-token" userId token
+	REDIS_SERIAL_ALARM            = "serial-alarm"

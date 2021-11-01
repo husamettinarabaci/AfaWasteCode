@@ -13,7 +13,7 @@ type ArventoDeviceGpsType struct {
 }
 
 //New
-func (res ArventoDeviceGpsType) New() {
+func (res *ArventoDeviceGpsType) New() {
 	res.Latitude = 0
 	res.Longitude = 0
 	res.Speed = 0

@@ -19,7 +19,7 @@ type UserType struct {
 }
 
 //New
-func (res UserType) New() {
+func (res *UserType) New() {
 	res.UserId = 0
 	res.CustomerId = 0
 	res.UserName = ""
@@ -109,12 +109,12 @@ func (res UserType) UpdatePasswordSQL() string {
 
 //SelectWithDb
 func (res UserType) SelectWithDb(db *sql.DB) error {
-	errDb := db.QueryRow(res.SelectSQL()).Scan(res.CustomerId,
-		res.UserName,
-		res.UserRole,
-		res.Password,
-		res.Email,
-		res.Active,
-		res.CreateTime)
+	errDb := db.QueryRow(res.SelectSQL()).Scan(&res.CustomerId,
+		&res.UserName,
+		&res.UserRole,
+		&res.Password,
+		&res.Email,
+		&res.Active,
+		&res.CreateTime)
 	return errDb
 }

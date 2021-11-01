@@ -12,7 +12,7 @@ type CustomerRecyDevicesListType struct {
 }
 
 //New
-func (res CustomerRecyDevicesListType) New() {
+func (res *CustomerRecyDevicesListType) New() {
 	res.CustomerId = 0
 	res.Devices = make(map[string]RecyDeviceType)
 }

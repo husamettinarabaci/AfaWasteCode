@@ -43,7 +43,7 @@ type UltDeviceType struct {
 }
 
 //New
-func (res UltDeviceType) New() {
+func (res *UltDeviceType) New() {
 	res.DeviceId = 0
 	res.CustomerId = 0
 	res.ContainerNo = ""
@@ -285,37 +285,36 @@ func (res UltDeviceType) UpdateThermSQL() string {
 
 //SelectWithDb
 func (res UltDeviceType) SelectWithDb(db *sql.DB) error {
-	errDb := db.QueryRow(res.SelectSQL()).Scan(
-		res.CustomerId,
-		res.ContainerNo,
-		res.ContainerType,
-		res.DeviceType,
-		res.SerialNumber,
-		res.StatusTime,
-		res.AliveStatus,
-		res.AliveLastOkTime,
-		res.Latitude,
-		res.Longitude,
-		res.GpsTime,
-		res.AlarmStatus,
-		res.AlarmTime,
-		res.AlarmType,
-		res.Alarm,
-		res.Therm,
-		res.ThermTime,
-		res.ThermStatus,
-		res.Active,
-		res.CreateTime,
-		res.Battery,
-		res.BatteryStatus,
-		res.BatteryTime,
-		res.UltTime,
-		res.UltRange,
-		res.UltStatus,
-		res.Imei,
-		res.Imsi,
-		res.FirmwareVersion,
-		res.OldLatitude,
-		res.OldLongitude)
+	errDb := db.QueryRow(res.SelectSQL()).Scan(&res.CustomerId,
+		&res.ContainerNo,
+		&res.ContainerType,
+		&res.DeviceType,
+		&res.SerialNumber,
+		&res.StatusTime,
+		&res.AliveStatus,
+		&res.AliveLastOkTime,
+		&res.Latitude,
+		&res.Longitude,
+		&res.GpsTime,
+		&res.AlarmStatus,
+		&res.AlarmTime,
+		&res.AlarmType,
+		&res.Alarm,
+		&res.Therm,
+		&res.ThermTime,
+		&res.ThermStatus,
+		&res.Active,
+		&res.CreateTime,
+		&res.Battery,
+		&res.BatteryStatus,
+		&res.BatteryTime,
+		&res.UltTime,
+		&res.UltRange,
+		&res.UltStatus,
+		&res.Imei,
+		&res.Imsi,
+		&res.FirmwareVersion,
+		&res.OldLatitude,
+		&res.OldLongitude)
 	return errDb
 }

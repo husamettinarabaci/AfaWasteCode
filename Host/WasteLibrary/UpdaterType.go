@@ -15,7 +15,7 @@ type UpdaterType struct {
 }
 
 //New
-func (res UpdaterType) New() {
+func (res *UpdaterType) New() {
 	res.DeviceId = 0
 	res.AppType = RFID_APPTYPE_NONE
 	res.Version = "1"

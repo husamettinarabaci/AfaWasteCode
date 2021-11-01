@@ -20,7 +20,7 @@ type HttpClientHeaderType struct {
 }
 
 //New
-func (res HttpClientHeaderType) New() {
+func (res *HttpClientHeaderType) New() {
 	res.AppType = APPTYPE_NONE
 	res.DeviceNo = ""
 	res.OpType = OPTYPE_NONE

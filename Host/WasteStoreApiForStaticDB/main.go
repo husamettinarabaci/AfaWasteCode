@@ -302,6 +302,82 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}
+	} else if currentHttpHeader.AppType == WasteLibrary.APPTYPE_LISTENER {
+		var execSQL string = ""
+		if currentHttpHeader.OpType == WasteLibrary.OPTYPE_DEVICE {
+			if currentHttpHeader.DeviceType == WasteLibrary.DEVICE_TYPE_RFID {
+				var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+				WasteLibrary.LogStr("Data : " + currentData.ToString())
+				if currentData.DeviceId != 0 {
+					execSQL = currentData.UpdateBasicSQL()
+					WasteLibrary.LogStr(execSQL)
+				} else {
+
+					execSQL = currentData.InsertSQL()
+					WasteLibrary.LogStr(execSQL)
+				}
+				var deviceId int = 0
+				errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+				if errDb != nil {
+					WasteLibrary.LogErr(errDb)
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+				} else {
+					resultVal.Result = WasteLibrary.RESULT_OK
+				}
+
+				currentData.DeviceId = float64(deviceId)
+				resultVal.Retval = currentData.ToIdString()
+			} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICE_TYPE_RECY {
+				var currentData WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+				WasteLibrary.LogStr("Data : " + currentData.ToString())
+				if currentData.DeviceId != 0 {
+					execSQL = currentData.UpdateBasicSQL()
+					WasteLibrary.LogStr(execSQL)
+				} else {
+
+					execSQL = currentData.InsertSQL()
+					WasteLibrary.LogStr(execSQL)
+				}
+				var deviceId int = 0
+				errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+				if errDb != nil {
+					WasteLibrary.LogErr(errDb)
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+				} else {
+					resultVal.Result = WasteLibrary.RESULT_OK
+				}
+
+				currentData.DeviceId = float64(deviceId)
+				resultVal.Retval = currentData.ToIdString()
+			} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICE_TYPE_ULT {
+				var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+				WasteLibrary.LogStr("Data : " + currentData.ToString())
+				if currentData.DeviceId != 0 {
+					execSQL = currentData.UpdateBasicSQL()
+					WasteLibrary.LogStr(execSQL)
+				} else {
+
+					execSQL = currentData.InsertSQL()
+					WasteLibrary.LogStr(execSQL)
+				}
+				var deviceId int = 0
+				errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+				if errDb != nil {
+					WasteLibrary.LogErr(errDb)
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+				} else {
+					resultVal.Result = WasteLibrary.RESULT_OK
+				}
+
+				currentData.DeviceId = float64(deviceId)
+				resultVal.Retval = currentData.ToIdString()
+			} else {
+
+			}
+
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}

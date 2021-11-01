@@ -19,7 +19,7 @@ type CustomerType struct {
 }
 
 //New
-func (res CustomerType) New() {
+func (res *CustomerType) New() {
 	res.CustomerId = 0
 	res.CustomerName = ""
 	res.CustomerLink = ""
@@ -94,12 +94,12 @@ func (res CustomerType) UpdateSQL() string {
 
 //SelectWithDb
 func (res CustomerType) SelectWithDb(db *sql.DB) error {
-	errDb := db.QueryRow(res.SelectSQL()).Scan(res.CustomerName,
-		res.CustomerLink,
-		res.RfIdApp,
-		res.UltApp,
-		res.RecyApp,
-		res.Active,
-		res.CreateTime)
+	errDb := db.QueryRow(res.SelectSQL()).Scan(&res.CustomerName,
+		&res.CustomerLink,
+		&res.RfIdApp,
+		&res.UltApp,
+		&res.RecyApp,
+		&res.Active,
+		&res.CreateTime)
 	return errDb
 }

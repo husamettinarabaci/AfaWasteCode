@@ -44,7 +44,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
 			var createHttpHeader WasteLibrary.HttpClientHeaderType
 			createHttpHeader.New()
-			createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
+			createHttpHeader.AppType = WasteLibrary.APPTYPE_LISTENER
 			createHttpHeader.DeviceNo = ""
 			createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
 			createHttpHeader.Time = WasteLibrary.GetTime()
@@ -64,7 +64,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 				WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
 			}
 
-			resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+			resultVal = WasteLibrary.HttpPostReq("http://waste-enhcapi-cluster-ip/createDevice", data)
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
@@ -95,7 +95,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
 			var createHttpHeader WasteLibrary.HttpClientHeaderType
 			createHttpHeader.New()
-			createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
+			createHttpHeader.AppType = WasteLibrary.APPTYPE_LISTENER
 			createHttpHeader.DeviceNo = ""
 			createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
 			createHttpHeader.Time = WasteLibrary.GetTime()
@@ -115,7 +115,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 				WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
 			}
 
-			resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+			resultVal = WasteLibrary.HttpPostReq("http://waste-enhcapi-cluster-ip/createDevice", data)
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
@@ -146,7 +146,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
 			var createHttpHeader WasteLibrary.HttpClientHeaderType
 			createHttpHeader.New()
-			createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
+			createHttpHeader.AppType = WasteLibrary.APPTYPE_LISTENER
 			createHttpHeader.DeviceNo = ""
 			createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
 			createHttpHeader.Time = WasteLibrary.GetTime()
@@ -166,7 +166,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 				WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
 			}
 
-			resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+			resultVal = WasteLibrary.HttpPostReq("http://waste-enhcapi-cluster-ip/createDevice", data)
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST

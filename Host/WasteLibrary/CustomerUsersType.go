@@ -12,7 +12,7 @@ type CustomerUsersType struct {
 }
 
 //New
-func (res CustomerUsersType) New() {
+func (res *CustomerUsersType) New() {
 	res.CustomerId = 0
 	res.Users = make(map[string]float64)
 }
