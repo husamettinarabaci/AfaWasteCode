@@ -2,3 +2,54 @@
 #Cleaner Tool
 #Gps Db Op Minimize
 #Speed Op
+
+RECY
+Base +
+Statu +
+Gps +
+Alarm +
+Therm +
+Version +
+Detail
+
+ULT
+Base +
+Statu +
+Battery +
+Gps +
+Alarm +
+Therm +
+Version + 
+Sens +
+
+RFID
+Base
+Statu
+Gps
+Alarm
+Therm
+Version
+Detail
+
+*Detail Add Report Value
+
+recy_devices
+recy_base_devices
+recy_gps_devices
+recy_therm_devices
+recy_version_devices
+recy_alarm_devices
+recy_statu_devices
+recy_detail_devices
+
+ult_devices
+ult_base_devices
+ult_battery_devices
+ult_gps_devices
+ult_alarm_devices
+ult_therm_devices
+ult_version_devices
+ult_statu_devices
+ult_sens_devices
+
+rfid_devices

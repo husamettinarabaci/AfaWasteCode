@@ -94,7 +94,8 @@ func (res CustomerType) UpdateSQL() string {
 
 //SelectWithDb
 func (res CustomerType) SelectWithDb(db *sql.DB) error {
-	errDb := db.QueryRow(res.SelectSQL()).Scan(&res.CustomerName,
+	errDb := db.QueryRow(res.SelectSQL()).Scan(
+		&res.CustomerName,
 		&res.CustomerLink,
 		&res.RfIdApp,
 		&res.UltApp,
