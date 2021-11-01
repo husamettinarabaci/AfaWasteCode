@@ -1,4 +1,3 @@
-
 	REDIS_SERIAL_RFID_DEVICE      = "serial-rfid-device" serialNo deviceId
 	REDIS_SERIAL_ULT_DEVICE       = "serial-ult-device" serialNo deviceId
 	REDIS_SERIAL_RECY_DEVICE      = "serial-recy-device" serialNo deviceId

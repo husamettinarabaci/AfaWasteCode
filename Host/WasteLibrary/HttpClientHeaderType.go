@@ -12,6 +12,7 @@ type HttpClientHeaderType struct {
 	OpType       string
 	Time         string
 	Repeat       string
+	DeviceType   string
 	DeviceId     float64
 	CustomerId   float64
 	BaseDataType string
@@ -25,6 +26,7 @@ func (res HttpClientHeaderType) New() {
 	res.OpType = OPTYPE_NONE
 	res.Time = GetTime()
 	res.Repeat = STATU_PASSIVE
+	res.DeviceType = DEVICE_TYPE_NONE
 	res.DeviceId = 0
 	res.CustomerId = 0
 	res.BaseDataType = BASETYPE_NONE

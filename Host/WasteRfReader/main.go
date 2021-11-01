@@ -44,14 +44,14 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		currentData.CustomerId = currentHttpHeader.CustomerId
 		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, currentHttpHeader.ToDeviceIdString())
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, currentHttpHeader.ToDeviceIdString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
 			return
 		}
-		var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
+		var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
 		currentData.Latitude = currentDevice.Latitude
 		currentData.Longitude = currentDevice.Longitude
 		currentData.ReadTime = currentHttpHeader.Time
@@ -80,11 +80,17 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		var currentTag WasteLibrary.TagType = WasteLibrary.StringToTagType(resultVal.Retval.(string))
-
+		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAGS, currentTag.ToIdString(), currentTag.ToString())
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+			return
+		}
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, currentTag.ToCustomerIdString())
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 			var currentCustomerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
-			currentCustomerTags.Tags[currentTag.ToIdString()] = currentTag
+			currentCustomerTags.Tags[currentTag.ToIdString()] = currentTag.TagID
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, currentCustomerTags.ToIdString(), currentCustomerTags.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL

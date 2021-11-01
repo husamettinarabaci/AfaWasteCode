@@ -22,7 +22,6 @@ var serialNumber = "0"
 var currentUser string
 var opInterval time.Duration = 5 * 60
 var wg sync.WaitGroup
-var version = "1"
 
 const (
 	AWS_S3_REGION = "eu-central-1"
@@ -33,7 +32,8 @@ func initStart() {
 
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.LogStr("Version : " + version)
+	WasteLibrary.Version = "1"
+	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	serialNumber = getSerialNumber()
 	WasteLibrary.LogStr(currentUser)
@@ -164,6 +164,7 @@ func sendDataToServer(opType string, sendData string, dataTime string, repeat st
 	currentHttpHeader.Repeat = repeat
 	currentHttpHeader.DeviceId = 0
 	currentHttpHeader.CustomerId = 0
+	currentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
 	data := url.Values{
 		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 		WasteLibrary.HTTP_DATA:   {sendData},

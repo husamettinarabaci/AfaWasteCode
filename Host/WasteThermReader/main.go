@@ -40,7 +40,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
-		var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 		currentData.DeviceId = currentHttpHeader.DeviceId
 		currentData.CustomerId = currentHttpHeader.CustomerId
 		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
@@ -70,8 +70,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			w.Write(resultVal.ToByte())
 			return
 		}
-		var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
+		var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
+		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

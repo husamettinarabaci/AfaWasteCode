@@ -1,6 +1,7 @@
 package WasteLibrary
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 )
@@ -208,7 +209,7 @@ func (res RfidDeviceType) SelectSQL() string {
 	ThermAppStatus,
 	ThermAppLastOkTime,
 	TransferAppStatus,
-	TransferAppLastOkTime
+	TransferAppLastOkTime,
 	ContactStatus,
 	ContactLastOkTime,
 	Speed,
@@ -282,7 +283,7 @@ func (res RfidDeviceType) InsertDeviceDataSQL() string {
 		ThermAppStatus,
 		ThermAppLastOkTime,
 		TransferAppStatus,
-		TransferAppLastOkTime
+		TransferAppLastOkTime,
 		ContactStatus,
 		ContactLastOkTime,
 		Speed,
@@ -493,4 +494,68 @@ func (res RfidDeviceType) UpdateThermSQL() string {
 		 WHERE DeviceId=%f AND CustomerId=%f 
 		 RETURNING DeviceId;`,
 		res.Therm, res.ThermTime, res.DeviceId, res.CustomerId)
+}
+
+//SelectWithDb
+func (res RfidDeviceType) SelectWithDb(db *sql.DB) error {
+	errDb := db.QueryRow(res.SelectSQL()).Scan(
+		res.CustomerId,
+		res.DeviceType,
+		res.TruckType,
+		res.SerialNumber,
+		res.StatusTime,
+		res.AliveStatus,
+		res.AliveLastOkTime,
+		res.Latitude,
+		res.Longitude,
+		res.GpsTime,
+		res.AlarmStatus,
+		res.AlarmTime,
+		res.AlarmType,
+		res.Alarm,
+		res.Therm,
+		res.ThermTime,
+		res.ThermStatus,
+		res.Active,
+		res.CreateTime,
+		res.ReaderAppStatus,
+		res.ReaderAppLastOkTime,
+		res.ReaderConnStatus,
+		res.ReaderConnLastOkTime,
+		res.ReaderStatus,
+		res.ReaderLastOkTime,
+		res.CamAppStatus,
+		res.CamAppLastOkTime,
+		res.CamConnStatus,
+		res.CamConnLastOkTime,
+		res.CamStatus,
+		res.CamLastOkTime,
+		res.GpsAppStatus,
+		res.GpsAppLastOkTime,
+		res.GpsConnStatus,
+		res.GpsConnLastOkTime,
+		res.GpsStatus,
+		res.GpsLastOkTime,
+		res.ThermAppStatus,
+		res.ThermAppLastOkTime,
+		res.TransferAppStatus,
+		res.TransferAppLastOkTime,
+		res.ContactStatus,
+		res.ContactLastOkTime,
+		res.Speed,
+		res.UpdaterAppStatus,
+		res.UpdaterAppLastOkTime,
+		res.SystemAppStatus,
+		res.SystemAppLastOkTime,
+		res.PlateNo,
+		res.DriverName,
+		res.DriverSurName,
+		res.GpsAppVersion,
+		res.ThermAppVersion,
+		res.TransferAppVersion,
+		res.CheckerAppVersion,
+		res.CamAppVersion,
+		res.ReaderAppVersion,
+		res.SystemAppVersion)
+	return errDb
 }

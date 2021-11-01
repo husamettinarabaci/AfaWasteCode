@@ -99,6 +99,35 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}
+	} else if currentHttpHeader.AppType == WasteLibrary.APPTYPE_AUTH {
+		var execSQL string = ""
+		if currentHttpHeader.OpType == WasteLibrary.OPTYPE_USER {
+
+			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
+			if currentData.UserId != 0 {
+				execSQL = currentData.UpdateSQL()
+				WasteLibrary.LogStr(execSQL)
+			} else {
+
+				execSQL = currentData.InsertSQL()
+				WasteLibrary.LogStr(execSQL)
+			}
+			var userId int = 0
+			errDb := configDb.QueryRow(execSQL).Scan(&userId)
+			if errDb != nil {
+				WasteLibrary.LogErr(errDb)
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+			} else {
+				resultVal.Result = WasteLibrary.RESULT_OK
+			}
+
+			currentData.UserId = float64(userId)
+			resultVal.Retval = currentData.ToIdString()
+
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
@@ -122,24 +151,12 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
-	var execSQL string = ""
 	if currentHttpHeader.BaseDataType == WasteLibrary.BASETYPE_USER {
 
 		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
 		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
-		if currentData.UserId != 0 {
-			execSQL = currentData.SelectSQL()
-			WasteLibrary.LogStr(execSQL)
-		}
-
-		errDb := configDb.QueryRow(execSQL).Scan(&currentData.CustomerId,
-			&currentData.UserName,
-			&currentData.UserRole,
-			&currentData.Password,
-			&currentData.Email,
-			&currentData.Active,
-			&currentData.CreateTime)
+		errDb := currentData.SelectWithDb(configDb)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
 			resultVal.Result = WasteLibrary.RESULT_FAIL

@@ -27,7 +27,6 @@ var lastSendTime time.Time
 var lastRfTag string = ""
 var readTags map[string]time.Time
 var serialPort io.ReadWriteCloser
-var version = "1"
 
 var serialOptions0 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
 	PortName:        "/dev/ttyUSB0",
@@ -54,7 +53,8 @@ func initStart() {
 	readTags = make(map[string]time.Time)
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.LogStr("Version : " + version)
+	WasteLibrary.Version = "1"
+	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	WasteLibrary.LogStr(currentUser)
 	currentTagDataType.New()

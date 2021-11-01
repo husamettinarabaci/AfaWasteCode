@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	var opType string = "CONFIG"
+	var opType string = "NO"
 	var opType2 string = "SET_CUSTOMERCONFIG_ADMIN"
 	var currentHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.HttpClientHeaderType{}
 	var urlVal string = "afatek.aws.afatek.com.tr"

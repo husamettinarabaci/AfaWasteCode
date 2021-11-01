@@ -1,6 +1,7 @@
 package WasteLibrary
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 )
@@ -280,4 +281,41 @@ func (res UltDeviceType) UpdateThermSQL() string {
 		 WHERE DeviceId=%f AND CustomerId=%f 
 		 RETURNING DeviceId;`,
 		res.Therm, res.ThermTime, res.DeviceId, res.CustomerId)
+}
+
+//SelectWithDb
+func (res UltDeviceType) SelectWithDb(db *sql.DB) error {
+	errDb := db.QueryRow(res.SelectSQL()).Scan(
+		res.CustomerId,
+		res.ContainerNo,
+		res.ContainerType,
+		res.DeviceType,
+		res.SerialNumber,
+		res.StatusTime,
+		res.AliveStatus,
+		res.AliveLastOkTime,
+		res.Latitude,
+		res.Longitude,
+		res.GpsTime,
+		res.AlarmStatus,
+		res.AlarmTime,
+		res.AlarmType,
+		res.Alarm,
+		res.Therm,
+		res.ThermTime,
+		res.ThermStatus,
+		res.Active,
+		res.CreateTime,
+		res.Battery,
+		res.BatteryStatus,
+		res.BatteryTime,
+		res.UltTime,
+		res.UltRange,
+		res.UltStatus,
+		res.Imei,
+		res.Imsi,
+		res.FirmwareVersion,
+		res.OldLatitude,
+		res.OldLongitude)
+	return errDb
 }

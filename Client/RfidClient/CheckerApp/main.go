@@ -16,8 +16,7 @@ var wg sync.WaitGroup
 var opInterval time.Duration = 5 * 60
 var contactPort string = os.Getenv("CONTACT_PORT")
 var currentUser string
-var currentDeviceType WasteLibrary.DeviceType
-var version = "1"
+var currentDeviceType WasteLibrary.RfidDeviceType
 
 type statusType struct {
 	Name string `json:"Name"`
@@ -107,7 +106,8 @@ func initStart() {
 
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.LogStr("Version : " + version)
+	WasteLibrary.Version = "1"
+	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	WasteLibrary.LogStr(currentUser)
 	currentDeviceType.New()

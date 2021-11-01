@@ -45,6 +45,7 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 		if opType == OPTYPE_APP {
 			if CurrentCheckStatu.AppStatu == STATU_ACTIVE {
 				resultVal.Result = RESULT_OK
+				resultVal.Retval = Version
 			} else {
 				resultVal.Result = RESULT_FAIL
 			}

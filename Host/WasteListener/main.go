@@ -61,11 +61,20 @@ func handleTcpRequest(conn net.Conn) {
 	}
 	var strBuf = string(buf)
 	WasteLibrary.LogStr(strBuf)
-	if reqLen == 111 {
+	if reqLen == 128 {
+
+		/*strEcho := strBuf
+		servAddr := "138.68.72.151:20000"
+		tcpAddr, _ := net.ResolveTCPAddr("tcp", servAddr)
+
+		conn2, _ := net.DialTCP("tcp", nil, tcpAddr)
+
+		conn2.Write([]byte(strEcho))
+		conn2.Close()*/
+
 		split := strings.Split(strBuf, "#")
 		if len(split) == 17 {
 			appType := split[0]
-			opType := split[1]
 			/*serialNo := split[2]
 			temp := split[3]
 			battery := split[4]
@@ -83,7 +92,7 @@ func handleTcpRequest(conn net.Conn) {
 			r10 := WasteLibrary.StringToFloat64(split[16])
 			var ultrange = math.Mod((r1+r2+r3+r4+r5+r6+r7+r8+r9+r10)/10, 10)*/
 
-			if appType == WasteLibrary.APPTYPE_ULT && (opType == WasteLibrary.OPTYPE_SENS || opType == WasteLibrary.OPTYPE_ATMP || opType == WasteLibrary.OPTYPE_AGPS) {
+			if appType == WasteLibrary.APPTYPE_ULT {
 				conn.Write([]byte(WasteLibrary.RESULT_OK))
 				conn.Close()
 

@@ -59,7 +59,7 @@ func customerProc(customerId float64) {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var loopCount = 0
 	var currentCustomerConfig WasteLibrary.CustomerConfigType
-	var currentCustomerDevices WasteLibrary.CustomerDevicesType
+	var currentCustomerDevices WasteLibrary.CustomerRfidDevicesType
 	var plateDevice map[string]string
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, WasteLibrary.Float64IdToString(customerId))
 
@@ -77,10 +77,10 @@ func customerProc(customerId float64) {
 				if resultVal.Result == WasteLibrary.RESULT_OK {
 					currentCustomerConfig = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
 				}
-				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_DEVICES, currentCustomerConfig.ToIdString())
+				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_RFID_DEVICES, currentCustomerConfig.ToIdString())
 				if resultVal.Result == WasteLibrary.RESULT_OK {
 					WasteLibrary.LogStr("Add Devices : " + WasteLibrary.Float64IdToString(customerId))
-					currentCustomerDevices = WasteLibrary.StringToCustomerDevicesType(resultVal.Retval.(string))
+					currentCustomerDevices = WasteLibrary.StringToCustomerRfidDevicesType(resultVal.Retval.(string))
 				}
 				resultVal = getDevice(currentCustomerConfig)
 				if resultVal.Result == WasteLibrary.RESULT_OK {
@@ -95,37 +95,39 @@ func customerProc(customerId float64) {
 					if vDevice == 0 {
 						continue
 					}
-					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, WasteLibrary.Float64IdToString(vDevice))
+					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, WasteLibrary.Float64IdToString(vDevice))
 					if resultVal.Result == WasteLibrary.RESULT_OK {
-						var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
-						if currentDevice.DeviceType == WasteLibrary.APPTYPE_RFID {
-							var arventoId string = plateDevice[currentDevice.DeviceName]
-							if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
-								if currentDevice.Latitude != 0 && currentDevice.Longitude != 0 {
-									currentDevice.Latitude = currentDeviceLocation.Latitude
-									currentDevice.Longitude = currentDeviceLocation.Longitude
-									currentDevice.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
-									currentDevice.Speed = currentDeviceLocation.Speed
-									WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Speed))
-									var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
-									newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_RFID
-									newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_ARVENTO
-									data := url.Values{
-										WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
-										WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
-									}
-									resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+						var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
 
-									if resultVal.Result == WasteLibrary.RESULT_OK {
-										resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
-									}
-									if currentDevice.Speed == 0 {
-										//TO DO
-										//Speed Op
-									}
+						var arventoId string = plateDevice[currentDevice.PlateNo]
+						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
+							if currentDevice.Latitude != 0 && currentDevice.Longitude != 0 {
+								currentDevice.Latitude = currentDeviceLocation.Latitude
+								currentDevice.Longitude = currentDeviceLocation.Longitude
+								currentDevice.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
+								currentDevice.Speed = currentDeviceLocation.Speed
+								WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Speed))
+								var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
+								newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_ARVENTO
+								newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_ARVENTO
+								newCurrentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
+								newCurrentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+								data := url.Values{
+									WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
+									WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
+								}
+								resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+
+								if resultVal.Result == WasteLibrary.RESULT_OK {
+									resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
+								}
+								if currentDevice.Speed == 0 {
+									//TO DO
+									//Speed Op
 								}
 							}
 						}
+
 					}
 				}
 			}

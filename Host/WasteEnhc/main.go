@@ -39,57 +39,165 @@ func data(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_DEVICE, currentHttpHeader.DeviceNo)
-	if resultVal.Result == WasteLibrary.RESULT_FAIL {
-		//TO DO
-		// insert new device
-		var createHttpHeader WasteLibrary.HttpClientHeaderType
-		createHttpHeader.New()
-		createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
-		createHttpHeader.DeviceNo = ""
-		createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
-		createHttpHeader.Time = WasteLibrary.GetTime()
-		createHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
-		createHttpHeader.DeviceId = 0
-		createHttpHeader.CustomerId = 0
-		createHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
-		var createDevice WasteLibrary.DeviceType
-		createDevice.New()
-		createDevice.DeviceId = 0
-		createDevice.CustomerId = -1
-		createDevice.SerialNumber = currentHttpHeader.DeviceNo
-		WasteLibrary.LogStr(createDevice.ToString())
-		data := url.Values{
-			WasteLibrary.HTTP_HEADER: {createHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
-		}
+	if currentHttpHeader.DeviceType == WasteLibrary.DEVICE_TYPE_RFID {
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RFID_DEVICE, currentHttpHeader.DeviceNo)
+		if resultVal.Result == WasteLibrary.RESULT_FAIL {
+			var createHttpHeader WasteLibrary.HttpClientHeaderType
+			createHttpHeader.New()
+			createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
+			createHttpHeader.DeviceNo = ""
+			createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
+			createHttpHeader.Time = WasteLibrary.GetTime()
+			createHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
+			createHttpHeader.DeviceId = 0
+			createHttpHeader.CustomerId = 0
+			createHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
+			createHttpHeader.DeviceType = currentHttpHeader.DeviceType
+			var createDevice WasteLibrary.RfidDeviceType
+			createDevice.New()
+			createDevice.DeviceId = 0
+			createDevice.CustomerId = -1
+			createDevice.SerialNumber = currentHttpHeader.DeviceNo
+			WasteLibrary.LogStr(createDevice.ToString())
+			data := url.Values{
+				WasteLibrary.HTTP_HEADER: {createHttpHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
+			}
 
-		resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
-			w.Write(resultVal.ToByte())
-			return
+			resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+				w.Write(resultVal.ToByte())
+				return
+			}
+			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RFID_DEVICE, currentHttpHeader.DeviceNo)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+				w.Write(resultVal.ToByte())
+				return
+			}
 		}
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_DEVICE, currentHttpHeader.DeviceNo)
+		var deviceIdStr = resultVal.Retval.(string)
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, deviceIdStr)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
 			return
 		}
-	}
-	var deviceIdStr = resultVal.Retval.(string)
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_DEVICES, deviceIdStr)
-	if resultVal.Result != WasteLibrary.RESULT_OK {
+		var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
+		currentHttpHeader.CustomerId = currentDevice.CustomerId
+		currentHttpHeader.DeviceId = currentDevice.DeviceId
+	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICE_TYPE_ULT {
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_ULT_DEVICE, currentHttpHeader.DeviceNo)
+		if resultVal.Result == WasteLibrary.RESULT_FAIL {
+			var createHttpHeader WasteLibrary.HttpClientHeaderType
+			createHttpHeader.New()
+			createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
+			createHttpHeader.DeviceNo = ""
+			createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
+			createHttpHeader.Time = WasteLibrary.GetTime()
+			createHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
+			createHttpHeader.DeviceId = 0
+			createHttpHeader.CustomerId = 0
+			createHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
+			createHttpHeader.DeviceType = currentHttpHeader.DeviceType
+			var createDevice WasteLibrary.UltDeviceType
+			createDevice.New()
+			createDevice.DeviceId = 0
+			createDevice.CustomerId = -1
+			createDevice.SerialNumber = currentHttpHeader.DeviceNo
+			WasteLibrary.LogStr(createDevice.ToString())
+			data := url.Values{
+				WasteLibrary.HTTP_HEADER: {createHttpHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
+			}
+
+			resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+				w.Write(resultVal.ToByte())
+				return
+			}
+			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_ULT_DEVICE, currentHttpHeader.DeviceNo)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+				w.Write(resultVal.ToByte())
+				return
+			}
+		}
+		var deviceIdStr = resultVal.Retval.(string)
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_ULT_DEVICES, deviceIdStr)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+			w.Write(resultVal.ToByte())
+			return
+		}
+		var currentDevice WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(resultVal.Retval.(string))
+		currentHttpHeader.CustomerId = currentDevice.CustomerId
+		currentHttpHeader.DeviceId = currentDevice.DeviceId
+	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICE_TYPE_RECY {
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RECY_DEVICE, currentHttpHeader.DeviceNo)
+		if resultVal.Result == WasteLibrary.RESULT_FAIL {
+			var createHttpHeader WasteLibrary.HttpClientHeaderType
+			createHttpHeader.New()
+			createHttpHeader.AppType = WasteLibrary.APPTYPE_ADMIN
+			createHttpHeader.DeviceNo = ""
+			createHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
+			createHttpHeader.Time = WasteLibrary.GetTime()
+			createHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
+			createHttpHeader.DeviceId = 0
+			createHttpHeader.CustomerId = 0
+			createHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
+			createHttpHeader.DeviceType = currentHttpHeader.DeviceType
+			var createDevice WasteLibrary.RecyDeviceType
+			createDevice.New()
+			createDevice.DeviceId = 0
+			createDevice.CustomerId = -1
+			createDevice.SerialNumber = currentHttpHeader.DeviceNo
+			WasteLibrary.LogStr(createDevice.ToString())
+			data := url.Values{
+				WasteLibrary.HTTP_HEADER: {createHttpHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {createDevice.ToString()},
+			}
+
+			resultVal = WasteLibrary.HttpPostReq("http://waste-afatekapi-cluster-ip/setDevice", data)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+				w.Write(resultVal.ToByte())
+				return
+			}
+			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RECY_DEVICE, currentHttpHeader.DeviceNo)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+				w.Write(resultVal.ToByte())
+				return
+			}
+		}
+		var deviceIdStr = resultVal.Retval.(string)
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RECY_DEVICES, deviceIdStr)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+			w.Write(resultVal.ToByte())
+			return
+		}
+		var currentDevice WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(resultVal.Retval.(string))
+		currentHttpHeader.CustomerId = currentDevice.CustomerId
+		currentHttpHeader.DeviceId = currentDevice.DeviceId
+	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 		w.Write(resultVal.ToByte())
 		return
 	}
-	var currentDevice WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(resultVal.Retval.(string))
-	currentHttpHeader.CustomerId = currentDevice.CustomerId
-	currentHttpHeader.DeviceId = currentDevice.DeviceId
 
 	var serviceClusterIp string = ""
 	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RFID {
@@ -127,16 +235,6 @@ func data(w http.ResponseWriter, req *http.Request) {
 
 			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 			serviceClusterIp = "waste-ultreader-cluster-ip"
-
-		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_ATMP {
-
-			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
-			serviceClusterIp = "waste-alarmreader-cluster-ip"
-
-		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_AGPS {
-
-			currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
-			serviceClusterIp = "waste-alarmreader-cluster-ip"
 
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL

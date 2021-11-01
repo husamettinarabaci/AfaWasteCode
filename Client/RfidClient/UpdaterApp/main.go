@@ -21,7 +21,6 @@ var serialNumber = "0"
 var currentUser string
 var opInterval time.Duration = 60 * 60
 var wg sync.WaitGroup
-var version = "1"
 
 const (
 	AWS_S3_REGION = "eu-central-1"
@@ -76,7 +75,8 @@ func initStart() {
 
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.LogStr("Version : " + version)
+	WasteLibrary.Version = "1"
+	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	serialNumber = getSerialNumber()
 	WasteLibrary.LogStr(currentUser)
@@ -136,9 +136,18 @@ func startUpdate(appType string) {
 	currentHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
 	currentHttpHeader.DeviceId = 0
 	currentHttpHeader.CustomerId = 0
+	currentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
 	var updaterType WasteLibrary.UpdaterType
 	updaterType.New()
 	updaterType.AppType = appType
+
+	resultVal = checkApp(updaterType)
+	if resultVal.Result == WasteLibrary.RESULT_OK {
+		if resultVal.Retval != nil {
+			updaterType.Version = resultVal.Retval.(string)
+		}
+	}
+
 	data := url.Values{
 		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 		WasteLibrary.HTTP_DATA:   {updaterType.ToString()},
@@ -382,6 +391,7 @@ func updateVersion(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType
 	currentHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
 	currentHttpHeader.DeviceId = 0
 	currentHttpHeader.CustomerId = 0
+	currentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
 	data := url.Values{
 		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 		WasteLibrary.HTTP_DATA:   {updaterType.ToString()},

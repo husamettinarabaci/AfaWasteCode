@@ -1,6 +1,7 @@
 package WasteLibrary
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 )
@@ -149,4 +150,24 @@ func (res TagType) UpdateSQL() string {
 			res.DeviceId, res.Epc, res.CustomerId)
 
 	}
+}
+
+//SelectWithDb
+func (res TagType) SelectWithDb(db *sql.DB) error {
+	errDb := db.QueryRow(res.SelectSQL()).Scan(res.CustomerId,
+		res.CustomerId,
+		res.DeviceId,
+		res.UID,
+		res.Epc,
+		res.ContainerNo,
+		res.ContainerType,
+		res.Latitude,
+		res.Longitude,
+		res.Statu,
+		res.ImageStatu,
+		res.Active,
+		res.ReadTime,
+		res.CheckTime,
+		res.CreateTime)
+	return errDb
 }

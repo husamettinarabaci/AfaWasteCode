@@ -1,6 +1,7 @@
 package WasteLibrary
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 )
@@ -77,7 +78,7 @@ func (res RecyDeviceType) New() {
 	res.DeviceId = 0
 	res.CustomerId = 0
 	res.ContainerNo = ""
-	res.DeviceType = DEVICE_TYPE_NONE
+	res.DeviceType = RECY_DEVICE_TYPE_NONE
 	res.SerialNumber = ""
 	res.StatusTime = ""
 	res.AliveStatus = STATU_PASSIVE
@@ -253,7 +254,7 @@ func (res RecyDeviceType) InsertSQL() string {
 
 //InsertDeviceDataSQL
 func (res RecyDeviceType) InsertDeviceDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.devicedata 
+	return fmt.Sprintf(`INSERT INTO public.recy_devicedata 
 	(DeviceId,
 		CustomerId,
 		ContainerNo,
@@ -513,4 +514,72 @@ func (res RecyDeviceType) UpdateThermSQL() string {
 		 WHERE DeviceId=%f AND CustomerId=%f 
 		 RETURNING DeviceId;`,
 		res.Therm, res.ThermTime, res.DeviceId, res.CustomerId)
+}
+
+//SelectWithDb
+func (res RecyDeviceType) SelectWithDb(db *sql.DB) error {
+	errDb := db.QueryRow(res.SelectSQL()).Scan(
+		res.CustomerId,
+		res.ContainerNo,
+		res.DeviceType,
+		res.SerialNumber,
+		res.StatusTime,
+		res.AliveStatus,
+		res.AliveLastOkTime,
+		res.Latitude,
+		res.Longitude,
+		res.GpsTime,
+		res.AlarmStatus,
+		res.AlarmTime,
+		res.AlarmType,
+		res.Alarm,
+		res.Therm,
+		res.ThermTime,
+		res.ThermStatus,
+		res.Active,
+		res.CreateTime,
+		res.ReaderAppStatus,
+		res.ReaderAppLastOkTime,
+		res.ReaderConnStatus,
+		res.ReaderConnLastOkTime,
+		res.ReaderStatus,
+		res.ReaderLastOkTime,
+		res.CamAppStatus,
+		res.CamAppLastOkTime,
+		res.CamConnStatus,
+		res.CamConnLastOkTime,
+		res.CamStatus,
+		res.CamLastOkTime,
+		res.ThermAppStatus,
+		res.ThermAppLastOkTime,
+		res.TransferAppStatus,
+		res.TransferAppLastOkTime,
+		res.SystemAppStatus,
+		res.SystemAppLastOkTime,
+		res.UpdaterAppStatus,
+		res.UpdaterAppLastOkTime,
+		res.TotalGlassCount,
+		res.TotalPlasticCount,
+		res.TotalMetalCount,
+		res.DailyGlassCount,
+		res.DailyPlasticCount,
+		res.DailyMetalCount,
+		res.RecyTime,
+		res.MotorAppStatus,
+		res.MotorAppLastOkTime,
+		res.MotorConnStatus,
+		res.MotorConnLastOkTime,
+		res.MotorStatus,
+		res.MotorLastOkTime,
+		res.WebAppStatus,
+		res.WebAppLastOkTime,
+		res.WebAppVersion,
+		res.MotorAppVersion,
+		res.ThermAppVersion,
+		res.TransferAppVersion,
+		res.CheckerAppVersion,
+		res.CamAppVersion,
+		res.ReaderAppVersion,
+		res.SystemAppVersion)
+	return errDb
 }

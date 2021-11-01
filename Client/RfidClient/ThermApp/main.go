@@ -15,13 +15,13 @@ import (
 var opInterval time.Duration = 5 * 60
 var wg sync.WaitGroup
 var currentUser string
-var currentThermDataType WasteLibrary.DeviceType
-var version = "1"
+var currentThermDataType WasteLibrary.RfidDeviceType
 
 func initStart() {
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.LogStr("Version : " + version)
+	WasteLibrary.Version = "1"
+	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	WasteLibrary.LogStr(currentUser)
 	currentThermDataType.New()

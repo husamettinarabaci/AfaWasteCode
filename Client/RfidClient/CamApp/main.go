@@ -22,14 +22,14 @@ var wg sync.WaitGroup
 var integratedPortInt = 1
 var currentUser string
 var lastCamRelayTime time.Time
-var version = "1"
 
 func initStart() {
 	time.Sleep(5 * time.Second)
 
 	lastCamRelayTime = time.Now()
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.LogStr("Version : " + version)
+	WasteLibrary.Version = "1"
+	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	WasteLibrary.LogStr(currentUser)
 }

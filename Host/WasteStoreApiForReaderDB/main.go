@@ -92,7 +92,7 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_DEVICE {
 
-			var currentData WasteLibrary.DeviceType = WasteLibrary.StringToDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			execSQL = currentData.InsertDeviceDataSQL()

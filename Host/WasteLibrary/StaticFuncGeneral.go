@@ -12,6 +12,7 @@ import (
 //Debug Mode
 var Debug bool = os.Getenv("DEBUG") == "1"
 var AllowCors bool = true
+var Version string = "1"
 
 //Container
 var Container string = os.Getenv("CONTAINER_TYPE")

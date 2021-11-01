@@ -1,6 +1,7 @@
 package WasteLibrary
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 )
@@ -104,4 +105,16 @@ func (res UserType) UpdatePasswordSQL() string {
 	  WHERE UserId=%f  
 	RETURNING UserId;`,
 		res.Password, res.UserId)
+}
+
+//SelectWithDb
+func (res UserType) SelectWithDb(db *sql.DB) error {
+	errDb := db.QueryRow(res.SelectSQL()).Scan(res.CustomerId,
+		res.UserName,
+		res.UserRole,
+		res.Password,
+		res.Email,
+		res.Active,
+		res.CreateTime)
+	return errDb
 }
