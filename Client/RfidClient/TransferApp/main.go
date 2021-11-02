@@ -44,23 +44,23 @@ func main() {
 	initStart()
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.OPTYPE_RF)
+	go fileCheck(WasteLibrary.READERTYPE_RF)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.OPTYPE_CAM)
+	go fileCheck(WasteLibrary.READERTYPE_CAM)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.OPTYPE_GPS)
+	go fileCheck(WasteLibrary.READERTYPE_GPS)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.OPTYPE_THERM)
+	go fileCheck(WasteLibrary.READERTYPE_THERM)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.OPTYPE_STATUS)
+	go fileCheck(WasteLibrary.READERTYPE_STATUS)
 	wg.Add(1)
 
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
@@ -87,19 +87,19 @@ func trans(w http.ResponseWriter, req *http.Request) {
 
 	} else {
 
-		opType := req.FormValue(WasteLibrary.HTTP_OPTYPE)
+		readerType := req.FormValue(WasteLibrary.HTTP_READERTYPE)
 		dataVal := req.FormValue(WasteLibrary.HTTP_DATA)
-		resultVal = sendDataToServer(opType, dataVal, WasteLibrary.GetTime(), WasteLibrary.STATU_PASSIVE)
+		resultVal = sendDataToServer(readerType, dataVal, WasteLibrary.GetTime(), WasteLibrary.STATU_PASSIVE)
 		WasteLibrary.LogStr("Send Data To Server : " + resultVal.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
-			if opType != WasteLibrary.OPTYPE_CAM {
-				storeData(opType, dataVal)
+			if readerType != WasteLibrary.READERTYPE_CAM {
+				storeData(readerType, dataVal)
 			}
 		}
-		if opType == WasteLibrary.OPTYPE_CAM {
+		if readerType == WasteLibrary.READERTYPE_CAM {
 			var curretnTagType WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
 
-			sendFileToServer(curretnTagType.UID)
+			sendFileToServer(curretnTagType.TagReader.UID)
 		}
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
@@ -153,18 +153,16 @@ func uploadFile(session *session.Session, uploadFileDir string) error {
 	return err
 }
 
-func sendDataToServer(opType string, sendData string, dataTime string, repeat string) WasteLibrary.ResultType {
+func sendDataToServer(readerType string, sendData string, dataTime string, repeat string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.New()
 	currentHttpHeader.AppType = applicationType
 	currentHttpHeader.DeviceNo = serialNumber
-	currentHttpHeader.OpType = opType
+	currentHttpHeader.ReaderType = readerType
 	currentHttpHeader.Time = dataTime
 	currentHttpHeader.Repeat = repeat
-	currentHttpHeader.DeviceId = 0
-	currentHttpHeader.CustomerId = 0
-	currentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+	currentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 	data := url.Values{
 		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 		WasteLibrary.HTTP_DATA:   {sendData},
@@ -180,16 +178,16 @@ func storeData(dataType string, sendData string) {
 	}
 }
 
-func resendData(opType string, fileName string) {
+func resendData(readerType string, fileName string) {
 	var resultVal WasteLibrary.ResultType
-	if opType == WasteLibrary.OPTYPE_CAM {
+	if readerType == WasteLibrary.READERTYPE_CAM {
 		sendFileToServer(fileName)
 	} else {
 
 		var dataJSON string = ""
 		var dataTime string = fileName
 
-		readByte, err := ioutil.ReadFile("WAIT_" + opType + "/" + fileName)
+		readByte, err := ioutil.ReadFile("WAIT_" + readerType + "/" + fileName)
 		if err != nil {
 			WasteLibrary.LogErr(err)
 		} else {
@@ -198,21 +196,21 @@ func resendData(opType string, fileName string) {
 
 			WasteLibrary.LogStr("Read File : " + dataJSON)
 
-			resultVal = sendDataToServer(opType, string(dataJSON), dataTime, WasteLibrary.STATU_ACTIVE)
+			resultVal = sendDataToServer(readerType, string(dataJSON), dataTime, WasteLibrary.STATU_ACTIVE)
 			WasteLibrary.LogStr("Send Data To Server Again : " + resultVal.ToString())
 			if resultVal.Result == WasteLibrary.RESULT_OK {
-				WasteLibrary.RemoveFile("WAIT_" + opType + "/" + fileName)
+				WasteLibrary.RemoveFile("WAIT_" + readerType + "/" + fileName)
 			}
 		}
 	}
 }
 
-func fileCheck(opType string) {
-	WasteLibrary.LogStr("File Check :" + opType)
+func fileCheck(readerType string) {
+	WasteLibrary.LogStr("File Check :" + readerType)
 	for {
 		time.Sleep(opInterval * time.Second)
 
-		f, err := os.Open("WAIT_" + opType)
+		f, err := os.Open("WAIT_" + readerType)
 		if err != nil {
 			WasteLibrary.LogErr(err)
 			continue
@@ -229,14 +227,14 @@ func fileCheck(opType string) {
 			second := time.Since(file.ModTime()).Seconds()
 			if second > 60*60 && second < 24*60*60 {
 				var fileName string = file.Name()
-				if opType == WasteLibrary.OPTYPE_CAM {
+				if readerType == WasteLibrary.READERTYPE_CAM {
 					spData := strings.Split(strings.TrimSpace(file.Name()), ".")
 					fileName = spData[0]
 				}
-				resendData(opType, fileName)
+				resendData(readerType, fileName)
 			}
 			if second > 24*60*60 {
-				WasteLibrary.RemoveFile("WAIT_" + opType + "/" + file.Name())
+				WasteLibrary.RemoveFile("WAIT_" + readerType + "/" + file.Name())
 			}
 		}
 	}

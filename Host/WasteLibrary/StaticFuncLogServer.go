@@ -26,7 +26,7 @@ func LogStr(value string) {
 func SendLogServer(logType string, logVal string) {
 	if Container == "" {
 		if Debug {
-			fmt.Println("Time : " + time.Now().String() + " - LogType : " + logType + " - Func : " + GetFuncName(2).Function + " - Log : " + logVal)
+			fmt.Println("Time : " + GetTime() + " - LogType : " + logType + " - Func : " + GetFuncName(2).Function + " - Log : " + logVal)
 		}
 	} else {
 		data := url.Values{

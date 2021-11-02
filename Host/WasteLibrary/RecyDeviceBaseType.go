@@ -11,6 +11,7 @@ type RecyDeviceBaseType struct {
 	DeviceId    float64
 	ContainerNo string
 	DeviceType  string
+	NewData     bool
 }
 
 //New
@@ -18,6 +19,7 @@ func (res *RecyDeviceBaseType) New() {
 	res.DeviceId = 0
 	res.ContainerNo = ""
 	res.DeviceType = RECY_DEVICE_TYPE_NONE
+	res.NewData = false
 }
 
 //ToId String

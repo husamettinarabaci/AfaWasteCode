@@ -70,7 +70,7 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RFID {
 		var execSQL string = ""
-		if currentHttpHeader.OpType == WasteLibrary.OPTYPE_TAG {
+		if currentHttpHeader.ReaderType == WasteLibrary.OPTYPE_TAG {
 
 			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
@@ -90,7 +90,7 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 			currentData.DeviceId = float64(dataId)
 			resultVal.Retval = currentData.ToIdString()
 
-		} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_DEVICE {
+		} else if currentHttpHeader.ReaderType == WasteLibrary.OPTYPE_DEVICE {
 
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())

@@ -14,7 +14,7 @@ type RecyDeviceType struct {
 	DeviceBase    RecyDeviceBaseType
 	DeviceGps     RecyDeviceGpsType
 	DeviceTherm   RecyDeviceThermType
-	DeviceVersion RecyDevicVersionType
+	DeviceVersion RecyDeviceVersionType
 	DeviceAlarm   RecyDeviceAlarmType
 	DeviceStatu   RecyDeviceStatuType
 	DeviceDetail  RecyDeviceDetailType
@@ -78,7 +78,14 @@ func (res RecyDeviceType) SelectSQL() string {
 
 //InsertSQL
 func (res RecyDeviceType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_devices (DeviceId,CustomerId,SerialNumber) 
+	return fmt.Sprintf(`INSERT INTO public.rfid_devices (CustomerId,SerialNumber) 
+	  VALUES (%f,'%s') 
+	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber)
+}
+
+//InsertDataSQL
+func (res RecyDeviceType) InsertDataSQL() string {
+	return fmt.Sprintf(`INSERT INTO public.rfid_devices (DeviceId,CustomerId,SerialNumber) 
 	  VALUES (%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber)
 }

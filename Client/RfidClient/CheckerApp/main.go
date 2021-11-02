@@ -27,77 +27,77 @@ type statusType struct {
 var statusTypes []statusType = []statusType{
 	{
 		Name: "readerAppStatus",
-		Key:  WasteLibrary.OPTYPE_APP,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10001",
 	},
 	{
 		Name: "readerConnStatus",
-		Key:  WasteLibrary.OPTYPE_CONN,
+		Key:  WasteLibrary.CHECKTYPE_CONN,
 		Port: "10001",
 	},
 	{
 		Name: "readerStatus",
-		Key:  WasteLibrary.OPTYPE_READER,
+		Key:  WasteLibrary.CHECKTYPE_DEVICE,
 		Port: "10001",
 	},
 	{
 		Name: "camAppStatus",
-		Key:  WasteLibrary.OPTYPE_APP,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10002",
 	},
 	{
 		Name: "camConnStatus",
-		Key:  WasteLibrary.OPTYPE_CONN,
+		Key:  WasteLibrary.CHECKTYPE_CONN,
 		Port: "10002",
 	},
 	{
 		Name: "camStatus",
-		Key:  WasteLibrary.OPTYPE_CAM,
+		Key:  WasteLibrary.CHECKTYPE_DEVICE,
 		Port: "10002",
 	},
 	{
 		Name: "gpsAppStatus",
-		Key:  WasteLibrary.OPTYPE_APP,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10003",
 	},
 	{
 		Name: "gpsConnStatus",
-		Key:  WasteLibrary.OPTYPE_CONN,
+		Key:  WasteLibrary.CHECKTYPE_CONN,
 		Port: "10003",
 	},
 	{
 		Name: "gpsStatus",
-		Key:  WasteLibrary.OPTYPE_GPS,
+		Key:  WasteLibrary.CHECKTYPE_DEVICE,
 		Port: "10003",
 	},
 	{
 		Name: "thermAppStatus",
-		Key:  WasteLibrary.OPTYPE_APP,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10004",
 	},
 	{
 		Name: "updaterAppStatus",
-		Key:  WasteLibrary.OPTYPE_APP,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10005",
 	},
 	{
 		Name: "systemAppStatus",
-		Key:  WasteLibrary.OPTYPE_APP,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10006",
 	},
 	{
 		Name: "transferAppStatus",
-		Key:  WasteLibrary.OPTYPE_APP,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10000",
 	},
 	{
 		Name: "aliveStatus",
-		Key:  WasteLibrary.OPTYPE_NONE,
+		Key:  WasteLibrary.CHECKTYPE_NONE,
 		Port: "",
 	},
 	{
 		Name: "contactStatus",
-		Key:  WasteLibrary.OPTYPE_NONE,
+		Key:  WasteLibrary.CHECKTYPE_NONE,
 		Port: "",
 	},
 }
@@ -117,7 +117,7 @@ func main() {
 	initStart()
 
 	for i := range statusTypes {
-		if statusTypes[i].Key == WasteLibrary.OPTYPE_NONE {
+		if statusTypes[i].Key == WasteLibrary.CHECKTYPE_NONE {
 			continue
 		}
 		go statusCheck(i)
@@ -143,7 +143,7 @@ func statusCheck(statusTypeIndex int) {
 		var lastStatus = WasteLibrary.STATU_PASSIVE
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			WasteLibrary.HTTP_OPTYPE: {statusTypes[statusTypeIndex].Key},
+			WasteLibrary.HTTP_CHECKTYPE: {statusTypes[statusTypeIndex].Key},
 		}
 
 		resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:"+statusTypes[statusTypeIndex].Port+"/status", data)
@@ -152,35 +152,35 @@ func statusCheck(statusTypeIndex int) {
 		}
 
 		if statusTypes[statusTypeIndex].Name == "readerAppStatus" {
-			currentDeviceType.ReaderAppStatus = lastStatus
+			currentDeviceType.DeviceStatu.ReaderAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "readerConnStatus" {
-			currentDeviceType.ReaderConnStatus = lastStatus
+			currentDeviceType.DeviceStatu.ReaderConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "readerStatus" {
-			currentDeviceType.ReaderStatus = lastStatus
+			currentDeviceType.DeviceStatu.ReaderStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camAppStatus" {
-			currentDeviceType.CamAppStatus = lastStatus
+			currentDeviceType.DeviceStatu.CamAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camConnStatus" {
-			currentDeviceType.CamConnStatus = lastStatus
+			currentDeviceType.DeviceStatu.CamConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "camStatus" {
-			currentDeviceType.CamStatus = lastStatus
+			currentDeviceType.DeviceStatu.CamStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsAppStatus" {
-			currentDeviceType.GpsAppStatus = lastStatus
+			currentDeviceType.DeviceStatu.GpsAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsConnStatus" {
-			currentDeviceType.GpsConnStatus = lastStatus
+			currentDeviceType.DeviceStatu.GpsConnStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "gpsStatus" {
-			currentDeviceType.GpsStatus = lastStatus
+			currentDeviceType.DeviceStatu.GpsStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "thermAppStatus" {
-			currentDeviceType.ThermAppStatus = lastStatus
+			currentDeviceType.DeviceStatu.ThermAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "updaterAppStatus" {
-			currentDeviceType.UpdaterAppStatus = lastStatus
+			currentDeviceType.DeviceStatu.UpdaterAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "transferAppStatus" {
-			currentDeviceType.TransferAppStatus = lastStatus
+			currentDeviceType.DeviceStatu.TransferAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "systemAppStatus" {
-			currentDeviceType.SystemAppStatus = lastStatus
+			currentDeviceType.DeviceStatu.SystemAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "aliveStatus" {
-			currentDeviceType.AliveStatus = lastStatus
+			currentDeviceType.DeviceStatu.AliveStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "contactStatus" {
-			currentDeviceType.ContactStatus = lastStatus
+			currentDeviceType.DeviceStatu.ContactStatus = lastStatus
 		} else {
 
 		}
@@ -198,9 +198,9 @@ func contactCheck() {
 			pin := rpio.Pin(conPort)
 			var tempData = rpio.ReadPin(pin) == 1
 			if tempData {
-				currentDeviceType.ContactStatus = WasteLibrary.STATU_ACTIVE
+				currentDeviceType.DeviceStatu.ContactStatus = WasteLibrary.STATU_ACTIVE
 			} else {
-				currentDeviceType.ContactStatus = WasteLibrary.STATU_PASSIVE
+				currentDeviceType.DeviceStatu.ContactStatus = WasteLibrary.STATU_PASSIVE
 			}
 			rpio.Close()
 		}
@@ -213,8 +213,8 @@ func sendStatus() {
 		time.Sleep(opInterval * time.Second)
 
 		data := url.Values{
-			WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_STATUS},
-			WasteLibrary.HTTP_DATA:   {currentDeviceType.ToString()},
+			WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_STATUS},
+			WasteLibrary.HTTP_DATA:       {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

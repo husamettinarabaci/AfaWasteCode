@@ -12,14 +12,16 @@ type UltDeviceBatteryType struct {
 	Battery       string
 	BatteryStatus string
 	BatteryTime   string
+	NewData       bool
 }
 
 //New
 func (res *UltDeviceBatteryType) New() {
 	res.DeviceId = 0
-	res.Battery = "0"
-	res.BatteryStatus = BATTERY_STATU_NONE
+	res.Battery = "0000"
+	res.BatteryStatus = BATTERYSTATU_NONE
 	res.BatteryTime = ""
+	res.NewData = false
 }
 
 //ToId String

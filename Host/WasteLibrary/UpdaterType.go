@@ -17,7 +17,7 @@ type UpdaterType struct {
 //New
 func (res *UpdaterType) New() {
 	res.DeviceId = 0
-	res.AppType = RFID_APPTYPE_NONE
+	res.AppType = RFID_APPNAME_NONE
 	res.Version = "1"
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()

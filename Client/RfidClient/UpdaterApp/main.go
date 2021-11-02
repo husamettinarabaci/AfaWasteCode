@@ -35,38 +35,38 @@ type statusType struct {
 
 var statusTypes []statusType = []statusType{
 	{
-		Name: WasteLibrary.RFID_APPTYPE_READER,
-		Key:  WasteLibrary.OPTYPE_APP,
+		Name: WasteLibrary.RFID_APPNAME_READER,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10001",
 	},
 	{
-		Name: WasteLibrary.RFID_APPTYPE_CAM,
-		Key:  WasteLibrary.OPTYPE_APP,
+		Name: WasteLibrary.RFID_APPNAME_CAM,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10002",
 	},
 	{
-		Name: WasteLibrary.RFID_APPTYPE_GPS,
-		Key:  WasteLibrary.OPTYPE_APP,
+		Name: WasteLibrary.RFID_APPNAME_GPS,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10003",
 	},
 	{
-		Name: WasteLibrary.RFID_APPTYPE_THERM,
-		Key:  WasteLibrary.OPTYPE_APP,
+		Name: WasteLibrary.RFID_APPNAME_THERM,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10004",
 	},
 	{
-		Name: WasteLibrary.RFID_APPTYPE_SYSTEM,
-		Key:  WasteLibrary.OPTYPE_APP,
+		Name: WasteLibrary.RFID_APPNAME_SYSTEM,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10006",
 	},
 	{
-		Name: WasteLibrary.RFID_APPTYPE_TRANSFER,
-		Key:  WasteLibrary.OPTYPE_APP,
+		Name: WasteLibrary.RFID_APPNAME_TRANSFER,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10000",
 	},
 	{
-		Name: WasteLibrary.RFID_APPTYPE_CHECKER,
-		Key:  WasteLibrary.OPTYPE_APP,
+		Name: WasteLibrary.RFID_APPNAME_CHECKER,
+		Key:  WasteLibrary.CHECKTYPE_APP,
 		Port: "10007",
 	},
 }
@@ -131,12 +131,8 @@ func startUpdate(appType string) {
 	currentHttpHeader.New()
 	currentHttpHeader.AppType = applicationType
 	currentHttpHeader.DeviceNo = serialNumber
-	currentHttpHeader.OpType = WasteLibrary.OPTYPE_UPDATE
-	currentHttpHeader.Time = WasteLibrary.GetTime()
-	currentHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
-	currentHttpHeader.DeviceId = 0
-	currentHttpHeader.CustomerId = 0
-	currentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+	currentHttpHeader.ReaderType = WasteLibrary.READERTYPE_UPDATE
+	currentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 	var updaterType WasteLibrary.UpdaterType
 	updaterType.New()
 	updaterType.AppType = appType
@@ -367,7 +363,7 @@ func checkApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 	for i := range statusTypes {
 		if statusTypes[i].Name == updaterType.AppType {
 			data := url.Values{
-				WasteLibrary.HTTP_OPTYPE: {statusTypes[i].Key},
+				WasteLibrary.HTTP_CHECKTYPE: {statusTypes[i].Key},
 			}
 			resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:"+statusTypes[i].Port+"/status", data)
 			break
@@ -386,12 +382,8 @@ func updateVersion(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType
 	currentHttpHeader.New()
 	currentHttpHeader.AppType = applicationType
 	currentHttpHeader.DeviceNo = serialNumber
-	currentHttpHeader.OpType = WasteLibrary.OPTYPE_UPDATE
-	currentHttpHeader.Time = WasteLibrary.GetTime()
-	currentHttpHeader.Repeat = WasteLibrary.STATU_PASSIVE
-	currentHttpHeader.DeviceId = 0
-	currentHttpHeader.CustomerId = 0
-	currentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+	currentHttpHeader.ReaderType = WasteLibrary.READERTYPE_UPDATE
+	currentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 	data := url.Values{
 		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 		WasteLibrary.HTTP_DATA:   {updaterType.ToString()},

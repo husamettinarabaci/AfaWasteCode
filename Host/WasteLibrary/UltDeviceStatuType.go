@@ -12,6 +12,7 @@ type UltDeviceStatuType struct {
 	StatusTime      string
 	AliveStatus     string
 	AliveLastOkTime string
+	NewData         bool
 }
 
 //New
@@ -20,6 +21,7 @@ func (res *UltDeviceStatuType) New() {
 	res.StatusTime = ""
 	res.AliveStatus = STATU_PASSIVE
 	res.AliveLastOkTime = ""
+	res.NewData = false
 }
 
 //ToId String

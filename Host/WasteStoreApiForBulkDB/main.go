@@ -68,9 +68,21 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	dataVal := req.FormValue(WasteLibrary.HTTP_DATA)
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 	WasteLibrary.LogStr("Data : " + dataVal)
-	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata(
-	AppType,DeviceId,OpType,Data,CustomerId,DataTime) 
-	 VALUES ('%s',%f,'%s','%s',%f,'%s');`, currentHttpHeader.AppType, currentHttpHeader.DeviceId, currentHttpHeader.OpType, dataVal, currentHttpHeader.CustomerId, currentHttpHeader.Time)
+
+	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata 
+	  (AppType,DeviceNo,DeviceId,CustomerId,Time,Repeat,DeviceType,ReaderType,DataType,Token,Data) 
+	  VALUES ('%s','%s',%f,%f,'%s','%s','%s','%s','%s','%s','%s');`,
+		currentHttpHeader.AppType,
+		currentHttpHeader.DeviceNo,
+		currentHttpHeader.DeviceId,
+		currentHttpHeader.CustomerId,
+		currentHttpHeader.Time,
+		currentHttpHeader.Repeat,
+		currentHttpHeader.DeviceType,
+		currentHttpHeader.ReaderType,
+		currentHttpHeader.DataType,
+		currentHttpHeader.Token,
+		dataVal)
 	WasteLibrary.LogStr(insertSQL)
 	_, errDb := bulkDb.Exec(insertSQL)
 	if errDb != nil {

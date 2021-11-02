@@ -13,15 +13,17 @@ type RecyDeviceAlarmType struct {
 	AlarmTime   string
 	AlarmType   string
 	Alarm       string
+	NewData     bool
 }
 
 //New
 func (res *RecyDeviceAlarmType) New() {
 	res.DeviceId = 0
-	res.AlarmStatus = ALARM_STATU_NONE
+	res.AlarmStatus = ALARMSTATU_NONE
 	res.AlarmTime = ""
-	res.AlarmType = ALARM_NONE
+	res.AlarmType = ALARMTYPE_NONE
 	res.Alarm = ""
+	res.NewData = false
 }
 
 //ToId String

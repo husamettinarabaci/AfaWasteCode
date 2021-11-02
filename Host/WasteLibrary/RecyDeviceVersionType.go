@@ -17,6 +17,7 @@ type RecyDeviceVersionType struct {
 	CamAppVersion      string
 	ReaderAppVersion   string
 	SystemAppVersion   string
+	NewData            bool
 }
 
 //New
@@ -30,6 +31,7 @@ func (res *RecyDeviceVersionType) New() {
 	res.CamAppVersion = "1"
 	res.ReaderAppVersion = "1"
 	res.SystemAppVersion = "1"
+	res.NewData = false
 }
 
 //ToId String

@@ -8,13 +8,21 @@ import (
 
 //UltDeviceType
 type UltDeviceType struct {
-	DeviceId     float64
-	CustomerId   float64
-	SerialNumber string
-	Active       string
-	CreateTime   string
-	OldLatitude  float64
-	OldLongitude float64
+	DeviceId      float64
+	CustomerId    float64
+	SerialNumber  string
+	OldLatitude   float64
+	OldLongitude  float64
+	DeviceBase    UltDeviceBaseType
+	DeviceStatu   UltDeviceStatuType
+	DeviceBattery UltDeviceBatteryType
+	DeviceGps     UltDeviceGpsType
+	DeviceAlarm   UltDeviceAlarmType
+	DeviceTherm   UltDeviceThermType
+	DeviceVersion UltDeviceVersionType
+	DeviceSens    UltDeviceSensType
+	Active        string
+	CreateTime    string
 }
 
 //New
@@ -22,10 +30,19 @@ func (res *UltDeviceType) New() {
 	res.DeviceId = 0
 	res.CustomerId = 0
 	res.SerialNumber = ""
-	res.Active = STATU_ACTIVE
-	res.CreateTime = ""
 	res.OldLatitude = 0
 	res.OldLongitude = 0
+	res.DeviceBase.New()
+	res.DeviceStatu.New()
+	res.DeviceBattery.New()
+	res.DeviceGps.New()
+	res.DeviceAlarm.New()
+	res.DeviceTherm.New()
+	res.DeviceVersion.New()
+	res.DeviceSens.New()
+	res.Active = STATU_ACTIVE
+	res.CreateTime = ""
+
 }
 
 //ToId String
@@ -71,6 +88,13 @@ func (res UltDeviceType) SelectSQL() string {
 
 //InsertSQL
 func (res UltDeviceType) InsertSQL() string {
+	return fmt.Sprintf(`INSERT INTO public.ult_devices (CustomerId,SerialNumber,OldLatitude,OldLongitude) 
+	  VALUES (%f,'%s',%f,%f) 
+	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
+}
+
+//InsertDataSQL
+func (res UltDeviceType) InsertDataSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_devices (DeviceId,CustomerId,SerialNumber,OldLatitude,OldLongitude) 
 	  VALUES (%f,%f,'%s',%f,%f) 
 	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)

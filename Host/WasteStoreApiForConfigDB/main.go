@@ -72,7 +72,7 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_ADMIN {
 		var execSQL string = ""
-		if currentHttpHeader.OpType == WasteLibrary.OPTYPE_USER {
+		if currentHttpHeader.ReaderType == WasteLibrary.OPTYPE_USER {
 
 			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
@@ -101,7 +101,7 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		}
 	} else if currentHttpHeader.AppType == WasteLibrary.APPTYPE_AUTH {
 		var execSQL string = ""
-		if currentHttpHeader.OpType == WasteLibrary.OPTYPE_USER {
+		if currentHttpHeader.ReaderType == WasteLibrary.OPTYPE_USER {
 
 			var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
 			WasteLibrary.LogStr("Data : " + currentData.ToString())

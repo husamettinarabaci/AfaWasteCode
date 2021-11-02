@@ -14,16 +14,18 @@ type UltDeviceBaseType struct {
 	DeviceType    string
 	Imei          string
 	Imsi          string
+	NewData       bool
 }
 
 //New
 func (res *UltDeviceBaseType) New() {
 	res.DeviceId = 0
 	res.ContainerNo = ""
-	res.ContainerType = CONTAINER_TYPE_NONE
+	res.ContainerType = CONTAINERTYPE_NONE
 	res.DeviceType = ULT_DEVICE_TYPE_NONE
 	res.Imei = ""
 	res.Imsi = ""
+	res.NewData = false
 }
 
 //ToId String

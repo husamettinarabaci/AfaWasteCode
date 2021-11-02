@@ -12,14 +12,16 @@ type UltDeviceThermType struct {
 	Therm       string
 	ThermTime   string
 	ThermStatus string
+	NewData     bool
 }
 
 //New
 func (res *UltDeviceThermType) New() {
 	res.DeviceId = 0
-	res.Therm = "0"
+	res.Therm = "00"
 	res.ThermTime = ""
-	res.ThermStatus = THERM_STATU_NONE
+	res.ThermStatus = THERMSTATU_NONE
+	res.NewData = false
 }
 
 //ToId String

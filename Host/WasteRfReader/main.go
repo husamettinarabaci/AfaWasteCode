@@ -102,7 +102,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 		var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
 		newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_RFID
-		newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_TAG
+		newCurrentHttpHeader.ReaderType = WasteLibrary.OPTYPE_TAG
 		data = url.Values{
 			WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
 			WasteLibrary.HTTP_DATA:   {currentTag.ToString()},

@@ -52,8 +52,8 @@ func thermCheck() {
 			cmd.Stdout = &outb
 			cmd.Stderr = &errb
 			err := cmd.Run()
-			currentThermDataType.Therm = strings.TrimSuffix(outb.String(), "'C\n")
-			WasteLibrary.LogStr(currentThermDataType.Therm)
+			currentThermDataType.DeviceTherm.Therm = strings.TrimSuffix(outb.String(), "'C\n")
+			WasteLibrary.LogStr(currentThermDataType.DeviceTherm.Therm)
 			if err != nil {
 				WasteLibrary.LogErr(err)
 
@@ -68,8 +68,8 @@ func sendTherm() {
 	for {
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_THERM},
-			WasteLibrary.HTTP_DATA:   {currentThermDataType.ToString()},
+			WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_THERM},
+			WasteLibrary.HTTP_DATA:       {currentThermDataType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

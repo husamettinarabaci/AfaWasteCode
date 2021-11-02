@@ -12,6 +12,7 @@ type UltDeviceSensType struct {
 	UltTime   string
 	UltRange  float64
 	UltStatus string
+	NewData   bool
 }
 
 //New
@@ -19,7 +20,8 @@ func (res *UltDeviceSensType) New() {
 	res.DeviceId = 0
 	res.UltTime = ""
 	res.UltRange = 0
-	res.UltStatus = ULT_STATU_NONE
+	res.UltStatus = CONTINER_FULLNESS_STATU_NONE
+	res.NewData = false
 }
 
 //ToId String

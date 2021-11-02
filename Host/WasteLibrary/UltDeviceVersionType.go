@@ -10,13 +10,14 @@ import (
 type UltDeviceVersionType struct {
 	DeviceId        float64
 	FirmwareVersion string
+	NewData         bool
 }
 
 //New
 func (res *UltDeviceVersionType) New() {
 	res.DeviceId = 0
-
 	res.FirmwareVersion = "1"
+	res.NewData = false
 
 }
 

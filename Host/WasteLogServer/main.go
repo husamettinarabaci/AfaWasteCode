@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	_ "github.com/lib/pq"
 
@@ -37,7 +36,7 @@ func log(w http.ResponseWriter, req *http.Request) {
 	logType := req.FormValue(WasteLibrary.LOGGER_LOGTYPE)
 	funcVal := req.FormValue(WasteLibrary.LOGGER_FUNC)
 	logVal := req.FormValue(WasteLibrary.LOGGER_LOG)
-	logStr("Time : " + time.Now().String() + " - Container : " + container + " - LogType : " + logType + " - Func : " + funcVal + " - Log : " + logVal + " - IP : " + req.RemoteAddr)
+	logStr("Time : " + GetTime() + " - Container : " + container + " - LogType : " + logType + " - Func : " + funcVal + " - Log : " + logVal + " - IP : " + req.RemoteAddr)
 	w.Write(resultVal.ToByte())
 }
 

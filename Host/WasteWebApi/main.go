@@ -281,7 +281,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 	var customerId string = resultVal.Retval.(string)
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	if currentHttpHeader.OpType == WasteLibrary.OPTYPE_CUSTOMERCONFIG {
+	if currentHttpHeader.ReaderType == WasteLibrary.OPTYPE_CUSTOMERCONFIG {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, customerId)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -289,7 +289,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 			w.Write(resultVal.ToByte())
 			return
 		}
-	} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_ADMINCONFIG {
+	} else if currentHttpHeader.ReaderType == WasteLibrary.OPTYPE_ADMINCONFIG {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_ADMINCONFIG, customerId)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -297,7 +297,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 			w.Write(resultVal.ToByte())
 			return
 		}
-	} else if currentHttpHeader.OpType == WasteLibrary.OPTYPE_LOCALCONFIG {
+	} else if currentHttpHeader.ReaderType == WasteLibrary.OPTYPE_LOCALCONFIG {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LOCALCONFIG, customerId)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL

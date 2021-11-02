@@ -50,7 +50,7 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogStr("AfatekApi Start System Add Customer AFATEK")
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType
 		currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
-		currentHttpHeader.OpType = WasteLibrary.OPTYPE_CUSTOMER
+		currentHttpHeader.ReaderType = WasteLibrary.OPTYPE_CUSTOMER
 		currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_CUSTOMER
 		var currentData WasteLibrary.CustomerType
 		currentData.CustomerName = "AFATEK"
@@ -257,7 +257,7 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
-	currentHttpHeader.OpType = WasteLibrary.OPTYPE_CUSTOMER
+	currentHttpHeader.ReaderType = WasteLibrary.OPTYPE_CUSTOMER
 	currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_CUSTOMER
 	var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.HTTP_DATA))
 	data := url.Values{
@@ -564,7 +564,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
-	currentHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
+	currentHttpHeader.ReaderType = WasteLibrary.OPTYPE_DEVICE
 	currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICE_TYPE_RFID {
 		var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))

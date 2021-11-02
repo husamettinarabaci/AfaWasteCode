@@ -100,22 +100,21 @@ func gpsCheck() {
 							longitude, _ := gps.GetLongitude()
 
 							if latitude != "" {
-								currentDeviceType.Latitude = WasteLibrary.StringToFloat64(latitude)
+								currentDeviceType.DeviceGps.Latitude = WasteLibrary.StringToFloat64(latitude)
 							} else {
-								currentDeviceType.Latitude = 0
+								currentDeviceType.DeviceGps.Latitude = 0
 							}
 							if longitude != "" {
-								currentDeviceType.Longitude = WasteLibrary.StringToFloat64(longitude)
+								currentDeviceType.DeviceGps.Longitude = WasteLibrary.StringToFloat64(longitude)
 							} else {
-								currentDeviceType.Longitude = 0
+								currentDeviceType.DeviceGps.Longitude = 0
 							}
 							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_ACTIVE
 						} else {
-							currentDeviceType.Latitude = 0
-							currentDeviceType.Longitude = 0
+							currentDeviceType.DeviceGps.Latitude = 0
+							currentDeviceType.DeviceGps.Longitude = 0
 							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_PASSIVE
 						}
-						currentDeviceType.Speed = -1
 					}
 					time.Sleep(opInterval * time.Second)
 				}
@@ -130,8 +129,8 @@ func sendGps() {
 	for {
 		time.Sleep(opInterval * time.Second)
 		data := url.Values{
-			WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_GPS},
-			WasteLibrary.HTTP_DATA:   {currentDeviceType.ToString()},
+			WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_GPS},
+			WasteLibrary.HTTP_DATA:       {currentDeviceType.ToString()},
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}

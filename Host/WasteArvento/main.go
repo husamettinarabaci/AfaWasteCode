@@ -109,7 +109,7 @@ func customerProc(customerId float64) {
 								WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Speed))
 								var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
 								newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_ARVENTO
-								newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_ARVENTO
+								newCurrentHttpHeader.ReaderType = WasteLibrary.OPTYPE_ARVENTO
 								newCurrentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
 								newCurrentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
 								data := url.Values{

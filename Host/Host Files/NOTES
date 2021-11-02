@@ -4,23 +4,23 @@
 #Speed Op
 
 RECY
-Base +
-Statu +
-Gps +
-Alarm +
-Therm +
-Version +
+Base
+Statu
+Gps
+Alarm
+Therm
+Version
 Detail
 
 ULT
-Base +
-Statu +
-Battery +
-Gps +
-Alarm +
-Therm +
-Version + 
-Sens +
+Base
+Statu
+Gps
+Alarm
+Therm
+Version
+Battery
+Sens
 
 RFID
 Base
@@ -31,7 +31,16 @@ Therm
 Version
 Detail
 
+TAG
+Base
+Statu
+Gps
+Reader
+
 *Detail Add Report Value
+*listenerdata
+*create clusterip by reader
+
 
 recy_devices
 recy_base_devices
@@ -53,3 +62,16 @@ ult_statu_devices
 ult_sens_devices
 
 rfid_devices
+rfid_gps_devices
+rfid_alarm_devices
+rfid_therm_devices
+rfid_version_devices
+rfid_statu_devices
+rfid_base_devices
+rfid_detail_devices
+
+tags
+tag_bases
+tag_status
+tag_gpses
+tag_readers

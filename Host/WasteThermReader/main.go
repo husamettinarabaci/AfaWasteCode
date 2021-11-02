@@ -80,7 +80,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		}
 		var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
 		newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_RFID
-		newCurrentHttpHeader.OpType = WasteLibrary.OPTYPE_DEVICE
+		newCurrentHttpHeader.ReaderType = WasteLibrary.OPTYPE_DEVICE
 		data = url.Values{
 			WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
 			WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},

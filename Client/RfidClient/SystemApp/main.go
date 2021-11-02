@@ -9,7 +9,7 @@ import (
 )
 
 var currentUser string
-var opInterval time.Duration = 5 * 60
+var opInterval time.Duration = 60 * 60
 var wg sync.WaitGroup
 
 func initStart() {
@@ -26,7 +26,7 @@ func main() {
 	initStart()
 
 	time.Sleep(time.Second)
-	go systemCheck(WasteLibrary.RFID_APPTYPE_GPS)
+	go systemCheck(WasteLibrary.RFID_APPNAME_SYSTEM)
 	wg.Add(1)
 
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)

@@ -40,6 +40,7 @@ type RecyDeviceStatuType struct {
 	MotorLastOkTime       string
 	WebAppStatus          string
 	WebAppLastOkTime      string
+	NewData               bool
 }
 
 //New
@@ -76,6 +77,7 @@ func (res *RecyDeviceStatuType) New() {
 	res.MotorLastOkTime = ""
 	res.WebAppStatus = STATU_PASSIVE
 	res.WebAppLastOkTime = ""
+	res.NewData = false
 }
 
 //ToId String

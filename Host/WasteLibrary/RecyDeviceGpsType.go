@@ -12,6 +12,7 @@ type RecyDeviceGpsType struct {
 	Latitude  float64
 	Longitude float64
 	GpsTime   string
+	NewData   bool
 }
 
 //New
@@ -20,6 +21,7 @@ func (res *RecyDeviceGpsType) New() {
 	res.Latitude = 0
 	res.Longitude = 0
 	res.GpsTime = ""
+	res.NewData = false
 }
 
 //ToId String

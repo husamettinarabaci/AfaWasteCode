@@ -7,29 +7,29 @@ import (
 
 //HttpClientHeaderType
 type HttpClientHeaderType struct {
-	AppType      string
-	DeviceNo     string
-	OpType       string
-	Time         string
-	Repeat       string
-	DeviceType   string
-	DeviceId     float64
-	CustomerId   float64
-	BaseDataType string
-	Token        string
+	AppType    string
+	DeviceNo   string
+	DeviceId   float64
+	CustomerId float64
+	Time       string
+	Repeat     string
+	DeviceType string
+	ReaderType string
+	DataType   string
+	Token      string
 }
 
 //New
 func (res *HttpClientHeaderType) New() {
 	res.AppType = APPTYPE_NONE
 	res.DeviceNo = ""
-	res.OpType = OPTYPE_NONE
-	res.Time = GetTime()
-	res.Repeat = STATU_PASSIVE
-	res.DeviceType = DEVICE_TYPE_NONE
 	res.DeviceId = 0
 	res.CustomerId = 0
-	res.BaseDataType = BASETYPE_NONE
+	res.Time = GetTime()
+	res.Repeat = STATU_PASSIVE
+	res.DeviceType = DEVICETYPE_NONE
+	res.ReaderType = READERTYPE_NONE
+	res.DataType = DATATYPE_NONE
 	res.Token = ""
 }
 

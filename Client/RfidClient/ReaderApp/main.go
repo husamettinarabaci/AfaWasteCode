@@ -48,8 +48,8 @@ var currentTagDataType WasteLibrary.TagType
 
 func initStart() {
 
-	lastReadTime = time.Now()
-	lastSendTime = time.Now()
+	lastReadTime = WasteLibrary.GetTime()
+	lastSendTime = WasteLibrary.GetTime()
 	readTags = make(map[string]time.Time)
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
@@ -117,7 +117,7 @@ func rfCheck() {
 					} else {
 						buf = buf[:n]
 						data = hex.EncodeToString(buf)
-						lastReadTime = time.Now()
+						lastReadTime = WasteLibrary.GetTime()
 						data = strings.ToUpper(data)
 						WasteLibrary.LogStr(data)
 
@@ -133,10 +133,10 @@ func rfCheck() {
 							if time.Since(readTags[tempData[36:60]]).Seconds() > 15*60 {
 								lastRfTag = tempData[36:60]
 								nid, _ := uuid.NewUUID()
-								lastSendTime = time.Now()
+								lastSendTime = WasteLibrary.GetTime()
 								readTags[tempData[36:60]] = lastSendTime
 								currentTagDataType.Epc = lastRfTag
-								currentTagDataType.UID = nid.String()
+								currentTagDataType.TagReader.UID = nid.String()
 								sendRf()
 								sendRfToCam()
 							}
@@ -156,8 +156,8 @@ func rfCheck() {
 
 func sendRf() {
 	data := url.Values{
-		WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_RF},
-		WasteLibrary.HTTP_DATA:   {currentTagDataType.ToString()},
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_RF},
+		WasteLibrary.HTTP_DATA:       {currentTagDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 }
@@ -165,8 +165,8 @@ func sendRf() {
 func sendRfToCam() {
 
 	data := url.Values{
-		WasteLibrary.HTTP_OPTYPE: {WasteLibrary.OPTYPE_RF},
-		WasteLibrary.HTTP_DATA:   {currentTagDataType.ToString()},
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_CAMTRIGGER},
+		WasteLibrary.HTTP_DATA:       {currentTagDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10002/trigger", data)
 }

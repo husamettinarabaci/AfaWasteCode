@@ -16,6 +16,7 @@ type RecyDeviceDetailType struct {
 	DailyPlasticCount float64
 	DailyMetalCount   float64
 	RecyTime          string
+	NewData           bool
 }
 
 //New
@@ -28,6 +29,7 @@ func (res *RecyDeviceDetailType) New() {
 	res.DailyPlasticCount = 0
 	res.DailyMetalCount = 0
 	res.RecyTime = ""
+	res.NewData = false
 }
 
 //ToId String

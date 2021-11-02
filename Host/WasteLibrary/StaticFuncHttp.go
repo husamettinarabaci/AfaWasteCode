@@ -39,23 +39,23 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = RESULT_ERROR_HTTP_PARSE
 	} else {
 
-		opType := req.FormValue(HTTP_OPTYPE)
-		LogStr(opType)
+		readerType := req.FormValue(HTTP_CHECKTYPE)
+		LogStr(readerType)
 		resultVal.Result = RESULT_FAIL
-		if opType == OPTYPE_APP {
+		if readerType == CHECKTYPE_APP {
 			if CurrentCheckStatu.AppStatu == STATU_ACTIVE {
 				resultVal.Result = RESULT_OK
 				resultVal.Retval = Version
 			} else {
 				resultVal.Result = RESULT_FAIL
 			}
-		} else if opType == OPTYPE_CONN {
+		} else if readerType == CHECKTYPE_CONN {
 			if CurrentCheckStatu.ConnStatu == STATU_ACTIVE {
 				resultVal.Result = RESULT_OK
 			} else {
 				resultVal.Result = RESULT_FAIL
 			}
-		} else if opType == OPTYPE_CAM {
+		} else if readerType == CHECKTYPE_DEVICE {
 			if CurrentCheckStatu.DeviceStatu == STATU_ACTIVE {
 				resultVal.Result = RESULT_OK
 			} else {
