@@ -21,7 +21,7 @@ type UserType struct {
 //New
 func (res *UserType) New() {
 	res.UserId = 0
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.UserName = ""
 	res.UserRole = USER_ROLE_GUEST
 	res.Password = ""

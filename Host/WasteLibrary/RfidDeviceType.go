@@ -25,7 +25,7 @@ type RfidDeviceType struct {
 //New
 func (res *RfidDeviceType) New() {
 	res.DeviceId = 0
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.Active = STATU_ACTIVE
 	res.CreateTime = ""
 }

@@ -94,9 +94,8 @@ func register(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.New()
 	currentHttpHeader.AppType = WasteLibrary.APPTYPE_AUTH
-	currentHttpHeader.ReaderType = WasteLibrary.OPTYPE_USER
 	currentHttpHeader.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
-	currentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_USER
+	currentHttpHeader.DataType = WasteLibrary.DATATYPE_USER
 	data := url.Values{
 		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 		WasteLibrary.HTTP_DATA:   {currentUser.ToString()},

@@ -23,7 +23,7 @@ type TagType struct {
 //New
 func (res *TagType) New() {
 	res.TagId = 0
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.TagId = 0
 	res.Epc = ""
 	res.TagBase.New()

@@ -20,7 +20,7 @@ type CustomerConfigType struct {
 
 //New
 func (res *CustomerConfigType) New() {
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.ArventoApp = STATU_PASSIVE
 	res.ArventoUserName = ""
 	res.ArventoPin1 = ""

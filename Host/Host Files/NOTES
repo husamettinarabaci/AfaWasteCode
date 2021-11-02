@@ -38,8 +38,10 @@ Gps
 Reader
 
 *Detail Add Report Value
-*listenerdata
-*create clusterip by reader
+*StringToRfidDeviceType concate data
+*StringToRecyDeviceType concate data
+*StringToUltDeviceType concate data
+*StringToTagType concate data
 
 
 recy_devices
@@ -75,3 +77,5 @@ tag_bases
 tag_status
 tag_gpses
 tag_readers
+
+

@@ -95,33 +95,32 @@ func customerProc(customerId float64) {
 					if vDevice == 0 {
 						continue
 					}
-					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, WasteLibrary.Float64IdToString(vDevice))
+					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, WasteLibrary.Float64IdToString(vDevice))
+					//TO DO
+					//proc arvento concate device
 					if resultVal.Result == WasteLibrary.RESULT_OK {
 						var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
 
-						var arventoId string = plateDevice[currentDevice.PlateNo]
+						var arventoId string = plateDevice[currentDevice.DeviceDetail.PlateNo]
 						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
-							if currentDevice.Latitude != 0 && currentDevice.Longitude != 0 {
-								currentDevice.Latitude = currentDeviceLocation.Latitude
-								currentDevice.Longitude = currentDeviceLocation.Longitude
-								currentDevice.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
-								currentDevice.Speed = currentDeviceLocation.Speed
-								WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.Speed))
+							if currentDevice.DeviceGps.Latitude != 0 && currentDevice.DeviceGps.Longitude != 0 {
+								currentDevice.DeviceGps.Latitude = currentDeviceLocation.Latitude
+								currentDevice.DeviceGps.Longitude = currentDeviceLocation.Longitude
+								currentDevice.DeviceGps.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
+								currentDevice.DeviceGps.Speed = currentDeviceLocation.Speed
+								WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.DeviceGps.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.DeviceGps.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.DeviceGps.Speed))
 								var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
-								newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_ARVENTO
-								newCurrentHttpHeader.ReaderType = WasteLibrary.OPTYPE_ARVENTO
-								newCurrentHttpHeader.BaseDataType = WasteLibrary.BASETYPE_DEVICE
-								newCurrentHttpHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+								newCurrentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_GPS_DEVICE
 								data := url.Values{
 									WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
-									WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
+									WasteLibrary.HTTP_DATA:   {currentDevice.DeviceGps.ToString()},
 								}
 								resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
 
 								if resultVal.Result == WasteLibrary.RESULT_OK {
-									resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
+									resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_GPS_DEVICES, currentDevice.DeviceGps.ToIdString(), currentDevice.DeviceGps.ToString())
 								}
-								if currentDevice.Speed == 0 {
+								if currentDevice.DeviceGps.Speed == 0 {
 									//TO DO
 									//Speed Op
 								}
@@ -167,7 +166,7 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLib
 	var gpstime string = ""
 	for {
 
-		if strings.Index(bodys, "<Device_x0020_No>") > -1 {
+		if strings.Contains(bodys, "<Device_x0020_No>") {
 			deviceID = bodys[strings.Index(bodys, "<Device_x0020_No>")+17 : strings.Index(bodys, "</Device_x0020_No>")]
 			gpstime = bodys[strings.Index(bodys, "<GMT_x0020_Date_x002F_Time>")+27 : strings.Index(bodys, "</GMT_x0020_Date_x002F_Time>")]
 			latitude = bodys[strings.Index(bodys, "<Latitude>")+10 : strings.Index(bodys, "</Latitude>")]
@@ -225,7 +224,7 @@ func getDevice(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLibra
 	var deviceID string = ""
 	var plateNO string = ""
 	for {
-		if strings.Index(bodys, "<Device_x0020_No>") > -1 {
+		if strings.Contains(bodys, "<Device_x0020_No>") {
 			deviceID = bodys[strings.Index(bodys, "<Device_x0020_No>")+17 : strings.Index(bodys, "</Device_x0020_No>")]
 			plateNO = bodys[strings.Index(bodys, "<License_x0020_Plate>")+21 : strings.Index(bodys, "</License_x0020_Plate>")]
 			bodys = bodys[strings.Index(bodys, "</License_x0020_Plate>")+1:]

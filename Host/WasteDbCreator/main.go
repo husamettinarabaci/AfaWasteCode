@@ -42,7 +42,6 @@ func bulkDbSet() {
 
 	err = bulkDb.Ping()
 	WasteLibrary.LogErr(err)
-	AppType,DeviceNo,DeviceId,CustomerId,Time,Repeat,DeviceType,ReaderType,DataType,Token,Data
 	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS listenerdata ( 
 			DataId serial PRIMARY KEY,
 			AppType varchar(50) NOT NULL DEFAULT '',
@@ -160,7 +159,7 @@ func readerDbSet() {
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
 		ContainerNo varchar(50) NOT NULL DEFAULT '',
-		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_TYPE_NONE + `',
+		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINERTYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -169,8 +168,8 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_status ( 
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
-		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_STATU_EMPTY + `',
-		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_EMPTY + `',
+		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
+		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_NONE + `',
 		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -214,7 +213,7 @@ func readerDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		DeviceType  varchar(50) NOT NULL DEFAULT '` + WasteLibrary.RFID_DEVICE_TYPE_NONE + `',
-		TruckType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TRUCK_TYPE_NONE + `',
+		TruckType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TRUCKTYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -273,9 +272,9 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_STATU_NONE + `',
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_NONE + `',
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
 		Alarm varchar(50) NOT NULL DEFAULT '',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
@@ -287,7 +286,7 @@ func readerDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERM_STATU_NONE + `',
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -337,7 +336,7 @@ func readerDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		ContainerNo  varchar(50) NOT NULL DEFAULT '',
-		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_TYPE_NONE + `',
+		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINERTYPE_NONE + `',
 		DeviceType  varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_DEVICE_TYPE_NONE + `',
 		Imei  varchar(50) NOT NULL DEFAULT '',
 		Imsi  varchar(50) NOT NULL DEFAULT '',
@@ -361,7 +360,7 @@ func readerDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Battery varchar(50) NOT NULL DEFAULT '0',
-		BatteryStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.BATTERY_STATU_NONE + `',
+		BatteryStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.BATTERYSTATU_NONE + `',
 		BatteryTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
@@ -382,9 +381,9 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_STATU_NONE + `',
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_NONE + `',
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -395,7 +394,7 @@ func readerDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERM_STATU_NONE + `'
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `'
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -415,7 +414,7 @@ func readerDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		UltTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		UltRange INT NOT NULL DEFAULT 0,
-		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `',
+		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -495,9 +494,9 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_STATU_NONE + `',
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_NONE + `',
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
 		Alarm varchar(50) NOT NULL DEFAULT '',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
@@ -509,7 +508,7 @@ func readerDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERM_STATU_NONE + `',
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -581,7 +580,7 @@ func staticDbSet() {
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
 		ContainerNo varchar(50) NOT NULL DEFAULT '',
-		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_TYPE_NONE + `',
+		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINERTYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -590,8 +589,8 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_status ( 
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
-		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_STATU_EMPTY + `',
-		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_EMPTY + `',
+		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
+		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_NONE + `',
 		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -634,7 +633,7 @@ func staticDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		DeviceType  varchar(50) NOT NULL DEFAULT '` + WasteLibrary.RFID_DEVICE_TYPE_NONE + `',
-		TruckType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TRUCK_TYPE_NONE + `',
+		TruckType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TRUCKTYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -693,9 +692,9 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_STATU_NONE + `',
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_NONE + `',
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
 		Alarm varchar(50) NOT NULL DEFAULT '',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
@@ -707,7 +706,7 @@ func staticDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERM_STATU_NONE + `',
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -756,7 +755,7 @@ func staticDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		ContainerNo  varchar(50) NOT NULL DEFAULT '',
-		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_TYPE_NONE + `',
+		ContainerType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINERTYPE_NONE + `',
 		DeviceType  varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_DEVICE_TYPE_NONE + `',
 		Imei  varchar(50) NOT NULL DEFAULT '',
 		Imsi  varchar(50) NOT NULL DEFAULT '',
@@ -780,7 +779,7 @@ func staticDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Battery varchar(50) NOT NULL DEFAULT '0',
-		BatteryStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.BATTERY_STATU_NONE + `',
+		BatteryStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.BATTERYSTATU_NONE + `',
 		BatteryTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
@@ -801,9 +800,9 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_STATU_NONE + `',
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_NONE + `',
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -814,7 +813,7 @@ func staticDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERM_STATU_NONE + `'
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `'
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -834,7 +833,7 @@ func staticDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		UltTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		UltRange INT NOT NULL DEFAULT 0,
-		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `',
+		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -913,9 +912,9 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_STATU_NONE + `',
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARM_NONE + `',
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
 		Alarm varchar(50) NOT NULL DEFAULT '',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
@@ -927,7 +926,7 @@ func staticDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERM_STATU_NONE + `',
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)

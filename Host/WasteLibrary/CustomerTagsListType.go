@@ -13,7 +13,7 @@ type CustomerTagsListType struct {
 
 //New
 func (res *CustomerTagsListType) New() {
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.Tags = make(map[string]TagType)
 }
 

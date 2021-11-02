@@ -204,7 +204,7 @@ const (
 	REDIS_RFID_STATU_DEVICES      = "rfid-statu-devices"
 	REDIS_RFID_BASE_DEVICES       = "rfid-base-devices"
 	REDIS_RFID_DETAIL_DEVICES     = "rfid-detail-devices"
-	REDIS_TAGS                    = "tags"
+	REDIS_TAG_EPC                 = "tag-epc"
 	REDIS_TAG_TYPES               = "tags"
 	REDIS_TAG_BASES               = "tag-bases"
 	REDIS_TAG_STATUS              = "tag-status"

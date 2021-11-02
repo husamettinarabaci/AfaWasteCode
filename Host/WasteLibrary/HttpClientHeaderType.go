@@ -24,7 +24,7 @@ func (res *HttpClientHeaderType) New() {
 	res.AppType = APPTYPE_NONE
 	res.DeviceNo = ""
 	res.DeviceId = 0
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.Time = GetTime()
 	res.Repeat = STATU_PASSIVE
 	res.DeviceType = DEVICETYPE_NONE

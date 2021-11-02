@@ -25,7 +25,7 @@ var lastCamRelayTime time.Time
 func initStart() {
 	time.Sleep(5 * time.Second)
 
-	lastCamRelayTime = WasteLibrary.GetTime()
+	lastCamRelayTime = time.Now()
 	WasteLibrary.LogStr("Successfully connected!")
 	WasteLibrary.Version = "1"
 	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
@@ -176,7 +176,7 @@ func camCheck() {
 
 		if time.Since(lastCamRelayTime).Seconds() > 60*60 && WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.STATU_PASSIVE {
 
-			lastCamRelayTime = WasteLibrary.GetTime()
+			lastCamRelayTime = time.Now()
 			WasteLibrary.LogStr("Restart cam...")
 			rpio.Open()
 			WasteLibrary.LogStr(camPort)

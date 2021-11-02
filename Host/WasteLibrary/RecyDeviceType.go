@@ -25,7 +25,7 @@ type RecyDeviceType struct {
 //New
 func (res *RecyDeviceType) New() {
 	res.DeviceId = 0
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.DeviceBase.New()
 	res.DeviceGps.New()
 	res.DeviceTherm.New()

@@ -39,62 +39,69 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
-		var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-		currentData.DeviceId = currentHttpHeader.DeviceId
-		currentData.CustomerId = currentHttpHeader.CustomerId
-		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-		WasteLibrary.LogStr("Data : " + currentData.ToString())
-		currentData.GpsTime = currentHttpHeader.Time
-		if currentData.Longitude != 0 && currentData.Latitude != 0 {
-			data := url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-			}
-			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-				w.Write(resultVal.ToByte())
-				return
-			}
+		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
+			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+			currentData.DeviceId = currentHttpHeader.DeviceId
+			currentData.CustomerId = currentHttpHeader.CustomerId
+			currentData.DeviceGps.DeviceId = currentData.DeviceId
+			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
+			currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_GPS_DEVICE
+			currentData.DeviceGps.GpsTime = currentHttpHeader.Time
+			if currentData.DeviceGps.Longitude != 0 && currentData.DeviceGps.Latitude != 0 {
+				data := url.Values{
+					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+					WasteLibrary.HTTP_DATA:   {currentData.DeviceGps.ToString()},
+				}
+				resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+					w.Write(resultVal.ToByte())
+					return
+				}
 
-			currentData.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-			}
-			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-				w.Write(resultVal.ToByte())
-				return
-			}
-			var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_DEVICES, currentDevice.ToIdString(), currentDevice.ToString())
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-				w.Write(resultVal.ToByte())
-				return
-			}
-			var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
-			newCurrentHttpHeader.AppType = WasteLibrary.APPTYPE_RFID
-			newCurrentHttpHeader.ReaderType = WasteLibrary.OPTYPE_DEVICE
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
-			}
-			resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-				w.Write(resultVal.ToByte())
-				return
-			}
+				currentData.DeviceGps.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+				data = url.Values{
+					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+					WasteLibrary.HTTP_DATA:   {currentData.DeviceGps.ToString()},
+				}
+				resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+					w.Write(resultVal.ToByte())
+					return
+				}
+				currentData.DeviceGps = WasteLibrary.StringToRfidDeviceGpsType(resultVal.Retval.(string))
+				resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_GPS_DEVICES, currentData.DeviceGps.ToIdString(), currentData.DeviceGps.ToString())
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+					w.Write(resultVal.ToByte())
+					return
+				}
+				data = url.Values{
+					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+					WasteLibrary.HTTP_DATA:   {currentData.DeviceGps.ToString()},
+				}
+				resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+					w.Write(resultVal.ToByte())
+					return
+				}
+				if currentData.DeviceGps.Speed == 0 {
+					//TO DO
+					//stop proc
+				}
 
-		} else {
-			resultVal.Result = WasteLibrary.RESULT_OK
+				//TO DO
+				//send data web socket
+			} else {
+				resultVal.Result = WasteLibrary.RESULT_OK
+			}
 		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK

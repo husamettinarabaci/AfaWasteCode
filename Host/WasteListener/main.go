@@ -135,11 +135,11 @@ func handleTcpRequest(conn net.Conn) {
 				currentDevice.DeviceStatu.StatusTime = WasteLibrary.GetTime()
 				currentDevice.DeviceStatu.AliveStatus = WasteLibrary.STATU_ACTIVE
 				currentDevice.DeviceStatu.AliveLastOkTime = WasteLibrary.GetTime()
-				if therm != "00" {
+				if therm != "**" {
 					currentDevice.DeviceTherm.Therm = therm
 					currentDevice.DeviceTherm.ThermTime = WasteLibrary.GetTime()
 				}
-				if battery != "0000" {
+				if battery != "****" {
 					currentDevice.DeviceBattery.Battery = battery
 					currentDevice.DeviceBattery.BatteryTime = WasteLibrary.GetTime()
 				}

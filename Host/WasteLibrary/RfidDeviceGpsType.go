@@ -11,6 +11,7 @@ type RfidDeviceGpsType struct {
 	DeviceId  float64
 	Latitude  float64
 	Longitude float64
+	Speed     float64
 	GpsTime   string
 	NewData   bool
 }
@@ -20,6 +21,7 @@ func (res *RfidDeviceGpsType) New() {
 	res.DeviceId = 0
 	res.Latitude = 0
 	res.Longitude = 0
+	res.Speed = -1
 	res.GpsTime = ""
 	res.NewData = false
 }
@@ -55,26 +57,27 @@ func StringToRfidDeviceGpsType(retStr string) RfidDeviceGpsType {
 
 //SelectSQL
 func (res RfidDeviceGpsType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT Latitude,Longitude,GpsTime
+	return fmt.Sprintf(`SELECT Latitude,Longitude,Speed,GpsTime
 	 FROM public.rfid_gps_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res RfidDeviceGpsType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_gps_devices (DeviceId,Latitude,Longitude,GpsTime) 
-	  VALUES (%f,%f,%f,'%s') 
-	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.GpsTime)
+	return fmt.Sprintf(`INSERT INTO public.rfid_gps_devices (DeviceId,Latitude,Longitude,Speed,GpsTime) 
+	  VALUES (%f,%f,%f,%f,'%s') 
+	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.Speed, res.GpsTime)
 }
 
 //UpdateSQL
 func (res RfidDeviceGpsType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.rfid_gps_devices 
-	  SET Latitude=%f,Longitude=%f,GpsTime='%s' 
+	  SET Latitude=%f,Longitude=%f,Speed=%f,GpsTime='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
 		res.Latitude,
 		res.Longitude,
+		res.Speed,
 		res.GpsTime,
 		res.DeviceId)
 }
@@ -84,6 +87,7 @@ func (res RfidDeviceGpsType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.Latitude,
 		&res.Longitude,
+		&res.Speed,
 		&res.GpsTime)
 	return errDb
 }

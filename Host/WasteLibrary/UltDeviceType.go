@@ -28,7 +28,7 @@ type UltDeviceType struct {
 //New
 func (res *UltDeviceType) New() {
 	res.DeviceId = 0
-	res.CustomerId = 0
+	res.CustomerId = 1
 	res.SerialNumber = ""
 	res.OldLatitude = 0
 	res.OldLongitude = 0

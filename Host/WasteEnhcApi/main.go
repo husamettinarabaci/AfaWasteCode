@@ -19,6 +19,7 @@ func main() {
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/createDevice", createDevice)
+	http.HandleFunc("/createTag", createTag)
 	http.ListenAndServe(":80", nil)
 }
 
@@ -1052,6 +1053,240 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+	}
+
+	w.Write(resultVal.ToByte())
+}
+
+func createTag(w http.ResponseWriter, req *http.Request) {
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
+
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+		WasteLibrary.LogErr(err)
+		return
+	}
+
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
+	//TagType    TagType
+	currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_TYPE
+	data := url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+	}
+	resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	currentData.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+	}
+	resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+		w.Write(resultVal.ToByte())
+		return
+	}
+	currentData = WasteLibrary.StringToTagType(resultVal.Retval.(string))
+
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_TYPES, currentData.ToIdString(), currentData.ToString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_EPC, currentData.Epc, currentData.ToString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+	//TagBase    TagBaseType
+	currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_BASE
+	var currentTagBase WasteLibrary.TagBaseType
+	currentTagBase.New()
+	currentTagBase.TagId = currentData.TagId
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagBase.ToString()},
+	}
+	resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	currentTagBase.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagBase.ToString()},
+	}
+	resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+		w.Write(resultVal.ToByte())
+		return
+	}
+	currentTagBase = WasteLibrary.StringToTagBaseType(resultVal.Retval.(string))
+
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_BASES, currentTagBase.ToIdString(), currentTagBase.ToString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+	//TagStatu   TagStatuType
+	currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_STATU
+	var currentTagStatu WasteLibrary.TagStatuType
+	currentTagStatu.New()
+	currentTagStatu.TagId = currentData.TagId
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagStatu.ToString()},
+	}
+	resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	currentTagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagStatu.ToString()},
+	}
+	resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+		w.Write(resultVal.ToByte())
+		return
+	}
+	currentTagStatu = WasteLibrary.StringToTagStatuType(resultVal.Retval.(string))
+
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_STATUS, currentTagStatu.ToIdString(), currentTagStatu.ToString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+	//TagGps     TagGpsType
+	currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_GPS
+	var currentTagGps WasteLibrary.TagGpsType
+	currentTagGps.New()
+	currentTagGps.TagId = currentData.TagId
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagGps.ToString()},
+	}
+	resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	currentTagGps.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagGps.ToString()},
+	}
+	resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+		w.Write(resultVal.ToByte())
+		return
+	}
+	currentTagGps = WasteLibrary.StringToTagGpsType(resultVal.Retval.(string))
+
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_GPSES, currentTagGps.ToIdString(), currentTagGps.ToString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+	//TagReader   TagReaderType
+	currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_READER
+	var currentTagReader WasteLibrary.TagReaderType
+	currentTagReader.New()
+	currentTagReader.TagId = currentData.TagId
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagReader.ToString()},
+	}
+	resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	currentTagReader.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+	data = url.Values{
+		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+		WasteLibrary.HTTP_DATA:   {currentTagReader.ToString()},
+	}
+	resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+		w.Write(resultVal.ToByte())
+		return
+	}
+	currentTagReader = WasteLibrary.StringToTagReaderType(resultVal.Retval.(string))
+
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_READERS, currentTagReader.ToIdString(), currentTagReader.ToString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, currentData.ToCustomerIdString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
+		w.Write(resultVal.ToByte())
+		return
+	}
+
+	var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
+	customerTags.Tags[currentData.ToIdString()] = currentTagReader.TagId
+	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, customerTags.ToIdString(), customerTags.ToString())
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+		w.Write(resultVal.ToByte())
+		return
 	}
 
 	w.Write(resultVal.ToByte())

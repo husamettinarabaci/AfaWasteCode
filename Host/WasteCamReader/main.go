@@ -39,12 +39,17 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
-		var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
-		WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-		WasteLibrary.LogStr("Data : " + currentData.ToString())
+		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
+			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
+			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+			WasteLibrary.LogStr("Data : " + currentData.ToString())
 
-		//TO DO
-		//Set ImageStatu
+			//TO DO
+			//Set ImageStatu
+
+			//TO DO
+			//send data web socket
+		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}

@@ -48,8 +48,8 @@ var currentTagDataType WasteLibrary.TagType
 
 func initStart() {
 
-	lastReadTime = WasteLibrary.GetTime()
-	lastSendTime = WasteLibrary.GetTime()
+	lastReadTime = time.Now()
+	lastSendTime = time.Now()
 	readTags = make(map[string]time.Time)
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
@@ -117,7 +117,7 @@ func rfCheck() {
 					} else {
 						buf = buf[:n]
 						data = hex.EncodeToString(buf)
-						lastReadTime = WasteLibrary.GetTime()
+						lastReadTime = time.Now()
 						data = strings.ToUpper(data)
 						WasteLibrary.LogStr(data)
 
@@ -133,7 +133,7 @@ func rfCheck() {
 							if time.Since(readTags[tempData[36:60]]).Seconds() > 15*60 {
 								lastRfTag = tempData[36:60]
 								nid, _ := uuid.NewUUID()
-								lastSendTime = WasteLibrary.GetTime()
+								lastSendTime = time.Now()
 								readTags[tempData[36:60]] = lastSendTime
 								currentTagDataType.Epc = lastRfTag
 								currentTagDataType.TagReader.UID = nid.String()
