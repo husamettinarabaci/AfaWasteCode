@@ -80,8 +80,6 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 	var customerId string = resultVal.Retval.(string)
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-		//TO DO
-		//proc concate device value
 		var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, currentData.ToIdString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -91,6 +89,7 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		currentData = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
+		currentData.GetAll()
 		if currentData.ToCustomerIdString() == customerId {
 			resultVal.Result = WasteLibrary.RESULT_OK
 			resultVal.Retval = currentData.ToString()
@@ -101,8 +100,6 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 			w.Write(resultVal.ToByte())
 		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-		//TO DO
-		//proc concate device value
 		var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_ULT_TYPE_DEVICES, currentData.ToIdString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -112,6 +109,7 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		currentData = WasteLibrary.StringToUltDeviceType(resultVal.Retval.(string))
+		currentData.GetAll()
 		if currentData.ToCustomerIdString() == customerId {
 			resultVal.Result = WasteLibrary.RESULT_OK
 			resultVal.Retval = currentData.ToString()
@@ -122,8 +120,6 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 			w.Write(resultVal.ToByte())
 		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
-		//TO DO
-		//proc concate device value
 		var currentData WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RECY_TYPE_DEVICES, currentData.ToIdString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -133,6 +129,7 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		currentData = WasteLibrary.StringToRecyDeviceType(resultVal.Retval.(string))
+		currentData.GetAll()
 		if currentData.ToCustomerIdString() == customerId {
 			resultVal.Result = WasteLibrary.RESULT_OK
 			resultVal.Retval = currentData.ToString()
@@ -191,11 +188,10 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
-				//TO DO
-				//proc concate device value
 				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, WasteLibrary.Float64IdToString(deviceId))
 				if resultVal.Result == WasteLibrary.RESULT_OK {
 					var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
+					currentDevice.GetAll()
 					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
@@ -219,11 +215,10 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
-				//TO DO
-				//proc concate device value
 				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_ULT_TYPE_DEVICES, WasteLibrary.Float64IdToString(deviceId))
 				if resultVal.Result == WasteLibrary.RESULT_OK {
 					var currentDevice WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(resultVal.Retval.(string))
+					currentDevice.GetAll()
 					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
@@ -248,11 +243,10 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
-				//TO DO
-				//proc concate device value
 				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RECY_TYPE_DEVICES, WasteLibrary.Float64IdToString(deviceId))
 				if resultVal.Result == WasteLibrary.RESULT_OK {
 					var currentDevice WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(resultVal.Retval.(string))
+					currentDevice.GetAll()
 					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
@@ -364,11 +358,10 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 	for _, tagId := range customerTags.Tags {
 
 		if tagId != 0 {
-			//TO DO
-			//proc concate tag value
 			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TAG_TYPES, WasteLibrary.Float64IdToString(tagId))
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 				var currentTag WasteLibrary.TagType = WasteLibrary.StringToTagType(resultVal.Retval.(string))
+				currentTag.GetAll()
 				customerTagsList.Tags[currentTag.ToIdString()] = currentTag
 			}
 
@@ -405,8 +398,6 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 	var customerId string = resultVal.Retval.(string)
 
 	var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
-	//TO DO
-	//proc concate tag value
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TAG_TYPES, currentData.ToIdString())
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -415,6 +406,7 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	currentData = WasteLibrary.StringToTagType(resultVal.Retval.(string))
+	currentData.GetAll()
 	if currentData.ToCustomerIdString() == customerId {
 		resultVal.Result = WasteLibrary.RESULT_OK
 		resultVal.Retval = currentData.ToString()

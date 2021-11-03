@@ -96,11 +96,9 @@ func customerProc(customerId float64) {
 						continue
 					}
 					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, WasteLibrary.Float64IdToString(vDevice))
-					//TO DO
-					//proc arvento concate device
 					if resultVal.Result == WasteLibrary.RESULT_OK {
 						var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
-
+						currentDevice.GetAll()
 						var arventoId string = plateDevice[currentDevice.DeviceDetail.PlateNo]
 						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
 							if currentDevice.DeviceGps.Latitude != 0 && currentDevice.DeviceGps.Longitude != 0 {
@@ -108,13 +106,20 @@ func customerProc(customerId float64) {
 								currentDevice.DeviceGps.Longitude = currentDeviceLocation.Longitude
 								currentDevice.DeviceGps.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
 								currentDevice.DeviceGps.Speed = currentDeviceLocation.Speed
-								WasteLibrary.LogStr("Devices Gps : " + WasteLibrary.Float64IdToString(customerId) + " - " + WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " + WasteLibrary.Float64ToString(currentDevice.DeviceGps.Latitude) + " - " + WasteLibrary.Float64ToString(currentDevice.DeviceGps.Longitude) + " - " + WasteLibrary.Float64ToString(currentDevice.DeviceGps.Speed))
+								WasteLibrary.LogStr("Devices Gps : " +
+									WasteLibrary.Float64IdToString(customerId) + " - " +
+									WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " +
+									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Latitude) + " - " +
+									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Longitude) + " - " +
+									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Speed))
 								var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
 								newCurrentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_GPS_DEVICE
 								data := url.Values{
 									WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
 									WasteLibrary.HTTP_DATA:   {currentDevice.DeviceGps.ToString()},
 								}
+								//TO DO
+								//send data gps reader
 								resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
 
 								if resultVal.Result == WasteLibrary.RESULT_OK {

@@ -22,6 +22,13 @@ func LogStr(value string) {
 	}
 }
 
+//LogStr
+func LogReport(value string) {
+	if Report {
+		SendLogServer(LOGGER_REPORT, value)
+	}
+}
+
 //SendLogServer
 func SendLogServer(logType string, logVal string) {
 	if Container == "" {

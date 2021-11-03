@@ -42,7 +42,9 @@ Reader
 *StringToRecyDeviceType concate data
 *StringToUltDeviceType concate data
 *StringToTagType concate data
-
+*GetStaticDbMainForStoreApi
+*RfidDevice Customer Change Tag Customer Change
+*check out modify
 
 recy_devices
 recy_base_devices

@@ -30,6 +30,7 @@ const (
 	LOGGER_DEBUG     = "DEBUG"
 	LOGGER_ERROR     = "ERROR"
 	LOGGER_INFO      = "INFO"
+	LOGGER_REPORT    = "REPORT"
 )
 
 const (
