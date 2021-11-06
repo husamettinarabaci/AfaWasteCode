@@ -33,19 +33,19 @@ func (res *CustomerConfigType) New() {
 }
 
 //ToId String
-func (res CustomerConfigType) ToIdString() string {
+func (res *CustomerConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
 //ToByte
-func (res CustomerConfigType) ToByte() []byte {
+func (res *CustomerConfigType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res CustomerConfigType) ToString() string {
+func (res *CustomerConfigType) ToString() string {
 	return string(res.ToByte())
 
 }

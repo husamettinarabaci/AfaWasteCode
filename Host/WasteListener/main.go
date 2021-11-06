@@ -131,7 +131,7 @@ func handleTcpRequest(conn net.Conn) {
 				currentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 				var currentDevice WasteLibrary.UltDeviceType
 				currentDevice.New()
-				currentDevice.SerialNumber = imsi
+				currentDevice.DeviceMain.SerialNumber = imsi
 				currentDevice.DeviceStatu.StatusTime = WasteLibrary.GetTime()
 				currentDevice.DeviceStatu.AliveStatus = WasteLibrary.STATU_ACTIVE
 				currentDevice.DeviceStatu.AliveLastOkTime = WasteLibrary.GetTime()
@@ -172,30 +172,40 @@ func handleTcpRequest(conn net.Conn) {
 }
 
 func data(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
-	resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
-	if resultVal.Result != WasteLibrary.RESULT_OK {
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
-		w.Write(resultVal.ToByte())
-		return
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RFID || currentHttpHeader.AppType == WasteLibrary.APPTYPE_RECY {
+		resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+	} else {
 	}
 	w.Write(resultVal.ToByte())
+
 }
 
 func update(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -205,19 +215,23 @@ func update(w http.ResponseWriter, req *http.Request) {
 	//TO DO
 	//udate proc
 	/*resultVal.Result = WasteLibrary.RESULT_FAIL
-	if err := req.ParseForm(); err != nil {
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
-		w.Write(resultVal.ToByte())
-		WasteLibrary.LogErr(err)
-		return
-	}
-	resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/update", req.Form)
-	if resultVal.Result != WasteLibrary.RESULT_OK {
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
-		w.Write(resultVal.ToByte())
-		return
-	}*/
+
+		if err := req.ParseForm(); err != nil {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+				w.Write(resultVal.ToByte())
+	WasteLibrary.LogReport("Result : "+resultVal.ToString())
+				WasteLibrary.LogErr(err)
+				return
+			}
+			resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/update", req.Form)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+				w.Write(resultVal.ToByte())
+	WasteLibrary.LogReport("Result : "+resultVal.ToString())
+				return
+			}*/
 	w.Write(resultVal.ToByte())
+
 }

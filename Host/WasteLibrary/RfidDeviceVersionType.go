@@ -33,18 +33,18 @@ func (res *RfidDeviceVersionType) New() {
 }
 
 //ToId String
-func (res RfidDeviceVersionType) ToIdString() string {
+func (res *RfidDeviceVersionType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RfidDeviceVersionType) ToByte() []byte {
+func (res *RfidDeviceVersionType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RfidDeviceVersionType) ToString() string {
+func (res *RfidDeviceVersionType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -62,21 +62,21 @@ func StringToRfidDeviceVersionType(retStr string) RfidDeviceVersionType {
 }
 
 //SelectSQL
-func (res RfidDeviceVersionType) SelectSQL() string {
+func (res *RfidDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT GpsAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion
 	 FROM public.rfid_version_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res RfidDeviceVersionType) InsertSQL() string {
+func (res *RfidDeviceVersionType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.rfid_version_devices (DeviceId,GpsAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
-	  VALUES (%f,'%s','%s',%s','%s','%s',%s','%s') 
+	  VALUES (%f,'%s','%s','%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.GpsAppVersion, res.ThermAppVersion, res.TransferAppVersion, res.CheckerAppVersion, res.CamAppVersion, res.ReaderAppVersion, res.SystemAppVersion)
 }
 
 //UpdateSQL
-func (res RfidDeviceVersionType) UpdateSQL() string {
+func (res *RfidDeviceVersionType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.rfid_version_devices 
 	  SET GpsAppVersion='%s',ThermAppVersion='%s',TransferAppVersion='%s',CheckerAppVersion='%s',CamAppVersion='%s',ReaderAppVersion='%s',SystemAppVersion='%s' 
 	  WHERE DeviceId=%f  
@@ -92,7 +92,7 @@ func (res RfidDeviceVersionType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RfidDeviceVersionType) SelectWithDb(db *sql.DB) error {
+func (res *RfidDeviceVersionType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.GpsAppVersion,
 		&res.ThermAppVersion,

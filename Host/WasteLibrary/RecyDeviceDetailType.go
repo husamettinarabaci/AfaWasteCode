@@ -28,23 +28,23 @@ func (res *RecyDeviceDetailType) New() {
 	res.DailyGlassCount = 0
 	res.DailyPlasticCount = 0
 	res.DailyMetalCount = 0
-	res.RecyTime = ""
+	res.RecyTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res RecyDeviceDetailType) ToIdString() string {
+func (res *RecyDeviceDetailType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RecyDeviceDetailType) ToByte() []byte {
+func (res *RecyDeviceDetailType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RecyDeviceDetailType) ToString() string {
+func (res *RecyDeviceDetailType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -62,7 +62,7 @@ func StringToRecyDeviceDetailType(retStr string) RecyDeviceDetailType {
 }
 
 //SelectSQL
-func (res RecyDeviceDetailType) SelectSQL() string {
+func (res *RecyDeviceDetailType) SelectSQL() string {
 
 	return fmt.Sprintf(`SELECT TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime
 	 FROM public.recy_detail_devices
@@ -70,7 +70,7 @@ func (res RecyDeviceDetailType) SelectSQL() string {
 }
 
 //InsertSQL
-func (res RecyDeviceDetailType) InsertSQL() string {
+func (res *RecyDeviceDetailType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.recy_detail_devices (DeviceId,TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime) 
 	  VALUES (%f,%f,%f,%f,%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.TotalGlassCount, res.TotalPlasticCount,
@@ -78,7 +78,7 @@ func (res RecyDeviceDetailType) InsertSQL() string {
 }
 
 //UpdateSQL
-func (res RecyDeviceDetailType) UpdateSQL() string {
+func (res *RecyDeviceDetailType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.recy_detail_devices 
 	  SET TotalGlassCount=%f,TotalPlasticCount=%f,TotalMetalCount=%f,DailyGlassCount=%f,DailyPlasticCount=%f,DailyMetalCount=%f,RecyTime='%s' 
 	  WHERE DeviceId=%f  
@@ -94,7 +94,7 @@ func (res RecyDeviceDetailType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RecyDeviceDetailType) SelectWithDb(db *sql.DB) error {
+func (res *RecyDeviceDetailType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.TotalGlassCount,
 		&res.TotalPlasticCount,

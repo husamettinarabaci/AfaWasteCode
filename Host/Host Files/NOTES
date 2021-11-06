@@ -3,81 +3,11 @@
 #Gps Db Op Minimize
 #Speed Op
 
-RECY
-Base
-Statu
-Gps
-Alarm
-Therm
-Version
-Detail
-
-ULT
-Base
-Statu
-Gps
-Alarm
-Therm
-Version
-Battery
-Sens
-
-RFID
-Base
-Statu
-Gps
-Alarm
-Therm
-Version
-Detail
-
-TAG
-Base
-Statu
-Gps
-Reader
 
 *Detail Add Report Value
-*StringToRfidDeviceType concate data
-*StringToRecyDeviceType concate data
-*StringToUltDeviceType concate data
-*StringToTagType concate data
 *GetStaticDbMainForStoreApi
 *RfidDevice Customer Change Tag Customer Change
 *check out modify
 
-recy_devices
-recy_base_devices
-recy_gps_devices
-recy_therm_devices
-recy_version_devices
-recy_alarm_devices
-recy_statu_devices
-recy_detail_devices
-
-ult_devices
-ult_base_devices
-ult_battery_devices
-ult_gps_devices
-ult_alarm_devices
-ult_therm_devices
-ult_version_devices
-ult_statu_devices
-ult_sens_devices
-
-rfid_devices
-rfid_gps_devices
-rfid_alarm_devices
-rfid_therm_devices
-rfid_version_devices
-rfid_statu_devices
-rfid_base_devices
-rfid_detail_devices
-
-tags
-tag_bases
-tag_status
-tag_gpses
-tag_readers
 
 

@@ -11,13 +11,13 @@ type ResultType struct {
 }
 
 //ToByte
-func (res ResultType) ToByte() []byte {
+func (res *ResultType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res ResultType) ToString() string {
+func (res *ResultType) ToString() string {
 	return string(res.ToByte())
 
 }

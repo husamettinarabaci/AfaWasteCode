@@ -15,13 +15,13 @@ func (res *CustomersListType) New() {
 }
 
 //ToByte
-func (res CustomersListType) ToByte() []byte {
+func (res *CustomersListType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res CustomersListType) ToString() string {
+func (res *CustomersListType) ToString() string {
 	return string(res.ToByte())
 
 }

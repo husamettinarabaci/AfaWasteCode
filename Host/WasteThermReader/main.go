@@ -23,6 +23,7 @@ func main() {
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -30,10 +31,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -42,7 +45,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
-			currentData.CustomerId = currentHttpHeader.CustomerId
 			currentData.DeviceTherm.DeviceId = currentData.DeviceId
 			if WasteLibrary.StringIdToFloat64(currentData.DeviceTherm.Therm) > 80 {
 				currentData.DeviceTherm.ThermStatus = WasteLibrary.THERMSTATU_HIGH
@@ -62,19 +64,21 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 
 			currentData.DeviceTherm.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.DeviceTherm.ToString()},
 			}
 			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 			currentData.DeviceTherm = WasteLibrary.StringToRfidDeviceThermType(resultVal.Retval.(string))
@@ -83,9 +87,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
 				w.Write(resultVal.ToByte())
+
 				return
 			}
-
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.DeviceTherm.ToString()},
@@ -95,6 +99,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 
@@ -106,4 +111,5 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
 	w.Write(resultVal.ToByte())
+
 }

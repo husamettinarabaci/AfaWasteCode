@@ -29,18 +29,18 @@ func (res *UltDeviceBaseType) New() {
 }
 
 //ToId String
-func (res UltDeviceBaseType) ToIdString() string {
+func (res *UltDeviceBaseType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UltDeviceBaseType) ToByte() []byte {
+func (res *UltDeviceBaseType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceBaseType) ToString() string {
+func (res *UltDeviceBaseType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -58,21 +58,21 @@ func StringToUltDeviceBaseType(retStr string) UltDeviceBaseType {
 }
 
 //SelectSQL
-func (res UltDeviceBaseType) SelectSQL() string {
+func (res *UltDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT ContainerNo,ContainerType,DeviceType,Imei,Imsi
 	 FROM public.ult_base_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res UltDeviceBaseType) InsertSQL() string {
+func (res *UltDeviceBaseType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_base_devices (DeviceId,ContainerNo,ContainerType,DeviceType,Imei,Imsi) 
 	  VALUES (%f,'%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.ContainerType, res.DeviceType, res.Imei, res.Imsi)
 }
 
 //UpdateSQL
-func (res UltDeviceBaseType) UpdateSQL() string {
+func (res *UltDeviceBaseType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.ult_base_devices 
 	  SET ContainerNo='%s',ContainerType='%s',DeviceType='%s',Imei='%s',Imsi='%s'
 	  WHERE DeviceId=%f  
@@ -86,7 +86,7 @@ func (res UltDeviceBaseType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res UltDeviceBaseType) SelectWithDb(db *sql.DB) error {
+func (res *UltDeviceBaseType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.ContainerNo,
 		&res.ContainerType,

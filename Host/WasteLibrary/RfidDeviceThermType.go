@@ -19,24 +19,24 @@ type RfidDeviceThermType struct {
 func (res *RfidDeviceThermType) New() {
 	res.DeviceId = 0
 	res.Therm = "00"
-	res.ThermTime = ""
+	res.ThermTime = GetTime()
 	res.ThermStatus = THERMSTATU_NONE
 	res.NewData = false
 }
 
 //ToId String
-func (res RfidDeviceThermType) ToIdString() string {
+func (res *RfidDeviceThermType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RfidDeviceThermType) ToByte() []byte {
+func (res *RfidDeviceThermType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RfidDeviceThermType) ToString() string {
+func (res *RfidDeviceThermType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -54,21 +54,21 @@ func StringToRfidDeviceThermType(retStr string) RfidDeviceThermType {
 }
 
 //SelectSQL
-func (res RfidDeviceThermType) SelectSQL() string {
+func (res *RfidDeviceThermType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Therm,ThermTime,ThermStatus
 	 FROM public.rfid_therm_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res RfidDeviceThermType) InsertSQL() string {
+func (res *RfidDeviceThermType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.rfid_therm_devices (DeviceId,Therm,ThermTime,ThermStatus) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Therm, res.ThermTime, res.ThermStatus)
 }
 
 //UpdateSQL
-func (res RfidDeviceThermType) UpdateSQL() string {
+func (res *RfidDeviceThermType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.rfid_therm_devices 
 	  SET Therm='%s',ThermTime='%s',ThermStatus='%s' 
 	  WHERE DeviceId=%f  
@@ -80,7 +80,7 @@ func (res RfidDeviceThermType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RfidDeviceThermType) SelectWithDb(db *sql.DB) error {
+func (res *RfidDeviceThermType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.Therm,
 		&res.ThermTime,

@@ -1,7 +1,6 @@
 package WasteLibrary
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 )
@@ -9,10 +8,7 @@ import (
 //UltDeviceType
 type UltDeviceType struct {
 	DeviceId      float64
-	CustomerId    float64
-	SerialNumber  string
-	OldLatitude   float64
-	OldLongitude  float64
+	DeviceMain    UltDeviceMainType
 	DeviceBase    UltDeviceBaseType
 	DeviceStatu   UltDeviceStatuType
 	DeviceBattery UltDeviceBatteryType
@@ -21,17 +17,12 @@ type UltDeviceType struct {
 	DeviceTherm   UltDeviceThermType
 	DeviceVersion UltDeviceVersionType
 	DeviceSens    UltDeviceSensType
-	Active        string
-	CreateTime    string
 }
 
 //New
 func (res *UltDeviceType) New() {
 	res.DeviceId = 0
-	res.CustomerId = 1
-	res.SerialNumber = ""
-	res.OldLatitude = 0
-	res.OldLongitude = 0
+	res.DeviceMain.New()
 	res.DeviceBase.New()
 	res.DeviceStatu.New()
 	res.DeviceBattery.New()
@@ -40,29 +31,82 @@ func (res *UltDeviceType) New() {
 	res.DeviceTherm.New()
 	res.DeviceVersion.New()
 	res.DeviceSens.New()
-	res.Active = STATU_ACTIVE
-	res.CreateTime = ""
 
+}
+
+//GetAll
+func (res *UltDeviceType) GetAll() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_ULT_MAIN_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceMain = StringToUltDeviceMainType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_BASE_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceBase = StringToUltDeviceBaseType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_GPS_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceGps = StringToUltDeviceGpsType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_THERM_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceTherm = StringToUltDeviceThermType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_VERSION_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceVersion = StringToUltDeviceVersionType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_ALARM_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceAlarm = StringToUltDeviceAlarmType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_STATU_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceStatu = StringToUltDeviceStatuType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_SENS_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceSens = StringToUltDeviceSensType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_ULT_BATTERY_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceBattery = StringToUltDeviceBatteryType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	return resultVal
 }
 
 //ToId String
-func (res UltDeviceType) ToIdString() string {
+func (res *UltDeviceType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
-//ToCustomerId String
-func (res UltDeviceType) ToCustomerIdString() string {
-	return fmt.Sprintf("%.0f", res.CustomerId)
-}
-
 //ToByte
-func (res UltDeviceType) ToByte() []byte {
+func (res *UltDeviceType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceType) ToString() string {
+func (res *UltDeviceType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -77,50 +121,4 @@ func ByteToUltDeviceType(retByte []byte) UltDeviceType {
 //String To UltDeviceType
 func StringToUltDeviceType(retStr string) UltDeviceType {
 	return ByteToUltDeviceType([]byte(retStr))
-}
-
-//SelectSQL
-func (res UltDeviceType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,OldLatitude,OldLongitude
-	 FROM public.ult_devices
-	 WHERE DeviceId=%f ;`, res.DeviceId)
-}
-
-//InsertSQL
-func (res UltDeviceType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_devices (CustomerId,SerialNumber,OldLatitude,OldLongitude) 
-	  VALUES (%f,'%s',%f,%f) 
-	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
-}
-
-//InsertDataSQL
-func (res UltDeviceType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_devices (DeviceId,CustomerId,SerialNumber,OldLatitude,OldLongitude) 
-	  VALUES (%f,%f,'%s',%f,%f) 
-	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
-}
-
-//UpdateSQL
-func (res UltDeviceType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_devices 
-	  SET CustomerId=%f,SerialNumber='%s',OldLatitude=%f,OldLongitude=%f
-	  WHERE DeviceId=%f  
-	  RETURNING DeviceId;`,
-		res.CustomerId,
-		res.SerialNumber,
-		res.OldLatitude,
-		res.OldLongitude,
-		res.DeviceId)
-}
-
-//SelectWithDb
-func (res UltDeviceType) SelectWithDb(db *sql.DB) error {
-	errDb := db.QueryRow(res.SelectSQL()).Scan(
-		&res.CustomerId,
-		&res.SerialNumber,
-		&res.Active,
-		&res.CreateTime,
-		&res.OldLatitude,
-		&res.OldLongitude)
-	return errDb
 }

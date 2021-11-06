@@ -48,7 +48,7 @@ func bulkDbSet() {
 			DeviceNo varchar(50) NOT NULL DEFAULT '',
 			DeviceId INT NOT NULL DEFAULT -1,
 			CustomerId INT NOT NULL DEFAULT -1,
-			Time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+			Time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			Repeat varchar(50) NOT NULL DEFAULT '',
 			DeviceType varchar(50) NOT NULL DEFAULT '',
 			ReaderType varchar(50) NOT NULL DEFAULT '',
@@ -115,7 +115,7 @@ func sumDbSet() {
 	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS redisdata ( 
 			DataId serial PRIMARY KEY,
 			HashKey TEXT NOT NULL DEFAULT '',
-			SubKey TEXT NOT NULL DEFAULT '', 
+			SubKey TEXT NOT NULL DEFAULT '',
 			KeyValue TEXT NOT NULL DEFAULT '',
 			  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 			);`)
@@ -143,7 +143,7 @@ func readerDbSet() {
 
 	var createSQL string
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tags ( 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_mains ( 
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -171,7 +171,7 @@ func readerDbSet() {
 		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
 		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_NONE + `',
 		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
-		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -180,9 +180,9 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_gpses ( 
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
-		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -192,13 +192,13 @@ func readerDbSet() {
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
 		UID varchar(50) NOT NULL DEFAULT '',
-		ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_devices (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_main_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -261,8 +261,8 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_gps_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		Speed NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -319,12 +319,12 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_devices (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_main_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		CustomerId INT NOT NULL DEFAULT -1,
 		SerialNumber  varchar(50) NOT NULL DEFAULT '',
-		OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		OldLongitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		Active varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_ACTIVE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -370,9 +370,9 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_gps_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -394,7 +394,7 @@ func readerDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `'
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -420,7 +420,7 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_devices (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_main_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -483,8 +483,8 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_gps_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
@@ -565,7 +565,7 @@ func staticDbSet() {
 	WasteLibrary.LogErr(err)
 	var createSQL string
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tags ( 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_mains ( 
 		TagID serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
 		DeviceId INT NOT NULL DEFAULT -1,
@@ -592,7 +592,7 @@ func staticDbSet() {
 		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
 		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_NONE + `',
 		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
-		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -601,9 +601,9 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_gpses ( 
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
-		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -613,13 +613,13 @@ func staticDbSet() {
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
 		UID varchar(50) NOT NULL DEFAULT '',
-		ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+		ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_devices (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_main_devices (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
 		SerialNumber  varchar(50) NOT NULL DEFAULT '',
@@ -681,8 +681,8 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_gps_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		Speed NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -739,11 +739,11 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_devices (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_main_devices (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
 		SerialNumber  varchar(50) NOT NULL DEFAULT '',
-		OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
+		OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		OldLongitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		Active varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_ACTIVE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -789,9 +789,9 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_gps_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0, 
-		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -813,7 +813,7 @@ func staticDbSet() {
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
 		ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `'
+		ThermStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.THERMSTATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -839,7 +839,7 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_devices (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_main_devices (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
 		SerialNumber  varchar(50) NOT NULL DEFAULT '',

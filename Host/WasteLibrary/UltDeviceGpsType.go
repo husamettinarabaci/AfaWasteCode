@@ -20,23 +20,23 @@ func (res *UltDeviceGpsType) New() {
 	res.DeviceId = 0
 	res.Latitude = 0
 	res.Longitude = 0
-	res.GpsTime = ""
+	res.GpsTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res UltDeviceGpsType) ToIdString() string {
+func (res *UltDeviceGpsType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UltDeviceGpsType) ToByte() []byte {
+func (res *UltDeviceGpsType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceGpsType) ToString() string {
+func (res *UltDeviceGpsType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -54,21 +54,21 @@ func StringToUltDeviceGpsType(retStr string) UltDeviceGpsType {
 }
 
 //SelectSQL
-func (res UltDeviceGpsType) SelectSQL() string {
+func (res *UltDeviceGpsType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Latitude,Longitude,GpsTime
 	 FROM public.ult_gps_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res UltDeviceGpsType) InsertSQL() string {
+func (res *UltDeviceGpsType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_gps_devices (DeviceId,Latitude,Longitude,GpsTime) 
 	  VALUES (%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.GpsTime)
 }
 
 //UpdateSQL
-func (res UltDeviceGpsType) UpdateSQL() string {
+func (res *UltDeviceGpsType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.ult_gps_devices 
 	  SET Latitude=%f,Longitude=%f,GpsTime='%s' 
 	  WHERE DeviceId=%f  
@@ -80,7 +80,7 @@ func (res UltDeviceGpsType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res UltDeviceGpsType) SelectWithDb(db *sql.DB) error {
+func (res *UltDeviceGpsType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.Latitude,
 		&res.Longitude,

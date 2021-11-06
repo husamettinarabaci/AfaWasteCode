@@ -20,19 +20,19 @@ func (res *AdminConfigType) New() {
 }
 
 //ToId String
-func (res AdminConfigType) ToIdString() string {
+func (res *AdminConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
 //ToByte
-func (res AdminConfigType) ToByte() []byte {
+func (res *AdminConfigType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res AdminConfigType) ToString() string {
+func (res *AdminConfigType) ToString() string {
 	return string(res.ToByte())
 
 }

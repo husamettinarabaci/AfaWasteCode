@@ -17,19 +17,19 @@ func (res *ArventoDeviceGpsType) New() {
 	res.Latitude = 0
 	res.Longitude = 0
 	res.Speed = 0
-	res.GpsTime = ""
+	res.GpsTime = GetTime()
 
 }
 
 //ToByte
-func (res ArventoDeviceGpsType) ToByte() []byte {
+func (res *ArventoDeviceGpsType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res ArventoDeviceGpsType) ToString() string {
+func (res *ArventoDeviceGpsType) ToString() string {
 	return string(res.ToByte())
 
 }

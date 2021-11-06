@@ -19,24 +19,24 @@ type UltDeviceThermType struct {
 func (res *UltDeviceThermType) New() {
 	res.DeviceId = 0
 	res.Therm = "00"
-	res.ThermTime = ""
+	res.ThermTime = GetTime()
 	res.ThermStatus = THERMSTATU_NONE
 	res.NewData = false
 }
 
 //ToId String
-func (res UltDeviceThermType) ToIdString() string {
+func (res *UltDeviceThermType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UltDeviceThermType) ToByte() []byte {
+func (res *UltDeviceThermType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceThermType) ToString() string {
+func (res *UltDeviceThermType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -54,21 +54,21 @@ func StringToUltDeviceThermType(retStr string) UltDeviceThermType {
 }
 
 //SelectSQL
-func (res UltDeviceThermType) SelectSQL() string {
+func (res *UltDeviceThermType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Therm,ThermTime,ThermStatus
 	 FROM public.ult_therm_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res UltDeviceThermType) InsertSQL() string {
+func (res *UltDeviceThermType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_therm_devices (DeviceId,Therm,ThermTime,ThermStatus) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Therm, res.ThermTime, res.ThermStatus)
 }
 
 //UpdateSQL
-func (res UltDeviceThermType) UpdateSQL() string {
+func (res *UltDeviceThermType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.ult_therm_devices 
 	  SET Therm='%s',ThermTime='%s',ThermStatus='%s' 
 	  WHERE DeviceId=%f  
@@ -80,7 +80,7 @@ func (res UltDeviceThermType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res UltDeviceThermType) SelectWithDb(db *sql.DB) error {
+func (res *UltDeviceThermType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.Therm,
 		&res.ThermTime,

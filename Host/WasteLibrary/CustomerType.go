@@ -31,19 +31,19 @@ func (res *CustomerType) New() {
 }
 
 //ToId String
-func (res CustomerType) ToIdString() string {
+func (res *CustomerType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
 //ToByte
-func (res CustomerType) ToByte() []byte {
+func (res *CustomerType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res CustomerType) ToString() string {
+func (res *CustomerType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -61,7 +61,7 @@ func StringToCustomerType(retStr string) CustomerType {
 }
 
 //SelectSQL
-func (res CustomerType) SelectSQL() string {
+func (res *CustomerType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT 
 	CustomerName,
 	CustomerLink,
@@ -75,7 +75,7 @@ func (res CustomerType) SelectSQL() string {
 }
 
 //InsertSQL
-func (res CustomerType) InsertSQL() string {
+func (res *CustomerType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.customers(
 		CustomerName,CustomerLink,RfIdApp,UltApp,RecyApp)
   VALUES ('%s','%s','%s','%s','%s')  RETURNING CustomerId;`,
@@ -84,7 +84,7 @@ func (res CustomerType) InsertSQL() string {
 }
 
 //UpdateSQL
-func (res CustomerType) UpdateSQL() string {
+func (res *CustomerType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.customers
 		 SET CustomerName='%s',CustomerLink='%s',RfIdApp='%s',UltApp='%s',RecyApp='%s'
 		 WHERE CustomerId=%f  RETURNING CustomerId;`,
@@ -93,7 +93,7 @@ func (res CustomerType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res CustomerType) SelectWithDb(db *sql.DB) error {
+func (res *CustomerType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.CustomerName,
 		&res.CustomerLink,

@@ -31,23 +31,23 @@ func (res *UserType) New() {
 }
 
 //ToId String
-func (res UserType) ToIdString() string {
+func (res *UserType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.UserId)
 }
 
 //ToCustomerId String
-func (res UserType) ToCustomerIdString() string {
+func (res *UserType) ToCustomerIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
 //ToByte
-func (res UserType) ToByte() []byte {
+func (res *UserType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UserType) ToString() string {
+func (res *UserType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -65,7 +65,7 @@ func StringToUserType(retStr string) UserType {
 }
 
 //SelectSQL
-func (res UserType) SelectSQL() string {
+func (res *UserType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT 
 			CustomerId,
 			UserName,
@@ -79,7 +79,7 @@ func (res UserType) SelectSQL() string {
 }
 
 //InsertSQL
-func (res UserType) InsertSQL() string {
+func (res *UserType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.users 
 	(UserRole,Email,UserName,CustomerId,Password) 
 	  VALUES ('%s','%s','%s',%f,'%s')   
@@ -89,17 +89,16 @@ func (res UserType) InsertSQL() string {
 }
 
 //UpdateSQL
-func (res UserType) UpdateSQL() string {
+func (res *UserType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.users 
-	SET UserRole='%s',Email='%s',UserName='%s',CustomerId=%f,Active='%s'
+	SET UserRole='%s',Email='%s',UserName='%s'
 	  WHERE UserId=%f  
 	RETURNING UserId;`,
-		res.UserRole, res.Email, res.UserName,
-		res.CustomerId, res.Active, res.UserId)
+		res.UserRole, res.Email, res.UserName, res.UserId)
 }
 
 //UpdatePasswordSQL
-func (res UserType) UpdatePasswordSQL() string {
+func (res *UserType) UpdatePasswordSQL() string {
 	return fmt.Sprintf(`UPDATE public.users 
 	SET Password='%s'
 	  WHERE UserId=%f  
@@ -108,7 +107,7 @@ func (res UserType) UpdatePasswordSQL() string {
 }
 
 //SelectWithDb
-func (res UserType) SelectWithDb(db *sql.DB) error {
+func (res *UserType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(&res.CustomerId,
 		&res.UserName,
 		&res.UserRole,

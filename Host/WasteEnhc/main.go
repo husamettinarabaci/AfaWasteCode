@@ -23,6 +23,7 @@ func main() {
 }
 
 func data(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -30,10 +31,12 @@ func data(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -47,6 +50,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RFID_DEVICE, currentHttpHeader.DeviceNo)
@@ -54,19 +58,16 @@ func data(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 		}
 		var deviceIdStr = resultVal.Retval.(string)
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, deviceIdStr)
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
-			w.Write(resultVal.ToByte())
-			return
-		}
-		var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
-		currentHttpHeader.CustomerId = currentDevice.CustomerId
+		var currentDevice WasteLibrary.RfidDeviceType
+		currentDevice.New()
+		currentDevice.DeviceId = WasteLibrary.StringIdToFloat64(deviceIdStr)
+		currentDevice.GetAll()
+		currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
 		currentHttpHeader.DeviceId = currentDevice.DeviceId
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_ULT_DEVICE, currentHttpHeader.DeviceNo)
@@ -76,6 +77,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_ULT_DEVICE, currentHttpHeader.DeviceNo)
@@ -83,19 +85,16 @@ func data(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 		}
 		var deviceIdStr = resultVal.Retval.(string)
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_ULT_TYPE_DEVICES, deviceIdStr)
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
-			w.Write(resultVal.ToByte())
-			return
-		}
-		var currentDevice WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(resultVal.Retval.(string))
-		currentHttpHeader.CustomerId = currentDevice.CustomerId
+		var currentDevice WasteLibrary.UltDeviceType
+		currentDevice.New()
+		currentDevice.DeviceId = WasteLibrary.StringIdToFloat64(deviceIdStr)
+		currentDevice.GetAll()
+		currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
 		currentHttpHeader.DeviceId = currentDevice.DeviceId
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RECY_DEVICE, currentHttpHeader.DeviceNo)
@@ -105,6 +104,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RECY_DEVICE, currentHttpHeader.DeviceNo)
@@ -112,24 +112,22 @@ func data(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 		}
 		var deviceIdStr = resultVal.Retval.(string)
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RECY_TYPE_DEVICES, deviceIdStr)
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
-			w.Write(resultVal.ToByte())
-			return
-		}
-		var currentDevice WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(resultVal.Retval.(string))
-		currentHttpHeader.CustomerId = currentDevice.CustomerId
+		var currentDevice WasteLibrary.RecyDeviceType
+		currentDevice.New()
+		currentDevice.DeviceId = WasteLibrary.StringIdToFloat64(deviceIdStr)
+		currentDevice.GetAll()
+		currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
 		currentHttpHeader.DeviceId = currentDevice.DeviceId
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 
@@ -178,6 +176,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	if serviceClusterIp != "" {
@@ -186,10 +185,12 @@ func data(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
 			w.Write(resultVal.ToByte())
+
 			return
 		}
 	}
 	w.Write(resultVal.ToByte())
+
 }
 
 func createDevice(currentHttpHeader WasteLibrary.HttpClientHeaderType) WasteLibrary.ResultType {

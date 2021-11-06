@@ -46,15 +46,18 @@ func main() {
 }
 
 func trigger(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -75,14 +78,16 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_READERTYPE
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	w.Write(resultVal.ToByte())
+
 }
 
 func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, repeat string) {
 	WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_PASSIVE
-	WasteLibrary.LogStr("Do Record : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
+	WasteLibrary.LogStr("Do Record : " + readerDataTypeVal.TagMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
 	cmd := exec.Command("timeout", "30", "ffmpeg", "-y", "-v", "0", "-loglevel", "0", "-hide_banner", "-f", "mpegts", "-i", "udp://localhost:1000"+integratedPort, "-t", "7", "-vb", "128k", "-threads", "7", "-map", "0:0", "-map", "-0:1", "-map", "-0:2", "-c:v", "libx264", "-pix_fmt", "yuvj420p", "-f", "mp4", "WAIT_CAM/"+readerDataTypeVal.TagReader.UID+".mp4")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
@@ -91,7 +96,7 @@ func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, rep
 	if err != nil && !strings.Contains(err.Error(), "124") {
 		WasteLibrary.LogErr(err)
 		if repeat == WasteLibrary.STATU_ACTIVE {
-			WasteLibrary.LogStr("Do Record repeat for err : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
+			WasteLibrary.LogStr("Do Record repeat for err : " + readerDataTypeVal.TagMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
 			doRecord(readerDataTypeVal, integratedPort, WasteLibrary.STATU_PASSIVE)
 			return
 		}
@@ -102,7 +107,7 @@ func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, rep
 			fi, err := os.Stat("WAIT_CAM/" + readerDataTypeVal.TagReader.UID + ".mp4")
 			if err != nil {
 				if repeat == WasteLibrary.STATU_ACTIVE {
-					WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
+					WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.TagMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
 					doRecord(readerDataTypeVal, integratedPort, WasteLibrary.STATU_PASSIVE)
 					return
 				}
@@ -110,7 +115,7 @@ func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, rep
 			size := fi.Size()
 			if size < 10000 {
 				if repeat == WasteLibrary.STATU_ACTIVE {
-					WasteLibrary.LogStr("Do Record repeat for file size : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
+					WasteLibrary.LogStr("Do Record repeat for file size : " + readerDataTypeVal.TagMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
 					doRecord(readerDataTypeVal, integratedPort, WasteLibrary.STATU_PASSIVE)
 					return
 				}
@@ -124,7 +129,7 @@ func doRecord(readerDataTypeVal WasteLibrary.TagType, integratedPort string, rep
 			}
 		} else {
 			if repeat == WasteLibrary.STATU_ACTIVE {
-				WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
+				WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.TagMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.TagReader.UID + " - " + repeat)
 				doRecord(readerDataTypeVal, integratedPort, WasteLibrary.STATU_PASSIVE)
 				return
 			}

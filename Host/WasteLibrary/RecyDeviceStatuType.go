@@ -46,53 +46,53 @@ type RecyDeviceStatuType struct {
 //New
 func (res *RecyDeviceStatuType) New() {
 	res.DeviceId = 0
-	res.StatusTime = ""
+	res.StatusTime = GetTime()
 	res.AliveStatus = STATU_PASSIVE
-	res.AliveLastOkTime = ""
+	res.AliveLastOkTime = GetTime()
 	res.ReaderAppStatus = STATU_PASSIVE
-	res.ReaderAppLastOkTime = ""
+	res.ReaderAppLastOkTime = GetTime()
 	res.ReaderConnStatus = STATU_PASSIVE
-	res.ReaderConnLastOkTime = ""
+	res.ReaderConnLastOkTime = GetTime()
 	res.ReaderStatus = STATU_PASSIVE
-	res.ReaderLastOkTime = ""
+	res.ReaderLastOkTime = GetTime()
 	res.CamAppStatus = STATU_PASSIVE
-	res.CamAppLastOkTime = ""
+	res.CamAppLastOkTime = GetTime()
 	res.CamConnStatus = STATU_PASSIVE
-	res.CamConnLastOkTime = ""
+	res.CamConnLastOkTime = GetTime()
 	res.CamStatus = STATU_PASSIVE
-	res.CamLastOkTime = ""
+	res.CamLastOkTime = GetTime()
 	res.ThermAppStatus = STATU_PASSIVE
-	res.ThermAppLastOkTime = ""
+	res.ThermAppLastOkTime = GetTime()
 	res.TransferAppStatus = STATU_PASSIVE
-	res.TransferAppLastOkTime = ""
+	res.TransferAppLastOkTime = GetTime()
 	res.SystemAppStatus = STATU_PASSIVE
-	res.SystemAppLastOkTime = ""
+	res.SystemAppLastOkTime = GetTime()
 	res.UpdaterAppStatus = STATU_PASSIVE
-	res.UpdaterAppLastOkTime = ""
+	res.UpdaterAppLastOkTime = GetTime()
 	res.MotorAppStatus = STATU_PASSIVE
-	res.MotorAppLastOkTime = ""
+	res.MotorAppLastOkTime = GetTime()
 	res.MotorConnStatus = STATU_PASSIVE
-	res.MotorConnLastOkTime = ""
+	res.MotorConnLastOkTime = GetTime()
 	res.MotorStatus = STATU_PASSIVE
-	res.MotorLastOkTime = ""
+	res.MotorLastOkTime = GetTime()
 	res.WebAppStatus = STATU_PASSIVE
-	res.WebAppLastOkTime = ""
+	res.WebAppLastOkTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res RecyDeviceStatuType) ToIdString() string {
+func (res *RecyDeviceStatuType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RecyDeviceStatuType) ToByte() []byte {
+func (res *RecyDeviceStatuType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RecyDeviceStatuType) ToString() string {
+func (res *RecyDeviceStatuType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -110,7 +110,7 @@ func StringToRecyDeviceStatuType(retStr string) RecyDeviceStatuType {
 }
 
 //SelectSQL
-func (res RecyDeviceStatuType) SelectSQL() string {
+func (res *RecyDeviceStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime,ReaderAppStatus,ReaderAppLastOkTime,ReaderConnStatus,
 	ReaderConnLastOkTime,ReaderStatus,ReaderLastOkTime,CamAppStatus,CamAppLastOkTime,CamConnStatus,CamConnLastOkTime,
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
@@ -121,7 +121,7 @@ func (res RecyDeviceStatuType) SelectSQL() string {
 }
 
 //InsertSQL
-func (res RecyDeviceStatuType) InsertSQL() string {
+func (res *RecyDeviceStatuType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.recy_statu_devices (DeviceId,
 	StatusTime,AliveStatus,AliveLastOkTime,ReaderAppStatus,ReaderAppLastOkTime,ReaderConnStatus,
 	ReaderConnLastOkTime,ReaderStatus,ReaderLastOkTime,CamAppStatus,CamAppLastOkTime,CamConnStatus,CamConnLastOkTime,
@@ -142,7 +142,7 @@ func (res RecyDeviceStatuType) InsertSQL() string {
 }
 
 //UpdateSQL
-func (res RecyDeviceStatuType) UpdateSQL() string {
+func (res *RecyDeviceStatuType) UpdateSQL() string {
 	var execSqlExt = ""
 	if res.AliveStatus == STATU_ACTIVE {
 		execSqlExt += ",AliveLastOkTime='" + res.AliveLastOkTime + "'"
@@ -206,7 +206,7 @@ func (res RecyDeviceStatuType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RecyDeviceStatuType) SelectWithDb(db *sql.DB) error {
+func (res *RecyDeviceStatuType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.StatusTime,
 		&res.AliveStatus,

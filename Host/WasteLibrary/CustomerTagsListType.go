@@ -18,19 +18,19 @@ func (res *CustomerTagsListType) New() {
 }
 
 //ToId String
-func (res CustomerTagsListType) ToIdString() string {
+func (res *CustomerTagsListType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
 //ToByte
-func (res CustomerTagsListType) ToByte() []byte {
+func (res *CustomerTagsListType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res CustomerTagsListType) ToString() string {
+func (res *CustomerTagsListType) ToString() string {
 	return string(res.ToByte())
 
 }

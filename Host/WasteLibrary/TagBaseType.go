@@ -23,19 +23,19 @@ func (res *TagBaseType) New() {
 }
 
 //ToId String
-func (res TagBaseType) ToIdString() string {
+func (res *TagBaseType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)
 }
 
 //ToByte
-func (res TagBaseType) ToByte() []byte {
+func (res *TagBaseType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res TagBaseType) ToString() string {
+func (res *TagBaseType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -53,21 +53,21 @@ func StringToTagBaseType(retStr string) TagBaseType {
 }
 
 //SelectSQL
-func (res TagBaseType) SelectSQL() string {
+func (res *TagBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT ContainerNo,ContainerType
 	 FROM public.tag_bases
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
-func (res TagBaseType) InsertSQL() string {
+func (res *TagBaseType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.tag_bases (TagId,ContainerNo,ContainerType) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING TagId;`, res.TagId, res.ContainerNo, res.ContainerType)
 }
 
 //UpdateSQL
-func (res TagBaseType) UpdateSQL() string {
+func (res *TagBaseType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.tag_bases 
 	  SET ContainerNo='%s',ContainerType='%s'
 	  WHERE TagId=%f  
@@ -78,7 +78,7 @@ func (res TagBaseType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res TagBaseType) SelectWithDb(db *sql.DB) error {
+func (res *TagBaseType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.ContainerNo,
 		&res.ContainerType)

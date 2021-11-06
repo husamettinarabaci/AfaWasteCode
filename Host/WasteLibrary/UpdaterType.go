@@ -24,19 +24,19 @@ func (res *UpdaterType) New() {
 }
 
 //ToId String
-func (res UpdaterType) ToIdString() string {
+func (res *UpdaterType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UpdaterType) ToByte() []byte {
+func (res *UpdaterType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res UpdaterType) ToString() string {
+func (res *UpdaterType) ToString() string {
 	return string(res.ToByte())
 
 }

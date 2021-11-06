@@ -23,6 +23,7 @@ func main() {
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -30,10 +31,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -43,25 +46,11 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
-			currentData.CustomerId = currentHttpHeader.CustomerId
 			currentData.DeviceStatu.DeviceId = currentData.DeviceId
 			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_STATU_DEVICE
 			currentData.DeviceStatu.StatusTime = currentHttpHeader.Time
-			data := url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
-			}
-			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-				w.Write(resultVal.ToByte())
-				return
-			}
-
-			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 			if currentData.DeviceStatu.ReaderAppStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.DeviceStatu.ReaderAppLastOkTime = currentHttpHeader.Time
@@ -112,6 +101,22 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				currentData.DeviceStatu.ContactLastOkTime = currentHttpHeader.Time
 			}
 
+			WasteLibrary.LogReport("Device Statu Status Reader 1: " + currentData.DeviceStatu.ToString())
+			data := url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
+			}
+			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+				w.Write(resultVal.ToByte())
+
+				return
+			}
+
+			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
@@ -121,14 +126,18 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
 				w.Write(resultVal.ToByte())
+
 				return
 			}
+			WasteLibrary.LogReport("Device Statu Status Db Reader : " + resultVal.Retval.(string))
 			currentData.DeviceStatu = WasteLibrary.StringToRfidDeviceStatuType(resultVal.Retval.(string))
+			WasteLibrary.LogReport("Device Statu Status Reader 2: " + currentData.DeviceStatu.ToString())
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_STATU_DEVICES, currentData.DeviceStatu.ToIdString(), currentData.DeviceStatu.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 			data = url.Values{
@@ -140,6 +149,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 				w.Write(resultVal.ToByte())
+
 				return
 			}
 			//TO DO
@@ -150,4 +160,5 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
 	w.Write(resultVal.ToByte())
+
 }

@@ -45,14 +45,14 @@ func (res *VersionType) New() {
 }
 
 //ToByte
-func (res VersionType) ToByte() []byte {
+func (res *VersionType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res VersionType) ToString() string {
+func (res *VersionType) ToString() string {
 	return string(res.ToByte())
 
 }

@@ -20,23 +20,23 @@ func (res *UltDeviceBatteryType) New() {
 	res.DeviceId = 0
 	res.Battery = "0000"
 	res.BatteryStatus = BATTERYSTATU_NONE
-	res.BatteryTime = ""
+	res.BatteryTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res UltDeviceBatteryType) ToIdString() string {
+func (res *UltDeviceBatteryType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UltDeviceBatteryType) ToByte() []byte {
+func (res *UltDeviceBatteryType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceBatteryType) ToString() string {
+func (res *UltDeviceBatteryType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -54,21 +54,21 @@ func StringToUltDeviceBatteryType(retStr string) UltDeviceBatteryType {
 }
 
 //SelectSQL
-func (res UltDeviceBatteryType) SelectSQL() string {
+func (res *UltDeviceBatteryType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Battery,BatteryStatus,BatteryTime
 	 FROM public.ult_battery_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res UltDeviceBatteryType) InsertSQL() string {
+func (res *UltDeviceBatteryType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_battery_devices (DeviceId,Battery,BatteryStatus,BatteryTime) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Battery, res.BatteryStatus, res.BatteryTime)
 }
 
 //UpdateSQL
-func (res UltDeviceBatteryType) UpdateSQL() string {
+func (res *UltDeviceBatteryType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.ult_battery_devices 
 	  SET Battery='%s',BatteryStatus='%s',BatteryTime='%s'
 	  WHERE DeviceId=%f  
@@ -80,7 +80,7 @@ func (res UltDeviceBatteryType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res UltDeviceBatteryType) SelectWithDb(db *sql.DB) error {
+func (res *UltDeviceBatteryType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.Battery,
 		&res.BatteryStatus,

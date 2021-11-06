@@ -19,17 +19,20 @@ func main() {
 }
 
 func log(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_OK
+
 	if err := req.ParseForm(); err != nil {
 		logErr(err)
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	container := req.FormValue(WasteLibrary.LOGGER_CONTAINER)
@@ -38,6 +41,7 @@ func log(w http.ResponseWriter, req *http.Request) {
 	logVal := req.FormValue(WasteLibrary.LOGGER_LOG)
 	logStr("Time : " + WasteLibrary.GetTime() + " - Container : " + container + " - LogType : " + logType + " - Func : " + funcVal + " - Log : " + logVal + " - IP : " + req.RemoteAddr)
 	w.Write(resultVal.ToByte())
+
 }
 
 func logErr(err error) {

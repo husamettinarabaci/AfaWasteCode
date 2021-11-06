@@ -53,16 +53,19 @@ func main() {
 }
 
 func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -99,19 +102,23 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	}
 	w.Write(resultVal.ToByte())
+
 }
 
 func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -138,4 +145,5 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Write(resultVal.ToByte())
+
 }

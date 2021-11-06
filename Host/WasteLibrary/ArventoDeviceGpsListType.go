@@ -16,14 +16,14 @@ func (res *ArventoDeviceGpsListType) New() {
 }
 
 //ToByte
-func (res ArventoDeviceGpsListType) ToByte() []byte {
+func (res *ArventoDeviceGpsListType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res ArventoDeviceGpsListType) ToString() string {
+func (res *ArventoDeviceGpsListType) ToString() string {
 	return string(res.ToByte())
 
 }

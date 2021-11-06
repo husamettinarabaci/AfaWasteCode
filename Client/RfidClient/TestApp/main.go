@@ -9,35 +9,34 @@ import (
 
 func main() {
 
-	var readerType string = "USER"
-	var readerType2 string = "LOGIN_AUTH"
+	var readerType string = "DEVICE"
+	var readerType2 string = "SET_RFIDDEVICE_AFATEK"
 	var currentHeader WasteLibrary.HttpClientHeaderType
 	currentHeader.New()
 	var urlVal string = "afatek.aws.afatek.com.tr"
 	var path1 string = "webapi"
 	var path2 string = "getLink"
 	data := url.Values{}
-	var deviceId float64 = 0
+	var deviceId float64 = 14
 	var customerId float64 = 1
 	var userId float64 = 2
-	var token = "MSMkMmEkMTAkMm9LY2dmSWlSRXc3TnhhSlplYmZNT1RrZmI3MmtMaVdXWnZ2eTczMlNCUVFlMGtjU1ZyWVc="
+	var token = "MSMkMmEkMTAkTU9WNzc4UWJYU3d3SllIb2NpREhYT3RESm00aVhVS2JabGUvWlZRQmtacjBqVENrT08zZ08="
 
 	if readerType == "DEVICE" {
 		if readerType2 == "GET_RFIDDEVICE_WEB" {
-			//TO DO
-			//check
+			//OK
 			path1 = "webapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RFID *
+			//currentHeader.DeviceType - DEVICETYPE_RFID *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RfidDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : RfidDeviceType
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -47,20 +46,19 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_RECYDEVICE_WEB" {
-			//TO DO
-			//check
+			//OK
 			path1 = "webapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RecyDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : RecyDeviceType
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 			var currentData WasteLibrary.RecyDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -70,20 +68,19 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_ULTDEVICE_WEB" {
-			//TO DO
-			//check
+			//OK
 			path1 = "webapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - UltDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : UltDeviceType
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 			var currentData WasteLibrary.UltDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -93,22 +90,21 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_RFIDDEVICE_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RFID *
+			//currentHeader.DeviceType - DEVICETYPE_RFID *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RfidDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : RfidDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -119,22 +115,21 @@ func main() {
 			}
 
 		} else if readerType2 == "GET_RECYDEVICE_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RecyDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : RecyDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 			var currentData WasteLibrary.RecyDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -145,22 +140,21 @@ func main() {
 			}
 
 		} else if readerType2 == "GET_ULTDEVICE_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - UltDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : UltDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 			var currentData WasteLibrary.UltDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -170,22 +164,21 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_RFIDDEVICE_ADMIN" {
-			//TO DO
-			//check
-			path1 = "afatekapi"
+			//OK
+			path1 = "adminapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RFID *
+			//currentHeader.DeviceType - DEVICETYPE_RFID *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RfidDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : RfidDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -196,22 +189,21 @@ func main() {
 			}
 
 		} else if readerType2 == "GET_RECYDEVICE_ADMIN" {
-			//TO DO
-			//check
-			path1 = "afatekapi"
+			//OK
+			path1 = "adminapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RecyDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : RecyDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 			var currentData WasteLibrary.RecyDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -222,22 +214,21 @@ func main() {
 			}
 
 		} else if readerType2 == "GET_ULTDEVICE_ADMIN" {
-			//TO DO
-			//check
-			path1 = "afatekapi"
+			//OK
+			path1 = "adminapi"
 			path2 = "getDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - UltDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//HTTP_DATA : currentData
 			//
 			//Retval : UltDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 			var currentData WasteLibrary.UltDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -257,16 +248,18 @@ func main() {
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RfidDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
 			//Retval : RfidDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
-			currentData.DeviceId = deviceId
+			currentData.DeviceId = 2
+			currentData.DeviceMain.DeviceId = currentData.DeviceId
+			currentData.DeviceMain.CustomerId = 3
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
@@ -279,18 +272,18 @@ func main() {
 			path1 = "afatekapi"
 			path2 = "setDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RecyDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
 			//Retval : RecyDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 			var currentData WasteLibrary.RecyDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -306,18 +299,18 @@ func main() {
 			path1 = "afatekapi"
 			path2 = "setDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - UltDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
 			//Retval : UltDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 			var currentData WasteLibrary.UltDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -329,21 +322,21 @@ func main() {
 		} else if readerType2 == "SET_RFIDDEVICE_ADMIN" {
 			//TO DO
 			//check
-			path1 = "afatekapi"
+			path1 = "adminapi"
 			path2 = "setDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RFID *
+			//currentHeader.DeviceType - DEVICETYPE_RFID *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RfidDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
 			//Retval : RfidDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -356,21 +349,21 @@ func main() {
 		} else if readerType2 == "SET_RECYDEVICE_ADMIN" {
 			//TO DO
 			//check
-			path1 = "afatekapi"
+			path1 = "adminapi"
 			path2 = "setDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - RecyDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
 			//Retval : RecyDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 			var currentData WasteLibrary.RecyDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -383,21 +376,21 @@ func main() {
 		} else if readerType2 == "SET_ULTDEVICE_ADMIN" {
 			//TO DO
 			//check
-			path1 = "afatekapi"
+			path1 = "adminapi"
 			path2 = "setDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - UltDeviceType *
-			//currentData.DevıceId - deviceId *
+			//currentData.DeviceId - deviceId *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
 			//Retval : UltDeviceType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 			var currentData WasteLibrary.UltDeviceType
 			currentData.New()
 			currentData.DeviceId = deviceId
@@ -412,11 +405,11 @@ func main() {
 			path1 = "webapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_RFID *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerRfidDevicesListType
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
@@ -427,11 +420,11 @@ func main() {
 			path1 = "webapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerRecyDevicesListType
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
@@ -442,11 +435,11 @@ func main() {
 			path1 = "webapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerUltDevicesListType
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
@@ -457,14 +450,14 @@ func main() {
 			path1 = "afatekapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RFID *
+			//currentHeader.DeviceType - DEVICETYPE_RFID *
 			//currentHeader.Token - token *
 			//currentHeader.CustomerId - customerId *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerRfidDevicesListType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			currentHeader.CustomerId = customerId
 
 			data = url.Values{
@@ -476,14 +469,14 @@ func main() {
 			path1 = "afatekapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//currentHeader.Token - token *
 			//currentHeader.CustomerId - customerId *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerRecyDevicesListType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 			currentHeader.CustomerId = customerId
 
 			data = url.Values{
@@ -495,14 +488,14 @@ func main() {
 			path1 = "afatekapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//currentHeader.Token - token *
 			//currentHeader.CustomerId - customerId *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerUltDevicesListType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 			currentHeader.CustomerId = customerId
 
 			data = url.Values{
@@ -511,17 +504,17 @@ func main() {
 		} else if readerType2 == "GET_RFIDDEVICES_ADMIN" {
 			//TO DO
 			//check
-			path1 = "afatekapi"
+			path1 = "adminapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RFID *
+			//currentHeader.DeviceType - DEVICETYPE_RFID *
 			//currentHeader.Token - token *
 			//currentHeader.CustomerId - customerId *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerRfidDevicesListType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RFID
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			currentHeader.CustomerId = customerId
 
 			data = url.Values{
@@ -530,17 +523,17 @@ func main() {
 		} else if readerType2 == "GET_RECYDEVICES_ADMIN" {
 			//TO DO
 			//check
-			path1 = "afatekapi"
+			path1 = "adminapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_RECY *
+			//currentHeader.DeviceType - DEVICETYPE_RECY *
 			//currentHeader.Token - token *
 			//currentHeader.CustomerId - customerId *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerRecyDevicesListType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_RECY
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RECY
 			currentHeader.CustomerId = customerId
 
 			data = url.Values{
@@ -549,17 +542,17 @@ func main() {
 		} else if readerType2 == "GET_ULTDEVICES_ADMIN" {
 			//TO DO
 			//check
-			path1 = "afatekapi"
+			path1 = "adminapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICE_TYPE_ULT *
+			//currentHeader.DeviceType - DEVICETYPE_ULT *
 			//currentHeader.Token - token *
 			//currentHeader.CustomerId - customerId *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerUltDevicesListType
 			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICE_TYPE_ULT
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
 			currentHeader.CustomerId = customerId
 
 			data = url.Values{
@@ -570,16 +563,14 @@ func main() {
 		}
 	} else if readerType == "CUSTOMER" {
 		if readerType2 == "GET_CUSTOMER_WEB" {
-			//TO DO
-			//check
+			//OK
 			//Retval : CustomerType
 			path1 = "webapi"
 			path2 = "getCustomer"
 
 			data = url.Values{}
 		} else if readerType2 == "GET_CUSTOMER_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "getCustomer"
 			//currentHeader - HttpClientHeaderType *
@@ -593,8 +584,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
 		} else if readerType2 == "GET_CUSTOMER_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "getCustomer"
 			//currentHeader - HttpClientHeaderType *
@@ -617,8 +607,7 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "SET_CUSTOMER_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "setCustomer"
 			//currentHeader - HttpClientHeaderType *
@@ -627,6 +616,8 @@ func main() {
 			//
 			//currentData - CustomerType *
 			//currentData.CustomerId - [0,customerId] *
+			//currentData.CustomerName - customerName *
+			//currentData.CustomerLink - customerLink *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
@@ -635,15 +626,21 @@ func main() {
 
 			var currentData WasteLibrary.CustomerType
 			currentData.New()
-			currentData.CustomerId = customerId
+			currentData.CustomerId = 0 // customerId
+			currentData.CustomerName = "BODRUM"
+			currentData.CustomerLink = "temizbodrum.bodrum.bel.tr"
+			currentData.RfIdApp = WasteLibrary.STATU_ACTIVE
+			currentData.UltApp = WasteLibrary.STATU_ACTIVE
+			currentData.RecyApp = WasteLibrary.STATU_ACTIVE
+			currentData.Active = WasteLibrary.STATU_ACTIVE
+			currentData.CreateTime = WasteLibrary.GetTime()
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_CUSTOMERS_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "getCustomers"
 			//currentHeader - HttpClientHeaderType *
@@ -661,8 +658,7 @@ func main() {
 		}
 	} else if readerType == "USER" {
 		if readerType2 == "GET_USER_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "getUser"
 			//currentHeader - HttpClientHeaderType *
@@ -684,8 +680,7 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "SET_USER_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "setUser"
 			//currentHeader - HttpClientHeaderType *
@@ -700,8 +695,8 @@ func main() {
 			//Retval : UserType
 			currentHeader.Token = token
 			var currentData WasteLibrary.UserType
-			currentData.UserId = 2
-			currentData.UserName = "devafatek3"
+			currentData.UserId = 3
+			currentData.UserName = "devafatek10"
 			currentData.UserRole = WasteLibrary.USER_ROLE_ADMIN
 			currentData.Password = "Amca1512003"
 			currentData.Email = "developer3@afatek.com.tr"
@@ -742,7 +737,6 @@ func main() {
 			currentData.UserName = "devafatek"
 			currentData.Password = "Amca151200"
 			currentData.Email = "developer@afatek.com.tr"
-			currentData.Active = WasteLibrary.STATU_ACTIVE
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
@@ -750,8 +744,7 @@ func main() {
 			}
 
 		} else if readerType2 == "GET_USERS_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "getUsers"
 			//currentHeader - HttpClientHeaderType *
@@ -768,29 +761,27 @@ func main() {
 		}
 	} else if readerType == "CONFIG" {
 		if readerType2 == "GET_ADMINCONFIG_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "getConfig"
 			//currentHeader - HttpClientHeaderType *
 			//currentHeader.Token - token *
-			//currentHeader.ReaderType - OPTYPE_ADMINCONFIG *
+			//currentHeader.DataType - DATATYPE_ADMINCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : AdminConfigType
 			currentHeader.Token = token
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_ADMINCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_ADMINCONFIG
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
 		} else if readerType2 == "SET_ADMINCONFIG_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "setConfig"
 			//currentHeader - HttpClientHeaderType *
 			//currentHeader.Token - token *
-			//currentHeader.ReaderType - OPTYPE_ADMINCONFIG *
+			//currentHeader.DataType - DATATYPE_ADMINCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - AdminConfigType *
@@ -798,7 +789,7 @@ func main() {
 			//HTTP_DATA : currentData
 
 			currentHeader.Token = token
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_ADMINCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_ADMINCONFIG
 			var currentData WasteLibrary.AdminConfigType
 			currentData.New()
 
@@ -807,29 +798,27 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_LOCALCONFIG_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "getConfig"
 			//currentHeader - HttpClientHeaderType *
 			//currentHeader.Token - token *
-			//currentHeader.ReaderType - OPTYPE_LOCALCONFIG *
+			//currentHeader.DataType - DATATYPE_LOCALCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : LocalConfigType
 			currentHeader.Token = token
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_LOCALCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_LOCALCONFIG
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
 		} else if readerType2 == "SET_LOCALCONFIG_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "setConfig"
 			//currentHeader - HttpClientHeaderType *
 			//currentHeader.Token - token *
-			//currentHeader.ReaderType - OPTYPE_LOCALCONFIG *
+			//currentHeader.DataType - DATATYPE_LOCALCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - LocalConfigType *
@@ -837,7 +826,7 @@ func main() {
 			//HTTP_DATA : currentData
 
 			currentHeader.Token = token
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_LOCALCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_LOCALCONFIG
 			var currentData WasteLibrary.LocalConfigType
 			currentData.New()
 
@@ -846,36 +835,34 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_CUSTOMERCONFIG_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "getConfig"
 			//currentHeader - HttpClientHeaderType *
 			//currentHeader.Token - token *
-			//currentHeader.ReaderType - OPTYPE_CUSTOMERCONFIG *
+			//currentHeader.DataType - OPTYPE_CUSTOMERCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerConfigType
 			currentHeader.Token = token
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_CUSTOMERCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_CUSTOMERCONFIG
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
 		} else if readerType2 == "SET_CUSTOMERCONFIG_ADMIN" {
-			//TO DO
-			//check
+			//OK
 			path1 = "adminapi"
 			path2 = "setConfig"
 			//currentHeader - HttpClientHeaderType *
 			//currentHeader.Token - token *
-			//currentHeader.ReaderType - OPTYPE_CUSTOMERCONFIG *
+			//currentHeader.DataType - OPTYPE_CUSTOMERCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//currentData - CustomerConfigType *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			currentHeader.Token = token
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_CUSTOMERCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_CUSTOMERCONFIG
 			var currentData WasteLibrary.CustomerConfigType
 			currentData.New()
 			currentData.ArventoApp = WasteLibrary.STATU_ACTIVE
@@ -889,44 +876,41 @@ func main() {
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
 		} else if readerType2 == "GET_ADMINCONFIG_WEB" {
-			//TO DO
-			//check
+			//OK
 			path1 = "webapi"
 			path2 = "getConfig"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.ReaderType - OPTYPE_ADMINCONFIG *
+			//currentHeader.DataType - DATATYPE_ADMINCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : AdminConfigType
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_ADMINCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_ADMINCONFIG
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
 		} else if readerType2 == "GET_LOCALCONFIG_WEB" {
-			//TO DO
-			//check
+			//OK
 			path1 = "webapi"
 			path2 = "getConfig"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.ReaderType - OPTYPE_LOCALCONFIG *
+			//currentHeader.DataType - DATATYPE_LOCALCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : LocalConfigType
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_LOCALCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_LOCALCONFIG
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
 		} else if readerType2 == "GET_CUSTOMERCONFIG_WEB" {
-			//TO DO
-			//check
+			//OK
 			path1 = "webapi"
 			path2 = "getConfig"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.ReaderType - OPTYPE_CUSTOMERCONFIG *
+			//currentHeader.DataType - DATATYPE_CUSTOMERCONFIG *
 			//HTTP_HEADER : currentHeader
 			//
 			//Retval : CustomerConfigType
-			currentHeader.ReaderType = WasteLibrary.OPTYPE_CUSTOMERCONFIG
+			currentHeader.DataType = WasteLibrary.DATATYPE_CUSTOMERCONFIG
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
@@ -934,6 +918,7 @@ func main() {
 
 		}
 	} else if readerType == "LISTENER" {
+		urlVal = "listener.aws.afatek.com.tr"
 		if readerType2 == "ULT" {
 			//TO DO
 			//check
@@ -943,32 +928,88 @@ func main() {
 			//check
 
 		} else if readerType2 == "STATUS_RFID" {
-			//TO DO
-			//check
-
+			//OK
+			urlVal = urlVal + "/data"
+			currentHeader.New()
+			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
+			currentHeader.DeviceNo = "12345678901234567"
+			currentHeader.ReaderType = WasteLibrary.READERTYPE_STATUS
+			currentHeader.Time = WasteLibrary.GetTime()
+			currentHeader.Repeat = WasteLibrary.STATU_PASSIVE
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
+			var currentData WasteLibrary.RfidDeviceType
+			currentData.New()
+			currentData.DeviceStatu.CamStatus = WasteLibrary.STATU_ACTIVE
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
 		} else if readerType2 == "READER_RFID" {
-			//TO DO
-			//check
-
+			//OK
+			urlVal = urlVal + "/data"
+			currentHeader.New()
+			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
+			currentHeader.DeviceNo = "12345678901234567"
+			currentHeader.ReaderType = WasteLibrary.READERTYPE_RF
+			currentHeader.Time = WasteLibrary.GetTime()
+			currentHeader.Repeat = WasteLibrary.STATU_PASSIVE
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
+			var currentData WasteLibrary.TagType
+			currentData.New()
+			currentData.TagMain.Epc = "1234567"
+			currentData.TagReader.UID = "89078"
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
 		} else if readerType2 == "THERM_RFID" {
-			//TO DO
-			//check
-
+			//OK
+			urlVal = urlVal + "/data"
+			currentHeader.New()
+			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
+			currentHeader.DeviceNo = "12345678901234567"
+			currentHeader.ReaderType = WasteLibrary.READERTYPE_THERM
+			currentHeader.Time = WasteLibrary.GetTime()
+			currentHeader.Repeat = WasteLibrary.STATU_PASSIVE
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
+			var currentData WasteLibrary.RfidDeviceType
+			currentData.New()
+			currentData.DeviceTherm.Therm = "35"
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
 		} else if readerType2 == "GPS_RFID" {
-			//TO DO
-			//check
-
+			//OK
+			urlVal = urlVal + "/data"
+			currentHeader.New()
+			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
+			currentHeader.DeviceNo = "12345678901234567"
+			currentHeader.ReaderType = WasteLibrary.READERTYPE_GPS
+			currentHeader.Time = WasteLibrary.GetTime()
+			currentHeader.Repeat = WasteLibrary.STATU_PASSIVE
+			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
+			var currentData WasteLibrary.RfidDeviceType
+			currentData.New()
+			currentData.DeviceGps.Latitude = 1
+			currentData.DeviceGps.Longitude = 2
+			data = url.Values{
+				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+			}
 		} else {
 
 		}
 	} else {
-		var currentCustomerRfidDevices WasteLibrary.CustomerRfidDevicesType
-		currentCustomerRfidDevices.New()
-		currentCustomerRfidDevices.Devices["0"] = 0
-		fmt.Println(currentCustomerRfidDevices)
+		var userType WasteLibrary.UserType
+		userType.New()
+		fmt.Println(userType)
 		return
 	}
 	var urlFull string = "http://" + urlVal + "/" + path1 + "/" + path2
+	if readerType == "LISTENER" {
+		urlFull = "http://" + urlVal
+	}
 	fmt.Println(urlFull)
 	resultVal := WasteLibrary.HttpPostReq(urlFull, data)
 	fmt.Println(resultVal)

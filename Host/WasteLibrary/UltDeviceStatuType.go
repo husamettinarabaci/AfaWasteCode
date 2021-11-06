@@ -18,25 +18,25 @@ type UltDeviceStatuType struct {
 //New
 func (res *UltDeviceStatuType) New() {
 	res.DeviceId = 0
-	res.StatusTime = ""
+	res.StatusTime = GetTime()
 	res.AliveStatus = STATU_PASSIVE
-	res.AliveLastOkTime = ""
+	res.AliveLastOkTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res UltDeviceStatuType) ToIdString() string {
+func (res *UltDeviceStatuType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UltDeviceStatuType) ToByte() []byte {
+func (res *UltDeviceStatuType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceStatuType) ToString() string {
+func (res *UltDeviceStatuType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -54,14 +54,14 @@ func StringToUltDeviceStatuType(retStr string) UltDeviceStatuType {
 }
 
 //SelectSQL
-func (res UltDeviceStatuType) SelectSQL() string {
+func (res *UltDeviceStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime
 	 FROM public.ult_statu_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res UltDeviceStatuType) InsertSQL() string {
+func (res *UltDeviceStatuType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_statu_devices (DeviceId,StatusTime,AliveStatus,AliveLastOkTime) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId,
@@ -69,7 +69,7 @@ func (res UltDeviceStatuType) InsertSQL() string {
 }
 
 //UpdateSQL
-func (res UltDeviceStatuType) UpdateSQL() string {
+func (res *UltDeviceStatuType) UpdateSQL() string {
 	var execSqlExt = ""
 	if res.AliveStatus == STATU_ACTIVE {
 		execSqlExt += ",AliveLastOkTime='" + res.AliveLastOkTime + "'"
@@ -83,7 +83,7 @@ func (res UltDeviceStatuType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res UltDeviceStatuType) SelectWithDb(db *sql.DB) error {
+func (res *UltDeviceStatuType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.StatusTime,
 		&res.AliveStatus,

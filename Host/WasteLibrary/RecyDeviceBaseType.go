@@ -23,18 +23,18 @@ func (res *RecyDeviceBaseType) New() {
 }
 
 //ToId String
-func (res RecyDeviceBaseType) ToIdString() string {
+func (res *RecyDeviceBaseType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RecyDeviceBaseType) ToByte() []byte {
+func (res *RecyDeviceBaseType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RecyDeviceBaseType) ToString() string {
+func (res *RecyDeviceBaseType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -52,21 +52,21 @@ func StringToRecyDeviceBaseType(retStr string) RecyDeviceBaseType {
 }
 
 //SelectSQL
-func (res RecyDeviceBaseType) SelectSQL() string {
+func (res *RecyDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT ContainerNo,DeviceType
 	 FROM public.recy_base_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res RecyDeviceBaseType) InsertSQL() string {
+func (res *RecyDeviceBaseType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.recy_base_devices (DeviceId,ContainerNo,DeviceType) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.DeviceType)
 }
 
 //UpdateSQL
-func (res RecyDeviceBaseType) UpdateSQL() string {
+func (res *RecyDeviceBaseType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.recy_base_devices 
 	  SET ContainerNo='%s',DeviceType='%s'
 	  WHERE DeviceId=%f  
@@ -77,7 +77,7 @@ func (res RecyDeviceBaseType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RecyDeviceBaseType) SelectWithDb(db *sql.DB) error {
+func (res *RecyDeviceBaseType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.ContainerNo,
 		&res.DeviceType)

@@ -72,6 +72,7 @@ func main() {
 }
 
 func trans(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -82,6 +83,7 @@ func trans(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 
@@ -104,6 +106,7 @@ func trans(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
 	w.Write(resultVal.ToByte())
+
 }
 
 func sendFileToServer(fileName string) {

@@ -22,23 +22,23 @@ func (res *RfidDeviceGpsType) New() {
 	res.Latitude = 0
 	res.Longitude = 0
 	res.Speed = -1
-	res.GpsTime = ""
+	res.GpsTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res RfidDeviceGpsType) ToIdString() string {
+func (res *RfidDeviceGpsType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RfidDeviceGpsType) ToByte() []byte {
+func (res *RfidDeviceGpsType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RfidDeviceGpsType) ToString() string {
+func (res *RfidDeviceGpsType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -56,21 +56,21 @@ func StringToRfidDeviceGpsType(retStr string) RfidDeviceGpsType {
 }
 
 //SelectSQL
-func (res RfidDeviceGpsType) SelectSQL() string {
+func (res *RfidDeviceGpsType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Latitude,Longitude,Speed,GpsTime
 	 FROM public.rfid_gps_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res RfidDeviceGpsType) InsertSQL() string {
+func (res *RfidDeviceGpsType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.rfid_gps_devices (DeviceId,Latitude,Longitude,Speed,GpsTime) 
 	  VALUES (%f,%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.Speed, res.GpsTime)
 }
 
 //UpdateSQL
-func (res RfidDeviceGpsType) UpdateSQL() string {
+func (res *RfidDeviceGpsType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.rfid_gps_devices 
 	  SET Latitude=%f,Longitude=%f,Speed=%f,GpsTime='%s' 
 	  WHERE DeviceId=%f  
@@ -83,7 +83,7 @@ func (res RfidDeviceGpsType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RfidDeviceGpsType) SelectWithDb(db *sql.DB) error {
+func (res *RfidDeviceGpsType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.Latitude,
 		&res.Longitude,

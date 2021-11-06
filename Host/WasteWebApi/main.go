@@ -27,16 +27,19 @@ func main() {
 }
 
 func getCustomer(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -46,6 +49,7 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
@@ -53,19 +57,23 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, customerId)
 
 	w.Write(resultVal.ToByte())
+
 }
 
 func getDevice(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -75,79 +83,85 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 		var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, currentData.ToIdString())
+		currentData.GetAll()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
-		currentData = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
-		currentData.GetAll()
-		if currentData.ToCustomerIdString() == customerId {
+		if currentData.DeviceMain.ToCustomerIdString() == customerId {
 			resultVal.Result = WasteLibrary.RESULT_OK
 			resultVal.Retval = currentData.ToString()
 			w.Write(resultVal.ToByte())
+
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 		var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_ULT_TYPE_DEVICES, currentData.ToIdString())
+		currentData.GetAll()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
-		currentData = WasteLibrary.StringToUltDeviceType(resultVal.Retval.(string))
-		currentData.GetAll()
-		if currentData.ToCustomerIdString() == customerId {
+		if currentData.DeviceMain.ToCustomerIdString() == customerId {
 			resultVal.Result = WasteLibrary.RESULT_OK
 			resultVal.Retval = currentData.ToString()
 			w.Write(resultVal.ToByte())
+
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		var currentData WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RECY_TYPE_DEVICES, currentData.ToIdString())
+		currentData.GetAll()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
-		currentData = WasteLibrary.StringToRecyDeviceType(resultVal.Retval.(string))
-		currentData.GetAll()
-		if currentData.ToCustomerIdString() == customerId {
+		if currentData.DeviceMain.ToCustomerIdString() == customerId {
 			resultVal.Result = WasteLibrary.RESULT_OK
 			resultVal.Retval = currentData.ToString()
 			w.Write(resultVal.ToByte())
+
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 	}
 
 }
 
 func getDevices(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -155,10 +169,12 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -168,6 +184,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
@@ -178,6 +195,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
 
@@ -188,10 +206,12 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
-				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, WasteLibrary.Float64IdToString(deviceId))
+
+				var currentDevice WasteLibrary.RfidDeviceType
+				currentDevice.New()
+				currentDevice.DeviceId = deviceId
+				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
-					currentDevice.GetAll()
 					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
@@ -205,6 +225,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
 
@@ -215,10 +236,11 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
-				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_ULT_TYPE_DEVICES, WasteLibrary.Float64IdToString(deviceId))
+				var currentDevice WasteLibrary.UltDeviceType
+				currentDevice.New()
+				currentDevice.DeviceId = deviceId
+				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					var currentDevice WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(resultVal.Retval.(string))
-					currentDevice.GetAll()
 					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
@@ -232,6 +254,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
 
@@ -243,10 +266,11 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
-				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RECY_TYPE_DEVICES, WasteLibrary.Float64IdToString(deviceId))
+				var currentDevice WasteLibrary.RecyDeviceType
+				currentDevice.New()
+				currentDevice.DeviceId = deviceId
+				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					var currentDevice WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(resultVal.Retval.(string))
-					currentDevice.GetAll()
 					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
@@ -259,9 +283,11 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 	}
 	w.Write(resultVal.ToByte())
+
 }
 
 func getConfig(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -269,10 +295,12 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -282,6 +310,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
@@ -293,6 +322,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_CUSTOMERCONFIG_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ADMINCONFIG {
@@ -301,6 +331,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_ADMINCONFIG_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_LOCALCONFIG {
@@ -309,6 +340,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_LOCALCONFIG_NOTFOUND
 			w.Write(resultVal.ToByte())
+
 			return
 		}
 	} else {
@@ -316,9 +348,11 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Write(resultVal.ToByte())
+
 }
 
 func getTags(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -326,10 +360,12 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -339,6 +375,7 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
@@ -348,6 +385,7 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 
@@ -358,10 +396,12 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 	for _, tagId := range customerTags.Tags {
 
 		if tagId != 0 {
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TAG_TYPES, WasteLibrary.Float64IdToString(tagId))
+
+			var currentTag WasteLibrary.TagType
+			currentTag.New()
+			currentTag.TagId = tagId
+			resultVal = currentTag.GetAll()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
-				var currentTag WasteLibrary.TagType = WasteLibrary.StringToTagType(resultVal.Retval.(string))
-				currentTag.GetAll()
 				customerTagsList.Tags[currentTag.ToIdString()] = currentTag
 			}
 
@@ -370,9 +410,11 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 	resultVal.Result = WasteLibrary.RESULT_OK
 	resultVal.Retval = customerTagsList.ToString()
 	w.Write(resultVal.ToByte())
+
 }
 
 func getTag(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -380,10 +422,12 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -393,27 +437,32 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	var customerId string = resultVal.Retval.(string)
 
 	var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TAG_TYPES, currentData.ToIdString())
+
+	resultVal = currentData.GetAll()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_TAG_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 		return
 	}
 	currentData = WasteLibrary.StringToTagType(resultVal.Retval.(string))
 	currentData.GetAll()
-	if currentData.ToCustomerIdString() == customerId {
+	if currentData.TagMain.ToCustomerIdString() == customerId {
 		resultVal.Result = WasteLibrary.RESULT_OK
 		resultVal.Retval = currentData.ToString()
 		w.Write(resultVal.ToByte())
+
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_TAG_NOTFOUND
 		w.Write(resultVal.ToByte())
+
 	}
 }

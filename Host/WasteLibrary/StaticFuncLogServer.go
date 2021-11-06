@@ -22,7 +22,7 @@ func LogStr(value string) {
 	}
 }
 
-//LogStr
+//LogReport
 func LogReport(value string) {
 	if Report {
 		SendLogServer(LOGGER_REPORT, value)

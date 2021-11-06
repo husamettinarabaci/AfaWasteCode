@@ -18,14 +18,14 @@ var CurrentCheckStatu CheckStatuType = CheckStatuType{
 }
 
 //ToByte
-func (res CheckStatuType) ToByte() []byte {
+func (res *CheckStatuType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res CheckStatuType) ToString() string {
+func (res *CheckStatuType) ToString() string {
 	return string(res.ToByte())
 
 }

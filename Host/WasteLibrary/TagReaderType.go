@@ -18,24 +18,24 @@ type TagReaderType struct {
 func (res *TagReaderType) New() {
 	res.TagId = 0
 	res.UID = ""
-	res.ReadTime = ""
+	res.ReadTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res TagReaderType) ToIdString() string {
+func (res *TagReaderType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)
 }
 
 //ToByte
-func (res TagReaderType) ToByte() []byte {
+func (res *TagReaderType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res TagReaderType) ToString() string {
+func (res *TagReaderType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -53,21 +53,21 @@ func StringToTagReaderType(retStr string) TagReaderType {
 }
 
 //SelectSQL
-func (res TagReaderType) SelectSQL() string {
+func (res *TagReaderType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT UID,ReadTime
 	 FROM public.tag_readers
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
-func (res TagReaderType) InsertSQL() string {
+func (res *TagReaderType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.tag_readers (TagId,UID,ReadTime) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING TagId;`, res.TagId, res.UID, res.ReadTime)
 }
 
 //UpdateSQL
-func (res TagReaderType) UpdateSQL() string {
+func (res *TagReaderType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.tag_readers 
 	  SET UID='%s',ReadTime='%s'
 	  WHERE TagId=%f  
@@ -78,7 +78,7 @@ func (res TagReaderType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res TagReaderType) SelectWithDb(db *sql.DB) error {
+func (res *TagReaderType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.UID,
 		&res.ReadTime)

@@ -135,7 +135,7 @@ func rfCheck() {
 								nid, _ := uuid.NewUUID()
 								lastSendTime = time.Now()
 								readTags[tempData[36:60]] = lastSendTime
-								currentTagDataType.Epc = lastRfTag
+								currentTagDataType.TagMain.Epc = lastRfTag
 								currentTagDataType.TagReader.UID = nid.String()
 								sendRf()
 								sendRfToCam()

@@ -22,6 +22,7 @@ func main() {
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/getkey", getkey)
 	http.HandleFunc("/setkey", setkey)
+	http.HandleFunc("/deletekey", deletekey)
 	http.HandleFunc("/saveStaticDbMain", saveStaticDbMain)
 	http.HandleFunc("/getStaticDbMain", getStaticDbMain)
 	http.HandleFunc("/saveConfigDbMain", saveConfigDbMain)
@@ -35,117 +36,144 @@ func main() {
 }
 
 func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforbulkdb-cluster-ip/saveBulkDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func getBulkDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforbulkdb-cluster-ip/getBulkDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforreaderdb-cluster-ip/saveReaderDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func getReaderDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforreaderdb-cluster-ip/getReaderDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforconfigdb-cluster-ip/saveConfigDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforconfigdb-cluster-ip/getConfigDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -153,55 +181,89 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	WasteLibrary.LogStr("StoreApi Receive Data : " + req.FormValue("DATA"))
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforstaticdb-cluster-ip/saveStaticDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforstaticdb-cluster-ip/getStaticDbMain", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func getkey(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/getkey", req.Form)
 	w.Write(resultVal.ToByte())
+
 }
 
 func setkey(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/setkey", req.Form)
 	w.Write(resultVal.ToByte())
+
+}
+
+func deletekey(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
+	var resultVal WasteLibrary.ResultType
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/deletekey", req.Form)
+	w.Write(resultVal.ToByte())
+
 }

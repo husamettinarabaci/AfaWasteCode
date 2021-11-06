@@ -95,10 +95,11 @@ func customerProc(customerId float64) {
 					if vDevice == 0 {
 						continue
 					}
-					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_TYPE_DEVICES, WasteLibrary.Float64IdToString(vDevice))
+					var currentDevice WasteLibrary.RfidDeviceType
+					currentDevice.New()
+					currentDevice.DeviceId = vDevice
+					resultVal = currentDevice.GetAll()
 					if resultVal.Result == WasteLibrary.RESULT_OK {
-						var currentDevice WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(resultVal.Retval.(string))
-						currentDevice.GetAll()
 						var arventoId string = plateDevice[currentDevice.DeviceDetail.PlateNo]
 						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
 							if currentDevice.DeviceGps.Latitude != 0 && currentDevice.DeviceGps.Longitude != 0 {

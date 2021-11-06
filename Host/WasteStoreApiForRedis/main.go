@@ -59,21 +59,25 @@ func main() {
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/getkey", getkey)
 	http.HandleFunc("/setkey", setkey)
+	http.HandleFunc("/deletekey", deletekey)
 	http.ListenAndServe(":80", nil)
 	WasteLibrary.LogStr("Finished")
 }
 
 func getkey(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -89,19 +93,23 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	w.Write(resultVal.ToByte())
+
 }
 
 func setkey(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -119,6 +127,36 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 	setKeyRedis(hKey, sKey, kVal)
 
 	w.Write(resultVal.ToByte())
+
+}
+
+func deletekey(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
+	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
+	//kVal := req.FormValue(WasteLibrary.REDIS_KEYVALUE)
+	WasteLibrary.LogStr("DeleteKeyDb : " + resultVal.ToString())
+	resultVal = deleteKeyDb(hKey, sKey)
+	WasteLibrary.LogStr("DeleteKeyDb : " + resultVal.ToString())
+	deleteKeyRedis(hKey, sKey)
+
+	w.Write(resultVal.ToByte())
+
 }
 
 func getKeyRedis(hKey string, sKey string) WasteLibrary.ResultType {
@@ -165,6 +203,22 @@ func setKeyRedis(hKey string, sKey string, kVal string) {
 	}
 }
 
+func deleteKeyRedis(hKey string, sKey string) {
+	var err error
+	if hKey != "" {
+		_, err = redisDb.HDel(ctx, hKey, sKey).Result()
+	} else {
+		_, err = redisDb.HDel(ctx, sKey).Result()
+
+	}
+	switch {
+	case err == redis.Nil:
+		WasteLibrary.LogStr("Not Found")
+	case err != nil:
+		WasteLibrary.LogErr(err)
+	}
+}
+
 func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -197,6 +251,18 @@ func insertKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType 
 		HashKey,SubKey,KeyValue)
 	   VALUES ('%s','%s','%s');`, hKey, sKey, kVal)
 	_, errDb := sumDb.Exec(insertSQL)
+	WasteLibrary.LogErr(errDb)
+	resultVal.Result = WasteLibrary.RESULT_OK
+	return resultVal
+}
+
+func deleteKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	WasteLibrary.LogStr("Delete Db : " + hKey + " - " + sKey)
+	var deleteSQL string = fmt.Sprintf(`DELETE FROM public.redisdata
+	    WHERE HashKey='%s' AND SubKey='%s';`, hKey, sKey)
+	_, errDb := sumDb.Exec(deleteSQL)
 	WasteLibrary.LogErr(errDb)
 	resultVal.Result = WasteLibrary.RESULT_OK
 	return resultVal

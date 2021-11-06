@@ -621,18 +621,18 @@ func (res *LocalConfigType) New() {
 }
 
 //ToId String
-func (res LocalConfigType) ToIdString() string {
+func (res *LocalConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
 //ToByte
-func (res LocalConfigType) ToByte() []byte {
+func (res *LocalConfigType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res LocalConfigType) ToString() string {
+func (res *LocalConfigType) ToString() string {
 	return string(res.ToByte())
 
 }

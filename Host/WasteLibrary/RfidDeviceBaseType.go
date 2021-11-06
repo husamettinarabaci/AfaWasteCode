@@ -23,18 +23,18 @@ func (res *RfidDeviceBaseType) New() {
 }
 
 //ToId String
-func (res RfidDeviceBaseType) ToIdString() string {
+func (res *RfidDeviceBaseType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RfidDeviceBaseType) ToByte() []byte {
+func (res *RfidDeviceBaseType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RfidDeviceBaseType) ToString() string {
+func (res *RfidDeviceBaseType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -52,21 +52,21 @@ func StringToRfidDeviceBaseType(retStr string) RfidDeviceBaseType {
 }
 
 //SelectSQL
-func (res RfidDeviceBaseType) SelectSQL() string {
+func (res *RfidDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT DeviceType,TruckType
 	 FROM public.rfid_base_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res RfidDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_base_devices (DeviceId,DeviceType) 
+func (res *RfidDeviceBaseType) InsertSQL() string {
+	return fmt.Sprintf(`INSERT INTO public.rfid_base_devices (DeviceId,DeviceType,TruckType) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.DeviceType, res.TruckType)
 }
 
 //UpdateSQL
-func (res RfidDeviceBaseType) UpdateSQL() string {
+func (res *RfidDeviceBaseType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.rfid_base_devices 
 	  SET DeviceType='%s',TruckType='%s'
 	  WHERE DeviceId=%f  
@@ -77,7 +77,7 @@ func (res RfidDeviceBaseType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RfidDeviceBaseType) SelectWithDb(db *sql.DB) error {
+func (res *RfidDeviceBaseType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.DeviceType,
 		&res.TruckType)

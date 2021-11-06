@@ -35,18 +35,18 @@ func (res *RecyDeviceVersionType) New() {
 }
 
 //ToId String
-func (res RecyDeviceVersionType) ToIdString() string {
+func (res *RecyDeviceVersionType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RecyDeviceVersionType) ToByte() []byte {
+func (res *RecyDeviceVersionType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RecyDeviceVersionType) ToString() string {
+func (res *RecyDeviceVersionType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -64,21 +64,21 @@ func StringToRecyDeviceVersionType(retStr string) RecyDeviceVersionType {
 }
 
 //SelectSQL
-func (res RecyDeviceVersionType) SelectSQL() string {
+func (res *RecyDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion
 	 FROM public.recy_version_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res RecyDeviceVersionType) InsertSQL() string {
+func (res *RecyDeviceVersionType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.recy_version_devices (DeviceId,WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
-	  VALUES (%f,'%s','%s','%s',%s','%s','%s',%s','%s') 
+	  VALUES (%f,'%s','%s','%s','%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.WebAppVersion, res.MotorAppVersion, res.ThermAppVersion, res.TransferAppVersion, res.CheckerAppVersion, res.CamAppVersion, res.ReaderAppVersion, res.SystemAppVersion)
 }
 
 //UpdateSQL
-func (res RecyDeviceVersionType) UpdateSQL() string {
+func (res *RecyDeviceVersionType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.recy_version_devices 
 	  SET WebAppVersion='%s',MotorAppVersion='%s',ThermAppVersion='%s',TransferAppVersion='%s',CheckerAppVersion='%s',CamAppVersion='%s',ReaderAppVersion='%s',SystemAppVersion='%s' 
 	  WHERE DeviceId=%f  
@@ -95,7 +95,7 @@ func (res RecyDeviceVersionType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RecyDeviceVersionType) SelectWithDb(db *sql.DB) error {
+func (res *RecyDeviceVersionType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.WebAppVersion,
 		&res.MotorAppVersion,

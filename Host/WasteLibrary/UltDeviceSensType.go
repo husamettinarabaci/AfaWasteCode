@@ -18,25 +18,25 @@ type UltDeviceSensType struct {
 //New
 func (res *UltDeviceSensType) New() {
 	res.DeviceId = 0
-	res.UltTime = ""
+	res.UltTime = GetTime()
 	res.UltRange = 0
 	res.UltStatus = CONTINER_FULLNESS_STATU_NONE
 	res.NewData = false
 }
 
 //ToId String
-func (res UltDeviceSensType) ToIdString() string {
+func (res *UltDeviceSensType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UltDeviceSensType) ToByte() []byte {
+func (res *UltDeviceSensType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceSensType) ToString() string {
+func (res *UltDeviceSensType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -54,14 +54,14 @@ func StringToUltDeviceSensType(retStr string) UltDeviceSensType {
 }
 
 //SelectSQL
-func (res UltDeviceSensType) SelectSQL() string {
+func (res *UltDeviceSensType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT UltTime,UltRange,UltStatus
 	 FROM public.ult_sens_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res UltDeviceSensType) InsertSQL() string {
+func (res *UltDeviceSensType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_sens_devices (DeviceId,UltTime,UltRange,UltStatus) 
 	  VALUES (%f,'%s',%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId,
@@ -69,7 +69,7 @@ func (res UltDeviceSensType) InsertSQL() string {
 }
 
 //UpdateSQL
-func (res UltDeviceSensType) UpdateSQL() string {
+func (res *UltDeviceSensType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.ult_sens_devices 
 	  SET UltTime='%s',UltRange=%f,UltStatus='%s'
 	  WHERE DeviceId=%f  
@@ -78,7 +78,7 @@ func (res UltDeviceSensType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res UltDeviceSensType) SelectWithDb(db *sql.DB) error {
+func (res *UltDeviceSensType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.UltTime,
 		&res.UltRange,

@@ -23,6 +23,7 @@ func main() {
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {
+
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -30,10 +31,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		w.Write(resultVal.ToByte())
+
 		WasteLibrary.LogErr(err)
 		return
 	}
@@ -42,7 +45,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
-			currentData.CustomerId = currentHttpHeader.CustomerId
 			currentData.DeviceGps.DeviceId = currentData.DeviceId
 			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
@@ -58,6 +60,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 					w.Write(resultVal.ToByte())
+
 					return
 				}
 
@@ -71,6 +74,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
 					w.Write(resultVal.ToByte())
+
 					return
 				}
 				currentData.DeviceGps = WasteLibrary.StringToRfidDeviceGpsType(resultVal.Retval.(string))
@@ -79,6 +83,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
 					w.Write(resultVal.ToByte())
+
 					return
 				}
 				data = url.Values{
@@ -90,6 +95,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 					w.Write(resultVal.ToByte())
+
 					return
 				}
 				if currentData.DeviceGps.Speed == 0 {
@@ -107,4 +113,5 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
 	w.Write(resultVal.ToByte())
+
 }

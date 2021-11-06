@@ -1,7 +1,6 @@
 package WasteLibrary
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 )
@@ -9,8 +8,7 @@ import (
 //RecyDeviceType
 type RecyDeviceType struct {
 	DeviceId      float64
-	CustomerId    float64
-	SerialNumber  string
+	DeviceMain    RecyDeviceMainType
 	DeviceBase    RecyDeviceBaseType
 	DeviceGps     RecyDeviceGpsType
 	DeviceTherm   RecyDeviceThermType
@@ -18,14 +16,12 @@ type RecyDeviceType struct {
 	DeviceAlarm   RecyDeviceAlarmType
 	DeviceStatu   RecyDeviceStatuType
 	DeviceDetail  RecyDeviceDetailType
-	Active        string
-	CreateTime    string
 }
 
 //New
 func (res *RecyDeviceType) New() {
 	res.DeviceId = 0
-	res.CustomerId = 1
+	res.DeviceMain.New()
 	res.DeviceBase.New()
 	res.DeviceGps.New()
 	res.DeviceTherm.New()
@@ -35,24 +31,73 @@ func (res *RecyDeviceType) New() {
 	res.DeviceDetail.New()
 }
 
+//GetAll
+func (res *RecyDeviceType) GetAll() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_RECY_MAIN_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceMain = StringToRecyDeviceMainType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RECY_BASE_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceBase = StringToRecyDeviceBaseType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RECY_GPS_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceGps = StringToRecyDeviceGpsType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RECY_THERM_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceTherm = StringToRecyDeviceThermType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RECY_VERSION_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceVersion = StringToRecyDeviceVersionType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RECY_ALARM_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceAlarm = StringToRecyDeviceAlarmType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RECY_STATU_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceStatu = StringToRecyDeviceStatuType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RECY_DETAIL_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceDetail = StringToRecyDeviceDetailType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	return resultVal
+}
+
 //ToId String
-func (res RecyDeviceType) ToIdString() string {
+func (res *RecyDeviceType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
-//ToCustomerId String
-func (res RecyDeviceType) ToCustomerIdString() string {
-	return fmt.Sprintf("%.0f", res.CustomerId)
-}
-
 //ToByte
-func (res RecyDeviceType) ToByte() []byte {
+func (res *RecyDeviceType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RecyDeviceType) ToString() string {
+func (res *RecyDeviceType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -67,46 +112,4 @@ func ByteToRecyDeviceType(retByte []byte) RecyDeviceType {
 //String To RecyDeviceType
 func StringToRecyDeviceType(retStr string) RecyDeviceType {
 	return ByteToRecyDeviceType([]byte(retStr))
-}
-
-//SelectSQL
-func (res RecyDeviceType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime
-	 FROM public.recy_devices
-	 WHERE DeviceId=%f ;`, res.DeviceId)
-}
-
-//InsertSQL
-func (res RecyDeviceType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_devices (CustomerId,SerialNumber) 
-	  VALUES (%f,'%s') 
-	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber)
-}
-
-//InsertDataSQL
-func (res RecyDeviceType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_devices (DeviceId,CustomerId,SerialNumber) 
-	  VALUES (%f,%f,'%s') 
-	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber)
-}
-
-//UpdateSQL
-func (res RecyDeviceType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.recy_devices 
-	  SET CustomerId=%f,SerialNumber='%s' 
-	  WHERE DeviceId=%f  
-	  RETURNING DeviceId;`,
-		res.CustomerId,
-		res.SerialNumber,
-		res.DeviceId)
-}
-
-//SelectWithDb
-func (res RecyDeviceType) SelectWithDb(db *sql.DB) error {
-	errDb := db.QueryRow(res.SelectSQL()).Scan(
-		&res.CustomerId,
-		&res.SerialNumber,
-		&res.Active,
-		&res.CreateTime)
-	return errDb
 }

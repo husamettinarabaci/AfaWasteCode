@@ -34,23 +34,23 @@ func (res *HttpClientHeaderType) New() {
 }
 
 //ToCustomerId String
-func (res HttpClientHeaderType) ToCustomerIdString() string {
+func (res *HttpClientHeaderType) ToCustomerIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
 //ToDeviceId String
-func (res HttpClientHeaderType) ToDeviceIdString() string {
+func (res *HttpClientHeaderType) ToDeviceIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res HttpClientHeaderType) ToByte() []byte {
+func (res *HttpClientHeaderType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res HttpClientHeaderType) ToString() string {
+func (res *HttpClientHeaderType) ToString() string {
 	return string(res.ToByte())
 
 }

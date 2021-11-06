@@ -21,24 +21,24 @@ func (res *TagStatuType) New() {
 	res.TagId = 0
 	res.TagStatu = TAG_STATU_NONE
 	res.ImageStatu = STATU_PASSIVE
-	res.CheckTime = ""
+	res.CheckTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res TagStatuType) ToIdString() string {
+func (res *TagStatuType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)
 }
 
 //ToByte
-func (res TagStatuType) ToByte() []byte {
+func (res *TagStatuType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 
 }
 
 //ToString Get JSON
-func (res TagStatuType) ToString() string {
+func (res *TagStatuType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -56,21 +56,21 @@ func StringToTagStatuType(retStr string) TagStatuType {
 }
 
 //SelectSQL
-func (res TagStatuType) SelectSQL() string {
+func (res *TagStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT TagStatu,ImageStatu,CheckTime
 	 FROM public.tag_status
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
-func (res TagStatuType) InsertSQL() string {
+func (res *TagStatuType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.tag_status (TagId,TagStatu,ImageStatu,CheckTime) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING TagId;`, res.TagId, res.TagStatu, res.ImageStatu, res.CheckTime)
 }
 
 //UpdateSQL
-func (res TagStatuType) UpdateSQL() string {
+func (res *TagStatuType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.tag_status 
 	  SET TagStatu='%s',ImageStatu='%s',CheckTime='%s'
 	  WHERE TagId=%f  
@@ -82,7 +82,7 @@ func (res TagStatuType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res TagStatuType) SelectWithDb(db *sql.DB) error {
+func (res *TagStatuType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.TagStatu,
 		&res.ImageStatu,

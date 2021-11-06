@@ -22,18 +22,18 @@ func (res *UltDeviceVersionType) New() {
 }
 
 //ToId String
-func (res UltDeviceVersionType) ToIdString() string {
+func (res *UltDeviceVersionType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res UltDeviceVersionType) ToByte() []byte {
+func (res *UltDeviceVersionType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res UltDeviceVersionType) ToString() string {
+func (res *UltDeviceVersionType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -51,21 +51,21 @@ func StringToUltDeviceVersionType(retStr string) UltDeviceVersionType {
 }
 
 //SelectSQL
-func (res UltDeviceVersionType) SelectSQL() string {
+func (res *UltDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT FirmwareVersion
 	 FROM public.ult_version_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
-func (res UltDeviceVersionType) InsertSQL() string {
+func (res *UltDeviceVersionType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.ult_version_devices (DeviceId,FirmwareVersion) 
 	  VALUES (%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.FirmwareVersion)
 }
 
 //UpdateSQL
-func (res UltDeviceVersionType) UpdateSQL() string {
+func (res *UltDeviceVersionType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.ult_version_devices 
 	  SET FirmwareVersion='%s'
 	  WHERE DeviceId=%f  
@@ -75,7 +75,7 @@ func (res UltDeviceVersionType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res UltDeviceVersionType) SelectWithDb(db *sql.DB) error {
+func (res *UltDeviceVersionType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.FirmwareVersion)
 	return errDb

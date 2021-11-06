@@ -46,53 +46,53 @@ type RfidDeviceStatuType struct {
 //New
 func (res *RfidDeviceStatuType) New() {
 	res.DeviceId = 0
-	res.StatusTime = ""
+	res.StatusTime = GetTime()
 	res.AliveStatus = STATU_PASSIVE
-	res.AliveLastOkTime = ""
+	res.AliveLastOkTime = GetTime()
 	res.ReaderAppStatus = STATU_PASSIVE
-	res.ReaderAppLastOkTime = ""
+	res.ReaderAppLastOkTime = GetTime()
 	res.ReaderConnStatus = STATU_PASSIVE
-	res.ReaderConnLastOkTime = ""
+	res.ReaderConnLastOkTime = GetTime()
 	res.ReaderStatus = STATU_PASSIVE
-	res.ReaderLastOkTime = ""
+	res.ReaderLastOkTime = GetTime()
 	res.CamAppStatus = STATU_PASSIVE
-	res.CamAppLastOkTime = ""
+	res.CamAppLastOkTime = GetTime()
 	res.CamConnStatus = STATU_PASSIVE
-	res.CamConnLastOkTime = ""
+	res.CamConnLastOkTime = GetTime()
 	res.CamStatus = STATU_PASSIVE
-	res.CamLastOkTime = ""
+	res.CamLastOkTime = GetTime()
 	res.GpsAppStatus = STATU_PASSIVE
-	res.GpsAppLastOkTime = ""
+	res.GpsAppLastOkTime = GetTime()
 	res.GpsConnStatus = STATU_PASSIVE
-	res.GpsConnLastOkTime = ""
+	res.GpsConnLastOkTime = GetTime()
 	res.GpsStatus = STATU_PASSIVE
-	res.GpsLastOkTime = ""
+	res.GpsLastOkTime = GetTime()
 	res.ThermAppStatus = STATU_PASSIVE
-	res.ThermAppLastOkTime = ""
+	res.ThermAppLastOkTime = GetTime()
 	res.TransferAppStatus = STATU_PASSIVE
-	res.TransferAppLastOkTime = ""
+	res.TransferAppLastOkTime = GetTime()
 	res.SystemAppStatus = STATU_PASSIVE
-	res.SystemAppLastOkTime = ""
+	res.SystemAppLastOkTime = GetTime()
 	res.UpdaterAppStatus = STATU_PASSIVE
-	res.UpdaterAppLastOkTime = ""
+	res.UpdaterAppLastOkTime = GetTime()
 	res.ContactStatus = STATU_PASSIVE
-	res.ContactLastOkTime = ""
+	res.ContactLastOkTime = GetTime()
 	res.NewData = false
 }
 
 //ToId String
-func (res RfidDeviceStatuType) ToIdString() string {
+func (res *RfidDeviceStatuType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte
-func (res RfidDeviceStatuType) ToByte() []byte {
+func (res *RfidDeviceStatuType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
 	return jData
 }
 
 //ToString Get JSON
-func (res RfidDeviceStatuType) ToString() string {
+func (res *RfidDeviceStatuType) ToString() string {
 	return string(res.ToByte())
 
 }
@@ -110,7 +110,7 @@ func StringToRfidDeviceStatuType(retStr string) RfidDeviceStatuType {
 }
 
 //SelectSQL
-func (res RfidDeviceStatuType) SelectSQL() string {
+func (res *RfidDeviceStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime,ReaderAppStatus,ReaderAppLastOkTime,ReaderConnStatus,
 	ReaderConnLastOkTime,ReaderStatus,ReaderLastOkTime,CamAppStatus,CamAppLastOkTime,CamConnStatus,CamConnLastOkTime,
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
@@ -121,7 +121,7 @@ func (res RfidDeviceStatuType) SelectSQL() string {
 }
 
 //InsertSQL
-func (res RfidDeviceStatuType) InsertSQL() string {
+func (res *RfidDeviceStatuType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.rfid_statu_devices (DeviceId,
 	StatusTime,AliveStatus,AliveLastOkTime,ReaderAppStatus,ReaderAppLastOkTime,ReaderConnStatus,
 	ReaderConnLastOkTime,ReaderStatus,ReaderLastOkTime,CamAppStatus,CamAppLastOkTime,CamConnStatus,CamConnLastOkTime,
@@ -141,7 +141,7 @@ func (res RfidDeviceStatuType) InsertSQL() string {
 }
 
 //UpdateSQL
-func (res RfidDeviceStatuType) UpdateSQL() string {
+func (res *RfidDeviceStatuType) UpdateSQL() string {
 	var execSqlExt = ""
 	if res.AliveStatus == STATU_ACTIVE {
 		execSqlExt += ",AliveLastOkTime='" + res.AliveLastOkTime + "'"
@@ -202,7 +202,7 @@ func (res RfidDeviceStatuType) UpdateSQL() string {
 }
 
 //SelectWithDb
-func (res RfidDeviceStatuType) SelectWithDb(db *sql.DB) error {
+func (res *RfidDeviceStatuType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.StatusTime,
 		&res.AliveStatus,
