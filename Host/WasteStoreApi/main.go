@@ -40,6 +40,8 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -61,6 +63,8 @@ func getBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -82,6 +86,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -103,6 +109,8 @@ func getReaderDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -124,6 +132,8 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -145,6 +155,8 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -166,6 +178,8 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -189,6 +203,8 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -210,6 +226,8 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -231,6 +249,8 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 
@@ -252,6 +272,8 @@ func deletekey(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 

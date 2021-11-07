@@ -11,7 +11,6 @@ import (
 
 //Debug Mode
 var Debug bool = os.Getenv("DEBUG") == "1"
-var Report bool = true
 var AllowCors bool = true
 var Version string = "1"
 

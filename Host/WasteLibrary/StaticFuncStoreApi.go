@@ -9,7 +9,7 @@ func SaveBulkDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveBulkDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -18,7 +18,7 @@ func GetBulkDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getBulkDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -27,7 +27,7 @@ func SaveStaticDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveStaticDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -36,7 +36,7 @@ func GetStaticDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getStaticDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -45,7 +45,7 @@ func SaveReaderDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveReaderDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -54,7 +54,7 @@ func GetReaderDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getReaderDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -63,7 +63,7 @@ func SaveConfigDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/saveConfigDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -72,7 +72,7 @@ func GetConfigDbMainForStoreApi(data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getConfigDbMain", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -86,7 +86,7 @@ func SaveRedisForStoreApi(hKey string, sKey string, kVal string) ResultType {
 		REDIS_KEYVALUE: {kVal},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/setkey", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -99,7 +99,7 @@ func DeleteRedisForStoreApi(hKey string, sKey string) ResultType {
 		REDIS_SUBKEY:  {sKey},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/deletekey", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }
 
@@ -112,6 +112,6 @@ func GetRedisForStoreApi(hKey string, sKey string) ResultType {
 		REDIS_SUBKEY:  {sKey},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getkey", data)
-	LogReport(resultVal.ToString())
+	LogStr(resultVal.ToString())
 	return resultVal
 }

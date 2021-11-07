@@ -23,8 +23,12 @@ func main() {
 	http.HandleFunc("/getCustomers", getCustomers)
 	http.HandleFunc("/setDevice", setDevice)
 	http.HandleFunc("/getDevice", getDevice)
+	http.HandleFunc("/getConfig", getConfig)
+	http.HandleFunc("/setConfig", setConfig)
 	http.HandleFunc("/getDevices", getDevices)
 	http.HandleFunc("/startSystem", startSystem)
+	http.HandleFunc("/openLog", openLog)
+	http.HandleFunc("/closeLog", closeLog)
 	http.ListenAndServe(":80", nil)
 }
 
@@ -241,11 +245,57 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 
 }
 
+func openLog(w http.ResponseWriter, req *http.Request) {
+
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+
+	data := url.Values{}
+
+	resultVal = WasteLibrary.HttpPostReq("http://waste-logserver-cluster-ip/openLog", data)
+
+	w.Write(resultVal.ToByte())
+
+}
+
+func closeLog(w http.ResponseWriter, req *http.Request) {
+
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+
+	data := url.Values{}
+
+	resultVal = WasteLibrary.HttpPostReq("http://waste-logserver-cluster-ip/closeLog", data)
+
+	w.Write(resultVal.ToByte())
+
+}
+
 func setCustomer(w http.ResponseWriter, req *http.Request) {
 
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -493,6 +543,8 @@ func getCustomers(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -560,6 +612,8 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -612,6 +666,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -909,6 +965,8 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -1038,6 +1096,8 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -1114,6 +1174,124 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICES_NOTFOUND
 	}
+	w.Write(resultVal.ToByte())
+
+}
+
+func getConfig(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+		w.Write(resultVal.ToByte())
+
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	resultVal = checkAuth(req.Form, customerId)
+
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		w.Write(resultVal.ToByte())
+
+		return
+	}
+
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_CUSTOMERCONFIG {
+		var currentConfig WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(req.FormValue(WasteLibrary.HTTP_DATA))
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, currentConfig.ToIdString())
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_CUSTOMERCONFIG_NOTFOUND
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+	} else {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+	}
+
+	w.Write(resultVal.ToByte())
+
+}
+
+func setConfig(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+		w.Write(resultVal.ToByte())
+
+		return
+	}
+	var customerId string = resultVal.Retval.(string)
+
+	resultVal = checkAuth(req.Form, customerId)
+
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		w.Write(resultVal.ToByte())
+
+		return
+	}
+
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_CUSTOMERCONFIG {
+		var currentData WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(req.FormValue(WasteLibrary.HTTP_DATA))
+		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, currentData.ToIdString(), currentData.ToString())
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+	} else {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DATATYPE
+		w.Write(resultVal.ToByte())
+
+		return
+	}
+
 	w.Write(resultVal.ToByte())
 
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -93,7 +92,6 @@ func gpsCheck() {
 				WasteLibrary.LogStr("Device OK")
 				for scanner.Scan() {
 					gps, err := devafatekgps.ParseGpsLine(scanner.Text())
-					fmt.Println(gps)
 					if err == nil {
 						if gps.GetFixQuality() == "1" || gps.GetFixQuality() == "2" {
 							latitude, _ := gps.GetLatitude()

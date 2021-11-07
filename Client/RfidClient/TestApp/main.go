@@ -9,8 +9,8 @@ import (
 
 func main() {
 
-	var readerType string = "DEVICE"
-	var readerType2 string = "SET_RFIDDEVICE_AFATEK"
+	var readerType string = "CONFIG"
+	var readerType2 string = "SET_CUSTOMERCONFIG_AFATEK"
 	var currentHeader WasteLibrary.HttpClientHeaderType
 	currentHeader.New()
 	var urlVal string = "afatek.aws.afatek.com.tr"
@@ -20,7 +20,7 @@ func main() {
 	var deviceId float64 = 14
 	var customerId float64 = 1
 	var userId float64 = 2
-	var token = "MSMkMmEkMTAkTU9WNzc4UWJYU3d3SllIb2NpREhYT3RESm00aVhVS2JabGUvWlZRQmtacjBqVENrT08zZ08="
+	var token = "MSMkMmEkMTAkY1hidHFrb2M3TlZSZUZJLmk5NHVUZXRScEhpTnBHWGozQlQ4a09YUGRsN0hUcTYuYllyQzY="
 
 	if readerType == "DEVICE" {
 		if readerType2 == "GET_RFIDDEVICE_WEB" {
@@ -402,6 +402,7 @@ func main() {
 		} else if readerType2 == "GET_RFIDDEVICES_WEB" {
 			//TO DO
 			//check
+			urlVal = "bodrum.aws.afatek.com.tr"
 			path1 = "webapi"
 			path2 = "getDevices"
 			//currentHeader - HttpClientHeaderType *
@@ -626,9 +627,9 @@ func main() {
 
 			var currentData WasteLibrary.CustomerType
 			currentData.New()
-			currentData.CustomerId = 0 // customerId
+			currentData.CustomerId = 3 // customerId
 			currentData.CustomerName = "BODRUM"
-			currentData.CustomerLink = "temizbodrum.bodrum.bel.tr"
+			currentData.CustomerLink = "bodrum.aws.afatek.com.tr"
 			currentData.RfIdApp = WasteLibrary.STATU_ACTIVE
 			currentData.UltApp = WasteLibrary.STATU_ACTIVE
 			currentData.RecyApp = WasteLibrary.STATU_ACTIVE
@@ -849,9 +850,9 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
-		} else if readerType2 == "SET_CUSTOMERCONFIG_ADMIN" {
+		} else if readerType2 == "SET_CUSTOMERCONFIG_AFATEK" {
 			//OK
-			path1 = "adminapi"
+			path1 = "afatekapi"
 			path2 = "setConfig"
 			//currentHeader - HttpClientHeaderType *
 			//currentHeader.Token - token *
@@ -865,10 +866,11 @@ func main() {
 			currentHeader.DataType = WasteLibrary.DATATYPE_CUSTOMERCONFIG
 			var currentData WasteLibrary.CustomerConfigType
 			currentData.New()
+			currentData.CustomerId = 3
 			currentData.ArventoApp = WasteLibrary.STATU_ACTIVE
-			currentData.ArventoUserName = "devafatekarvento"
-			currentData.ArventoPin1 = "pin1"
-			currentData.ArventoPin2 = "pin2"
+			currentData.ArventoUserName = "afatekbilisim"
+			currentData.ArventoPin1 = "Amca151200!Furkan"
+			currentData.ArventoPin2 = "Amca151200!Furkan"
 			currentData.SystemProblem = WasteLibrary.STATU_PASSIVE
 			currentData.TruckStopTrace = WasteLibrary.STATU_ACTIVE
 			data = url.Values{

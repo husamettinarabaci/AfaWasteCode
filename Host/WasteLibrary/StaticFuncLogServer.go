@@ -22,10 +22,10 @@ func LogStr(value string) {
 	}
 }
 
-//LogReport
-func LogReport(value string) {
-	if Report {
-		SendLogServer(LOGGER_REPORT, value)
+//LogDebug
+func LogDebug(value string) {
+	if Debug {
+		SendLogServer(LOGGER_DEBUG, value)
 	}
 }
 

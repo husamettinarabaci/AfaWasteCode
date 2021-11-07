@@ -27,6 +27,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -101,7 +103,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				currentData.DeviceStatu.ContactLastOkTime = currentHttpHeader.Time
 			}
 
-			WasteLibrary.LogReport("Device Statu Status Reader 1: " + currentData.DeviceStatu.ToString())
 			data := url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
@@ -129,9 +130,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			WasteLibrary.LogReport("Device Statu Status Db Reader : " + resultVal.Retval.(string))
 			currentData.DeviceStatu = WasteLibrary.StringToRfidDeviceStatuType(resultVal.Retval.(string))
-			WasteLibrary.LogReport("Device Statu Status Reader 2: " + currentData.DeviceStatu.ToString())
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_STATU_DEVICES, currentData.DeviceStatu.ToIdString(), currentData.DeviceStatu.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
