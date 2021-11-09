@@ -1,12 +1,13 @@
 cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
-cd WasteAdminApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteAfatekApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhcApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteWebApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteWebSocket && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteCamReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteDbCreator && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhc && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteGpsReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSensReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteBatteryReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteListener && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteLogServer && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteRfReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
@@ -19,14 +20,16 @@ cd WasteStoreApiForConfigDB && go get "github.com/devafatek/WasteLibrary" && cd 
 cd WasteStoreApiForRedis && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteThermReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteAuthApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteArvento && go get "github.com/devafatek/WasteLibrary" && cd .. 
+cd WasteSummaryForTagView && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteArvento && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteDbCreator && go get "github.com/devafatek/WasteLibrary" && cd .. 
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
-sudo docker build -f WasteAdminApi/Dockerfile -t devafatek/wasteadminapi:1.0 . && docker push devafatek/wasteadminapi:1.0 &&
 sudo docker build -f WasteCamReader/Dockerfile -t devafatek/wastecamreader:1.0 . && docker push devafatek/wastecamreader:1.0 &&
-sudo docker build -f WasteDbCreator/Dockerfile -t devafatek/wastedbcreator:1.0 . && docker push devafatek/wastedbcreator:1.0 &&
 sudo docker build -f WasteEnhc/Dockerfile -t devafatek/wasteenhc:1.0 . && docker push devafatek/wasteenhc:1.0 &&
 sudo docker build -f WasteGpsReader/Dockerfile -t devafatek/wastegpsreader:1.0 . && docker push devafatek/wastegpsreader:1.0 &&
+sudo docker build -f WasteSensReader/Dockerfile -t devafatek/wastesensreader:1.0 . && docker push devafatek/wastesensreader:1.0 &&
+sudo docker build -f WasteBatteryReader/Dockerfile -t devafatek/wastebatteryreader:1.0 . && docker push devafatek/wastebatteryreader:1.0 &&
 sudo docker build -f WasteListener/Dockerfile -t devafatek/wastelistener:1.0 . && docker push devafatek/wastelistener:1.0 &&
 sudo docker build -f WasteLogServer/Dockerfile -t devafatek/wastelogserver:1.0 . && docker push devafatek/wastelogserver:1.0 &&
 sudo docker build -f WasteRfReader/Dockerfile -t devafatek/wasterfreader:1.0 . && docker push devafatek/wasterfreader:1.0 &&
@@ -39,20 +42,24 @@ sudo docker build -f WasteStoreApiForConfigDB/Dockerfile -t devafatek/wastestore
 sudo docker build -f WasteStoreApiForRedis/Dockerfile -t devafatek/wastestoreapiforredis:1.0 . && docker push devafatek/wastestoreapiforredis:1.0 &&
 sudo docker build -f WasteThermReader/Dockerfile -t devafatek/wastethermreader:1.0 . && docker push devafatek/wastethermreader:1.0 &&
 sudo docker build -f WasteWebApi/Dockerfile -t devafatek/wastewebapi:1.0 . && docker push devafatek/wastewebapi:1.0 &&
+sudo docker build -f WasteWebSocket/Dockerfile -t devafatek/wastewebsocket:1.0 . && docker push devafatek/wastewebsocket:1.0 &&
 sudo docker build -f WasteAfatekApi/Dockerfile -t devafatek/wasteafatekapi:1.0 . && docker push devafatek/wasteafatekapi:1.0 &&
 sudo docker build -f WasteEnhcApi/Dockerfile -t devafatek/wasteenhcapi:1.0 . && docker push devafatek/wasteenhcapi:1.0 &&
 sudo docker build -f WasteAuthApi/Dockerfile -t devafatek/wasteauthapi:1.0 . && docker push devafatek/wasteauthapi:1.0 &&
-sudo docker build -f WasteArvento/Dockerfile -t devafatek/wastearvento:1.0 . && docker push devafatek/wastearvento:1.0
+sudo docker build -f WasteSummaryForTagView/Dockerfile -t devafatek/wastesummaryfortagview:1.0 . && docker push devafatek/wastesummaryfortagview:1.0 &&
+sudo docker build -f WasteArvento/Dockerfile -t devafatek/wastearvento:1.0 . && docker push devafatek/wastearvento:1.0 &&
+sudo docker build -f WasteDbCreator/Dockerfile -t devafatek/wastedbcreator:1.0 . && docker push devafatek/wastedbcreator:1.0 
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
-kubectl create -f Aws/Yaml/waste-adminapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-afatekapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-enhcapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-webapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-websocket-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-camreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-dbcreator-pod.yaml &&
 kubectl create -f Aws/Yaml/waste-enhc-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-gpsreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-sensreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-batteryreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-listener-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-logserver-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-rfreader-deployment.yaml &&
@@ -65,5 +72,7 @@ kubectl create -f Aws/Yaml/waste-storeapiforconfigdb-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-storeapiforredis-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-authapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-thermreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-summaryfortagview-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-arvento-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-dbcreator-pod.yaml &&
 kubectl create -f Aws/Yaml/waste-redis-deployment.yaml

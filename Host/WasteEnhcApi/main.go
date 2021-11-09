@@ -18,6 +18,8 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
+	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/createDevice", createDevice)
 	http.HandleFunc("/createTag", createTag)
 	http.ListenAndServe(":80", nil)
@@ -412,6 +414,7 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
+		var currentUlt WasteLibrary.UltDeviceType = WasteLibrary.StringToCustomerUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 		//DeviceMainType    UltDeviceMainType
 		currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_MAIN_DEVICE
 		var currentDevice WasteLibrary.UltDeviceMainType
@@ -459,6 +462,8 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		currentDeviceBase.New()
 		currentDeviceBase.NewData = true
 		currentDeviceBase.DeviceId = currentDevice.DeviceId
+		currentDeviceBase.Imei = currentUlt.DeviceBase.Imei
+		currentDeviceBase.Imsi = currentUlt.DeviceBase.Imsi
 		data = url.Values{
 			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 			WasteLibrary.HTTP_DATA:   {currentDeviceBase.ToString()},

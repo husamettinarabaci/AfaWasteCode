@@ -8,13 +8,13 @@ import (
 //CustomerTagsListType
 type CustomerTagsListType struct {
 	CustomerId float64
-	Tags       map[string]TagType
+	Tags       []TagViewType
 }
 
 //New
 func (res *CustomerTagsListType) New() {
 	res.CustomerId = 1
-	res.Tags = make(map[string]TagType)
+	res.Tags = []TagViewType{}
 }
 
 //ToId String

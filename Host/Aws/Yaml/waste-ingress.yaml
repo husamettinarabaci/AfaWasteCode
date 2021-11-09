@@ -1,16 +1,32 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: >
-      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"nginx.ingress.kubernetes.io/rewrite-target":"/$2"},"creationTimestamp":"2021-10-03T13:13:20Z","generation":4,"managedFields":[{"apiVersion":"networking.k8s.io/v1","fieldsType":"FieldsV1","fieldsV1":{"f:metadata":{"f:annotations":{".":{},"f:kubectl.kubernetes.io/last-applied-configuration":{},"f:nginx.ingress.kubernetes.io/rewrite-target":{}}},"f:spec":{"f:rules":{}}},"manager":"kubectl-client-side-apply","operation":"Update","time":"2021-10-03T13:13:20Z"},{"apiVersion":"networking.k8s.io/v1beta1","fieldsType":"FieldsV1","fieldsV1":{"f:status":{"f:loadBalancer":{"f:ingress":{}}}},"manager":"nginx-ingress-controller","operation":"Update","time":"2021-10-03T13:14:15Z"}],"name":"waste-ingress","namespace":"waste-system","selfLink":"/apis/networking.k8s.io/v1/namespaces/waste-system/ingresses/waste-ingress","uid":"bc989b28-0d58-4655-a7dd-456f92164831"},"spec":{"rules":[{"http":{"paths":[{"backend":{"service":{"name":"waste-adminapi-cluster-ip","port":{"number":80}}},"path":"/adminapi(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-adminui-cluster-ip","port":{"number":80}}},"path":"/adminui(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-webapi-cluster-ip","port":{"number":80}}},"path":"/webapi(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-webui-cluster-ip","port":{"number":80}}},"path":"/webui(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-trackapi-cluster-ip","port":{"number":80}}},"path":"/trackapi(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-trackui-cluster-ip","port":{"number":80}}},"path":"/trackui(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-reportapi-cluster-ip","port":{"number":80}}},"path":"/reportapi(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-reportui-cluster-ip","port":{"number":80}}},"path":"/reportui(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-afatekapi-cluster-ip","port":{"number":80}}},"path":"/afatekapi(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-afatekui-cluster-ip","port":{"number":80}}},"path":"/afatekui(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-lmsapi-cluster-ip","port":{"number":80}}},"path":"/lmsapi(/|$)(.*)","pathType":"Prefix"},{"backend":{"service":{"name":"waste-lmsui-cluster-ip","port":{"number":80}}},"path":"/lmsui(/|$)(.*)","pathType":"Prefix"}]}}]}}
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-  creationTimestamp: '2021-10-03T13:13:20Z'
-  generation: 5
   name: waste-ingress
   namespace: waste-system
-  resourceVersion: '12317712'
   uid: bc989b28-0d58-4655-a7dd-456f92164831
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  managedFields:
+    - manager: kubectl-client-side-apply
+      operation: Update
+      apiVersion: networking.k8s.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:kubectl.kubernetes.io/last-applied-configuration': {}
+            'f:nginx.ingress.kubernetes.io/rewrite-target': {}
+        'f:spec':
+          'f:rules': {}
+    - manager: nginx-ingress-controller
+      operation: Update
+      apiVersion: networking.k8s.io/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          'f:loadBalancer':
+            'f:ingress': {}
   selfLink: /apis/networking.k8s.io/v1/namespaces/waste-system/ingresses/waste-ingress
 status:
   loadBalancer:
@@ -23,38 +39,10 @@ spec:
         paths:
           - backend:
               service:
-                name: waste-adminapi-cluster-ip
-                port:
-                  number: 80
-            path: /adminapi(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
-                name: waste-ui-cluster-ip
-                port:
-                  number: 80
-            path: /ui(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
                 name: waste-webapi-cluster-ip
                 port:
                   number: 80
             path: /webapi(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
-                name: waste-trackapi-cluster-ip
-                port:
-                  number: 80
-            path: /trackapi(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
-                name: waste-reportapi-cluster-ip
-                port:
-                  number: 80
-            path: /reportapi(/|$)(.*)
             pathType: Prefix
           - backend:
               service:
@@ -65,15 +53,15 @@ spec:
             pathType: Prefix
           - backend:
               service:
-                name: waste-lmsapi-cluster-ip
-                port:
-                  number: 80
-            path: /lmsapi(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
                 name: waste-authapi-cluster-ip
                 port:
                   number: 80
             path: /authapi(/|$)(.*)
+            pathType: Prefix
+          - backend:
+              service:
+                name: waste-websocket-cluster-ip
+                port:
+                  number: 80
+            path: /websocket(/|$)(.*)
             pathType: Prefix

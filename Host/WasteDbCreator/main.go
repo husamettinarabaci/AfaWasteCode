@@ -168,7 +168,7 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_status ( 
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
-		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
+		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_NONE + `',
 		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -384,6 +384,7 @@ func readerDbSet() {
 		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
+		Alarm varchar(50) NOT NULL DEFAULT '',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -413,8 +414,32 @@ func readerDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		UltTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		UltRange INT NOT NULL DEFAULT 0,
-		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
+		UltCount INT NOT NULL DEFAULT 0,
+		UltRange1  INT NOT NULL DEFAULT 0,
+        UltRange2  INT NOT NULL DEFAULT 0,
+        UltRange3  INT NOT NULL DEFAULT 0,
+        UltRange4  INT NOT NULL DEFAULT 0,
+        UltRange5  INT NOT NULL DEFAULT 0,
+        UltRange6  INT NOT NULL DEFAULT 0,
+        UltRange7  INT NOT NULL DEFAULT 0,
+        UltRange8  INT NOT NULL DEFAULT 0,
+        UltRange9  INT NOT NULL DEFAULT 0,
+        UltRange10 INT NOT NULL DEFAULT 0,
+        UltRange11 INT NOT NULL DEFAULT 0,
+        UltRange12 INT NOT NULL DEFAULT 0,
+        UltRange13 INT NOT NULL DEFAULT 0,
+        UltRange14 INT NOT NULL DEFAULT 0,
+        UltRange15 INT NOT NULL DEFAULT 0,
+        UltRange16 INT NOT NULL DEFAULT 0,
+        UltRange17 INT NOT NULL DEFAULT 0,
+        UltRange18 INT NOT NULL DEFAULT 0,
+        UltRange19 INT NOT NULL DEFAULT 0,
+        UltRange20 INT NOT NULL DEFAULT 0,
+        UltRange21 INT NOT NULL DEFAULT 0,
+        UltRange22 INT NOT NULL DEFAULT 0,
+        UltRange23 INT NOT NULL DEFAULT 0,
+        UltRange24 INT NOT NULL DEFAULT 0,
+		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -589,7 +614,7 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_status ( 
 		DataId serial PRIMARY KEY,
 		TagID INT NOT NULL DEFAULT -1,
-		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
+		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		TagStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_STATU_NONE + `',
 		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -803,6 +828,7 @@ func staticDbSet() {
 		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
 		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
+		Alarm varchar(50) NOT NULL DEFAULT '',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -832,8 +858,32 @@ func staticDbSet() {
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		UltTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		UltRange INT NOT NULL DEFAULT 0,
-		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTINER_FULLNESS_STATU_NONE + `',
+		UltCount INT NOT NULL DEFAULT 0,
+		UltRange1  INT NOT NULL DEFAULT 0,
+        UltRange2  INT NOT NULL DEFAULT 0,
+        UltRange3  INT NOT NULL DEFAULT 0,
+        UltRange4  INT NOT NULL DEFAULT 0,
+        UltRange5  INT NOT NULL DEFAULT 0,
+        UltRange6  INT NOT NULL DEFAULT 0,
+        UltRange7  INT NOT NULL DEFAULT 0,
+        UltRange8  INT NOT NULL DEFAULT 0,
+        UltRange9  INT NOT NULL DEFAULT 0,
+        UltRange10 INT NOT NULL DEFAULT 0,
+        UltRange11 INT NOT NULL DEFAULT 0,
+        UltRange12 INT NOT NULL DEFAULT 0,
+        UltRange13 INT NOT NULL DEFAULT 0,
+        UltRange14 INT NOT NULL DEFAULT 0,
+        UltRange15 INT NOT NULL DEFAULT 0,
+        UltRange16 INT NOT NULL DEFAULT 0,
+        UltRange17 INT NOT NULL DEFAULT 0,
+        UltRange18 INT NOT NULL DEFAULT 0,
+        UltRange19 INT NOT NULL DEFAULT 0,
+        UltRange20 INT NOT NULL DEFAULT 0,
+        UltRange21 INT NOT NULL DEFAULT 0,
+        UltRange22 INT NOT NULL DEFAULT 0,
+        UltRange23 INT NOT NULL DEFAULT 0,
+        UltRange24 INT NOT NULL DEFAULT 0,
+		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)

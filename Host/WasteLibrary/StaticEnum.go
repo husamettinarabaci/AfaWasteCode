@@ -81,11 +81,12 @@ const (
 )
 
 const (
-	CONTINER_FULLNESS_STATU_NONE  = "NONE"
-	CONTINER_FULLNESS_STATU_EMPTY = "EMPTY"
-	CONTINER_FULLNESS_STATU_HALF  = "HALF"
-	CONTINER_FULLNESS_STATU_FULL  = "FULL"
-	CONTINER_FULLNESS_STATU_ERROR = "ERROR"
+	CONTAINER_FULLNESS_STATU_NONE   = "NONE"
+	CONTAINER_FULLNESS_STATU_EMPTY  = "EMPTY"
+	CONTAINER_FULLNESS_STATU_LITTLE = "LITTLE"
+	CONTAINER_FULLNESS_STATU_MEDIUM = "MEDIUM"
+	CONTAINER_FULLNESS_STATU_FULL   = "FULL"
+	CONTAINER_FULLNESS_STATU_ERROR  = "ERROR"
 )
 
 const (
@@ -177,6 +178,7 @@ const (
 )
 
 const (
+	REDIS_CUSTOMER_CHANNEL        = "ch-customer-"
 	REDIS_SERIAL_RFID_DEVICE      = "serial-rfid-device"
 	REDIS_SERIAL_ULT_DEVICE       = "serial-ult-device"
 	REDIS_SERIAL_RECY_DEVICE      = "serial-recy-device"
@@ -211,6 +213,7 @@ const (
 	REDIS_TAG_STATUS              = "tag-status"
 	REDIS_TAG_GPSES               = "tag-gpses"
 	REDIS_TAG_READERS             = "tag-readers"
+	REDIS_CUSTOMER_TAGVIEWS       = "customer-tagviews"
 	REDIS_CUSTOMER_TAGS           = "customer-tags"
 	REDIS_CUSTOMER_RFID_DEVICES   = "customer-rfid-devices"
 	REDIS_CUSTOMER_RECY_DEVICES   = "customer-recy-devices"
@@ -226,6 +229,7 @@ const (
 	REDIS_USER_TOKEN              = "user-token"
 	REDIS_SERIAL_ALARM            = "serial-alarm"
 	REDIS_HASHKEY                 = "HASHKEY"
+	REDIS_CHANNELKEY              = "CHANNELKEY"
 	REDIS_SUBKEY                  = "SUBKEY"
 	REDIS_KEYVALUE                = "KEYVALUE"
 )

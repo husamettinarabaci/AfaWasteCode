@@ -19,6 +19,7 @@ type TagStatuType struct {
 //New
 func (res *TagStatuType) New() {
 	res.TagId = 0
+	res.ContainerStatu = CONTAINER_FULLNESS_STATU_NONE
 	res.TagStatu = TAG_STATU_NONE
 	res.ImageStatu = STATU_PASSIVE
 	res.CheckTime = GetTime()
@@ -57,27 +58,28 @@ func StringToTagStatuType(retStr string) TagStatuType {
 
 //SelectSQL
 func (res *TagStatuType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT TagStatu,ImageStatu,CheckTime
+	return fmt.Sprintf(`SELECT TagStatu,ImageStatu,CheckTime,ContainerStatu
 	 FROM public.tag_status
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
 func (res *TagStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_status (TagId,TagStatu,ImageStatu,CheckTime) 
-	  VALUES (%f,'%s','%s','%s') 
-	  RETURNING TagId;`, res.TagId, res.TagStatu, res.ImageStatu, res.CheckTime)
+	return fmt.Sprintf(`INSERT INTO public.tag_status (TagId,TagStatu,ImageStatu,CheckTime,ContainerStatu) 
+	  VALUES (%f,'%s','%s','%s','%s') 
+	  RETURNING TagId;`, res.TagId, res.TagStatu, res.ImageStatu, res.CheckTime, res.ContainerStatu)
 }
 
 //UpdateSQL
 func (res *TagStatuType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.tag_status 
-	  SET TagStatu='%s',ImageStatu='%s',CheckTime='%s'
+	  SET TagStatu='%s',ImageStatu='%s',CheckTime='%s',ContainerStatu='%s'
 	  WHERE TagId=%f  
 	  RETURNING TagId;`,
 		res.TagStatu,
 		res.ImageStatu,
 		res.CheckTime,
+		res.ContainerStatu,
 		res.TagId)
 }
 
@@ -86,6 +88,7 @@ func (res *TagStatuType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.TagStatu,
 		&res.ImageStatu,
-		&res.CheckTime)
+		&res.CheckTime,
+		&res.ContainerStatu)
 	return errDb
 }

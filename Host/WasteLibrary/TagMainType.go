@@ -70,7 +70,7 @@ func StringToTagMainType(retStr string) TagMainType {
 func (res *TagMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,DeviceId,Epc,Active,CreateTime
 	 FROM public.tag_mains
-	 WHERE TagId=%f ;`, res.TagId)
+	 WHERE TagId=%f AND Active=`+STATU_ACTIVE+` ;`, res.TagId)
 }
 
 //InsertSQL

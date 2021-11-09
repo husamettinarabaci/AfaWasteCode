@@ -90,6 +90,20 @@ func SaveRedisForStoreApi(hKey string, sKey string, kVal string) ResultType {
 	return resultVal
 }
 
+//PublishRedisForStoreApi
+func PublishRedisForStoreApi(channelKey string, dataType string, dataVal string) ResultType {
+	var resultVal ResultType
+	resultVal.Result = dataType
+	resultVal.Retval = dataVal
+	data := url.Values{
+		REDIS_CHANNELKEY: {channelKey},
+		REDIS_KEYVALUE:   {resultVal.ToString()},
+	}
+	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/publishkey", data)
+	LogStr(resultVal.ToString())
+	return resultVal
+}
+
 //DeleteRedisForStoreApi
 func DeleteRedisForStoreApi(hKey string, sKey string) ResultType {
 	var resultVal ResultType

@@ -20,7 +20,10 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
+	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/getkey", getkey)
+	http.HandleFunc("/publishkey", publishkey)
 	http.HandleFunc("/setkey", setkey)
 	http.HandleFunc("/deletekey", deletekey)
 	http.HandleFunc("/saveStaticDbMain", saveStaticDbMain)
@@ -263,6 +266,29 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/setkey", req.Form)
+	w.Write(resultVal.ToByte())
+
+}
+
+func publishkey(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+	var resultVal WasteLibrary.ResultType
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/publishkey", req.Form)
 	w.Write(resultVal.ToByte())
 
 }

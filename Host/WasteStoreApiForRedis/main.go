@@ -27,7 +27,7 @@ func initStart() {
 	WasteLibrary.LogStr("Successfully connected!")
 	redisDb = redis.NewClient(&redis.Options{
 		Addr:     "waste-redis-cluster-ip:6379",
-		Password: "",
+		Password: "Amca151200!Furkan",
 		DB:       0,
 	})
 
@@ -57,11 +57,13 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
+	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
+	http.HandleFunc("/publishkey", publishkey)
 	http.HandleFunc("/getkey", getkey)
 	http.HandleFunc("/setkey", setkey)
 	http.HandleFunc("/deletekey", deletekey)
 	http.ListenAndServe(":80", nil)
-	WasteLibrary.LogStr("Finished")
 }
 
 func getkey(w http.ResponseWriter, req *http.Request) {
@@ -94,6 +96,32 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 			setKeyRedis(hKey, sKey, resultVal.Retval.(string))
 		}
 	}
+	w.Write(resultVal.ToByte())
+
+}
+
+func publishkey(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	channelKey := req.FormValue(WasteLibrary.REDIS_CHANNELKEY)
+	kVal := req.FormValue(WasteLibrary.REDIS_KEYVALUE)
+	publishKeyRedis(channelKey, kVal)
 	w.Write(resultVal.ToByte())
 
 }
@@ -201,6 +229,18 @@ func setKeyRedis(hKey string, sKey string, kVal string) {
 		_, err = redisDb.HSet(ctx, sKey, kVal).Result()
 
 	}
+	switch {
+	case err == redis.Nil:
+		WasteLibrary.LogStr("Not Found")
+	case err != nil:
+		WasteLibrary.LogErr(err)
+	}
+}
+
+func publishKeyRedis(channelKey string, kVal string) {
+	var err error
+
+	_, err = redisDb.Publish(ctx, channelKey, kVal).Result()
 	switch {
 	case err == redis.Nil:
 		WasteLibrary.LogStr("Not Found")

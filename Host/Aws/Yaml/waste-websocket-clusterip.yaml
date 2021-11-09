@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: waste-lmsapi-cluster-ip
+  name: waste-websocket-cluster-ip
   namespace: waste-system
 spec:
   type: ClusterIP
   selector:
-    app: waste-lmsapi
+    app: waste-websocket
   ports:
     - protocol: TCP
       port: 80

@@ -49,6 +49,14 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-thermreader-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteThermReader...'; done"]
+      - name: wait-for-wastebatteryreader
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-batteryreader-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteBatteryReader...'; done"]
+      - name: wait-for-wastesensreader
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-sensreader-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteSensReader...'; done"]
       containers:
       - name: waste-enhc
         image: devafatek/wasteenhc:1.0

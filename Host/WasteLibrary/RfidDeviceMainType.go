@@ -62,7 +62,7 @@ func StringToRfidDeviceMainType(retStr string) RfidDeviceMainType {
 func (res *RfidDeviceMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime
 	 FROM public.rfid_main_devices
-	 WHERE DeviceId=%f ;`, res.DeviceId)
+	 WHERE DeviceId=%f AND Active=`+STATU_ACTIVE+` ;`, res.DeviceId)
 }
 
 //InsertSQL

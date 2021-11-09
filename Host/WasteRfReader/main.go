@@ -18,6 +18,8 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
+	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/reader", reader)
 	http.ListenAndServe(":80", nil)
 }
@@ -132,8 +134,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			//TO DO
-			//send data web socket tagreader
+
+			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_READER, currentData.TagReader.ToString())
 
 			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_GPS_DEVICES, currentHttpHeader.ToDeviceIdString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -196,8 +198,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			//TO DO
-			//send data web socket taggps
+
+			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_GPS, currentData.TagGps.ToString())
 
 		}
 

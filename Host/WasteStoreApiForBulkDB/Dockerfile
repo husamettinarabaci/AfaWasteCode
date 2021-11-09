@@ -33,5 +33,5 @@ COPY --from=builder /app/WasteStoreApiForBulkDB .
 
 VOLUME ${LOG_DATA}
 
-ENV DEBUG=1
+ENV DEBUG=0
 CMD ["./WasteStoreApiForBulkDB"]

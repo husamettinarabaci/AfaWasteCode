@@ -1,11 +1,11 @@
 package main
 
 import (
-	"math"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/devafatek/WasteLibrary"
@@ -30,6 +30,8 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
+	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/data", data)
 	http.HandleFunc("/update", update)
 	http.ListenAndServe(":80", nil)
@@ -61,56 +63,41 @@ func handleTcpRequest(conn net.Conn) {
 	}
 	var strBuf = string(buf)
 	WasteLibrary.LogStr(strBuf)
-	if reqLen == 128 {
-
+	if reqLen == 215 {
 		split := strings.Split(strBuf, "#")
-		if len(split) == 17 {
+		if len(split) == 32 {
 			appType := split[0]
 			imei := split[1]
 			therm := split[2]
 			battery := split[3]
-			var r1 float64 = 0
-			if split[6] != "*****" {
-				r1 = WasteLibrary.StringToFloat64(split[6])
-			}
-			var r2 float64 = 0
-			if split[7] != "*****" {
-				r2 = WasteLibrary.StringToFloat64(split[7])
-			}
-			var r3 float64 = 0
-			if split[8] != "*****" {
-				r3 = WasteLibrary.StringToFloat64(split[8])
-			}
-			var r4 float64 = 0
-			if split[9] != "*****" {
-				r4 = WasteLibrary.StringToFloat64(split[9])
-			}
-			var r5 float64 = 0
-			if split[10] != "*****" {
-				r5 = WasteLibrary.StringToFloat64(split[10])
-			}
-			var r6 float64 = 0
-			if split[11] != "*****" {
-				r6 = WasteLibrary.StringToFloat64(split[11])
-			}
-			var r7 float64 = 0
-			if split[12] != "*****" {
-				r7 = WasteLibrary.StringToFloat64(split[12])
-			}
-			var r8 float64 = 0
-			if split[13] != "*****" {
-				r8 = WasteLibrary.StringToFloat64(split[13])
-			}
-			var r9 float64 = 0
-			if split[14] != "*****" {
-				r9 = WasteLibrary.StringToFloat64(split[14])
-			}
-			var r10 float64 = 0
-			if split[15] != "*****" {
-				r10 = WasteLibrary.StringToFloat64(split[15])
-			}
-			imsi := split[16]
-			var ultrange = math.Mod((r1+r2+r3+r4+r5+r6+r7+r8+r9+r10)/10, 10)
+			//latitude := split[4]
+			//longitude := split[5]
+			imsi := split[6]
+			ultCount := split[7]
+			//ultRange1 := split[8]
+			//ultRange2 := split[9]
+			//ultRange3 := split[10]
+			//ultRange4 := split[11]
+			//ultRange5 := split[12]
+			//ultRange6 := split[13]
+			//ultRange7 := split[14]
+			//ultRange8 := split[15]
+			//ultRange9 := split[16]
+			//ultRange10 := split[17]
+			//ultRange11 := split[18]
+			//ultRange12 := split[19]
+			//ultRange13 := split[20]
+			//ultRange14 := split[21]
+			//ultRange15 := split[22]
+			//ultRange16 := split[23]
+			//ultRange17 := split[24]
+			//ultRange18 := split[25]
+			//ultRange19 := split[26]
+			//ultRange20 := split[27]
+			//ultRange21 := split[28]
+			//ultRange22 := split[29]
+			//ultRange23 := split[30]
+			//ultRange24 := split[31]
 
 			if appType == WasteLibrary.APPTYPE_ULT && imsi != "***************" {
 
@@ -135,18 +122,124 @@ func handleTcpRequest(conn net.Conn) {
 				currentDevice.DeviceStatu.StatusTime = WasteLibrary.GetTime()
 				currentDevice.DeviceStatu.AliveStatus = WasteLibrary.STATU_ACTIVE
 				currentDevice.DeviceStatu.AliveLastOkTime = WasteLibrary.GetTime()
-				if therm != "**" {
-					currentDevice.DeviceTherm.Therm = therm
-					currentDevice.DeviceTherm.ThermTime = WasteLibrary.GetTime()
+				currentDevice.DeviceTherm.Therm = therm
+				currentDevice.DeviceTherm.ThermTime = WasteLibrary.GetTime()
+				currentDevice.DeviceBattery.Battery = battery
+				currentDevice.DeviceBattery.BatteryTime = WasteLibrary.GetTime()
+
+				currentDevice.DeviceSens.UltCount = WasteLibrary.StringIdToFloat64(ultCount)
+				tempCount, _ := strconv.Atoi(ultCount)
+				currentDevice.DeviceSens.UltRange1 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+				tempCount--
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange2 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
 				}
-				if battery != "****" {
-					currentDevice.DeviceBattery.Battery = battery
-					currentDevice.DeviceBattery.BatteryTime = WasteLibrary.GetTime()
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange3 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
 				}
-				if ultrange != 0 {
-					currentDevice.DeviceSens.UltTime = WasteLibrary.GetTime()
-					currentDevice.DeviceSens.UltRange = ultrange
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange4 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
 				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange5 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange6 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange7 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange8 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange9 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange10 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange11 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange12 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange13 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange14 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange15 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange16 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange17 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange18 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange19 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange20 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange21 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange22 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange23 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+				if tempCount > 0 {
+					currentDevice.DeviceSens.UltRange24 = WasteLibrary.StringIdToFloat64(split[tempCount+7])
+					tempCount--
+				}
+
 				currentDevice.DeviceBase.Imei = imei
 				currentDevice.DeviceBase.Imsi = imsi
 

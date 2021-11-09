@@ -18,6 +18,9 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
+	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
+	http.HandleFunc("/logApp", logApp)
 	http.HandleFunc("/setCustomer", setCustomer)
 	http.HandleFunc("/getCustomer", getCustomer)
 	http.HandleFunc("/getCustomers", getCustomers)
@@ -27,8 +30,6 @@ func main() {
 	http.HandleFunc("/setConfig", setConfig)
 	http.HandleFunc("/getDevices", getDevices)
 	http.HandleFunc("/startSystem", startSystem)
-	http.HandleFunc("/openLog", openLog)
-	http.HandleFunc("/closeLog", closeLog)
 	http.ListenAndServe(":80", nil)
 }
 
@@ -245,7 +246,7 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func openLog(w http.ResponseWriter, req *http.Request) {
+func logApp(w http.ResponseWriter, req *http.Request) {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -259,31 +260,10 @@ func openLog(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	appTypes, _ := req.URL.Query()["appType"]
+	opTypes, _ := req.URL.Query()["opType"]
 	data := url.Values{}
-
-	resultVal = WasteLibrary.HttpPostReq("http://waste-logserver-cluster-ip/openLog", data)
-
-	w.Write(resultVal.ToByte())
-
-}
-
-func closeLog(w http.ResponseWriter, req *http.Request) {
-
-	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.RESULT_FAIL
-
-	if err := req.ParseForm(); err != nil {
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
-		w.Write(resultVal.ToByte())
-
-		WasteLibrary.LogErr(err)
-		return
-	}
-
-	data := url.Values{}
-
-	resultVal = WasteLibrary.HttpPostReq("http://waste-logserver-cluster-ip/closeLog", data)
+	resultVal = WasteLibrary.HttpPostReq("http://waste-"+appTypes[0]+"-cluster-ip/"+opTypes[0], data)
 
 	w.Write(resultVal.ToByte())
 
@@ -1011,7 +991,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		}
 
 		var customerDevices WasteLibrary.CustomerRfidDevicesType = WasteLibrary.StringToCustomerRfidDevicesType(resultVal.Retval.(string))
-		customerDevicesList.Devices = make(map[string]WasteLibrary.RfidDeviceType)
+		customerDevicesList.Devices = []WasteLibrary.RfidDeviceType{}
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
@@ -1020,7 +1000,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 				currentDevice.DeviceId = deviceId
 				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+					customerDevicesList.Devices = append(customerDevicesList.Devices, currentDevice)
 				}
 			}
 		}
@@ -1039,7 +1019,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		}
 
 		var customerDevices WasteLibrary.CustomerUltDevicesType = WasteLibrary.StringToCustomerUltDevicesType(resultVal.Retval.(string))
-		customerDevicesList.Devices = make(map[string]WasteLibrary.UltDeviceType)
+		customerDevicesList.Devices = []WasteLibrary.UltDeviceType{}
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
@@ -1048,7 +1028,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 				currentDevice.DeviceId = deviceId
 				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+					customerDevicesList.Devices = append(customerDevicesList.Devices, currentDevice)
 				}
 			}
 		}
@@ -1067,7 +1047,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		}
 
 		var customerDevices WasteLibrary.CustomerRecyDevicesType = WasteLibrary.StringToCustomerRecyDevicesType(resultVal.Retval.(string))
-		customerDevicesList.Devices = make(map[string]WasteLibrary.RecyDeviceType)
+		customerDevicesList.Devices = []WasteLibrary.RecyDeviceType{}
 		for _, deviceId := range customerDevices.Devices {
 
 			if deviceId != 0 {
@@ -1076,7 +1056,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 				currentDevice.DeviceId = deviceId
 				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+					customerDevicesList.Devices = append(customerDevicesList.Devices, currentDevice)
 				}
 			}
 		}
