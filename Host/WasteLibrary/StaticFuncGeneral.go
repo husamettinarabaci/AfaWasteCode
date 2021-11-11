@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"time"
@@ -75,4 +76,25 @@ func StringToFloat64(sVal string) float64 {
 func GetMD5Hash(text string) string {
 	hash := md5.Sum([]byte(text))
 	return hex.EncodeToString(hash[:])
+}
+
+//DistanceInKmBetweenEarthCoordinates
+func DistanceInKmBetweenEarthCoordinates(lat1 float64, lon1 float64, lat2 float64, lon2 float64) float64 {
+	var earthRadiusKm float64 = 6371
+
+	var dLat = DegreesToRadians(lat2 - lat1)
+	var dLon = DegreesToRadians(lon2 - lon1)
+
+	lat1 = DegreesToRadians(lat1)
+	lat2 = DegreesToRadians(lat2)
+
+	var a = math.Sin(dLat/2)*math.Sin(dLat/2) +
+		math.Sin(dLon/2)*math.Sin(dLon/2)*math.Cos(lat1)*math.Cos(lat2)
+	var c = 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+	return earthRadiusKm * c * 1000
+}
+
+//DegreesToRadians
+func DegreesToRadians(degrees float64) float64 {
+	return degrees * math.Pi / 180
 }

@@ -48,6 +48,7 @@ func setCustomerList() {
 						WasteLibrary.LogStr("Add Customer : " + WasteLibrary.Float64IdToString(customerId))
 						currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)] = customerId
 						go customerProc(customerId)
+						time.Sleep(60 * time.Second)
 					}
 				}
 			}
@@ -104,7 +105,7 @@ func customerProc(customerId float64) {
 					if resultVal.Result == WasteLibrary.RESULT_OK {
 						var arventoId string = plateDevice[currentDevice.DeviceDetail.PlateNo]
 						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
-							if currentDevice.DeviceGps.Latitude != 0 && currentDevice.DeviceGps.Longitude != 0 {
+							if currentDeviceLocation.Latitude != 0 && currentDeviceLocation.Longitude != 0 {
 								currentDevice.DeviceGps.Latitude = currentDeviceLocation.Latitude
 								currentDevice.DeviceGps.Longitude = currentDeviceLocation.Longitude
 								currentDevice.DeviceGps.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
@@ -116,22 +117,18 @@ func customerProc(customerId float64) {
 									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Longitude) + " - " +
 									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Speed))
 								var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
+								newCurrentHttpHeader.New()
+								newCurrentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
+								newCurrentHttpHeader.DeviceId = currentDevice.DeviceId
+								newCurrentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
 								newCurrentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_GPS_DEVICE
 								data := url.Values{
 									WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},
-									WasteLibrary.HTTP_DATA:   {currentDevice.DeviceGps.ToString()},
+									WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
 								}
-								//TO DO
-								//send data gps reader
-								resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
 
-								if resultVal.Result == WasteLibrary.RESULT_OK {
-									resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_GPS_DEVICES, currentDevice.DeviceGps.ToIdString(), currentDevice.DeviceGps.ToString())
-								}
-								if currentDevice.DeviceGps.Speed == 0 {
-									//TO DO
-									//Speed Op
-								}
+								WasteLibrary.LogStr("Send Gps Reader" + currentDevice.ToString())
+								resultVal = WasteLibrary.HttpPostReq("http://waste-gpsreader-cluster-ip/reader", data)
 							}
 						}
 
@@ -196,7 +193,7 @@ func getLocation(currentCustomerConfig WasteLibrary.CustomerConfigType) WasteLib
 			if speed != "" {
 				currrentArventoDeviceGpsType.Speed = WasteLibrary.StringToFloat64(speed)
 			} else {
-				currrentArventoDeviceGpsType.Speed = 0
+				currrentArventoDeviceGpsType.Speed = -1
 			}
 			currrentArventoDeviceGpsType.GpsTime = gpstime
 			deviceLocation.ArventoDeviceGpsList[deviceID] = currrentArventoDeviceGpsType

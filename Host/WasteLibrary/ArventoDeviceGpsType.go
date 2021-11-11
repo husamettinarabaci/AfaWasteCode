@@ -16,7 +16,7 @@ type ArventoDeviceGpsType struct {
 func (res *ArventoDeviceGpsType) New() {
 	res.Latitude = 0
 	res.Longitude = 0
-	res.Speed = 0
+	res.Speed = -1
 	res.GpsTime = GetTime()
 
 }

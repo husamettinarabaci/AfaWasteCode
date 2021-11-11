@@ -319,6 +319,20 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_workhour_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		WorkHour1Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		WorkHour1Add INT NOT NULL DEFAULT 0,
+		WorkHour2Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		WorkHour2Add INT NOT NULL DEFAULT 0,
+		WorkHour3Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		WorkHour3Add INT NOT NULL DEFAULT 0,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_main_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
@@ -759,6 +773,20 @@ func staticDbSet() {
 		PlateNo varchar(50) NOT NULL DEFAULT '',
         DriverName varchar(50) NOT NULL DEFAULT '',
         DriverSurName varchar(50) NOT NULL DEFAULT '',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_workhour_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		WorkHour1Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		WorkHour1Add  INT NOT NULL DEFAULT 0,
+		WorkHour2Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		WorkHour2Add  INT NOT NULL DEFAULT 0,
+		WorkHour3Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		WorkHour3Add  INT NOT NULL DEFAULT 0,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)

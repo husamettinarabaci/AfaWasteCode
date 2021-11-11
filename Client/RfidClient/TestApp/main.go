@@ -2,26 +2,27 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net/url"
+	"time"
 
 	"github.com/devafatek/WasteLibrary"
-	"go get github.com/go-redis/redis/v8"
 )
 
 func main() {
 
-	var readerType string = "REDIS"
-	var readerType2 string = "PUBSUB"
+	var readerType string = "DEVICE"
+	var readerType2 string = "SET_RFIDDEVICE_WEB"
 	var currentHeader WasteLibrary.HttpClientHeaderType
 	currentHeader.New()
-	var urlVal string = "afatek.aws.afatek.com.tr"
+	var urlVal string = "bodrum.aws.afatek.com.tr"
 	var path1 string = "webapi"
 	var path2 string = "getLink"
 	data := url.Values{}
 	var deviceId float64 = 14
 	var customerId float64 = 1
 	var userId float64 = 2
-	var token = "MSMkMmEkMTAkc0lLT1NxWHdMRTE5ZnlMQ0VuWkN1LjdQSVZ1eDZLMjl0VC90NW5XMkNYRU93SzhRd094Mm0="
+	var token = "MiMkMmEkMTAkdzJsRVgyUXBsdDU4MUNTTGRYWW5mZVZDVUd6TGpmbFMuUzZUQmhRRkx1bTdXRlQ3Yk9Ed1M="
 
 	if readerType == "DEVICE" {
 		if readerType2 == "GET_RFIDDEVICE_WEB" {
@@ -46,6 +47,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_RECYDEVICE_WEB" {
 			//OK
 			path1 = "webapi"
@@ -68,6 +70,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_ULTDEVICE_WEB" {
 			//OK
 			path1 = "webapi"
@@ -90,6 +93,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_RFIDDEVICE_AFATEK" {
 			//OK
 			path1 = "afatekapi"
@@ -114,7 +118,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_RECYDEVICE_AFATEK" {
 			//OK
 			path1 = "afatekapi"
@@ -139,7 +143,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_ULTDEVICE_AFATEK" {
 			//OK
 			path1 = "afatekapi"
@@ -164,9 +168,9 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_RFIDDEVICE_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "setDevice"
 			//currentHeader - HttpClientHeaderType *
@@ -180,11 +184,12 @@ func main() {
 			//HTTP_DATA : currentData
 			//
 			//Retval : RfidDeviceType
+
 			currentHeader.Token = token
 			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
-			currentData.DeviceId = 57
+			currentData.DeviceId = 48
 			currentData.DeviceMain.DeviceId = currentData.DeviceId
 			currentData.DeviceMain.CustomerId = 3
 
@@ -192,6 +197,8 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
+			time.Sleep(5 * time.Second)
 
 		} else if readerType2 == "SET_RECYDEVICE_AFATEK" {
 			//TO DO
@@ -219,7 +226,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_ULTDEVICE_AFATEK" {
 			//TO DO
 			//check
@@ -246,6 +253,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_RFIDDEVICE_WEB" {
 			//TO DO
 			//check
@@ -266,13 +274,15 @@ func main() {
 			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
-			currentData.DeviceId = deviceId
+			currentData.DeviceId = 48
+			currentData.DeviceDetail.PlateNo = "07 AAV 297"
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-
+			sendData(readerType, urlVal, path1, path2, data)
+			time.Sleep(5 * time.Second)
 		} else if readerType2 == "SET_RECYDEVICE_WEB" {
 			//TO DO
 			//check
@@ -299,7 +309,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_ULTDEVICE_WEB" {
 			//TO DO
 			//check
@@ -326,6 +336,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_RFIDDEVICES_WEB" {
 			//TO DO
 			//check
@@ -342,6 +353,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_RECYDEVICES_WEB" {
 			//TO DO
 			//check
@@ -357,6 +369,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_ULTDEVICES_WEB" {
 			//TO DO
 			//check
@@ -372,6 +385,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_RFIDDEVICES_AFATEK" {
 			//TO DO
 			//check
@@ -391,6 +405,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_RECYDEVICES_AFATEK" {
 			//TO DO
 			//check
@@ -410,6 +425,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_ULTDEVICES_AFATEK" {
 			//TO DO
 			//check
@@ -429,6 +445,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else {
 
 		}
@@ -440,6 +457,7 @@ func main() {
 			path2 = "getCustomer"
 
 			data = url.Values{}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_CUSTOMER_AFATEK" {
 			//OK
 			path1 = "afatekapi"
@@ -463,6 +481,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_CUSTOMER_AFATEK" {
 			//OK
 			path1 = "afatekapi"
@@ -483,7 +502,7 @@ func main() {
 
 			var currentData WasteLibrary.CustomerType
 			currentData.New()
-			currentData.CustomerId = 3 // customerId
+			currentData.CustomerId = 0 //3 // customerId
 			currentData.CustomerName = "BODRUM"
 			currentData.CustomerLink = "bodrum.aws.afatek.com.tr"
 			currentData.RfIdApp = WasteLibrary.STATU_ACTIVE
@@ -496,6 +515,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_CUSTOMERS_AFATEK" {
 			//OK
 			path1 = "afatekapi"
@@ -510,6 +530,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else {
 
 		}
@@ -536,6 +557,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_USER_WEB" {
 			//OK
 			path1 = "webapi"
@@ -563,6 +585,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "LOGIN_AUTH" {
 			//OK
 			path1 = "authapi"
@@ -581,6 +604,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "REGISTER_AUTH" {
 			//OK
 			path1 = "authapi"
@@ -599,7 +623,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_USERS_WEB" {
 			//OK
 			path1 = "webapi"
@@ -613,6 +637,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else {
 
 		}
@@ -639,6 +664,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_LOCALCONFIG_WEB" {
 			//OK
 			path1 = "webapi"
@@ -661,6 +687,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_CUSTOMERCONFIG_AFATEK" {
 			//OK
 			path1 = "afatekapi"
@@ -688,6 +715,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_ADMINCONFIG_WEB" {
 			//OK
 			path1 = "webapi"
@@ -701,6 +729,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GET_LOCALCONFIG_WEB" {
 			//OK
 			path1 = "webapi"
@@ -714,6 +743,7 @@ func main() {
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else {
 
 		}
@@ -744,6 +774,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "READER_RFID" {
 			//OK
 			urlVal = urlVal + "/data"
@@ -762,6 +793,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "THERM_RFID" {
 			//OK
 			urlVal = urlVal + "/data"
@@ -779,6 +811,7 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
+			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "GPS_RFID" {
 			//OK
 			urlVal = urlVal + "/data"
@@ -797,23 +830,19 @@ func main() {
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 			}
-		} else {
-
-		}
-	} else if readerType == "REDIS" {
-		if readerType2 == "PUBSUB" {
-			redisClient = redis.NewClient(&redis.Options{
-				Addr: "afatek.aws.afatek.com.tr/redis:6379",
-			})
+			sendData(readerType, urlVal, path1, path2, data)
 		} else {
 
 		}
 	} else {
-		var userType WasteLibrary.UserType
-		userType.New()
-		fmt.Println(userType)
-		return
+
+		distance := distanceInKmBetweenEarthCoordinates(39.983073, 32.814551, 39.981752, 32.769141)
+		fmt.Println(distance)
 	}
+
+}
+
+func sendData(readerType string, urlVal string, path1 string, path2 string, data url.Values) {
 	var urlFull string = "http://" + urlVal + "/" + path1 + "/" + path2
 	if readerType == "LISTENER" {
 		urlFull = "http://" + urlVal
@@ -821,4 +850,23 @@ func main() {
 	fmt.Println(urlFull)
 	resultVal := WasteLibrary.HttpPostReq(urlFull, data)
 	fmt.Println(resultVal)
+}
+
+func distanceInKmBetweenEarthCoordinates(lat1 float64, lon1 float64, lat2 float64, lon2 float64) float64 {
+	var earthRadiusKm float64 = 6371
+
+	var dLat = degreesToRadians(lat2 - lat1)
+	var dLon = degreesToRadians(lon2 - lon1)
+
+	lat1 = degreesToRadians(lat1)
+	lat2 = degreesToRadians(lat2)
+
+	var a = math.Sin(dLat/2)*math.Sin(dLat/2) +
+		math.Sin(dLon/2)*math.Sin(dLon/2)*math.Cos(lat1)*math.Cos(lat2)
+	var c = 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+	return earthRadiusKm * c * 1000
+}
+
+func degreesToRadians(degrees float64) float64 {
+	return degrees * math.Pi / 180
 }

@@ -48,6 +48,7 @@ var upgrader = websocket.Upgrader{}
 
 func socket(w http.ResponseWriter, req *http.Request) {
 
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	if WasteLibrary.AllowCors {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -67,6 +68,7 @@ func socket(w http.ResponseWriter, req *http.Request) {
 
 	c, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
+		WasteLibrary.LogErr(err)
 		return
 	}
 	defer c.Close()
@@ -76,10 +78,12 @@ func socket(w http.ResponseWriter, req *http.Request) {
 	for {
 		msg, err := subscriber.ReceiveMessage(ctx)
 		if err != nil {
+			WasteLibrary.LogErr(err)
 			break
 		}
 		err = c.WriteMessage(1, []byte(msg.Payload))
 		if err != nil {
+			WasteLibrary.LogErr(err)
 			break
 		}
 	}

@@ -284,6 +284,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
+	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RFID || currentHttpHeader.AppType == WasteLibrary.APPTYPE_RECY {
 		resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
 		if resultVal.Result != WasteLibrary.RESULT_OK {

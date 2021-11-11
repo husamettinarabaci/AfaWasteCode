@@ -67,7 +67,7 @@ func StringToUltDeviceMainType(retStr string) UltDeviceMainType {
 func (res *UltDeviceMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,OldLatitude,OldLongitude
 	 FROM public.ult_main_devices
-	 WHERE DeviceId=%f AND Active=`+STATU_ACTIVE+` ;`, res.DeviceId)
+	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL

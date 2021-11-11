@@ -71,7 +71,7 @@ func (res *CustomerType) SelectSQL() string {
 	Active,
 	CreateTime 
 	FROM public.customers 
-	WHERE CustomerId=%f AND Active=`+STATU_ACTIVE+` ;`, res.CustomerId)
+	WHERE CustomerId=%f  ;`, res.CustomerId)
 }
 
 //InsertSQL

@@ -224,6 +224,26 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		currentData.DeviceId = float64(deviceId)
 		resultVal.Retval = currentData.ToIdString()
 
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_WORKHOUR_DEVICE {
+
+		var currentData WasteLibrary.RfidDeviceWorkHourType = WasteLibrary.StringToRfidDeviceWorkHourType(req.FormValue(WasteLibrary.HTTP_DATA))
+		WasteLibrary.LogStr("Data : " + currentData.ToString())
+
+		execSQL = currentData.InsertSQL()
+		WasteLibrary.LogStr(execSQL)
+
+		var deviceId int = 0
+		errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.DeviceId = float64(deviceId)
+		resultVal.Retval = currentData.ToIdString()
+
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_MAIN_DEVICE {
 		var currentData WasteLibrary.RecyDeviceMainType = WasteLibrary.StringToRecyDeviceMainType(req.FormValue(WasteLibrary.HTTP_DATA))
 		WasteLibrary.LogStr("Data : " + currentData.ToString())

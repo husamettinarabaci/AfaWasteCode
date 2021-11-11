@@ -510,9 +510,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_BASE_DEVICE
 		var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-		currentData.DeviceBase.DeviceId = currentData.DeviceId
 		var currentOldData WasteLibrary.RfidDeviceType
 		currentOldData.DeviceId = currentData.DeviceId
 		currentOldData.GetAll()
@@ -521,9 +519,12 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 			w.Write(resultVal.ToByte())
-
 			return
 		}
+
+		//DeviceBase
+		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_BASE_DEVICE
+		currentData.DeviceBase.DeviceId = currentData.DeviceId
 		data := url.Values{
 			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 			WasteLibrary.HTTP_DATA:   {currentData.DeviceBase.ToString()},
@@ -559,10 +560,47 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
+
+		//DeviceDetail
+		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_DETAIL_DEVICE
+		currentData.DeviceDetail.DeviceId = currentData.DeviceId
+		data = url.Values{
+			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.HTTP_DATA:   {currentData.DeviceDetail.ToString()},
+		}
+		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		currentData.DeviceDetail.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+		data = url.Values{
+			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+			WasteLibrary.HTTP_DATA:   {currentData.DeviceDetail.ToString()},
+		}
+		resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+		var currentDeviceDetail WasteLibrary.RfidDeviceDetailType = WasteLibrary.StringToRfidDeviceDetailType(resultVal.Retval.(string))
+		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_DETAIL_DEVICES, currentDeviceDetail.ToIdString(), currentDeviceDetail.ToString())
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_BASE_DEVICE
 		var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-		currentData.DeviceBase.DeviceId = currentData.DeviceId
 		var currentOldData WasteLibrary.UltDeviceType
 		currentOldData.DeviceId = currentData.DeviceId
 		currentOldData.GetAll()
@@ -574,6 +612,10 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
+
+		//DeviceBase
+		currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_BASE_DEVICE
+		currentData.DeviceBase.DeviceId = currentData.DeviceId
 		data := url.Values{
 			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 			WasteLibrary.HTTP_DATA:   {currentData.DeviceBase.ToString()},
@@ -610,9 +652,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RECY_BASE_DEVICE
 		var currentData WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-		currentData.DeviceBase.DeviceId = currentData.DeviceId
 		var currentOldData WasteLibrary.RecyDeviceType
 		currentOldData.DeviceId = currentData.DeviceId
 		currentOldData.GetAll()
@@ -624,6 +664,10 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
+
+		//DeviceBase
+		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RECY_BASE_DEVICE
+		currentData.DeviceBase.DeviceId = currentData.DeviceId
 		data := url.Values{
 			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 			WasteLibrary.HTTP_DATA:   {currentData.DeviceBase.ToString()},

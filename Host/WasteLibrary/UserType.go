@@ -75,7 +75,7 @@ func (res *UserType) SelectSQL() string {
 			Active,
 			CreateTime 
 			 FROM public.users 
-			 WHERE UserId=%f AND Active=`+STATU_ACTIVE+` ;`, res.UserId)
+			 WHERE UserId=%f  ;`, res.UserId)
 }
 
 //InsertSQL

@@ -55,102 +55,110 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_SENS_DEVICE
 			currentData.DeviceSens.UltTime = currentHttpHeader.Time
 
-			var oldSensData WasteLibrary.UltDeviceSensType
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_ULT_SENS_DEVICES, currentData.ToIdString())
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
-				w.Write(resultVal.ToByte())
-
-				return
-			}
-			oldSensData = WasteLibrary.StringToUltDeviceSensType(resultVal.Retval.(string))
+			var oldData WasteLibrary.UltDeviceType
+			oldData.DeviceId = currentData.DeviceId
+			oldData.GetAll()
 
 			if currentData.DeviceSens.UltCount < 24 {
-				currentData.DeviceSens.UltRange24 = oldSensData.UltRange24
+				currentData.DeviceSens.UltRange24 = oldData.DeviceSens.UltRange24
 			}
 			if currentData.DeviceSens.UltCount < 23 {
-				currentData.DeviceSens.UltRange23 = oldSensData.UltRange23
+				currentData.DeviceSens.UltRange23 = oldData.DeviceSens.UltRange23
 			}
 			if currentData.DeviceSens.UltCount < 22 {
-				currentData.DeviceSens.UltRange22 = oldSensData.UltRange22
+				currentData.DeviceSens.UltRange22 = oldData.DeviceSens.UltRange22
 			}
 			if currentData.DeviceSens.UltCount < 21 {
-				currentData.DeviceSens.UltRange21 = oldSensData.UltRange21
+				currentData.DeviceSens.UltRange21 = oldData.DeviceSens.UltRange21
 			}
 			if currentData.DeviceSens.UltCount < 20 {
-				currentData.DeviceSens.UltRange20 = oldSensData.UltRange20
+				currentData.DeviceSens.UltRange20 = oldData.DeviceSens.UltRange20
 			}
 			if currentData.DeviceSens.UltCount < 19 {
-				currentData.DeviceSens.UltRange19 = oldSensData.UltRange19
+				currentData.DeviceSens.UltRange19 = oldData.DeviceSens.UltRange19
 			}
 			if currentData.DeviceSens.UltCount < 18 {
-				currentData.DeviceSens.UltRange18 = oldSensData.UltRange18
+				currentData.DeviceSens.UltRange18 = oldData.DeviceSens.UltRange18
 			}
 			if currentData.DeviceSens.UltCount < 17 {
-				currentData.DeviceSens.UltRange17 = oldSensData.UltRange17
+				currentData.DeviceSens.UltRange17 = oldData.DeviceSens.UltRange17
 			}
 			if currentData.DeviceSens.UltCount < 16 {
-				currentData.DeviceSens.UltRange16 = oldSensData.UltRange16
+				currentData.DeviceSens.UltRange16 = oldData.DeviceSens.UltRange16
 			}
 			if currentData.DeviceSens.UltCount < 15 {
-				currentData.DeviceSens.UltRange15 = oldSensData.UltRange15
+				currentData.DeviceSens.UltRange15 = oldData.DeviceSens.UltRange15
 			}
 			if currentData.DeviceSens.UltCount < 14 {
-				currentData.DeviceSens.UltRange14 = oldSensData.UltRange14
+				currentData.DeviceSens.UltRange14 = oldData.DeviceSens.UltRange14
 			}
 			if currentData.DeviceSens.UltCount < 13 {
-				currentData.DeviceSens.UltRange13 = oldSensData.UltRange13
+				currentData.DeviceSens.UltRange13 = oldData.DeviceSens.UltRange13
 			}
 			if currentData.DeviceSens.UltCount < 12 {
-				currentData.DeviceSens.UltRange12 = oldSensData.UltRange12
+				currentData.DeviceSens.UltRange12 = oldData.DeviceSens.UltRange12
 			}
 			if currentData.DeviceSens.UltCount < 11 {
-				currentData.DeviceSens.UltRange11 = oldSensData.UltRange11
+				currentData.DeviceSens.UltRange11 = oldData.DeviceSens.UltRange11
 			}
 			if currentData.DeviceSens.UltCount < 10 {
-				currentData.DeviceSens.UltRange10 = oldSensData.UltRange10
+				currentData.DeviceSens.UltRange10 = oldData.DeviceSens.UltRange10
 			}
 			if currentData.DeviceSens.UltCount < 9 {
-				currentData.DeviceSens.UltRange9 = oldSensData.UltRange9
+				currentData.DeviceSens.UltRange9 = oldData.DeviceSens.UltRange9
 			}
 			if currentData.DeviceSens.UltCount < 8 {
-				currentData.DeviceSens.UltRange8 = oldSensData.UltRange8
+				currentData.DeviceSens.UltRange8 = oldData.DeviceSens.UltRange8
 			}
 			if currentData.DeviceSens.UltCount < 7 {
-				currentData.DeviceSens.UltRange7 = oldSensData.UltRange7
+				currentData.DeviceSens.UltRange7 = oldData.DeviceSens.UltRange7
 			}
 			if currentData.DeviceSens.UltCount < 6 {
-				currentData.DeviceSens.UltRange6 = oldSensData.UltRange6
+				currentData.DeviceSens.UltRange6 = oldData.DeviceSens.UltRange6
 			}
 			if currentData.DeviceSens.UltCount < 5 {
-				currentData.DeviceSens.UltRange5 = oldSensData.UltRange5
+				currentData.DeviceSens.UltRange5 = oldData.DeviceSens.UltRange5
 			}
 			if currentData.DeviceSens.UltCount < 4 {
-				currentData.DeviceSens.UltRange4 = oldSensData.UltRange4
+				currentData.DeviceSens.UltRange4 = oldData.DeviceSens.UltRange4
 			}
 			if currentData.DeviceSens.UltCount < 3 {
-				currentData.DeviceSens.UltRange3 = oldSensData.UltRange3
+				currentData.DeviceSens.UltRange3 = oldData.DeviceSens.UltRange3
 			}
 			if currentData.DeviceSens.UltCount < 2 {
-				currentData.DeviceSens.UltRange2 = oldSensData.UltRange2
+				currentData.DeviceSens.UltRange2 = oldData.DeviceSens.UltRange2
 			}
+
+			ultCm := currentData.DeviceSens.UltRange1 * 173 / 10000
+
+			var step1 float64 = 50
+			var step2 float64 = 100
+			var step3 float64 = 150
 
 			//TO DO
 			//calculate ult status by container type
-			ultCm := currentData.DeviceSens.UltRange1 * 173 / 10000
-			if ultCm < 50 {
+			if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_NONE {
+				step1 = 50
+				step2 = 100
+				step3 = 150
+			} else {
+				step1 = 50
+				step2 = 100
+				step3 = 150
+			}
+
+			if ultCm < step1 {
 				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
 			}
-			if ultCm >= 50 && ultCm < 100 {
+			if ultCm >= step1 && ultCm < step2 {
 				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_MEDIUM
 			}
 
-			if ultCm >= 100 && ultCm < 150 {
+			if ultCm >= step2 && ultCm < step3 {
 				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_LITTLE
 			}
 
-			if ultCm >= 150 {
+			if ultCm >= step3 {
 				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
 			}
 

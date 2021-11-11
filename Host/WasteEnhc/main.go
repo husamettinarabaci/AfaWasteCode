@@ -49,18 +49,26 @@ func data(w http.ResponseWriter, req *http.Request) {
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RFID_DEVICE, currentHttpHeader.DeviceNo)
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
-			resultVal = createDevice(currentHttpHeader, req.FormValue(WasteLibrary.HTTP_DATA))
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
-				w.Write(resultVal.ToByte())
+			if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_STATUS {
+				resultVal = createDevice(currentHttpHeader, req.FormValue(WasteLibrary.HTTP_DATA))
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+					w.Write(resultVal.ToByte())
 
-				return
-			}
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RFID_DEVICE, currentHttpHeader.DeviceNo)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
+					return
+				}
+				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RFID_DEVICE, currentHttpHeader.DeviceNo)
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+					w.Write(resultVal.ToByte())
+
+					return
+				}
+			} else {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_IGNORE_FIRST_DATA
 				w.Write(resultVal.ToByte())
 
 				return
@@ -103,18 +111,26 @@ func data(w http.ResponseWriter, req *http.Request) {
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RECY_DEVICE, currentHttpHeader.DeviceNo)
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
-			resultVal = createDevice(currentHttpHeader, req.FormValue(WasteLibrary.HTTP_DATA))
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
-				w.Write(resultVal.ToByte())
+			if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_STATUS {
+				resultVal = createDevice(currentHttpHeader, req.FormValue(WasteLibrary.HTTP_DATA))
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
+					w.Write(resultVal.ToByte())
 
-				return
-			}
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RECY_DEVICE, currentHttpHeader.DeviceNo)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
+					return
+				}
+				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_RECY_DEVICE, currentHttpHeader.DeviceNo)
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+					w.Write(resultVal.ToByte())
+
+					return
+				}
+			} else {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_IGNORE_FIRST_DATA
 				w.Write(resultVal.ToByte())
 
 				return

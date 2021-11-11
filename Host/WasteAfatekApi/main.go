@@ -57,6 +57,7 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 	} else {
 		WasteLibrary.LogStr("AfatekApi Start System Add Customer AFATEK")
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType
+		currentHttpHeader.New()
 		currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
 		currentHttpHeader.DataType = WasteLibrary.DATATYPE_CUSTOMER
 		var currentData WasteLibrary.CustomerType

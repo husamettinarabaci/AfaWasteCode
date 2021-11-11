@@ -62,7 +62,7 @@ func StringToRecyDeviceMainType(retStr string) RecyDeviceMainType {
 func (res *RecyDeviceMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime
 	 FROM public.recy_main_devices
-	 WHERE DeviceId=%f AND Active=`+STATU_ACTIVE+` ;`, res.DeviceId)
+	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL

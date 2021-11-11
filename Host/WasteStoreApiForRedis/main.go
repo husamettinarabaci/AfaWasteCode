@@ -121,7 +121,7 @@ func publishkey(w http.ResponseWriter, req *http.Request) {
 	}
 	channelKey := req.FormValue(WasteLibrary.REDIS_CHANNELKEY)
 	kVal := req.FormValue(WasteLibrary.REDIS_KEYVALUE)
-	publishKeyRedis(channelKey, kVal)
+	resultVal = publishKeyRedis(channelKey, kVal)
 	w.Write(resultVal.ToByte())
 
 }
@@ -237,7 +237,9 @@ func setKeyRedis(hKey string, sKey string, kVal string) {
 	}
 }
 
-func publishKeyRedis(channelKey string, kVal string) {
+func publishKeyRedis(channelKey string, kVal string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var err error
 
 	_, err = redisDb.Publish(ctx, channelKey, kVal).Result()
@@ -247,6 +249,13 @@ func publishKeyRedis(channelKey string, kVal string) {
 	case err != nil:
 		WasteLibrary.LogErr(err)
 	}
+
+	if err != nil {
+
+	} else {
+		resultVal.Result = WasteLibrary.RESULT_OK
+	}
+	return resultVal
 }
 
 func deleteKeyRedis(hKey string, sKey string) {

@@ -7,15 +7,16 @@ import (
 
 //RfidDeviceType
 type RfidDeviceType struct {
-	DeviceId      float64
-	DeviceMain    RfidDeviceMainType
-	DeviceBase    RfidDeviceBaseType
-	DeviceStatu   RfidDeviceStatuType
-	DeviceGps     RfidDeviceGpsType
-	DeviceAlarm   RfidDeviceAlarmType
-	DeviceTherm   RfidDeviceThermType
-	DeviceVersion RfidDeviceVersionType
-	DeviceDetail  RfidDeviceDetailType
+	DeviceId       float64
+	DeviceMain     RfidDeviceMainType
+	DeviceBase     RfidDeviceBaseType
+	DeviceStatu    RfidDeviceStatuType
+	DeviceGps      RfidDeviceGpsType
+	DeviceAlarm    RfidDeviceAlarmType
+	DeviceTherm    RfidDeviceThermType
+	DeviceVersion  RfidDeviceVersionType
+	DeviceDetail   RfidDeviceDetailType
+	DeviceWorkHour RfidDeviceWorkHourType
 }
 
 //New
@@ -29,6 +30,7 @@ func (res *RfidDeviceType) New() {
 	res.DeviceAlarm.New()
 	res.DeviceStatu.New()
 	res.DeviceDetail.New()
+	res.DeviceWorkHour.New()
 }
 
 //GetAll
@@ -79,6 +81,12 @@ func (res *RfidDeviceType) GetAll() ResultType {
 	resultVal = GetRedisForStoreApi(REDIS_RFID_DETAIL_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceDetail = StringToRfidDeviceDetailType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+	resultVal = GetRedisForStoreApi(REDIS_RFID_WORKHOUR_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.DeviceWorkHour = StringToRfidDeviceWorkHourType(resultVal.Retval.(string))
 	} else {
 		return resultVal
 	}
