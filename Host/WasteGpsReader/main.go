@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"net/url"
-	"time"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -11,6 +10,7 @@ import (
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
+	go WasteLibrary.InitLog()
 }
 func main() {
 
@@ -19,8 +19,6 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
-	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
-	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/reader", reader)
 	http.ListenAndServe(":80", nil)
 }
@@ -118,86 +116,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					var customerConfig WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
 					if customerConfig.TruckStopTrace == WasteLibrary.STATU_ACTIVE {
 
-						resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, currentHttpHeader.ToCustomerIdString())
-						if resultVal.Result == WasteLibrary.RESULT_OK {
-
-							var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
-							for _, tagId := range customerTags.Tags {
-
-								if tagId != 0 {
-
-									var currentTag WasteLibrary.TagType
-									currentTag.New()
-									currentTag.TagId = tagId
-									resultVal = currentTag.GetAll()
-									if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
-										second := time.Since(WasteLibrary.StringToTime(currentTag.TagReader.ReadTime)).Seconds()
-										if second < 1*60*60 {
-											var distance float64 = WasteLibrary.DistanceInKmBetweenEarthCoordinates(currentTag.TagGps.Latitude, currentTag.TagGps.Longitude, currentData.DeviceGps.Latitude, currentData.DeviceGps.Longitude)
-											if distance < 50 {
-
-												currentTag.TagStatu.TagId = currentTag.TagId
-												currentTag.TagStatu.CheckTime = WasteLibrary.GetTime()
-												currentTag.TagStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
-												currentTag.TagStatu.TagStatu = WasteLibrary.TAG_STATU_STOP
-												currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_STATU
-												data = url.Values{
-													WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-													WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-												}
-												resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-												if resultVal.Result != WasteLibrary.RESULT_OK {
-													resultVal.Result = WasteLibrary.RESULT_FAIL
-													resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-													w.Write(resultVal.ToByte())
-
-													return
-												}
-
-												currentTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-												data = url.Values{
-													WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-													WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-												}
-												resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-												if resultVal.Result != WasteLibrary.RESULT_OK {
-													resultVal.Result = WasteLibrary.RESULT_FAIL
-													resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-													w.Write(resultVal.ToByte())
-
-													return
-												}
-												currentTag.TagStatu = WasteLibrary.StringToTagStatuType(resultVal.Retval.(string))
-												resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_STATUS, currentTag.TagStatu.ToIdString(), currentTag.TagStatu.ToString())
-												if resultVal.Result != WasteLibrary.RESULT_OK {
-													resultVal.Result = WasteLibrary.RESULT_FAIL
-													resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-													w.Write(resultVal.ToByte())
-
-													return
-												}
-												data = url.Values{
-													WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-													WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-												}
-												resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
-												if resultVal.Result != WasteLibrary.RESULT_OK {
-													resultVal.Result = WasteLibrary.RESULT_FAIL
-													resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-													w.Write(resultVal.ToByte())
-
-													return
-												}
-
-												WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_STATU, currentTag.TagStatu.ToString())
-
-											}
-										}
-									}
-								}
-							}
-
+						data = url.Values{
+							WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+							WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 						}
+						WasteLibrary.LogStr("Send Gps Stop Reader" + currentData.ToString())
+						//resultVal = WasteLibrary.HttpPostReq("http://waste-gpsstopreader-cluster-ip/reader", data)
 
 					}
 				}

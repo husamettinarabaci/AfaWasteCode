@@ -1,8 +1,13 @@
 
+*tagread status change
+
 *Detail Add Report Value
-*Remove GetStaticDb Before SaveStaticDb
+*Remove Get*Db Before Save*Db
 
 *All set device set tag set customer send pubsub
 *wastestoreapiforstaticdb no rows in result set error
 *Test Summary tag
+*Test summary tagview
 *Test Speed 0
+*resultVal.Result = WasteLibrary.RESULT_FAIL log without Debug mod
+*check GpsStopReader distance

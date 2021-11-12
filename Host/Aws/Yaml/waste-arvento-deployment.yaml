@@ -21,6 +21,10 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
+      - name: wait-for-wastegpsreader
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-gpsreader-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteGpsReader...'; done"]
       - name: wait-for-wastestoreapi
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]

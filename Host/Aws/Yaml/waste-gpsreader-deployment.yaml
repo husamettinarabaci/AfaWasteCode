@@ -7,7 +7,7 @@ metadata:
     app: waste-gpsreader
     apptype: waste-coreapp
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: waste-gpsreader
@@ -21,6 +21,10 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
+      - name: wait-for-wastegpsstopreader
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-gpsstopreader-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteGpsStopReader...'; done"]
       - name: wait-for-wastestoreapi
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]

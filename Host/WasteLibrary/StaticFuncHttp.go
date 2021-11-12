@@ -73,40 +73,6 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 
 }
 
-//OpenLogHandler
-func OpenLogHandler(w http.ResponseWriter, req *http.Request) {
-
-	if AllowCors {
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
-	}
-	var resultVal ResultType
-	resultVal.Result = RESULT_OK
-
-	Debug = true
-	w.Write(resultVal.ToByte())
-
-}
-
-//CloseLogHandler
-func CloseLogHandler(w http.ResponseWriter, req *http.Request) {
-
-	if AllowCors {
-
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
-	}
-	var resultVal ResultType
-	resultVal.Result = RESULT_OK
-
-	Debug = false
-	w.Write(resultVal.ToByte())
-
-}
-
 //HttpPostReq
 func HttpPostReq(url string, data url.Values) ResultType {
 	var resultVal ResultType

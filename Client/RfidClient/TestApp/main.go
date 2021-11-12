@@ -12,17 +12,17 @@ import (
 func main() {
 
 	var readerType string = "DEVICE"
-	var readerType2 string = "SET_RFIDDEVICE_WEB"
+	var readerType2 string = "SET_RFIDDEVICE_AFATEK"
 	var currentHeader WasteLibrary.HttpClientHeaderType
 	currentHeader.New()
-	var urlVal string = "bodrum.aws.afatek.com.tr"
+	var urlVal string = "afatek.aws.afatek.com.tr"
 	var path1 string = "webapi"
 	var path2 string = "getLink"
 	data := url.Values{}
 	var deviceId float64 = 14
 	var customerId float64 = 1
 	var userId float64 = 2
-	var token = "MiMkMmEkMTAkdzJsRVgyUXBsdDU4MUNTTGRYWW5mZVZDVUd6TGpmbFMuUzZUQmhRRkx1bTdXRlQ3Yk9Ed1M="
+	var token = "MSMkMmEkMTAkQ2dLaTdITlpHbEdIeThvS1JnNFRKT1JmdVY0OTRVQi5EdkFycUs3NG0vbkREVmNMUUR4MC4="
 
 	if readerType == "DEVICE" {
 		if readerType2 == "GET_RFIDDEVICE_WEB" {
@@ -189,7 +189,7 @@ func main() {
 			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
-			currentData.DeviceId = 48
+			currentData.DeviceId = 51
 			currentData.DeviceMain.DeviceId = currentData.DeviceId
 			currentData.DeviceMain.CustomerId = 3
 

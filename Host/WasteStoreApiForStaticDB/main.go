@@ -23,7 +23,7 @@ var err error
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
-
+	go WasteLibrary.InitLog()
 }
 
 func main() {
@@ -46,8 +46,6 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
-	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
-	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/saveStaticDbMain", saveStaticDbMain)
 	http.HandleFunc("/getStaticDbMain", getStaticDbMain)
 	http.ListenAndServe(":80", nil)
@@ -76,9 +74,6 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
-
-	WasteLibrary.LogStr("AfatekApi Receive Header : " + req.FormValue(WasteLibrary.HTTP_HEADER))
-	WasteLibrary.LogStr("AfatekApi Receive Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 
 	var execSQL string = ""
 	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_MAIN_DEVICE {

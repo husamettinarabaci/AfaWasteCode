@@ -17,6 +17,7 @@ var currentCustomerList WasteLibrary.CustomersType
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
+	go WasteLibrary.InitLog()
 	redisDb = redis.NewClient(&redis.Options{
 		Addr:     "waste-redis-cluster-ip:6379",
 		Password: "Amca151200!Furkan",
@@ -38,8 +39,6 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
-	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
-	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/socket", socket)
 	http.ListenAndServe(":80", nil)
 }

@@ -10,6 +10,7 @@ import (
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
+	go WasteLibrary.InitLog()
 }
 func main() {
 
@@ -18,8 +19,6 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
-	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
-	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/data", data)
 	http.ListenAndServe(":80", nil)
 }
@@ -167,8 +166,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 			serviceClusterIp = "waste-thermreader-cluster-ip"
 			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_CAM {
-			serviceClusterIp = "waste-camreader-cluster-ip"
-			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
+			//serviceClusterIp = "waste-camreader-cluster-ip"
+			//resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}

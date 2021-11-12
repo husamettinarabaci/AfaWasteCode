@@ -182,6 +182,7 @@ const (
 
 const (
 	REDIS_CUSTOMER_CHANNEL        = "ch-customer-"
+	REDIS_APP_LOG_CHANNEL         = "ch-app-log"
 	REDIS_SERIAL_RFID_DEVICE      = "serial-rfid-device"
 	REDIS_SERIAL_ULT_DEVICE       = "serial-ult-device"
 	REDIS_SERIAL_RECY_DEVICE      = "serial-recy-device"

@@ -45,48 +45,56 @@ func (res *RfidDeviceType) GetAll() ResultType {
 	resultVal = GetRedisForStoreApi(REDIS_RFID_BASE_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceBase = StringToRfidDeviceBaseType(resultVal.Retval.(string))
+		res.DeviceBase.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_RFID_GPS_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceGps = StringToRfidDeviceGpsType(resultVal.Retval.(string))
+		res.DeviceGps.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_RFID_THERM_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceTherm = StringToRfidDeviceThermType(resultVal.Retval.(string))
+		res.DeviceTherm.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_RFID_VERSION_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceVersion = StringToRfidDeviceVersionType(resultVal.Retval.(string))
+		res.DeviceVersion.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_RFID_ALARM_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceAlarm = StringToRfidDeviceAlarmType(resultVal.Retval.(string))
+		res.DeviceAlarm.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_RFID_STATU_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceStatu = StringToRfidDeviceStatuType(resultVal.Retval.(string))
+		res.DeviceStatu.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_RFID_DETAIL_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceDetail = StringToRfidDeviceDetailType(resultVal.Retval.(string))
+		res.DeviceDetail.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_RFID_WORKHOUR_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.DeviceWorkHour = StringToRfidDeviceWorkHourType(resultVal.Retval.(string))
+		res.DeviceWorkHour.NewData = false
 	} else {
 		return resultVal
 	}

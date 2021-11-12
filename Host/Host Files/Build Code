@@ -6,6 +6,7 @@ cd WasteWebSocket && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteCamReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhc && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteGpsReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteGpsStopReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteSensReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteBatteryReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteListener && go get "github.com/devafatek/WasteLibrary" && cd .. &&
@@ -29,6 +30,7 @@ cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
 sudo docker build -f WasteCamReader/Dockerfile -t devafatek/wastecamreader:1.0 . && docker push devafatek/wastecamreader:1.0 &&
 sudo docker build -f WasteEnhc/Dockerfile -t devafatek/wasteenhc:1.0 . && docker push devafatek/wasteenhc:1.0 &&
 sudo docker build -f WasteGpsReader/Dockerfile -t devafatek/wastegpsreader:1.0 . && docker push devafatek/wastegpsreader:1.0 &&
+sudo docker build -f WasteGpsStopReader/Dockerfile -t devafatek/wastegpsstopreader:1.0 . && docker push devafatek/wastegpsstopreader:1.0 &&
 sudo docker build -f WasteSensReader/Dockerfile -t devafatek/wastesensreader:1.0 . && docker push devafatek/wastesensreader:1.0 &&
 sudo docker build -f WasteBatteryReader/Dockerfile -t devafatek/wastebatteryreader:1.0 . && docker push devafatek/wastebatteryreader:1.0 &&
 sudo docker build -f WasteListener/Dockerfile -t devafatek/wastelistener:1.0 . && docker push devafatek/wastelistener:1.0 &&
@@ -57,6 +59,9 @@ kubectl create -f Aws/Yaml/waste-logserver-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-dbcreator-pod.yaml
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
+kubectl create -f Aws/Yaml/waste-redis-deployment.yaml
+
+cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-afatekapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-enhcapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-webapi-deployment.yaml &&
@@ -64,6 +69,7 @@ kubectl create -f Aws/Yaml/waste-websocket-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-camreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-enhc-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-gpsreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-gpsstopreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-sensreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-batteryreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-rfreader-deployment.yaml &&
@@ -78,8 +84,9 @@ kubectl create -f Aws/Yaml/waste-authapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-thermreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfortagview-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfortag-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-arvento-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-redis-deployment.yaml
+kubectl create -f Aws/Yaml/waste-arvento-deployment.yaml
+
+
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-listener-deployment.yaml
@@ -88,4 +95,4 @@ cd WasteSystemUpdater && go get "github.com/devafatek/WasteLibrary" && cd ..
 sudo docker build -f WasteSystemUpdater/Dockerfile -t devafatek/wastesystemupdater:1.0 . && docker push devafatek/wastesystemupdater:1.0 
 kubectl create -f Aws/Yaml/waste-systemupdater-pod.yaml 
 
-#afatek.aws.afatek.com.tr/afatekapi/logApp?opType=openLog&appType=listener
+#afatek.aws.afatek.com.tr/afatekapi/logApp?opType=open&appType=wastelistener

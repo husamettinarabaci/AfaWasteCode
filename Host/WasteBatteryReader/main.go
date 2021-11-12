@@ -10,6 +10,7 @@ import (
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
+	go WasteLibrary.InitLog()
 }
 func main() {
 
@@ -18,8 +19,6 @@ func main() {
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
-	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
-	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.HandleFunc("/reader", reader)
 	http.ListenAndServe(":80", nil)
 }
@@ -73,19 +72,19 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			}
 
 			currentData.DeviceBattery.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceBattery.ToString()},
-			}
-			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-				w.Write(resultVal.ToByte())
-
-				return
-			}
-			currentData.DeviceBattery = WasteLibrary.StringToUltDeviceBatteryType(resultVal.Retval.(string))
+			// data = url.Values{
+			// WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+			// WasteLibrary.HTTP_DATA:   {currentData.DeviceBattery.ToString()},
+			// }
+			// resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
+			// if resultVal.Result != WasteLibrary.RESULT_OK {
+			// resultVal.Result = WasteLibrary.RESULT_FAIL
+			// resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
+			// w.Write(resultVal.ToByte())
+			//
+			// return
+			// }
+			// currentData.DeviceBattery = WasteLibrary.StringToUltDeviceBatteryType(resultVal.Retval.(string))
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_BATTERY_DEVICES, currentData.DeviceBattery.ToIdString(), currentData.DeviceBattery.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL

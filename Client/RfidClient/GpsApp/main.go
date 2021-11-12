@@ -58,8 +58,6 @@ func main() {
 	wg.Add(1)
 
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
-	http.HandleFunc("/openLog", WasteLibrary.OpenLogHandler)
-	http.HandleFunc("/closeLog", WasteLibrary.CloseLogHandler)
 	http.ListenAndServe(":10003", nil)
 
 	wg.Wait()

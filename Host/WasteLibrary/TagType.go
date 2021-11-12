@@ -37,24 +37,28 @@ func (res *TagType) GetAll() ResultType {
 	resultVal = GetRedisForStoreApi(REDIS_TAG_BASES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.TagBase = StringToTagBaseType(resultVal.Retval.(string))
+		res.TagBase.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_TAG_GPSES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.TagGps = StringToTagGpsType(resultVal.Retval.(string))
+		res.TagGps.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_TAG_STATUS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.TagStatu = StringToTagStatuType(resultVal.Retval.(string))
+		res.TagStatu.NewData = false
 	} else {
 		return resultVal
 	}
 	resultVal = GetRedisForStoreApi(REDIS_TAG_READERS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.TagReader = StringToTagReaderType(resultVal.Retval.(string))
+		res.TagReader.NewData = false
 	} else {
 		return resultVal
 	}

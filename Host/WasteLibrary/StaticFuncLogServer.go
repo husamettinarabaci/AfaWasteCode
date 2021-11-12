@@ -1,11 +1,14 @@
 package WasteLibrary
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/url"
 	"runtime"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 //LogErr
@@ -68,4 +71,32 @@ func GetFuncName(skipFrames int) runtime.Frame {
 	}
 
 	return frame
+}
+
+//InitLog
+func InitLog() {
+	var ctxLog = context.Background()
+	var redisDbLog *redis.Client
+	redisDbLog = redis.NewClient(&redis.Options{
+		Addr:     "waste-redis-cluster-ip:6379",
+		Password: "Amca151200!Furkan",
+		DB:       0,
+	})
+
+	pong, err := redisDbLog.Ping(ctxLog).Result()
+	LogErr(err)
+	LogStr(pong)
+	subscriber := redisDbLog.Subscribe(ctxLog, REDIS_APP_LOG_CHANNEL)
+
+	for {
+		msg, err := subscriber.ReceiveMessage(ctxLog)
+		if err != nil {
+			continue
+		}
+		resultVal := StringToResultType(msg.Payload)
+		if resultVal.Result == Container {
+			Debug = resultVal.Retval.(string) == "open"
+			LogStr("LogStatu : " + resultVal.Retval.(string) + " - Container : " + Container)
+		}
+	}
 }
