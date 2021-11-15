@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/GpsApp
+module afatek.com.tr/devafatek/rfid/GpsApp
 
 go 1.17
 

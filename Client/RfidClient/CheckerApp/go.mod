@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/CheckerApp
+module afatek.com.tr/devafatek/rfid/CheckerApp
 
 go 1.17
 

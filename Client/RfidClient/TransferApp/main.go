@@ -17,7 +17,6 @@ import (
 	"github.com/devafatek/WasteLibrary"
 )
 
-var applicationType = WasteLibrary.APPTYPE_RFID
 var serialNumber = "0"
 var currentUser string
 var opInterval time.Duration = 5 * 60
@@ -162,7 +161,6 @@ func sendDataToServer(readerType string, sendData string, dataTime string, repea
 	var resultVal WasteLibrary.ResultType
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.AppType = applicationType
 	currentHttpHeader.DeviceNo = serialNumber
 	currentHttpHeader.ReaderType = readerType
 	currentHttpHeader.Time = dataTime

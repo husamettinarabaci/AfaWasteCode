@@ -151,7 +151,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var serviceClusterIp string = ""
-	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RFID {
+	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 
 		if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_RF {
 			serviceClusterIp = "waste-rfreader-cluster-ip"
@@ -171,7 +171,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}
-	} else if currentHttpHeader.AppType == WasteLibrary.APPTYPE_ULT {
+	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 		if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_ULT {
 
 			//serviceClusterIp = "waste-gpsreader-cluster-ip"
@@ -192,7 +192,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}
-	} else if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RECY {
+	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		resultVal.Result = WasteLibrary.RESULT_OK
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -233,7 +233,6 @@ func createDevice(currentHttpHeader WasteLibrary.HttpClientHeaderType, currentDa
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var createHttpHeader WasteLibrary.HttpClientHeaderType
 	createHttpHeader.New()
-	createHttpHeader.AppType = WasteLibrary.APPTYPE_LISTENER
 	createHttpHeader.DeviceType = currentHttpHeader.DeviceType
 	createHttpHeader.DeviceNo = currentHttpHeader.DeviceNo
 	data := url.Values{

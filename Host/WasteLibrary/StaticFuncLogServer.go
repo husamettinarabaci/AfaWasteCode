@@ -25,13 +25,6 @@ func LogStr(value string) {
 	}
 }
 
-//LogDebug
-func LogDebug(value string) {
-	if Debug {
-		SendLogServer(LOGGER_DEBUG, value)
-	}
-}
-
 //SendLogServer
 func SendLogServer(logType string, logVal string) {
 	if Container == "" {
@@ -95,8 +88,8 @@ func InitLog() {
 		}
 		resultVal := StringToResultType(msg.Payload)
 		if resultVal.Result == Container {
-			Debug = resultVal.Retval.(string) == "open"
 			LogStr("LogStatu : " + resultVal.Retval.(string) + " - Container : " + Container)
+			Debug = resultVal.Retval.(string) == "open"
 		}
 	}
 }

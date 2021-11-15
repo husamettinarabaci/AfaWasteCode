@@ -105,18 +105,7 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					}
 
 					currentTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-					data = url.Values{
-						WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-						WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-					}
-					resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-					if resultVal.Result != WasteLibrary.RESULT_OK {
-						resultVal.Result = WasteLibrary.RESULT_FAIL
-						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-						WasteLibrary.LogStr(resultVal.ToString())
-						continue
-					}
-					currentTag.TagStatu = WasteLibrary.StringToTagStatuType(resultVal.Retval.(string))
+
 					resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_STATUS, currentTag.TagStatu.ToIdString(), currentTag.TagStatu.ToString())
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL

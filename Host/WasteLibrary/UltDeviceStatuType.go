@@ -12,6 +12,8 @@ type UltDeviceStatuType struct {
 	StatusTime      string
 	AliveStatus     string
 	AliveLastOkTime string
+	UltStatus       string
+	ContainerStatu  string
 	NewData         bool
 }
 
@@ -19,6 +21,8 @@ type UltDeviceStatuType struct {
 func (res *UltDeviceStatuType) New() {
 	res.DeviceId = 0
 	res.StatusTime = GetTime()
+	res.ContainerStatu = CONTAINER_FULLNESS_STATU_NONE
+	res.UltStatus = ULT_STATU_NONE
 	res.AliveStatus = STATU_PASSIVE
 	res.AliveLastOkTime = GetTime()
 	res.NewData = false
@@ -55,17 +59,17 @@ func StringToUltDeviceStatuType(retStr string) UltDeviceStatuType {
 
 //SelectSQL
 func (res *UltDeviceStatuType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime
+	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus
 	 FROM public.ult_statu_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_statu_devices (DeviceId,StatusTime,AliveStatus,AliveLastOkTime) 
-	  VALUES (%f,'%s','%s','%s') 
+	return fmt.Sprintf(`INSERT INTO public.ult_statu_devices (DeviceId,StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus) 
+	  VALUES (%f,'%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId,
-		res.StatusTime, res.AliveStatus, res.AliveLastOkTime)
+		res.StatusTime, res.AliveStatus, res.AliveLastOkTime, res.ContainerStatu, res.UltStatus)
 }
 
 //UpdateSQL
@@ -76,10 +80,10 @@ func (res *UltDeviceStatuType) UpdateSQL() string {
 	}
 
 	return fmt.Sprintf(`UPDATE public.ult_statu_devices 
-	  SET StatusTime='%s',AliveStatus='%s'`+execSqlExt+`
+	  SET StatusTime='%s',AliveStatus='%s',ContainerStatu='%s',UltStatus='%s'`+execSqlExt+`
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
-		res.StatusTime, res.AliveStatus, res.DeviceId)
+		res.StatusTime, res.AliveStatus, res.ContainerStatu, res.UltStatus, res.DeviceId)
 }
 
 //SelectWithDb
@@ -87,6 +91,8 @@ func (res *UltDeviceStatuType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.StatusTime,
 		&res.AliveStatus,
-		&res.AliveLastOkTime)
+		&res.AliveLastOkTime,
+		&res.ContainerStatu,
+		&res.UltStatus)
 	return errDb
 }

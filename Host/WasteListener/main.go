@@ -65,7 +65,7 @@ func handleTcpRequest(conn net.Conn) {
 	if reqLen == 215 {
 		split := strings.Split(strBuf, "#")
 		if len(split) == 32 {
-			appType := split[0]
+			deviceType := split[0]
 			imei := split[1]
 			therm := split[2]
 			battery := split[3]
@@ -98,7 +98,7 @@ func handleTcpRequest(conn net.Conn) {
 			//ultRange23 := split[30]
 			//ultRange24 := split[31]
 
-			if appType == WasteLibrary.APPTYPE_ULT && imsi != "***************" {
+			if deviceType == WasteLibrary.DEVICETYPE_ULT && imsi != "***************" {
 
 				resultVal := WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_ALARM, imsi)
 				if resultVal.Result == WasteLibrary.RESULT_OK {
@@ -111,7 +111,6 @@ func handleTcpRequest(conn net.Conn) {
 
 				var currentHttpHeader WasteLibrary.HttpClientHeaderType
 				currentHttpHeader.New()
-				currentHttpHeader.AppType = appType
 				currentHttpHeader.ReaderType = WasteLibrary.READERTYPE_ULT
 				currentHttpHeader.DeviceNo = imsi
 				currentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
@@ -285,7 +284,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
-	if currentHttpHeader.AppType == WasteLibrary.APPTYPE_RFID || currentHttpHeader.AppType == WasteLibrary.APPTYPE_RECY {
+	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID || currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL

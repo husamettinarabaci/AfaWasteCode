@@ -57,7 +57,6 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogStr("AfatekApi Start System Add Customer AFATEK")
 		var currentHttpHeader WasteLibrary.HttpClientHeaderType
 		currentHttpHeader.New()
-		currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
 		currentHttpHeader.DataType = WasteLibrary.DATATYPE_CUSTOMER
 		var currentData WasteLibrary.CustomerType
 		currentData.CustomerName = "AFATEK"
@@ -83,19 +82,6 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 		}
 
 		currentData.CustomerId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-		// data = url.Values{
-		// WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-		// WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-		// }
-		// resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-		// if resultVal.Result != WasteLibrary.RESULT_OK {
-		// resultVal.Result = WasteLibrary.RESULT_FAIL
-		// resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-		// w.Write(resultVal.ToByte())
-		//
-		// return
-		// }
-		// var currentCustomer WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(resultVal.Retval.(string))
 
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, currentData.ToIdString(), currentData.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -310,7 +296,6 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
 	currentHttpHeader.DataType = WasteLibrary.DATATYPE_CUSTOMER
 	var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.HTTP_DATA))
 	var oldCustomer WasteLibrary.CustomerType
@@ -344,19 +329,6 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 		isCustomerExist = true
 	}
 	currentData.CustomerId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-	// data = url.Values{
-	// WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-	// WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-	// }
-	// resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-	// if resultVal.Result != WasteLibrary.RESULT_OK {
-	// resultVal.Result = WasteLibrary.RESULT_FAIL
-	// resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-	// w.Write(resultVal.ToByte())
-	//
-	// return
-	// }
-	// var currentCustomer WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(resultVal.Retval.(string))
 
 	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, currentData.ToIdString(), currentData.ToString())
 	if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -514,6 +486,8 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
+
+	resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.ToIdString(), WasteLibrary.DATATYPE_CUSTOMER, currentData.ToString())
 
 	w.Write(resultVal.ToByte())
 
@@ -682,7 +656,6 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	currentHttpHeader.AppType = WasteLibrary.APPTYPE_AFATEK
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_MAIN_DEVICE
 		var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -703,19 +676,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 		currentData.DeviceMain.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-		// data = url.Values{
-		// WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-		// WasteLibrary.HTTP_DATA:   {currentData.DeviceMain.ToString()},
-		// }
-		// resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-		// if resultVal.Result != WasteLibrary.RESULT_OK {
-		// resultVal.Result = WasteLibrary.RESULT_FAIL
-		// resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-		// w.Write(resultVal.ToByte())
-		//
-		// return
-		// }
-		// var currentDeviceMain WasteLibrary.RfidDeviceMainType = WasteLibrary.StringToRfidDeviceMainType(resultVal.Retval.(string))
+
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_MAIN_DEVICES, currentData.DeviceMain.ToIdString(), currentData.DeviceMain.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -766,6 +727,9 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
+
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_MAIN_DEVICE, currentData.DeviceMain.ToString())
+
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 		currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_MAIN_DEVICE
 		var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -786,19 +750,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 		currentData.DeviceMain.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-		// data = url.Values{
-		// WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-		// WasteLibrary.HTTP_DATA:   {currentData.DeviceMain.ToString()},
-		// }
-		// resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-		// if resultVal.Result != WasteLibrary.RESULT_OK {
-		// resultVal.Result = WasteLibrary.RESULT_FAIL
-		// resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-		// w.Write(resultVal.ToByte())
-		//
-		// return
-		// }
-		// var currentDeviceMain WasteLibrary.UltDeviceMainType = WasteLibrary.StringToUltDeviceMainType(resultVal.Retval.(string))
+
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_MAIN_DEVICES, currentData.DeviceMain.ToIdString(), currentData.DeviceMain.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -849,6 +801,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_MAIN_DEVICE, currentData.DeviceMain.ToString())
+
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RECY_MAIN_DEVICE
 		var currentData WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -869,19 +823,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 		currentData.DeviceMain.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-		// data = url.Values{
-		// WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-		// WasteLibrary.HTTP_DATA:   {currentData.DeviceMain.ToString()},
-		// }
-		// resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-		// if resultVal.Result != WasteLibrary.RESULT_OK {
-		// resultVal.Result = WasteLibrary.RESULT_FAIL
-		// resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-		// w.Write(resultVal.ToByte())
-		//
-		// return
-		// }
-		// var currentDeviceMain WasteLibrary.RecyDeviceMainType = WasteLibrary.StringToRecyDeviceMainType(resultVal.Retval.(string))
+
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RECY_MAIN_DEVICES, currentData.DeviceMain.ToIdString(), currentData.DeviceMain.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -932,6 +874,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RECY_MAIN_DEVICE, currentData.DeviceMain.ToString())
+
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND

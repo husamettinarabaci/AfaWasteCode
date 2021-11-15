@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/UpdaterApp
+module afatek.com.tr/devafatek/rfid/UpdaterApp
 
 go 1.17
 

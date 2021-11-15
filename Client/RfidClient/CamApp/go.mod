@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/CamApp
+module afatek.com.tr/devafatek/rfid/CamApp
 
 go 1.17
 

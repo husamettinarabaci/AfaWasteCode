@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/ThermApp
+module afatek.com.tr/devafatek/rfid/ThermApp
 
 go 1.17
 

@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/ReaderApp
+module afatek.com.tr/devafatek/rfid/ReaderApp
 
 go 1.17
 

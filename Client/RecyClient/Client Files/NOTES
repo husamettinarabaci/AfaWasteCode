@@ -1,0 +1,45 @@
+/boot/config.txt
+dtoverlay=pi3-disable-bt
+enable_uart=1
+
+/etc/udev/rules.d/40_umts.rules
+SUBSYSTEMS=="usb", ACTION=="add", ATTRS{idVendor}=="19d2", NAME="3gnet0"
+
+/etc/dhcpcd.conf
+interface eth0
+ static ip_address=10.0.0.1/24
+
+/etc/wpa_supplicant/wpa_supplicant.conf
+network={
+	ssid="ssid"
+	psk="password"
+}
+
+sudo cp /usr/share/zoneinfo/Europe/Istanbul /etc/localtime
+sudo dpkg-reconfigure tzdata
+sudo apt update
+sudo apt install ffmpeg
+sudo apt install gpio
+
+sudo chmod +x ~/getSerialNumber.sh
+
+/etc/systemd/timesyncd.conf
+[Time]
+NTP=0.tr.pool.ntp.org 1.tr.pool.ntp.org 2.tr.pool.ntp.org 3.tr.pool.ntp.org
+FallbackNTP=0.tr.pool.ntp.org 1.tr.pool.ntp.org 2.tr.pool.ntp.org 3.tr.pool.ntp.org 
+
+mkdir /home/pi/WAIT_CAM
+mkdir /home/pi/WAIT_MOTOR
+mkdir /home/pi/WAIT_WEB
+mkdir /home/pi/WAIT_RF
+mkdir /home/pi/WAIT_STATUS
+mkdir /home/pi/WAIT_THERM
+mkdir /home/pi/DOWNLOADED_APP
+
+
+##Build Code
+env GOOS=linux GOARCH=arm GOARM=5 go build
+
+#ReaderApp
+#WebApp
+

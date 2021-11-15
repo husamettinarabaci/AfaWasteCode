@@ -1,0 +1,6 @@
+#!/bin/bash
+sudo reboot
+
+#PROP
+#/home/pi
+#chmod +s

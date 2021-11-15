@@ -77,12 +77,12 @@ func socket(w http.ResponseWriter, req *http.Request) {
 	for {
 		msg, err := subscriber.ReceiveMessage(ctx)
 		if err != nil {
-			WasteLibrary.LogErr(err)
+			//WasteLibrary.LogErr(err)
 			break
 		}
 		err = c.WriteMessage(1, []byte(msg.Payload))
 		if err != nil {
-			WasteLibrary.LogErr(err)
+			//WasteLibrary.LogErr(err)
 			break
 		}
 	}

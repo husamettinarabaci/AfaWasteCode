@@ -91,7 +91,7 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 	WasteLibrary.LogStr("RetValByRedis : " + resultVal.ToString())
 	if resultVal.Result == WasteLibrary.RESULT_FAIL {
 		resultVal = getKeyDb(hKey, sKey)
-		if resultVal.Result != WasteLibrary.RESULT_FAIL {
+		if resultVal.Result == WasteLibrary.RESULT_OK {
 			setKeyRedis(hKey, sKey, resultVal.Retval.(string))
 		}
 	}
@@ -150,10 +150,10 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
 	resultVal = getKeyDb(hKey, sKey)
 	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
-	if resultVal.Result == WasteLibrary.RESULT_FAIL {
-		resultVal = insertKeyDb(hKey, sKey, kVal)
-	} else {
+	if resultVal.Result == WasteLibrary.RESULT_OK {
 		resultVal = updateKeyDb(hKey, sKey, kVal)
+	} else {
+		resultVal = insertKeyDb(hKey, sKey, kVal)
 	}
 	setKeyRedis(hKey, sKey, kVal)
 
@@ -282,12 +282,12 @@ func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 	FROM public.redisdata WHERE HashKey='%s' AND SubKey='%s';`, hKey, sKey)
 	rows, errSel := sumDb.Query(selectSQL)
 	WasteLibrary.LogErr(errSel)
-	var kVal string = WasteLibrary.RESULT_NOT
+	var kVal string = WasteLibrary.RESULT_FAIL
 	for rows.Next() {
 		rows.Scan(&kVal)
 	}
 
-	if kVal == WasteLibrary.RESULT_NOT {
+	if kVal == WasteLibrary.RESULT_FAIL {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Retval = kVal

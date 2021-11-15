@@ -35,8 +35,8 @@ type UltDeviceSensType struct {
 	UltRange22 float64
 	UltRange23 float64
 	UltRange24 float64
-	UltStatus  string
-	NewData    bool
+
+	NewData bool
 }
 
 //New
@@ -68,7 +68,7 @@ func (res *UltDeviceSensType) New() {
 	res.UltRange22 = 0
 	res.UltRange23 = 0
 	res.UltRange24 = 0
-	res.UltStatus = CONTAINER_FULLNESS_STATU_NONE
+
 	res.NewData = false
 }
 
@@ -128,8 +128,7 @@ func (res *UltDeviceSensType) SelectSQL() string {
      UltRange21,
      UltRange22,
      UltRange23,
-     UltRange24,
-	 UltStatus
+     UltRange24
 	 FROM public.ult_sens_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
@@ -161,15 +160,13 @@ func (res *UltDeviceSensType) InsertSQL() string {
         UltRange21,
         UltRange22,
         UltRange23,
-        UltRange24,
-		UltStatus) 
+        UltRange24) 
 	  VALUES (%f,'%s',%f,%f,%f
 	  ,%f,%f,%f,%f,%f
 	  ,%f,%f,%f,%f,%f
 	  ,%f,%f,%f,%f,%f
 	  ,%f,%f,%f,%f,%f
-	  ,%f,%f 
-	  ,'%s') 
+	  ,%f,%f) 
 	  RETURNING DeviceId;`, res.DeviceId,
 		res.UltTime,
 		res.UltCount,
@@ -196,8 +193,7 @@ func (res *UltDeviceSensType) InsertSQL() string {
 		res.UltRange21,
 		res.UltRange22,
 		res.UltRange23,
-		res.UltRange24,
-		res.UltStatus)
+		res.UltRange24)
 }
 
 //UpdateSQL
@@ -228,8 +224,7 @@ func (res *UltDeviceSensType) UpdateSQL() string {
       UltRange21=%f,
       UltRange22=%f,
       UltRange23=%f,
-      UltRange24=%f,
-	  UltStatus='%s'
+      UltRange24=%f
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
 		res.UltTime,
@@ -258,7 +253,7 @@ func (res *UltDeviceSensType) UpdateSQL() string {
 		res.UltRange22,
 		res.UltRange23,
 		res.UltRange24,
-		res.UltStatus, res.DeviceId)
+		res.DeviceId)
 }
 
 //SelectWithDb
@@ -289,7 +284,6 @@ func (res *UltDeviceSensType) SelectWithDb(db *sql.DB) error {
 		&res.UltRange21,
 		&res.UltRange22,
 		&res.UltRange23,
-		&res.UltRange24,
-		&res.UltStatus)
+		&res.UltRange24)
 	return errDb
 }

@@ -119,19 +119,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
-			}
-			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-				w.Write(resultVal.ToByte())
-
-				return
-			}
-			currentData.DeviceStatu = WasteLibrary.StringToRfidDeviceStatuType(resultVal.Retval.(string))
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_STATU_DEVICES, currentData.DeviceStatu.ToIdString(), currentData.DeviceStatu.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -162,6 +149,42 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_STATU_DEVICE
 			currentData.DeviceStatu.StatusTime = currentHttpHeader.Time
 
+			ultCm := currentData.DeviceSens.UltRange1 * 173 / 10000
+
+			var step1 float64 = 50
+			var step2 float64 = 100
+			var step3 float64 = 150
+
+			//TO DO
+			//calculate ult status by container type
+			var oldData WasteLibrary.UltDeviceType
+			oldData.DeviceId = currentData.DeviceId
+			oldData.GetAll()
+			if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_NONE {
+				step1 = 50
+				step2 = 100
+				step3 = 150
+			} else {
+				step1 = 50
+				step2 = 100
+				step3 = 150
+			}
+
+			if ultCm < step1 {
+				currentData.DeviceStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
+			}
+			if ultCm >= step1 && ultCm < step2 {
+				currentData.DeviceStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_MEDIUM
+			}
+
+			if ultCm >= step2 && ultCm < step3 {
+				currentData.DeviceStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_LITTLE
+			}
+
+			if ultCm >= step3 {
+				currentData.DeviceStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
+			}
+
 			if currentData.DeviceStatu.AliveStatus == WasteLibrary.STATU_ACTIVE {
 				currentData.DeviceStatu.AliveLastOkTime = currentHttpHeader.Time
 			}
@@ -181,19 +204,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
-			}
-			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-				w.Write(resultVal.ToByte())
-
-				return
-			}
-			currentData.DeviceStatu = WasteLibrary.StringToUltDeviceStatuType(resultVal.Retval.(string))
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_STATU_DEVICES, currentData.DeviceStatu.ToIdString(), currentData.DeviceStatu.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL

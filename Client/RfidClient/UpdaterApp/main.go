@@ -16,7 +16,6 @@ import (
 	"github.com/devafatek/WasteLibrary"
 )
 
-var applicationType = WasteLibrary.APPTYPE_RFID
 var serialNumber = "0"
 var currentUser string
 var opInterval time.Duration = 60 * 60
@@ -129,7 +128,6 @@ func startUpdate(appType string) {
 	var resultVal WasteLibrary.ResultType
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.AppType = applicationType
 	currentHttpHeader.DeviceNo = serialNumber
 	currentHttpHeader.ReaderType = WasteLibrary.READERTYPE_UPDATE
 	currentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
@@ -380,7 +378,6 @@ func updateVersion(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.AppType = applicationType
 	currentHttpHeader.DeviceNo = serialNumber
 	currentHttpHeader.ReaderType = WasteLibrary.READERTYPE_UPDATE
 	currentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID

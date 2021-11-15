@@ -1,0 +1,18 @@
+[Unit]
+Description=MotorApp App
+After=network-online.target
+ 
+[Service]
+ExecStart=/home/pi/MotorApp
+WorkingDirectory=/home/pi/
+StandardOutput=inherit
+StandardError=inherit
+EnvironmentFile=/home/pi/serviceEnv.conf
+Restart=always
+User=pi
+ 
+[Install]
+WantedBy=multi-user.target
+
+#PROP
+#/lib/systemd/system/MotorApp.service

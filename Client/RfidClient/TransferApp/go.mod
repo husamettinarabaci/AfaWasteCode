@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/TransferApp
+module afatek.com.tr/devafatek/rfid/TransferApp
 
 go 1.17
 

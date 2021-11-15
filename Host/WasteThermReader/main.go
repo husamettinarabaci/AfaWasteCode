@@ -72,19 +72,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			}
 
 			currentData.DeviceTherm.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceTherm.ToString()},
-			}
-			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-				w.Write(resultVal.ToByte())
 
-				return
-			}
-			currentData.DeviceTherm = WasteLibrary.StringToRfidDeviceThermType(resultVal.Retval.(string))
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_THERM_DEVICES, currentData.DeviceTherm.ToIdString(), currentData.DeviceTherm.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -134,19 +122,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			}
 
 			currentData.DeviceTherm.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceTherm.ToString()},
-			}
-			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-				w.Write(resultVal.ToByte())
 
-				return
-			}
-			currentData.DeviceTherm = WasteLibrary.StringToUltDeviceThermType(resultVal.Retval.(string))
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_THERM_DEVICES, currentData.DeviceTherm.ToIdString(), currentData.DeviceTherm.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL

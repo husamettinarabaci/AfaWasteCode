@@ -112,7 +112,6 @@ func register(w http.ResponseWriter, req *http.Request) {
 	currentUser.CreateTime = WasteLibrary.GetTime()
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.AppType = WasteLibrary.APPTYPE_AUTH
 	currentHttpHeader.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
 	currentHttpHeader.DataType = WasteLibrary.DATATYPE_USER
 	currentUser.Active = WasteLibrary.STATU_ACTIVE
@@ -132,20 +131,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 	}
 
 	currentUser.UserId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-	data = url.Values{
-		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-		WasteLibrary.HTTP_DATA:   {currentUser.ToString()},
-	}
-	resultVal = WasteLibrary.GetConfigDbMainForStoreApi(data)
-	if resultVal.Result != WasteLibrary.RESULT_OK {
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-		w.Write(resultVal.ToByte())
 
-		return
-	}
-
-	currentUser = WasteLibrary.StringToUserType(resultVal.Retval.(string))
 	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USERS, currentUser.ToIdString(), currentUser.ToString())
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL

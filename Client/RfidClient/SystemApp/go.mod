@@ -1,4 +1,4 @@
-module afatek.com.tr/devafatek/SystemApp
+module afatek.com.tr/devafatek/rfid/SystemApp
 
 go 1.17
 

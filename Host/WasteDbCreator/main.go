@@ -365,10 +365,16 @@ func readerDbSet() {
 		StatusTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		AliveStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		AliveLastOkTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `',
+		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
+
+	// alterSQL := fmt.Sprintf(`ALTER TABLE ult_statu_devices ADD COLUMN IF NOT EXISTS UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `';`)
+	// _, err = readerDb.Exec(alterSQL)
+	// WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_battery_devices (
 		DataId serial PRIMARY KEY,
@@ -453,11 +459,14 @@ func readerDbSet() {
         UltRange22 INT NOT NULL DEFAULT 0,
         UltRange23 INT NOT NULL DEFAULT 0,
         UltRange24 INT NOT NULL DEFAULT 0,
-		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
+
+	// deleteSQL := fmt.Sprintf(`ALTER TABLE ult_sens_devices DROP COLUMN IF EXISTS UltStatus;`)
+	// _, err = readerDb.Exec(deleteSQL)
+	// WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_main_devices (
 		DataId serial PRIMARY KEY,
@@ -823,6 +832,8 @@ func staticDbSet() {
 		StatusTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		AliveStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		AliveLastOkTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `',
+		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -911,7 +922,6 @@ func staticDbSet() {
         UltRange22 INT NOT NULL DEFAULT 0,
         UltRange23 INT NOT NULL DEFAULT 0,
         UltRange24 INT NOT NULL DEFAULT 0,
-		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)

@@ -10,19 +10,20 @@ import (
 )
 
 func main() {
-
+	//
+	//SET_RFIDDEVICE_WEB
 	var readerType string = "DEVICE"
-	var readerType2 string = "SET_RFIDDEVICE_AFATEK"
+	var readerType2 string = "SET_RFIDDEVICE_WEB"
 	var currentHeader WasteLibrary.HttpClientHeaderType
 	currentHeader.New()
-	var urlVal string = "afatek.aws.afatek.com.tr"
+	var urlVal string = "bodrum.aws.afatek.com.tr"
 	var path1 string = "webapi"
 	var path2 string = "getLink"
 	data := url.Values{}
 	var deviceId float64 = 14
 	var customerId float64 = 1
 	var userId float64 = 2
-	var token = "MSMkMmEkMTAkQ2dLaTdITlpHbEdIeThvS1JnNFRKT1JmdVY0OTRVQi5EdkFycUs3NG0vbkREVmNMUUR4MC4="
+	var token = "MiMkMmEkMTAkemNqY2RvMjhsNnhSRkpWZGhBLjltdWFmOEphU3l0dW9lZ1pWbGk4WjVWWXVncDkvQjgxMkc="
 
 	if readerType == "DEVICE" {
 		if readerType2 == "GET_RFIDDEVICE_WEB" {
@@ -189,9 +190,9 @@ func main() {
 			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
-			currentData.DeviceId = 51
+			currentData.DeviceId = 20
 			currentData.DeviceMain.DeviceId = currentData.DeviceId
-			currentData.DeviceMain.CustomerId = 3
+			currentData.DeviceMain.CustomerId = 1
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
@@ -228,32 +229,38 @@ func main() {
 			}
 			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_ULTDEVICE_AFATEK" {
-			//TO DO
-			//check
+			//OK
 			path1 = "afatekapi"
 			path2 = "setDevice"
 			//currentHeader - HttpClientHeaderType *
-			//currentHeader.DeviceType - DEVICETYPE_ULT *
+			//currentHeader.DeviceType - DEVICE_TYPE_RFID *
 			//currentHeader.Token - token *
 			//HTTP_HEADER : currentHeader
 			//
-			//currentData - UltDeviceType *
+			//currentData - RfidDeviceType *
 			//currentData.DeviceId - deviceId *
 			//currentData.[All]
 			//HTTP_DATA : currentData
 			//
-			//Retval : UltDeviceType
-			currentHeader.Token = token
-			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
-			var currentData WasteLibrary.UltDeviceType
-			currentData.New()
-			currentData.DeviceId = deviceId
+			//Retval : RfidDeviceType
+			var i float64 = 1
+			for i = 1; i < 267; i++ {
 
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+				currentHeader.Token = token
+				currentHeader.DeviceType = WasteLibrary.DEVICETYPE_ULT
+				var currentData WasteLibrary.RfidDeviceType
+				currentData.New()
+				currentData.DeviceId = i
+				currentData.DeviceMain.DeviceId = currentData.DeviceId
+				currentData.DeviceMain.CustomerId = 3
+
+				data = url.Values{
+					WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
+					WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+				}
+				sendData(readerType, urlVal, path1, path2, data)
+				time.Sleep(5 * time.Second)
 			}
-			sendData(readerType, urlVal, path1, path2, data)
 		} else if readerType2 == "SET_RFIDDEVICE_WEB" {
 			//TO DO
 			//check
@@ -274,8 +281,8 @@ func main() {
 			currentHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 			var currentData WasteLibrary.RfidDeviceType
 			currentData.New()
-			currentData.DeviceId = 48
-			currentData.DeviceDetail.PlateNo = "07 AAV 297"
+			currentData.DeviceId = 51
+			currentData.DeviceDetail.PlateNo = "07 ABE 913"
 
 			data = url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHeader.ToString()},
@@ -761,7 +768,6 @@ func main() {
 			//OK
 			urlVal = urlVal + "/data"
 			currentHeader.New()
-			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
 			currentHeader.DeviceNo = "12345678901234567"
 			currentHeader.ReaderType = WasteLibrary.READERTYPE_STATUS
 			currentHeader.Time = WasteLibrary.GetTime()
@@ -779,7 +785,6 @@ func main() {
 			//OK
 			urlVal = urlVal + "/data"
 			currentHeader.New()
-			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
 			currentHeader.DeviceNo = "12345678901234567"
 			currentHeader.ReaderType = WasteLibrary.READERTYPE_RF
 			currentHeader.Time = WasteLibrary.GetTime()
@@ -798,7 +803,6 @@ func main() {
 			//OK
 			urlVal = urlVal + "/data"
 			currentHeader.New()
-			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
 			currentHeader.DeviceNo = "12345678901234567"
 			currentHeader.ReaderType = WasteLibrary.READERTYPE_THERM
 			currentHeader.Time = WasteLibrary.GetTime()
@@ -816,7 +820,6 @@ func main() {
 			//OK
 			urlVal = urlVal + "/data"
 			currentHeader.New()
-			currentHeader.AppType = WasteLibrary.APPTYPE_RFID
 			currentHeader.DeviceNo = "12345678901234567"
 			currentHeader.ReaderType = WasteLibrary.READERTYPE_GPS
 			currentHeader.Time = WasteLibrary.GetTime()

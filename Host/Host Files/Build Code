@@ -86,8 +86,6 @@ kubectl create -f Aws/Yaml/waste-summaryfortagview-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfortag-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-arvento-deployment.yaml
 
-
-
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-listener-deployment.yaml
 

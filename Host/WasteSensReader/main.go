@@ -128,39 +128,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				currentData.DeviceSens.UltRange2 = oldData.DeviceSens.UltRange2
 			}
 
-			ultCm := currentData.DeviceSens.UltRange1 * 173 / 10000
-
-			var step1 float64 = 50
-			var step2 float64 = 100
-			var step3 float64 = 150
-
-			//TO DO
-			//calculate ult status by container type
-			if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_NONE {
-				step1 = 50
-				step2 = 100
-				step3 = 150
-			} else {
-				step1 = 50
-				step2 = 100
-				step3 = 150
-			}
-
-			if ultCm < step1 {
-				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
-			}
-			if ultCm >= step1 && ultCm < step2 {
-				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_MEDIUM
-			}
-
-			if ultCm >= step2 && ultCm < step3 {
-				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_LITTLE
-			}
-
-			if ultCm >= step3 {
-				currentData.DeviceSens.UltStatus = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
-			}
-
 			data := url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.DeviceSens.ToString()},
@@ -175,19 +142,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			}
 
 			currentData.DeviceSens.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceSens.ToString()},
-			}
-			resultVal = WasteLibrary.GetStaticDbMainForStoreApi(data)
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_GET
-				w.Write(resultVal.ToByte())
 
-				return
-			}
-			currentData.DeviceSens = WasteLibrary.StringToUltDeviceSensType(resultVal.Retval.(string))
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_SENS_DEVICES, currentData.DeviceSens.ToIdString(), currentData.DeviceSens.ToString())
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
