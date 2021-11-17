@@ -58,6 +58,7 @@ const (
 	RFID_APPNAME_CAM      = "CamApp"
 	RFID_APPNAME_THERM    = "ThermApp"
 	RFID_APPNAME_SYSTEM   = "SystemApp"
+	RFID_APPNAME_UPDATER  = "UpdaterApp"
 )
 
 const (

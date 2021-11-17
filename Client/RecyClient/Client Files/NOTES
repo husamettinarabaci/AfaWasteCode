@@ -36,10 +36,14 @@ mkdir /home/pi/WAIT_STATUS
 mkdir /home/pi/WAIT_THERM
 mkdir /home/pi/DOWNLOADED_APP
 
+/etc/udev/rules.d/99-hidraw-permissions.rules
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0777", GROUP="plugdev"
 
 ##Build Code
 env GOOS=linux GOARCH=arm GOARM=5 go build
 
 #ReaderApp
 #WebApp
+#UpdaterApp - SystemApp
 
+#Splash Screen Afatek

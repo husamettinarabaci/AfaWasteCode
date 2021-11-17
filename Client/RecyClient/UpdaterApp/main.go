@@ -103,28 +103,28 @@ func updateCheck() {
 	if currentUser == "pi" {
 		for {
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_WEB)
+			startUpdate(WasteLibrary.RECY_APPNAME_WEB)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_CAM)
+			startUpdate(WasteLibrary.RECY_APPNAME_CAM)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_CHECKER)
+			startUpdate(WasteLibrary.RECY_APPNAME_CHECKER)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_READER)
+			startUpdate(WasteLibrary.RECY_APPNAME_READER)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_THERM)
+			startUpdate(WasteLibrary.RECY_APPNAME_THERM)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_TRANSFER)
+			startUpdate(WasteLibrary.RECY_APPNAME_TRANSFER)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_SYSTEM)
+			startUpdate(WasteLibrary.RECY_APPNAME_SYSTEM)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RECY_APPTYPE_MOTOR)
+			startUpdate(WasteLibrary.RECY_APPNAME_MOTOR)
 
 			time.Sleep(opInterval * time.Second)
 		}

@@ -74,7 +74,7 @@ func initStart() {
 
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.Version = "1"
+	WasteLibrary.Version = "2"
 	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	serialNumber = getSerialNumber()
@@ -98,25 +98,25 @@ func updateCheck() {
 	if currentUser == "pi" {
 		for {
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RFID_APPTYPE_GPS)
+			startUpdate(WasteLibrary.RFID_APPNAME_GPS)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RFID_APPTYPE_CAM)
+			startUpdate(WasteLibrary.RFID_APPNAME_CAM)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RFID_APPTYPE_CHECKER)
+			startUpdate(WasteLibrary.RFID_APPNAME_CHECKER)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RFID_APPTYPE_READER)
+			startUpdate(WasteLibrary.RFID_APPNAME_READER)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RFID_APPTYPE_THERM)
+			startUpdate(WasteLibrary.RFID_APPNAME_THERM)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RFID_APPTYPE_TRANSFER)
+			startUpdate(WasteLibrary.RFID_APPNAME_TRANSFER)
 
 			time.Sleep(time.Second)
-			startUpdate(WasteLibrary.RFID_APPTYPE_SYSTEM)
+			startUpdate(WasteLibrary.RFID_APPNAME_SYSTEM)
 
 			time.Sleep(opInterval * time.Second)
 		}

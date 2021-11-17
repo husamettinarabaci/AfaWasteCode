@@ -2,6 +2,7 @@ cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
 cd WasteAfatekApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhcApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteWebApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteWebUi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteWebSocket && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteCamReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhc && go get "github.com/devafatek/WasteLibrary" && cd .. &&
@@ -45,6 +46,7 @@ sudo docker build -f WasteStoreApiForConfigDB/Dockerfile -t devafatek/wastestore
 sudo docker build -f WasteStoreApiForRedis/Dockerfile -t devafatek/wastestoreapiforredis:1.0 . && docker push devafatek/wastestoreapiforredis:1.0 &&
 sudo docker build -f WasteThermReader/Dockerfile -t devafatek/wastethermreader:1.0 . && docker push devafatek/wastethermreader:1.0 &&
 sudo docker build -f WasteWebApi/Dockerfile -t devafatek/wastewebapi:1.0 . && docker push devafatek/wastewebapi:1.0 &&
+sudo docker build -f WasteWebUi/Dockerfile -t devafatek/wastewebui:1.0 . && docker push devafatek/wastewebui:1.0 &&
 sudo docker build -f WasteWebSocket/Dockerfile -t devafatek/wastewebsocket:1.0 . && docker push devafatek/wastewebsocket:1.0 &&
 sudo docker build -f WasteAfatekApi/Dockerfile -t devafatek/wasteafatekapi:1.0 . && docker push devafatek/wasteafatekapi:1.0 &&
 sudo docker build -f WasteEnhcApi/Dockerfile -t devafatek/wasteenhcapi:1.0 . && docker push devafatek/wasteenhcapi:1.0 &&
@@ -65,6 +67,7 @@ cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-afatekapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-enhcapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-webapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-webui-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-websocket-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-camreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-enhc-deployment.yaml &&

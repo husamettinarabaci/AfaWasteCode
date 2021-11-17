@@ -1,0 +1,18 @@
+[Unit]
+Description=HidReader App
+After=network-online.target
+ 
+[Service]
+ExecStart=python /home/pi/hidreader.py
+WorkingDirectory=/home/pi/
+StandardOutput=inherit
+StandardError=inherit
+EnvironmentFile=/home/pi/serviceEnv.conf
+Restart=always
+User=pi
+ 
+[Install]
+WantedBy=multi-user.target
+
+#PROP
+#/lib/systemd/system/HidReaderApp.service

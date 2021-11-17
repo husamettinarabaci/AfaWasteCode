@@ -4,3 +4,4 @@
 *Test Speed 0
 *resultVal.Result = WasteLibrary.RESULT_FAIL log without Debug mod
 *check GpsStopReader distance
+*Listener TcpSocket Error MAnage

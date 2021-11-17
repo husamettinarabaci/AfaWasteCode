@@ -157,8 +157,19 @@ func data(w http.ResponseWriter, req *http.Request) {
 			serviceClusterIp = "waste-rfreader-cluster-ip"
 			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GPS {
-			serviceClusterIp = "waste-gpsreader-cluster-ip"
-			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
+			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, currentHttpHeader.ToCustomerIdString())
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+				w.Write(resultVal.ToByte())
+
+				return
+			}
+			var customerConfig WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
+			if customerConfig.ArventoApp == WasteLibrary.STATU_PASSIVE {
+				serviceClusterIp = "waste-gpsreader-cluster-ip"
+				resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
+			}
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_STATUS {
 			serviceClusterIp = "waste-statusreader-cluster-ip"
 			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))

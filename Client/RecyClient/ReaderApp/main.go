@@ -5,59 +5,36 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"gitee.com/wiseai/go-rpio"
-	"github.com/AfatekDevelopers/serial_lib_go/devafatekserial"
 	"github.com/devafatek/WasteLibrary"
-	"github.com/google/uuid"
 )
 
-var readerPort string = os.Getenv("READER_PORT")
-var opInterval time.Duration = 5 * 60
 var wg sync.WaitGroup
 var currentUser string
 
+var opInterval time.Duration = 5 * 60
 var lastReadTime time.Time
 var lastSendTime time.Time
-var lastRfTag string = ""
-var readTags map[string]time.Time
-var serialPort io.ReadWriteCloser
-
-var serialOptions0 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
-	PortName:        "/dev/ttyUSB0",
-	BaudRate:        115200,
-	DataBits:        8,
-	StopBits:        1,
-	MinimumReadSize: 4,
-}
-
-var serialOptions1 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
-	PortName:        "/dev/ttyUSB1",
-	BaudRate:        115200,
-	DataBits:        8,
-	StopBits:        1,
-	MinimumReadSize: 4,
-}
-
-var currentTagDataType WasteLibrary.TagType
+var lastRfNfc string = ""
+var readNfcs map[string]time.Time
+var currentNfcDataType WasteLibrary.NfcType
 
 func initStart() {
 
 	lastReadTime = time.Now()
 	lastSendTime = time.Now()
-	readTags = make(map[string]time.Time)
+	readNfcs = make(map[string]time.Time)
 	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
 	WasteLibrary.Version = "1"
 	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
 	currentUser = WasteLibrary.GetCurrentUser()
 	WasteLibrary.LogStr(currentUser)
-	currentTagDataType.New()
+	currentNfcDataType.New()
 }
 func main() {
 
@@ -72,9 +49,30 @@ func main() {
 	wg.Add(1)
 
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/trigger", trigger)
 	http.ListenAndServe(":10001", nil)
 
 	wg.Wait()
+}
+
+func trigger(w http.ResponseWriter, req *http.Request) {
+
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+
+	cardId := req.URL.Query()["cardId"]
+	WasteLibrary.LogStr(cardId[0])
+	w.Write(resultVal.ToByte())
+
 }
 
 func rfCheck() {
@@ -121,7 +119,7 @@ func rfCheck() {
 						data = strings.ToUpper(data)
 						WasteLibrary.LogStr(data)
 
-						if strings.Contains(data, WasteLibrary.RFID_READER_OKBIT) || strings.Contains(data, WasteLibrary.RFID_READER_STARTBIT) {
+						if strings.Contains(data, WasteLibrary.RECY_READER_OKBIT) || strings.Contains(data, WasteLibrary.RECY_READER_STARTBIT) {
 							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_ACTIVE
 						} else {
 							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_PASSIVE
@@ -129,14 +127,14 @@ func rfCheck() {
 
 						tempData += data
 
-						if len(tempData) == 64 && tempData[:4] == WasteLibrary.RFID_READER_STARTBIT && tempData[10:12] == WasteLibrary.RFID_READER_CHECKBIT && tempData[36:50] == WasteLibrary.RFID_TAG_PATTERN {
-							if time.Since(readTags[tempData[36:60]]).Seconds() > 15*60 {
-								lastRfTag = tempData[36:60]
+						if len(tempData) == 64 && tempData[:4] == WasteLibrary.RECY_READER_STARTBIT && tempData[10:12] == WasteLibrary.RECY_READER_CHECKBIT && tempData[36:50] == WasteLibrary.RECY_NFC_PATTERN {
+							if time.Since(readNfcs[tempData[36:60]]).Seconds() > 15*60 {
+								lastRfNfc = tempData[36:60]
 								nid, _ := uuid.NewUUID()
 								lastSendTime = time.Now()
-								readTags[tempData[36:60]] = lastSendTime
-								currentTagDataType.TagMain.Epc = lastRfTag
-								currentTagDataType.TagReader.UID = nid.String()
+								readNfcs[tempData[36:60]] = lastSendTime
+								currentNfcDataType.NfcMain.Epc = lastRfNfc
+								currentNfcDataType.NfcReader.UID = nid.String()
 								sendRf()
 								sendRfToCam()
 							}
@@ -157,7 +155,7 @@ func rfCheck() {
 func sendRf() {
 	data := url.Values{
 		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_RF},
-		WasteLibrary.HTTP_DATA:       {currentTagDataType.ToString()},
+		WasteLibrary.HTTP_DATA:       {currentNfcDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 }
@@ -166,7 +164,7 @@ func sendRfToCam() {
 
 	data := url.Values{
 		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_CAMTRIGGER},
-		WasteLibrary.HTTP_DATA:       {currentTagDataType.ToString()},
+		WasteLibrary.HTTP_DATA:       {currentNfcDataType.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10002/trigger", data)
 }

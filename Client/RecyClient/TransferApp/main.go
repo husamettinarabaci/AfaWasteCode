@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -51,11 +50,7 @@ func main() {
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.READERTYPE_WEB)
-	wg.Add(1)
-
-	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.READERTYPE_MOTOR)
+	go fileCheck(WasteLibrary.READERTYPE_GPS)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
@@ -98,15 +93,10 @@ func trans(w http.ResponseWriter, req *http.Request) {
 		dataVal := req.FormValue(WasteLibrary.HTTP_DATA)
 		resultVal = sendDataToServer(readerType, dataVal, WasteLibrary.GetTime(), WasteLibrary.STATU_PASSIVE)
 		WasteLibrary.LogStr("Send Data To Server : " + resultVal.ToString())
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			if readerType != WasteLibrary.READERTYPE_CAM {
-				storeData(readerType, dataVal)
-			}
-		}
 		if readerType == WasteLibrary.READERTYPE_CAM {
-			var curretnNfcType WasteLibrary.Nfcype = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var curretnTagType WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
 
-			sendFileToServer(curretnNfcType.NfcReader.UID)
+			sendFileToServer(curretnTagType.TagReader.UID)
 		}
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
@@ -119,11 +109,14 @@ func sendFileToServer(fileName string) {
 	if err != nil {
 		WasteLibrary.LogErr(err)
 	} else {
+		err = uploadFile(session, "WAIT_CAM/"+fileName+".mp4")
+		if err != nil {
+			WasteLibrary.LogErr(err)
+		}
+
 		err = uploadFile(session, "WAIT_CAM/"+fileName+".png")
 		if err != nil {
 			WasteLibrary.LogErr(err)
-		} else {
-			WasteLibrary.RemoveFile("WAIT_CAM/" + fileName + ".png")
 		}
 	}
 }
@@ -171,40 +164,6 @@ func sendDataToServer(readerType string, sendData string, dataTime string, repea
 	return resultVal
 }
 
-func storeData(dataType string, sendData string) {
-	err := ioutil.WriteFile("WAIT_"+dataType+"/"+WasteLibrary.GetTime(), []byte(sendData), 0644)
-	if err != nil {
-		WasteLibrary.LogErr(err)
-	}
-}
-
-func resendData(readerType string, fileName string) {
-	var resultVal WasteLibrary.ResultType
-	if readerType == WasteLibrary.READERTYPE_CAM {
-		sendFileToServer(fileName)
-	} else {
-
-		var dataJSON string = ""
-		var dataTime string = fileName
-
-		readByte, err := ioutil.ReadFile("WAIT_" + readerType + "/" + fileName)
-		if err != nil {
-			WasteLibrary.LogErr(err)
-		} else {
-
-			dataJSON = string(readByte)
-
-			WasteLibrary.LogStr("Read File : " + dataJSON)
-
-			resultVal = sendDataToServer(readerType, string(dataJSON), dataTime, WasteLibrary.STATU_ACTIVE)
-			WasteLibrary.LogStr("Send Data To Server Again : " + resultVal.ToString())
-			if resultVal.Result == WasteLibrary.RESULT_OK {
-				WasteLibrary.RemoveFile("WAIT_" + readerType + "/" + fileName)
-			}
-		}
-	}
-}
-
 func fileCheck(readerType string) {
 	WasteLibrary.LogStr("File Check :" + readerType)
 	for {
@@ -225,15 +184,7 @@ func fileCheck(readerType string) {
 		for _, file := range fileInfo {
 			time.Sleep(time.Second)
 			second := time.Since(file.ModTime()).Seconds()
-			if second > 60*60 && second < 24*60*60 {
-				var fileName string = file.Name()
-				if readerType == WasteLibrary.READERTYPE_CAM {
-					spData := strings.Split(strings.TrimSpace(file.Name()), ".")
-					fileName = spData[0]
-				}
-				resendData(readerType, fileName)
-			}
-			if second > 24*60*60 {
+			if second > 1*60*60 {
 				WasteLibrary.RemoveFile("WAIT_" + readerType + "/" + file.Name())
 			}
 		}

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: waste-webui-cluster-ip
+  namespace: waste-system
+spec:
+  type: ClusterIP
+  selector:
+    app: waste-webui
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

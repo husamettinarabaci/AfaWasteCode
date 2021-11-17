@@ -78,7 +78,7 @@ func HttpPostReq(url string, data url.Values) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	client := http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 60 * time.Second,
 	}
 	resp, err := client.PostForm(url, data)
 	if err != nil {
