@@ -50,7 +50,11 @@ func main() {
 	wg.Add(1)
 
 	time.Sleep(time.Second)
-	go fileCheck(WasteLibrary.READERTYPE_GPS)
+	go fileCheck(WasteLibrary.READERTYPE_MOTOR)
+	wg.Add(1)
+
+	time.Sleep(time.Second)
+	go fileCheck(WasteLibrary.READERTYPE_WEB)
 	wg.Add(1)
 
 	time.Sleep(time.Second)
@@ -94,9 +98,9 @@ func trans(w http.ResponseWriter, req *http.Request) {
 		resultVal = sendDataToServer(readerType, dataVal, WasteLibrary.GetTime(), WasteLibrary.STATU_PASSIVE)
 		WasteLibrary.LogStr("Send Data To Server : " + resultVal.ToString())
 		if readerType == WasteLibrary.READERTYPE_CAM {
-			var curretnTagType WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentNfcType WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
 
-			sendFileToServer(curretnTagType.TagReader.UID)
+			sendFileToServer(currentNfcType.NfcReader.UID)
 		}
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
@@ -109,10 +113,6 @@ func sendFileToServer(fileName string) {
 	if err != nil {
 		WasteLibrary.LogErr(err)
 	} else {
-		err = uploadFile(session, "WAIT_CAM/"+fileName+".mp4")
-		if err != nil {
-			WasteLibrary.LogErr(err)
-		}
 
 		err = uploadFile(session, "WAIT_CAM/"+fileName+".png")
 		if err != nil {

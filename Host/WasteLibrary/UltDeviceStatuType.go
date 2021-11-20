@@ -14,6 +14,7 @@ type UltDeviceStatuType struct {
 	AliveLastOkTime string
 	UltStatus       string
 	ContainerStatu  string
+	SensPercent     float64
 	NewData         bool
 }
 
@@ -25,6 +26,7 @@ func (res *UltDeviceStatuType) New() {
 	res.UltStatus = ULT_STATU_NONE
 	res.AliveStatus = STATU_PASSIVE
 	res.AliveLastOkTime = GetTime()
+	res.SensPercent = 0
 	res.NewData = false
 }
 
@@ -59,17 +61,17 @@ func StringToUltDeviceStatuType(retStr string) UltDeviceStatuType {
 
 //SelectSQL
 func (res *UltDeviceStatuType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus
+	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent
 	 FROM public.ult_statu_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_statu_devices (DeviceId,StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus) 
-	  VALUES (%f,'%s','%s','%s','%s','%s') 
+	return fmt.Sprintf(`INSERT INTO public.ult_statu_devices (DeviceId,StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent) 
+	  VALUES (%f,'%s','%s','%s','%s','%s',%f) 
 	  RETURNING DeviceId;`, res.DeviceId,
-		res.StatusTime, res.AliveStatus, res.AliveLastOkTime, res.ContainerStatu, res.UltStatus)
+		res.StatusTime, res.AliveStatus, res.AliveLastOkTime, res.ContainerStatu, res.UltStatus, res.SensPercent)
 }
 
 //UpdateSQL
@@ -80,10 +82,10 @@ func (res *UltDeviceStatuType) UpdateSQL() string {
 	}
 
 	return fmt.Sprintf(`UPDATE public.ult_statu_devices 
-	  SET StatusTime='%s',AliveStatus='%s',ContainerStatu='%s',UltStatus='%s'`+execSqlExt+`
+	  SET StatusTime='%s',AliveStatus='%s',ContainerStatu='%s',UltStatus='%s',SensPercent=%f`+execSqlExt+`
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
-		res.StatusTime, res.AliveStatus, res.ContainerStatu, res.UltStatus, res.DeviceId)
+		res.StatusTime, res.AliveStatus, res.ContainerStatu, res.UltStatus, res.SensPercent, res.DeviceId)
 }
 
 //SelectWithDb
@@ -93,6 +95,7 @@ func (res *UltDeviceStatuType) SelectWithDb(db *sql.DB) error {
 		&res.AliveStatus,
 		&res.AliveLastOkTime,
 		&res.ContainerStatu,
-		&res.UltStatus)
+		&res.UltStatus,
+		&res.SensPercent)
 	return errDb
 }

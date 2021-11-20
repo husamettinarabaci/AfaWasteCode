@@ -231,7 +231,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 				currentDevice.DeviceId = deviceId
 				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices = append(customerDevicesList.Devices, currentDevice)
+					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
 			}
@@ -249,7 +249,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		}
 
 		var customerDevices WasteLibrary.CustomerUltDevicesType = WasteLibrary.StringToCustomerUltDevicesType(resultVal.Retval.(string))
-		var customerDevicesList WasteLibrary.CustomerUltDevicesListType
+		var customerDevicesList WasteLibrary.CustomerUltDevicesViewListType
 		customerDevicesList.New()
 		customerDevicesList.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
 		for _, deviceId := range customerDevices.Devices {
@@ -259,8 +259,20 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 				currentDevice.New()
 				currentDevice.DeviceId = deviceId
 				resultVal = currentDevice.GetAll()
+
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices = append(customerDevicesList.Devices, currentDevice)
+
+					var currentUltDeviceView WasteLibrary.UltDeviceViewType
+					currentUltDeviceView.New()
+					currentUltDeviceView.DeviceId = currentDevice.DeviceId
+					currentUltDeviceView.ContainerNo = currentDevice.DeviceBase.ContainerNo
+					currentUltDeviceView.ContainerStatu = currentDevice.DeviceStatu.ContainerStatu
+					currentUltDeviceView.UltStatus = currentDevice.DeviceStatu.UltStatus
+					currentUltDeviceView.Latitude = currentDevice.DeviceGps.Latitude
+					currentUltDeviceView.Longitude = currentDevice.DeviceGps.Longitude
+					currentUltDeviceView.SensPercent = currentDevice.DeviceStatu.SensPercent
+
+					customerDevicesList.Devices[currentUltDeviceView.ToIdString()] = currentUltDeviceView
 				}
 
 			}
@@ -290,7 +302,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 				currentDevice.DeviceId = deviceId
 				resultVal = currentDevice.GetAll()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices = append(customerDevicesList.Devices, currentDevice)
+					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
 				}
 
 			}
@@ -394,7 +406,7 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 	}
 	var customerId string = resultVal.Retval.(string)
 
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, customerId)
+	resultVal = WasteLibrary.GetRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, customerId)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
@@ -976,7 +988,7 @@ func getUsers(w http.ResponseWriter, req *http.Request) {
 	var customerUsers WasteLibrary.CustomerUsersType = WasteLibrary.StringToCustomerUsersType(resultVal.Retval.(string))
 	var customerUsersList WasteLibrary.CustomerUsersListType = WasteLibrary.CustomerUsersListType{
 		CustomerId: WasteLibrary.StringIdToFloat64(customerId),
-		Users:      []WasteLibrary.UserType{},
+		Users:      make(map[string]WasteLibrary.UserType),
 	}
 	for _, userId := range customerUsers.Users {
 
@@ -985,7 +997,7 @@ func getUsers(w http.ResponseWriter, req *http.Request) {
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 
 				var currentUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
-				customerUsersList.Users = append(customerUsersList.Users, currentUser)
+				customerUsersList.Users[currentUser.ToIdString()] = currentUser
 			}
 
 		}

@@ -302,43 +302,42 @@ func update(w http.ResponseWriter, req *http.Request) {
 	//fmt.Println(req.FormValue(WasteLibrary.HTTP_HEADER))
 	//fmt.Println(req.FormValue(WasteLibrary.HTTP_DATA))
 
-	if currentHttpHeader.DeviceNo == "0000000064231683" ||
-		currentHttpHeader.DeviceNo == "000000008ce06a67" ||
-		currentHttpHeader.DeviceNo == "000000004a65f340" ||
-		currentHttpHeader.DeviceNo == "000000004e64f0f2" ||
-		currentHttpHeader.DeviceNo == "000000007d4a013b" ||
-		currentHttpHeader.DeviceNo == "000000005679401f" ||
-		currentHttpHeader.DeviceNo == "000000003340b5a2" {
-		fmt.Println(req.FormValue(WasteLibrary.HTTP_HEADER))
-		fmt.Println(req.FormValue(WasteLibrary.HTTP_DATA))
-	}
-	if updaterType.AppType == WasteLibrary.RFID_APPTYPE_TRANSFER {
-		if updaterType.Version == "1" {
-			updaterType.Version = "2"
-			updaterType.AppType = WasteLibrary.RFID_APPNAME_TRANSFER
-			resultVal.Result = WasteLibrary.RESULT_OK
-			resultVal.Retval = updaterType.ToString()
-
+	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
+		if currentHttpHeader.DeviceNo == "0000000064231683" ||
+			currentHttpHeader.DeviceNo == "000000008ce06a67" ||
+			currentHttpHeader.DeviceNo == "000000004e64f0f2" ||
+			currentHttpHeader.DeviceNo == "000000007d4a013b" {
+			fmt.Println(req.FormValue(WasteLibrary.HTTP_HEADER))
+			fmt.Println(req.FormValue(WasteLibrary.HTTP_DATA))
 		}
-	}
+		if updaterType.AppType == WasteLibrary.RFID_APPTYPE_TRANSFER {
+			if updaterType.Version == "1" {
+				updaterType.Version = "2"
+				updaterType.AppType = WasteLibrary.RFID_APPNAME_TRANSFER
+				resultVal.Result = WasteLibrary.RESULT_OK
+				resultVal.Retval = updaterType.ToString()
 
-	if updaterType.AppType == WasteLibrary.RFID_APPNAME_UPDATER {
-		if updaterType.Version == "1" {
-			updaterType.Version = "2"
-			updaterType.AppType = WasteLibrary.RFID_APPNAME_UPDATER
-			resultVal.Result = WasteLibrary.RESULT_OK
-			resultVal.Retval = updaterType.ToString()
-
+			}
 		}
-	}
 
-	if updaterType.AppType == WasteLibrary.RFID_APPTYPE_SYSTEM {
-		if updaterType.Version == "1" {
-			updaterType.Version = "2"
-			updaterType.AppType = WasteLibrary.RFID_APPNAME_SYSTEM
-			resultVal.Result = WasteLibrary.RESULT_OK
-			resultVal.Retval = updaterType.ToString()
+		if updaterType.AppType == WasteLibrary.RFID_APPNAME_UPDATER {
+			if updaterType.Version == "1" {
+				updaterType.Version = "2"
+				updaterType.AppType = WasteLibrary.RFID_APPNAME_UPDATER
+				resultVal.Result = WasteLibrary.RESULT_OK
+				resultVal.Retval = updaterType.ToString()
 
+			}
+		}
+
+		if updaterType.AppType == WasteLibrary.RFID_APPTYPE_SYSTEM {
+			if updaterType.Version == "1" {
+				updaterType.Version = "2"
+				updaterType.AppType = WasteLibrary.RFID_APPNAME_SYSTEM
+				resultVal.Result = WasteLibrary.RESULT_OK
+				resultVal.Retval = updaterType.ToString()
+
+			}
 		}
 	}
 

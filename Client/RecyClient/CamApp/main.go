@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -87,7 +88,7 @@ func doRecord(readerDataTypeVal WasteLibrary.NfcType, integratedPort string, rep
 	WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_PASSIVE
 	WasteLibrary.LogStr("Do Record : " + readerDataTypeVal.NfcMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.NfcReader.UID + " - " + repeat)
 
-	cmd := exec.Command("timeout", "4", "ffmpeg", "-y", "-v", "0", "-loglevel", "0", "-hide_banner", "-f", "mpegts", "-i", "udp://localhost:1000"+integratedPort, "-frames:v", "1", "WAIT_CAM/"+readerDataTypeVal.NfcReader.UID+".png")
+	cmd := exec.Command("timeout", "30", "ffmpeg", "-y", "-v", "0", "-loglevel", "0", "-hide_banner", "-f", "mpegts", "-i", "udp://localhost:1000"+integratedPort, "-frames:v", "1", "WAIT_CAM/"+readerDataTypeVal.NfcReader.UID+".png")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	err := cmd.Run()
@@ -100,7 +101,7 @@ func doRecord(readerDataTypeVal WasteLibrary.NfcType, integratedPort string, rep
 			return
 		}
 	} else {
-		time.Sleep(5 * time.Second)
+		time.Sleep(2 * time.Second)
 
 		if WasteLibrary.IsFileExists("WAIT_CAM/" + readerDataTypeVal.NfcReader.UID + ".png") {
 			_, err := os.Stat("WAIT_CAM/" + readerDataTypeVal.NfcReader.UID + ".png")
@@ -114,6 +115,7 @@ func doRecord(readerDataTypeVal WasteLibrary.NfcType, integratedPort string, rep
 
 			WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_ACTIVE
 			sendCam(readerDataTypeVal)
+			sendCamToWeb(readerDataTypeVal)
 
 		} else {
 			if repeat == WasteLibrary.STATU_ACTIVE {
@@ -135,9 +137,18 @@ func sendCam(readerDataTypeVal WasteLibrary.NfcType) {
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 }
 
+func sendCamToWeb(readerDataTypeVal WasteLibrary.NfcType) {
+
+	data := url.Values{
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_WEBTRIGGER},
+		WasteLibrary.HTTP_DATA:       {readerDataTypeVal.ToString()},
+	}
+
+	WasteLibrary.HttpPostReq("http://127.0.0.1:10003/trigger", data)
+}
+
 func camCheck() {
 	for {
-
 		ifaces, err := net.Interfaces()
 		if err != nil {
 			WasteLibrary.LogErr(err)
@@ -159,14 +170,12 @@ func camCheck() {
 				case *net.IPAddr:
 					ip = v.IP
 				}
-				ipStr := string(ip)
-				WasteLibrary.LogStr(ipStr)
+				ipStr := fmt.Sprintf("%s", ip)
 				if ipStr == "10.0.0.1" {
 					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_ACTIVE
 				}
 			}
 		}
-
 		time.Sleep(opInterval * time.Second)
 	}
 }

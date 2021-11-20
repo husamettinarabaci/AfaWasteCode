@@ -59,115 +59,126 @@ func customerProc(customerId float64) {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	for {
 
-		//TO DO
-		//vardiya config
-		// var customerDevices WasteLibrary.CustomerRfidDevicesType = WasteLibrary.StringToCustomerRfidDevicesType(resultVal.Retval.(string))
-		// var customerDevicesList WasteLibrary.CustomerRfidDevicesListType
-		// customerDevicesList.New()
-		// customerDevicesList.CustomerId = WasteLibrary.StringIdToFloat64(WasteLibrary.Float64IdToString(customerId))
-		// for _, deviceId := range customerDevices.Devices {
-		//
-		// if deviceId != 0 {
-		//
-		// var currentDevice WasteLibrary.RfidDeviceType
-		// currentDevice.New()
-		// currentDevice.DeviceId = deviceId
-		// resultVal = currentDevice.GetAll()
-		// if resultVal.Result == WasteLibrary.RESULT_OK {
-		// customerDevicesList.Devices = append(customerDevicesList.Devices, currentDevice)
-		// }
-		//
-		// }
-		// }
-
-		var currentHttpHeader WasteLibrary.HttpClientHeaderType
-		currentHttpHeader.New()
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_STATU
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, WasteLibrary.Float64IdToString(customerId))
+		var customerAdminConfig WasteLibrary.AdminConfigType
+		customerAdminConfig.New()
+		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_ADMINCONFIG, WasteLibrary.Float64IdToString(customerId))
 		if resultVal.Result == WasteLibrary.RESULT_OK {
-
-			var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
-			for _, tagId := range customerTags.Tags {
-
-				if tagId != 0 {
-
-					var currentTag WasteLibrary.TagType
-					currentTag.New()
-					currentTag.TagId = tagId
-					resultVal = currentTag.GetAll()
-					if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
-						var containerStatu string = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
-						second := time.Since(WasteLibrary.StringToTime(currentTag.TagReader.ReadTime)).Seconds()
-						if second < 25*60*60 {
-							containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
-						}
-						//TO DO
-						//vardiya config
-						//for _, device := range customerDevicesList.Devices {
-						//	if device.DeviceId == currentTag.TagMain.DeviceId {
-						//
-						// var readTime time.Time      // tag read time
-						// var work1Start time.Time    //device work1 start
-						// var work1End time.Time      //device work1 start add 1 hour
-						// var work1Exist bool = false //if device work1 exist
-						// var work2Start time.Time    //device work1 start
-						// var work2End time.Time      //device work1 start
-						// var work2Exist bool = false //if device work1 exist
-						// var work3Start time.Time    //device work1 start
-						// var work3End time.Time      //device work1 start
-						// var work3Exist bool = false //if device work1 exist
-						//
-						// if device.DeviceWorkHour.WorkHour1Add > 0 {
-						// work1Exist = true
-						// work1Start = WasteLibrary.StringToTime(device.DeviceWorkHour.WorkHour1Start)
-						// work1Start.
-						//
-						// }
-						//
-						// var containerStatu string = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
-						// if work1Exist && readTime > work1Start && readTime < work1End {
-						// containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
-						// }
-						// if work2Exist && readTime > work2Start && readTime < work2End {
-						// containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
-						// }
-						// if work3Exist && readTime > work3Start && readTime < work3End {
-						// containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
-						// }
-
-						//break
-						//}
-						//}
-						if containerStatu != currentTag.TagStatu.ContainerStatu {
-							currentTag.TagStatu.ContainerStatu = containerStatu
-							data := url.Values{
-								WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-								WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-							}
-							resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
-							if resultVal.Result != WasteLibrary.RESULT_OK {
-								WasteLibrary.LogStr(resultVal.ToString())
-								continue
-							}
-
-							currentTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-
-							resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_STATUS, currentTag.TagStatu.ToIdString(), currentTag.TagStatu.ToString())
-							if resultVal.Result != WasteLibrary.RESULT_OK {
-								WasteLibrary.LogStr(resultVal.ToString())
-								continue
-							}
-							WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_STATU, currentTag.TagStatu.ToString())
-						}
-
-					}
-				}
-			}
-
-			//TO DO
-			//take tag statu spanshot
+			customerAdminConfig = WasteLibrary.StringToAdminConfigType(resultVal.Retval.(string))
 		}
 
+		var workEndHour int = customerAdminConfig.WorkEndHour
+		var workEndMinute int = customerAdminConfig.WorkEndMinute
+
+		var inWork bool = false
+		var workStartTime time.Time
+		if customerAdminConfig.DeviceBaseWork == WasteLibrary.STATU_PASSIVE {
+			if time.Now().Hour() < workEndHour {
+				inWork = true
+			} else if time.Now().Hour() == workEndHour {
+				if time.Now().Minute() < workEndMinute {
+					inWork = true
+				} else {
+					inWork = false
+				}
+			} else {
+				inWork = false
+			}
+
+			if !inWork {
+				workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), customerAdminConfig.WorkStartHour, customerAdminConfig.WorkStartMinute, 0, 0, time.Now().Location())
+			}
+		}
+
+		if inWork {
+
+		} else {
+			var currentHttpHeader WasteLibrary.HttpClientHeaderType
+			currentHttpHeader.New()
+			currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_STATU
+			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, WasteLibrary.Float64IdToString(customerId))
+			if resultVal.Result == WasteLibrary.RESULT_OK {
+
+				var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
+				for _, tagId := range customerTags.Tags {
+
+					if tagId != 0 {
+
+						var currentTag WasteLibrary.TagType
+						currentTag.New()
+						currentTag.TagId = tagId
+						resultVal = currentTag.GetAll()
+						if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
+
+							if customerAdminConfig.DeviceBaseWork == WasteLibrary.STATU_ACTIVE {
+
+								resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_WORKHOUR_DEVICES, currentTag.TagMain.ToDeviceIdString())
+								if resultVal.Result == WasteLibrary.RESULT_OK {
+
+									var currentDevice WasteLibrary.RfidDeviceWorkHourType = WasteLibrary.StringToRfidDeviceWorkHourType(resultVal.Retval.(string))
+
+									workEndHour = currentDevice.WorkEndHour
+									workEndMinute = currentDevice.WorkEndMinute
+									if time.Now().Hour() < workEndHour {
+										inWork = true
+									} else if time.Now().Hour() == workEndHour {
+										if time.Now().Minute() < workEndMinute {
+											inWork = true
+										} else {
+											inWork = false
+										}
+									} else {
+										inWork = false
+									}
+
+									if !inWork {
+										workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), currentDevice.WorkStartHour, currentDevice.WorkStartMinute, 0, 0, time.Now().Location())
+									}
+								}
+
+							}
+
+							if inWork {
+
+							} else {
+
+								var containerStatu = currentTag.TagStatu.ContainerStatu
+								second := workStartTime.Sub(WasteLibrary.StringToTime(currentTag.TagReader.ReadTime)).Seconds()
+								if second < 0 {
+									containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
+								} else {
+									containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
+								}
+
+								if containerStatu != currentTag.TagStatu.ContainerStatu {
+									currentTag.TagStatu.ContainerStatu = containerStatu
+									data := url.Values{
+										WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+										WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
+									}
+									resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+									if resultVal.Result != WasteLibrary.RESULT_OK {
+										WasteLibrary.LogStr(resultVal.ToString())
+										continue
+									}
+
+									currentTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
+
+									resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_STATUS, currentTag.TagStatu.ToIdString(), currentTag.TagStatu.ToString())
+									if resultVal.Result != WasteLibrary.RESULT_OK {
+										WasteLibrary.LogStr(resultVal.ToString())
+										continue
+									}
+								}
+							}
+
+						}
+					}
+				}
+
+				//TO DO
+				//take tag statu spanshot
+			}
+		}
 		time.Sleep(opInterval * time.Second)
 
 	}

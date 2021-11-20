@@ -252,6 +252,19 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			}
 
 			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_STATU, redisTag.TagStatu.ToString())
+			resultVal = WasteLibrary.GetRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, currentHttpHeader.ToCustomerIdString())
+			if resultVal.Result == WasteLibrary.RESULT_OK {
+				var customerTagsList WasteLibrary.CustomerTagsListType = WasteLibrary.StringToCustomerTagsListType(resultVal.Retval.(string))
+
+				customerTag := customerTagsList.Tags[redisTag.TagStatu.ToIdString()]
+				customerTag.ContainerStatu = redisTag.TagStatu.ContainerStatu
+				customerTag.TagStatu = redisTag.TagStatu.TagStatu
+				customerTag.Latitude = currentData.TagGps.Latitude
+				customerTag.Longitude = currentData.TagGps.Longitude
+				customerTagsList.Tags[redisTag.TagStatu.ToIdString()] = customerTag
+				WasteLibrary.SaveRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, currentHttpHeader.ToCustomerIdString(), customerTagsList.ToString())
+			}
+
 		}
 
 	} else {

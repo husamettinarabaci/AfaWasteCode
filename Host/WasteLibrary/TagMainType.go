@@ -19,6 +19,7 @@ type TagMainType struct {
 //New
 func (res *TagMainType) New() {
 	res.TagId = 0
+	res.DeviceId = 0
 	res.CustomerId = 1
 	res.TagId = 0
 	res.Epc = ""
@@ -36,9 +37,9 @@ func (res *TagMainType) ToCustomerIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
 }
 
-//ToTagId String
-func (res *TagMainType) ToTagIdString() string {
-	return fmt.Sprintf("%.0f", res.TagId)
+//ToDeviceId String
+func (res *TagMainType) ToDeviceIdString() string {
+	return fmt.Sprintf("%.0f", res.DeviceId)
 }
 
 //ToByte

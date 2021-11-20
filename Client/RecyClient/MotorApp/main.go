@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"gitee.com/wiseai/go-rpio"
 	"github.com/devafatek/WasteLibrary"
 )
 
@@ -33,7 +34,7 @@ func main() {
 
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/trigger", trigger)
-	http.ListenAndServe(":10003", nil)
+	http.ListenAndServe(":10008", nil)
 }
 
 func trigger(w http.ResponseWriter, req *http.Request) {
@@ -75,7 +76,6 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 
 func motorProc() {
 
-	WasteLibrary.LogStr("Motor Proc...")
 	rpio.Open()
 	leftEnb, _ := strconv.Atoi(turnLeftEnb)
 	rightEnb, _ := strconv.Atoi(turnRigthEnb)
@@ -95,11 +95,11 @@ func motorProc() {
 	pinLeftPwm.Low()
 	pinRightPwm.Low()
 	time.Sleep(1 * time.Second)
-	pinLeftPwm.Low()
-	pinRightPwm.High()
-	time.Sleep(3 * time.Second)
 	pinLeftPwm.High()
 	pinRightPwm.Low()
+	time.Sleep(3 * time.Second)
+	pinLeftPwm.Low()
+	pinRightPwm.High()
 	time.Sleep(3 * time.Second)
 	pinLeftEnb.Low()
 	pinRightEnb.Low()

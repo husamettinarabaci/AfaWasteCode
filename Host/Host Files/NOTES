@@ -4,4 +4,9 @@
 *Test Speed 0
 *resultVal.Result = WasteLibrary.RESULT_FAIL log without Debug mod
 *check GpsStopReader distance
-*Listener TcpSocket Error MAnage
+*Listener TcpSocket Error Manage
+*Check PutRequest Count Per Files
+
+
+*Make WorkHour Customer And Device Make WorkHour Parameters
+*Web Arayüz Konum Grid Yapma Üstüste gelenler

@@ -8,13 +8,13 @@ import (
 //CustomerRfidDevicesListType
 type CustomerRfidDevicesListType struct {
 	CustomerId float64
-	Devices    []RfidDeviceType
+	Devices    map[string]RfidDeviceType
 }
 
 //New
 func (res *CustomerRfidDevicesListType) New() {
 	res.CustomerId = 1
-	res.Devices = []RfidDeviceType{}
+	res.Devices = make(map[string]RfidDeviceType)
 }
 
 //ToId String

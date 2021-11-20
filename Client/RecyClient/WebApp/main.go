@@ -1,136 +1,105 @@
 package main
 
 import (
-	"bufio"
-	"io"
 	"net/http"
 	"net/url"
-	"sync"
-	"time"
 
-	"github.com/AfatekDevelopers/gps_lib_go/devafatekgps"
-	"github.com/AfatekDevelopers/serial_lib_go/devafatekserial"
 	"github.com/devafatek/WasteLibrary"
+	"github.com/gorilla/websocket"
 )
 
-var opInterval time.Duration = 1 * 60
-var wg sync.WaitGroup
-var currentUser string
-var serialPort io.ReadWriteCloser
-
-var serialOptions0 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
-	PortName:        "/dev/ttyAMA0",
-	BaudRate:        9600,
-	DataBits:        8,
-	StopBits:        1,
-	MinimumReadSize: 4,
-}
-
-var serialOptions1 devafatekserial.OpenOptions = devafatekserial.OpenOptions{
-	PortName:        "/dev/ttyAMA1",
-	BaudRate:        9600,
-	DataBits:        8,
-	StopBits:        1,
-	MinimumReadSize: 4,
-}
-
-var currentDeviceType WasteLibrary.RfidDeviceType
+var upgrader = websocket.Upgrader{}
+var socketCh chan string
 
 func initStart() {
 
-	time.Sleep(5 * time.Second)
 	WasteLibrary.LogStr("Successfully connected!")
-	WasteLibrary.Version = "1"
-	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
-	currentUser = WasteLibrary.GetCurrentUser()
-	WasteLibrary.LogStr(currentUser)
-	currentDeviceType.New()
+	go WasteLibrary.InitLog()
+	socketCh = make(chan string)
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 }
+
 func main() {
 
 	initStart()
 
-	time.Sleep(5 * time.Second)
-	go gpsCheck()
-	wg.Add(1)
-	time.Sleep(5 * time.Second)
-	go sendGps()
-	wg.Add(1)
+	//TO DO
+	// Get Customer LocalConfig
 
+	http.HandleFunc("/health", WasteLibrary.HealthHandler)
+	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
+	http.HandleFunc("/trigger", trigger)
+	http.HandleFunc("/socket", socket)
 	http.ListenAndServe(":10003", nil)
-
-	wg.Wait()
 }
 
-func gpsCheck() {
-	if currentUser == "pi" {
-		var err error
-		for {
-			time.Sleep(time.Second)
-			WasteLibrary.LogStr("Device Check")
-			serialPort, err = devafatekserial.Open(serialOptions0)
-			if err != nil {
-				WasteLibrary.LogErr(err)
-				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_PASSIVE
-			} else {
-				WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_ACTIVE
-			}
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.STATU_PASSIVE {
-				serialPort, err = devafatekserial.Open(serialOptions1)
-				if err != nil {
-					WasteLibrary.LogErr(err)
-					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_PASSIVE
-				} else {
-					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_ACTIVE
-				}
-			}
+func trigger(w http.ResponseWriter, req *http.Request) {
 
-			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.STATU_ACTIVE {
-				reader := bufio.NewReader(serialPort)
-				scanner := bufio.NewScanner(reader)
-				WasteLibrary.LogStr("Device OK")
-				for scanner.Scan() {
-					gps, err := devafatekgps.ParseGpsLine(scanner.Text())
-					if err == nil {
-						if gps.GetFixQuality() == "1" || gps.GetFixQuality() == "2" {
-							latitude, _ := gps.GetLatitude()
-							longitude, _ := gps.GetLongitude()
+	if WasteLibrary.AllowCors {
 
-							if latitude != "" {
-								currentDeviceType.DeviceGps.Latitude = WasteLibrary.StringToFloat64(latitude)
-							} else {
-								currentDeviceType.DeviceGps.Latitude = 0
-							}
-							if longitude != "" {
-								currentDeviceType.DeviceGps.Longitude = WasteLibrary.StringToFloat64(longitude)
-							} else {
-								currentDeviceType.DeviceGps.Longitude = 0
-							}
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_ACTIVE
-						} else {
-							currentDeviceType.DeviceGps.Latitude = 0
-							currentDeviceType.DeviceGps.Longitude = 0
-							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_PASSIVE
-						}
-					}
-					time.Sleep(opInterval * time.Second)
-				}
-			}
-			WasteLibrary.LogStr("Device NONE")
-		}
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
-	wg.Done()
+	var resultVal WasteLibrary.ResultType
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal.Result = WasteLibrary.RESULT_OK
+	w.Write(resultVal.ToByte())
+
+	readerType := req.FormValue(WasteLibrary.HTTP_READERTYPE)
+	WasteLibrary.LogStr(readerType)
+
+	if readerType == WasteLibrary.READERTYPE_RF {
+		socketCh <- WasteLibrary.RECY_SOCKET_ANALYZE
+	} else if readerType == WasteLibrary.READERTYPE_WEBTRIGGER {
+		socketCh <- WasteLibrary.RECY_SOCKET_FINISH
+		sendMotor()
+	} else {
+
+	}
+	socketCh <- WasteLibrary.RECY_SOCKET_INDEX
+
 }
 
-func sendGps() {
+func sendMotor() {
+
+	data := url.Values{
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_MOTORRIGGER},
+	}
+
+	WasteLibrary.HttpPostReq("http://127.0.0.1:10008/trigger", data)
+}
+
+func socket(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+
+	c, err := upgrader.Upgrade(w, req, nil)
+	if err != nil {
+		WasteLibrary.LogErr(err)
+		return
+	}
+	defer c.Close()
+
 	for {
-		time.Sleep(opInterval * time.Second)
-		data := url.Values{
-			WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_GPS},
-			WasteLibrary.HTTP_DATA:       {currentDeviceType.ToString()},
+		msg := <-socketCh
+		err = c.WriteMessage(1, []byte(msg))
+		if err != nil {
+			break
 		}
-		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}
-	wg.Done()
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -173,8 +174,9 @@ func camCheck() {
 				case *net.IPAddr:
 					ip = v.IP
 				}
-				ipStr := string(ip)
-				WasteLibrary.LogStr(ipStr)
+				//TO DO
+				//update all client
+				ipStr := fmt.Sprintf("%s", ip)
 				if ipStr == "10.0.0.1" {
 					WasteLibrary.CurrentCheckStatu.ConnStatu = WasteLibrary.STATU_ACTIVE
 				}

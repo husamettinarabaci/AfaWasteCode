@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -91,7 +92,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					return
 				}
 
-				WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentData.DeviceGps.ToString())
+				if int(currentData.DeviceGps.DeviceId)%(time.Now().Second()+1) == 0 {
+					WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentData.DeviceGps.ToString())
+				}
 				if currentData.DeviceGps.Speed == 0 {
 					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, currentHttpHeader.ToCustomerIdString())
 					if resultVal.Result != WasteLibrary.RESULT_OK {

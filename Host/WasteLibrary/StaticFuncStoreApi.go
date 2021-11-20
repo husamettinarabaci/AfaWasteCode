@@ -90,6 +90,20 @@ func SaveRedisForStoreApi(hKey string, sKey string, kVal string) ResultType {
 	return resultVal
 }
 
+//SaveRedisWODbForStoreApi
+func SaveRedisWODbForStoreApi(hKey string, sKey string, kVal string) ResultType {
+	var resultVal ResultType
+	resultVal.Result = RESULT_FAIL
+	data := url.Values{
+		REDIS_HASHKEY:  {hKey},
+		REDIS_SUBKEY:   {sKey},
+		REDIS_KEYVALUE: {kVal},
+	}
+	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/setkey", data)
+	LogStr(resultVal.ToString())
+	return resultVal
+}
+
 //PublishRedisForStoreApi
 func PublishRedisForStoreApi(channelKey string, dataType string, dataVal string) ResultType {
 	var resultVal ResultType
@@ -124,6 +138,20 @@ func GetRedisForStoreApi(hKey string, sKey string) ResultType {
 	data := url.Values{
 		REDIS_HASHKEY: {hKey},
 		REDIS_SUBKEY:  {sKey},
+	}
+	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getkey", data)
+	LogStr(resultVal.ToString())
+	return resultVal
+}
+
+//GetRedisWODbForStoreApi
+func GetRedisWODbForStoreApi(hKey string, hBaseKey string, sKey string) ResultType {
+	var resultVal ResultType
+	resultVal.Result = RESULT_FAIL
+	data := url.Values{
+		REDIS_HASHKEY:     {hKey},
+		REDIS_HASHBASEKEY: {hBaseKey},
+		REDIS_SUBKEY:      {sKey},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getkey", data)
 	LogStr(resultVal.ToString())

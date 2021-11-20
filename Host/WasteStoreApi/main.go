@@ -21,8 +21,10 @@ func main() {
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/getkey", getkey)
+	http.HandleFunc("/getkeyWODb", getkeyWODb)
 	http.HandleFunc("/publishkey", publishkey)
 	http.HandleFunc("/setkey", setkey)
+	http.HandleFunc("/setkeyWODb", setkeyWODb)
 	http.HandleFunc("/deletekey", deletekey)
 	http.HandleFunc("/saveStaticDbMain", saveStaticDbMain)
 	http.HandleFunc("/getStaticDbMain", getStaticDbMain)
@@ -245,6 +247,29 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 
 }
 
+func getkeyWODb(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+	var resultVal WasteLibrary.ResultType
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/getkeyWODb", req.Form)
+	w.Write(resultVal.ToByte())
+
+}
+
 func setkey(w http.ResponseWriter, req *http.Request) {
 
 	if WasteLibrary.AllowCors {
@@ -264,6 +289,29 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/setkey", req.Form)
+	w.Write(resultVal.ToByte())
+
+}
+
+func setkeyWODb(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+	var resultVal WasteLibrary.ResultType
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforredis-cluster-ip/setkeyWODb", req.Form)
 	w.Write(resultVal.ToByte())
 
 }

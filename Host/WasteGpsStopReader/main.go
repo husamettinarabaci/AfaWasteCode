@@ -126,10 +126,18 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					}
 
 					WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_STATU, currentTag.TagStatu.ToString())
+					resultVal = WasteLibrary.GetRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, currentHttpHeader.ToCustomerIdString())
+					if resultVal.Result == WasteLibrary.RESULT_OK {
+						var customerTagsList WasteLibrary.CustomerTagsListType = WasteLibrary.StringToCustomerTagsListType(resultVal.Retval.(string))
 
+						customerTag := customerTagsList.Tags[currentTag.TagStatu.ToIdString()]
+						customerTag.ContainerStatu = currentTag.TagStatu.ContainerStatu
+						customerTag.TagStatu = currentTag.TagStatu.TagStatu
+						customerTagsList.Tags[currentTag.TagStatu.ToIdString()] = customerTag
+						WasteLibrary.SaveRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, currentHttpHeader.ToCustomerIdString(), customerTagsList.ToString())
+					}
 				}
 			}
 		}
-
 	}
 }

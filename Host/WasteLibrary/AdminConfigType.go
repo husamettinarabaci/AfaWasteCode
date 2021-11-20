@@ -7,14 +7,24 @@ import (
 
 //AdminConfigType
 type AdminConfigType struct {
-	CustomerId float64
-	Active     string
-	CreateTime string
+	CustomerId      float64
+	DeviceBaseWork  string
+	WorkStartHour   int
+	WorkStartMinute int
+	WorkEndHour     int
+	WorkEndMinute   int
+	Active          string
+	CreateTime      string
 }
 
 //New
 func (res *AdminConfigType) New() {
 	res.CustomerId = 1
+	res.WorkStartHour = 06
+	res.WorkStartMinute = 0
+	res.WorkEndHour = 18
+	res.WorkEndMinute = 30
+	res.DeviceBaseWork = STATU_PASSIVE
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 }

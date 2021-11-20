@@ -198,6 +198,50 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_mains ( 
+		DataId serial PRIMARY KEY,
+		NfcID INT NOT NULL DEFAULT -1,
+		CustomerId INT NOT NULL DEFAULT -1,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Epc varchar(50) NOT NULL DEFAULT '',
+		Active varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_ACTIVE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_bases ( 
+		DataId serial PRIMARY KEY,
+		NfcID INT NOT NULL DEFAULT -1,
+		Name varchar(50) NOT NULL DEFAULT '',
+		SurName varchar(50) NOT NULL DEFAULT '',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_status ( 
+		DataId serial PRIMARY KEY,
+		NfcID INT NOT NULL DEFAULT -1,
+		ItemStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.RECY_ITEM_STATU_NONE + `',
+		NfcStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NFC_STATU_NONE + `',
+		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
+		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_readers ( 
+		DataId serial PRIMARY KEY,
+		NfcID INT NOT NULL DEFAULT -1,
+		UID varchar(50) NOT NULL DEFAULT '',
+		ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_main_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
@@ -322,12 +366,10 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_workhour_devices ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		WorkHour1Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		WorkHour1Add INT NOT NULL DEFAULT 0,
-		WorkHour2Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		WorkHour2Add INT NOT NULL DEFAULT 0,
-		WorkHour3Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		WorkHour3Add INT NOT NULL DEFAULT 0,
+		WorkStartHour  INT NOT NULL DEFAULT 6,
+		WorkStartMinute  INT NOT NULL DEFAULT 0,
+		WorkEndHour  INT NOT NULL DEFAULT 18,
+		WorkEndMinute  INT NOT NULL DEFAULT 30,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -366,15 +408,16 @@ func readerDbSet() {
 		AliveStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		AliveLastOkTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `',
+		SensPercent NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	// alterSQL := fmt.Sprintf(`ALTER TABLE ult_statu_devices ADD COLUMN IF NOT EXISTS UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `';`)
-	// _, err = readerDb.Exec(alterSQL)
-	// WasteLibrary.LogErr(err)
+	alterSQL := fmt.Sprintf(`ALTER TABLE ult_statu_devices ADD COLUMN IF NOT EXISTS SensPercent NUMERIC(14, 11)  NOT NULL DEFAULT 0;`)
+	_, err = readerDb.Exec(alterSQL)
+	WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_battery_devices (
 		DataId serial PRIMARY KEY,
@@ -667,6 +710,49 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_mains ( 
+		NfcID serial PRIMARY KEY,
+		CustomerId INT NOT NULL DEFAULT -1,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Epc varchar(50) NOT NULL DEFAULT '',
+		Active varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_ACTIVE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_bases ( 
+		DataId serial PRIMARY KEY,
+		NfcID INT NOT NULL DEFAULT -1,
+		Name varchar(50) NOT NULL DEFAULT '',
+		SurName varchar(50) NOT NULL DEFAULT '',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_status ( 
+		DataId serial PRIMARY KEY,
+		NfcID INT NOT NULL DEFAULT -1,
+		ItemStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.RECY_ITEM_STATU_NONE + `',
+		NfcStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NFC_STATU_NONE + `',
+		ImageStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
+		CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_readers ( 
+		DataId serial PRIMARY KEY,
+		NfcID INT NOT NULL DEFAULT -1,
+		UID varchar(50) NOT NULL DEFAULT '',
+		ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_main_devices (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -790,12 +876,10 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_workhour_devices ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		WorkHour1Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		WorkHour1Add  INT NOT NULL DEFAULT 0,
-		WorkHour2Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		WorkHour2Add  INT NOT NULL DEFAULT 0,
-		WorkHour3Start TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		WorkHour3Add  INT NOT NULL DEFAULT 0,
+		WorkStartHour  INT NOT NULL DEFAULT 6,
+		WorkStartMinute  INT NOT NULL DEFAULT 0,
+		WorkEndHour  INT NOT NULL DEFAULT 6,
+		WorkEndMinute  INT NOT NULL DEFAULT 0,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -833,10 +917,15 @@ func staticDbSet() {
 		AliveStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.STATU_PASSIVE + `',
 		AliveLastOkTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		UltStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ULT_STATU_NONE + `',
+		SensPercent NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 		ContainerStatu varchar(50) NOT NULL DEFAULT '` + WasteLibrary.CONTAINER_FULLNESS_STATU_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	alterSQL := fmt.Sprintf(`ALTER TABLE ult_statu_devices ADD COLUMN IF NOT EXISTS SensPercent NUMERIC(14, 11)  NOT NULL DEFAULT 0;`)
+	_, err = staticDb.Exec(alterSQL)
 	WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_battery_devices (

@@ -1,3 +1,5 @@
+gitee.com/wiseai/go-rpio v4.2.0+incompatible h1:iD/Ati6cRgEQMHYBRbV+oeY9oYRce+w7ZzLhrpSXJMI=
+gitee.com/wiseai/go-rpio v4.2.0+incompatible/go.mod h1:UqgqSofIqyK3jP+/c6bvRT9lqJp/P3JcYrLr6mkvNvI=
 github.com/AfatekDevelopers/gps_lib_go v0.0.0-20200525193957-04fe8c0bf846 h1:yb0jkr18K/DZ2k/ZUv9Q5m9PVqZ280LbFTaCA1ndpXY=
 github.com/AfatekDevelopers/gps_lib_go v0.0.0-20200525193957-04fe8c0bf846/go.mod h1:kxl1Cy9kIGskuHqB1qbZIcx/s8dJfLuP0UyImf0aKu4=
 github.com/AfatekDevelopers/gps_lib_go v0.0.0-20210906102949-9bb66ba894fd h1:/NGQVWrLIwTqfJPdG3iW7kZocQ1v+EDaN91tB4MR0U0=

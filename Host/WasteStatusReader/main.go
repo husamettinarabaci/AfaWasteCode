@@ -164,11 +164,14 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				step1 = 50
 				step2 = 100
 				step3 = 150
+
 			} else {
 				step1 = 50
 				step2 = 100
 				step3 = 150
 			}
+
+			currentData.DeviceStatu.SensPercent = (ultCm * 100) / (step3 + 50)
 
 			if ultCm < step1 {
 				currentData.DeviceStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL

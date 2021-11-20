@@ -8,25 +8,21 @@ import (
 
 //RfidDeviceWorkHourType
 type RfidDeviceWorkHourType struct {
-	DeviceId       float64
-	WorkHour1Start string
-	WorkHour1Add   float64
-	WorkHour2Start string
-	WorkHour2Add   float64
-	WorkHour3Start string
-	WorkHour3Add   float64
-	NewData        bool
+	DeviceId        float64
+	WorkStartHour   int
+	WorkStartMinute int
+	WorkEndHour     int
+	WorkEndMinute   int
+	NewData         bool
 }
 
 //New
 func (res *RfidDeviceWorkHourType) New() {
 	res.DeviceId = 0
-	res.WorkHour1Start = GetTime()
-	res.WorkHour1Add = 0
-	res.WorkHour2Start = GetTime()
-	res.WorkHour2Add = 0
-	res.WorkHour3Start = GetTime()
-	res.WorkHour3Add = 0
+	res.WorkStartHour = 06
+	res.WorkStartMinute = 0
+	res.WorkEndHour = 18
+	res.WorkEndMinute = 30
 	res.NewData = false
 }
 
@@ -62,9 +58,8 @@ func StringToRfidDeviceWorkHourType(retStr string) RfidDeviceWorkHourType {
 //SelectSQL
 func (res *RfidDeviceWorkHourType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT 
-	 WorkHour1Start,WorkHour1Add,
-	 WorkHour2Start,WorkHour2Add,
-	 WorkHour3Start,WorkHour3Add
+	WorkStartHour,WorkStartMinute,
+	WorkEndHour,WorkEndMinute
 	 FROM public.rfid_workhour_devices
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
@@ -72,37 +67,31 @@ func (res *RfidDeviceWorkHourType) SelectSQL() string {
 //InsertSQL
 func (res *RfidDeviceWorkHourType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.rfid_workhour_devices (DeviceId,
-	 WorkHour1Start,WorkHour1Add,
-	 WorkHour2Start,WorkHour2Add,
-	 WorkHour3Start,WorkHour3Add) 
-	  VALUES (%f
-	,'%s',%f,'%s',%f,'%s',%f) 
+		WorkStartHour,WorkStartMinute,
+		WorkEndHour,WorkEndMinute) 
+	  VALUES (%f,%d,%d,%d,%d) 
 	  RETURNING DeviceId;`, res.DeviceId,
-		res.WorkHour1Start, res.WorkHour1Add,
-		res.WorkHour2Start, res.WorkHour2Add,
-		res.WorkHour3Start, res.WorkHour3Add)
+		res.WorkStartHour, res.WorkStartMinute,
+		res.WorkEndHour, res.WorkEndMinute)
 }
 
 //UpdateSQL
 func (res *RfidDeviceWorkHourType) UpdateSQL() string {
 
 	return fmt.Sprintf(`UPDATE public.rfid_workhour_devices 
-	  SET WorkHour1Start='%s',WorkHour1Add=%f,
-	  WorkHour2Start='%s',WorkHour2Add=%f,
-	  WorkHour3Start='%s',WorkHour3Add=%f
+	  SET WorkStartHour=%d,WorkStartMinute=%d,
+	  WorkEndHour=%d,WorkEndMinute=%d
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
-		res.WorkHour1Start, res.WorkHour1Add,
-		res.WorkHour2Start, res.WorkHour2Add,
-		res.WorkHour3Start, res.WorkHour3Add,
+		res.WorkStartHour, res.WorkStartMinute,
+		res.WorkEndHour, res.WorkEndMinute,
 		res.DeviceId)
 }
 
 //SelectWithDb
 func (res *RfidDeviceWorkHourType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
-		&res.WorkHour1Start, &res.WorkHour1Add,
-		&res.WorkHour2Start, &res.WorkHour2Add,
-		&res.WorkHour3Start, &res.WorkHour3Add)
+		&res.WorkStartHour, &res.WorkStartMinute,
+		&res.WorkEndHour, &res.WorkEndMinute)
 	return errDb
 }

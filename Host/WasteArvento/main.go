@@ -135,7 +135,7 @@ func customerProc(customerId float64) {
 				}
 			}
 
-			time.Sleep(20 * time.Second)
+			time.Sleep(10 * time.Second)
 		} else {
 			delete(currentCustomerList.Customers, WasteLibrary.Float64IdToString(customerId))
 			break

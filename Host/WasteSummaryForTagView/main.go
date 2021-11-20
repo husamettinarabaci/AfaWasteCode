@@ -82,11 +82,12 @@ func customerProc(customerId float64) {
 						currentViewTag.TagStatu = currentTag.TagStatu.TagStatu
 						currentViewTag.Latitude = currentTag.TagGps.Latitude
 						currentViewTag.Longitude = currentTag.TagGps.Longitude
-						customerTagsList.Tags = append(customerTagsList.Tags, currentViewTag)
+						customerTagsList.Tags[currentViewTag.ToIdString()] = currentViewTag
 					}
 				}
 			}
 			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, customerTagsList.ToIdString(), customerTagsList.ToString())
+			resultVal = WasteLibrary.SaveRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, customerTagsList.ToIdString(), customerTagsList.ToString())
 		}
 
 		time.Sleep(opInterval * time.Second)
