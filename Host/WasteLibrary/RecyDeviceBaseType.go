@@ -22,6 +22,21 @@ func (res *RecyDeviceBaseType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *RecyDeviceBaseType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_RECY_BASE_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *RecyDeviceBaseType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -49,6 +64,16 @@ func ByteToRecyDeviceBaseType(retByte []byte) RecyDeviceBaseType {
 //String To RecyDeviceBaseType
 func StringToRecyDeviceBaseType(retStr string) RecyDeviceBaseType {
 	return ByteToRecyDeviceBaseType([]byte(retStr))
+}
+
+//ByteToType
+func (res *RecyDeviceBaseType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *RecyDeviceBaseType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

@@ -32,6 +32,20 @@ func (res *CustomerConfigType) New() {
 
 }
 
+//GetByRedis
+func (res *CustomerConfigType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_CUSTOMERCONFIG, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *CustomerConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
@@ -60,4 +74,14 @@ func ByteToCustomerConfigType(retByte []byte) CustomerConfigType {
 //String To CustomerConfigType
 func StringToCustomerConfigType(retStr string) CustomerConfigType {
 	return ByteToCustomerConfigType([]byte(retStr))
+}
+
+//ByteToType
+func (res *CustomerConfigType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *CustomerConfigType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

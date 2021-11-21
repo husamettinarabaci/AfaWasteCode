@@ -33,12 +33,9 @@ func setCustomerList() {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	for {
-
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, WasteLibrary.REDIS_CUSTOMERS)
-
+		var currentCustomers WasteLibrary.CustomersType
+		resultVal = currentCustomers.GetByRedis()
 		if resultVal.Result == WasteLibrary.RESULT_OK {
-
-			var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
 			for _, customerId := range currentCustomers.Customers {
 				if customerId != 0 {
 					if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
@@ -58,11 +55,12 @@ func customerProc(customerId float64) {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	for {
 
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, WasteLibrary.Float64IdToString(customerId))
+		var customerTags WasteLibrary.CustomerTagsType
+		customerTags.CustomerId = customerId
+		resultVal = customerTags.GetByRedis()
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
-			var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
-			var customerTagsList WasteLibrary.CustomerTagsListType
+			var customerTagsList WasteLibrary.CustomerTagsViewListType
 			customerTagsList.New()
 			customerTagsList.CustomerId = customerId
 			for _, tagId := range customerTags.Tags {
@@ -72,7 +70,7 @@ func customerProc(customerId float64) {
 					var currentTag WasteLibrary.TagType
 					currentTag.New()
 					currentTag.TagId = tagId
-					resultVal = currentTag.GetAll()
+					resultVal = currentTag.GetByRedis()
 					if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
 						var currentViewTag WasteLibrary.TagViewType
 						currentViewTag.New()

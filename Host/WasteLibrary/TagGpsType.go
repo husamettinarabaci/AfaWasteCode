@@ -24,6 +24,22 @@ func (res *TagGpsType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *TagGpsType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_TAG_GPSES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *TagGpsType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)
@@ -52,6 +68,16 @@ func ByteToTagGpsType(retByte []byte) TagGpsType {
 //String To TagGpsType
 func StringToTagGpsType(retStr string) TagGpsType {
 	return ByteToTagGpsType([]byte(retStr))
+}
+
+//ByteToType
+func (res *TagGpsType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *TagGpsType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

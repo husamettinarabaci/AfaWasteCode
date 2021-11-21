@@ -34,71 +34,73 @@ func (res *UltDeviceType) New() {
 
 }
 
-//GetAll
-func (res *UltDeviceType) GetAll() ResultType {
+//GetByRedis
+func (res *UltDeviceType) GetByRedis() ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_ULT_MAIN_DEVICES, res.ToIdString())
+
+	res.DeviceMain.DeviceId = res.DeviceId
+	resultVal = res.DeviceMain.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceBase.DeviceId = res.DeviceId
+	resultVal = res.DeviceBase.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceGps.DeviceId = res.DeviceId
+	resultVal = res.DeviceGps.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceTherm.DeviceId = res.DeviceId
+	resultVal = res.DeviceTherm.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceVersion.DeviceId = res.DeviceId
+	resultVal = res.DeviceVersion.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceAlarm.DeviceId = res.DeviceId
+	resultVal = res.DeviceAlarm.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceStatu.DeviceId = res.DeviceId
+	resultVal = res.DeviceStatu.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceSens.DeviceId = res.DeviceId
+	resultVal = res.DeviceSens.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceBattery.DeviceId = res.DeviceId
+	resultVal = res.DeviceBattery.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
+//GetByRedisBySerial
+func (res *UltDeviceType) GetByRedisBySerial(serial string) ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_SERIAL_ULT_DEVICE, serial)
 	if resultVal.Result == RESULT_OK {
-		res.DeviceMain = StringToUltDeviceMainType(resultVal.Retval.(string))
+		var deviceId string = resultVal.Retval.(string)
+		res.DeviceId = StringIdToFloat64(deviceId)
+		resultVal = res.GetByRedis()
 	} else {
 		return resultVal
 	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_BASE_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceBase = StringToUltDeviceBaseType(resultVal.Retval.(string))
-		res.DeviceBase.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_GPS_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceGps = StringToUltDeviceGpsType(resultVal.Retval.(string))
-		res.DeviceGps.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_THERM_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceTherm = StringToUltDeviceThermType(resultVal.Retval.(string))
-		res.DeviceTherm.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_VERSION_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceVersion = StringToUltDeviceVersionType(resultVal.Retval.(string))
-		res.DeviceVersion.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_ALARM_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceAlarm = StringToUltDeviceAlarmType(resultVal.Retval.(string))
-		res.DeviceAlarm.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_STATU_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceStatu = StringToUltDeviceStatuType(resultVal.Retval.(string))
-		res.DeviceStatu.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_SENS_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceSens = StringToUltDeviceSensType(resultVal.Retval.(string))
-		res.DeviceSens.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_ULT_BATTERY_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceBattery = StringToUltDeviceBatteryType(resultVal.Retval.(string))
-		res.DeviceBattery.NewData = false
-	} else {
-		return resultVal
-	}
+
+	resultVal.Retval = res.ToString()
 	return resultVal
 }
 

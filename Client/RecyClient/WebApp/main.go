@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/devafatek/WasteLibrary"
 	"github.com/gorilla/websocket"
@@ -23,8 +24,7 @@ func main() {
 
 	initStart()
 
-	//TO DO
-	// Get Customer LocalConfig
+	go getCustomer()
 
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
@@ -56,24 +56,70 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 	w.Write(resultVal.ToByte())
 
 	readerType := req.FormValue(WasteLibrary.HTTP_READERTYPE)
+	var nfcTypeVal WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
 	WasteLibrary.LogStr(readerType)
 
 	if readerType == WasteLibrary.READERTYPE_RF {
-		socketCh <- WasteLibrary.RECY_SOCKET_ANALYZE
+		resultVal.Result = WasteLibrary.RECY_SOCKET_ANALYZE
+		resultVal.Retval = nfcTypeVal.ToString()
+		socketCh <- resultVal.ToString()
 	} else if readerType == WasteLibrary.READERTYPE_WEBTRIGGER {
-		socketCh <- WasteLibrary.RECY_SOCKET_FINISH
-		sendMotor()
+		go sendMotor()
+		resultVal = getResult(nfcTypeVal)
+		if resultVal.Result == WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RECY_SOCKET_FINISH
+			socketCh <- resultVal.ToString()
+		} else {
+			resultVal.Result = WasteLibrary.RECY_SOCKET_ERROR
+			socketCh <- resultVal.ToString()
+		}
+
+		time.Sleep(5 * time.Second)
+		resultVal.Result = WasteLibrary.RECY_SOCKET_INDEX
+		socketCh <- resultVal.ToString()
 	} else {
 
 	}
-	socketCh <- WasteLibrary.RECY_SOCKET_INDEX
 
+}
+
+func getCustomer() WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	data := url.Values{
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_GET_CUSTOMER},
+	}
+	resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
+	if resultVal.Result == WasteLibrary.RESULT_OK {
+		//var customer WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(resultVal.Retval.(string))
+		//var autoStartVal string
+		//var customerAutoStartVal string
+		//TO DO
+		//create customerAutoStartVal by CustomerName
+		//get file value
+		//if autoStartVal != customerAutoStartVal {
+		//TO DO
+		// write customerAutoStartVal and reboot
+		//}
+	}
+	return resultVal
+}
+
+func getResult(nfcData WasteLibrary.NfcType) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	data := url.Values{
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_GET_NFC},
+		WasteLibrary.HTTP_DATA:       {nfcData.ToString()},
+	}
+	resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
+	return resultVal
 }
 
 func sendMotor() {
 
 	data := url.Values{
-		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_MOTORRIGGER},
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_MOTORTRIGGER},
 	}
 
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10008/trigger", data)
@@ -99,6 +145,7 @@ func socket(w http.ResponseWriter, req *http.Request) {
 		msg := <-socketCh
 		err = c.WriteMessage(1, []byte(msg))
 		if err != nil {
+			WasteLibrary.LogErr(err)
 			break
 		}
 	}

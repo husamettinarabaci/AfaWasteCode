@@ -17,6 +17,20 @@ func (res *CustomerUsersType) New() {
 	res.Users = make(map[string]float64)
 }
 
+//GetByRedis
+func (res *CustomerUsersType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_USERS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *CustomerUsersType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
@@ -45,4 +59,14 @@ func ByteToCustomerUsersType(retByte []byte) CustomerUsersType {
 //String To CustomerUsersType
 func StringToCustomerUsersType(retStr string) CustomerUsersType {
 	return ByteToCustomerUsersType([]byte(retStr))
+}
+
+//ByteToType
+func (res *CustomerUsersType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *CustomerUsersType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

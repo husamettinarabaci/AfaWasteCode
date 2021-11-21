@@ -26,6 +26,22 @@ func (res *RfidDeviceAlarmType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *RfidDeviceAlarmType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_RFID_ALARM_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *RfidDeviceAlarmType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -53,6 +69,16 @@ func ByteToRfidDeviceAlarmType(retByte []byte) RfidDeviceAlarmType {
 //String To RfidDeviceAlarmType
 func StringToRfidDeviceAlarmType(retStr string) RfidDeviceAlarmType {
 	return ByteToRfidDeviceAlarmType([]byte(retStr))
+}
+
+//ByteToType
+func (res *RfidDeviceAlarmType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *RfidDeviceAlarmType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

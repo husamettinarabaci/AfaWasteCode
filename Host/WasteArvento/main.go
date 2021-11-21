@@ -36,11 +36,11 @@ func setCustomerList() {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	for {
 
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, WasteLibrary.REDIS_CUSTOMERS)
+		var currentCustomers WasteLibrary.CustomersType
+		resultVal = currentCustomers.GetByRedis()
 
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
-			var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
 			for _, customerId := range currentCustomers.Customers {
 				if customerId != 0 {
 					if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
@@ -63,11 +63,9 @@ func customerProc(customerId float64) {
 	var currentCustomerConfig WasteLibrary.CustomerConfigType
 	var currentCustomerDevices WasteLibrary.CustomerRfidDevicesType
 	var plateDevice map[string]string
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, WasteLibrary.Float64IdToString(customerId))
+	currentCustomerConfig.CustomerId = customerId
+	resultVal = currentCustomerConfig.GetByRedis()
 
-	if resultVal.Result == WasteLibrary.RESULT_OK {
-		currentCustomerConfig = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
-	}
 	for {
 		if currentCustomerConfig.ArventoApp == WasteLibrary.STATU_ACTIVE {
 			if loopCount == 180 {
@@ -75,14 +73,13 @@ func customerProc(customerId float64) {
 			}
 			if loopCount == 0 {
 				loopCount = 0
-				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, WasteLibrary.Float64IdToString(customerId))
-				if resultVal.Result == WasteLibrary.RESULT_OK {
-					currentCustomerConfig = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
-				}
-				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_RFID_DEVICES, currentCustomerConfig.ToIdString())
+				currentCustomerConfig.CustomerId = customerId
+				resultVal = currentCustomerConfig.GetByRedis()
+
+				currentCustomerDevices.CustomerId = currentCustomerConfig.CustomerId
+				resultVal = currentCustomerDevices.GetByRedis()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
 					WasteLibrary.LogStr("Add Devices : " + WasteLibrary.Float64IdToString(customerId))
-					currentCustomerDevices = WasteLibrary.StringToCustomerRfidDevicesType(resultVal.Retval.(string))
 				}
 				resultVal = getDevice(currentCustomerConfig)
 				if resultVal.Result == WasteLibrary.RESULT_OK {
@@ -100,7 +97,7 @@ func customerProc(customerId float64) {
 					var currentDevice WasteLibrary.RfidDeviceType
 					currentDevice.New()
 					currentDevice.DeviceId = vDevice
-					resultVal = currentDevice.GetAll()
+					resultVal = currentDevice.GetByRedis()
 					if resultVal.Result == WasteLibrary.RESULT_OK {
 						var arventoId string = plateDevice[currentDevice.DeviceDetail.PlateNo]
 						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {

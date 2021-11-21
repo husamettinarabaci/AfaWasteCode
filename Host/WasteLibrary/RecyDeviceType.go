@@ -31,64 +31,68 @@ func (res *RecyDeviceType) New() {
 	res.DeviceDetail.New()
 }
 
-//GetAll
-func (res *RecyDeviceType) GetAll() ResultType {
+//GetByRedis
+func (res *RecyDeviceType) GetByRedis() ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_RECY_MAIN_DEVICES, res.ToIdString())
+
+	res.DeviceMain.DeviceId = res.DeviceId
+	resultVal = res.DeviceMain.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceBase.DeviceId = res.DeviceId
+	resultVal = res.DeviceBase.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceGps.DeviceId = res.DeviceId
+	resultVal = res.DeviceGps.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceTherm.DeviceId = res.DeviceId
+	resultVal = res.DeviceTherm.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceVersion.DeviceId = res.DeviceId
+	resultVal = res.DeviceVersion.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceAlarm.DeviceId = res.DeviceId
+	resultVal = res.DeviceAlarm.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceStatu.DeviceId = res.DeviceId
+	resultVal = res.DeviceStatu.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceDetail.DeviceId = res.DeviceId
+	resultVal = res.DeviceDetail.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
+//GetByRedisBySerial
+func (res *RecyDeviceType) GetByRedisBySerial(serial string) ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_SERIAL_RECY_DEVICE, serial)
 	if resultVal.Result == RESULT_OK {
-		res.DeviceMain = StringToRecyDeviceMainType(resultVal.Retval.(string))
+		var deviceId string = resultVal.Retval.(string)
+		res.DeviceId = StringIdToFloat64(deviceId)
+		resultVal = res.GetByRedis()
 	} else {
 		return resultVal
 	}
-	resultVal = GetRedisForStoreApi(REDIS_RECY_BASE_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceBase = StringToRecyDeviceBaseType(resultVal.Retval.(string))
-		res.DeviceBase.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_RECY_GPS_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceGps = StringToRecyDeviceGpsType(resultVal.Retval.(string))
-		res.DeviceGps.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_RECY_THERM_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceTherm = StringToRecyDeviceThermType(resultVal.Retval.(string))
-		res.DeviceTherm.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_RECY_VERSION_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceVersion = StringToRecyDeviceVersionType(resultVal.Retval.(string))
-		res.DeviceVersion.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_RECY_ALARM_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceAlarm = StringToRecyDeviceAlarmType(resultVal.Retval.(string))
-		res.DeviceAlarm.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_RECY_STATU_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceStatu = StringToRecyDeviceStatuType(resultVal.Retval.(string))
-		res.DeviceStatu.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_RECY_DETAIL_DEVICES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.DeviceDetail = StringToRecyDeviceDetailType(resultVal.Retval.(string))
-		res.DeviceDetail.NewData = false
-	} else {
-		return resultVal
-	}
+
+	resultVal.Retval = res.ToString()
 	return resultVal
 }
 

@@ -55,7 +55,8 @@ func socket(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 
-	resultVal := WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	var linkCustomer WasteLibrary.CustomerType
+	resultVal := linkCustomer.GetByRedisByLink(req.Host)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
@@ -63,7 +64,6 @@ func socket(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	var customerId string = resultVal.Retval.(string)
 
 	c, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
@@ -72,7 +72,7 @@ func socket(w http.ResponseWriter, req *http.Request) {
 	}
 	defer c.Close()
 
-	subscriber := redisDb.Subscribe(ctx, WasteLibrary.REDIS_CUSTOMER_CHANNEL+customerId)
+	subscriber := redisDb.Subscribe(ctx, WasteLibrary.REDIS_CUSTOMER_CHANNEL+linkCustomer.ToIdString())
 
 	for {
 		msg, err := subscriber.ReceiveMessage(ctx)

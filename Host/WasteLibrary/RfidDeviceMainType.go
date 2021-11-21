@@ -24,6 +24,21 @@ func (res *RfidDeviceMainType) New() {
 	res.CreateTime = GetTime()
 }
 
+//GetByRedis
+func (res *RfidDeviceMainType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_RFID_MAIN_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *RfidDeviceMainType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -56,6 +71,16 @@ func ByteToRfidDeviceMainType(retByte []byte) RfidDeviceMainType {
 //String To RfidDeviceMainType
 func StringToRfidDeviceMainType(retStr string) RfidDeviceMainType {
 	return ByteToRfidDeviceMainType([]byte(retStr))
+}
+
+//ByteToType
+func (res *RfidDeviceMainType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *RfidDeviceMainType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

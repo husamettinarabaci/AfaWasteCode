@@ -22,6 +22,22 @@ func (res *TagReaderType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *TagReaderType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_TAG_READERS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *TagReaderType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)
@@ -50,6 +66,16 @@ func ByteToTagReaderType(retByte []byte) TagReaderType {
 //String To TagReaderType
 func StringToTagReaderType(retStr string) TagReaderType {
 	return ByteToTagReaderType([]byte(retStr))
+}
+
+//ByteToType
+func (res *TagReaderType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *TagReaderType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

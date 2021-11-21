@@ -25,43 +25,54 @@ func (res *TagType) New() {
 	res.TagReader.New()
 }
 
-//GetAll
-func (res *TagType) GetAll() ResultType {
+//GetByRedis
+func (res *TagType) GetByRedis() ResultType {
+
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_TAG_MAINS, res.ToIdString())
+
+	res.TagMain.TagId = res.TagId
+	resultVal = res.TagMain.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.TagBase.TagId = res.TagId
+	resultVal = res.TagBase.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.TagGps.TagId = res.TagId
+	resultVal = res.TagGps.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.TagStatu.TagId = res.TagId
+	resultVal = res.TagStatu.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.TagReader.TagId = res.TagId
+	resultVal = res.TagReader.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
+//GetByRedisByEpc
+func (res *TagType) GetByRedisByEpc(epc string) ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_TAG_EPC, epc)
 	if resultVal.Result == RESULT_OK {
-		res.TagMain = StringToTagMainType(resultVal.Retval.(string))
+		var tagId string = resultVal.Retval.(string)
+		res.TagId = StringIdToFloat64(tagId)
+		resultVal = res.GetByRedis()
 	} else {
 		return resultVal
 	}
-	resultVal = GetRedisForStoreApi(REDIS_TAG_BASES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.TagBase = StringToTagBaseType(resultVal.Retval.(string))
-		res.TagBase.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_TAG_GPSES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.TagGps = StringToTagGpsType(resultVal.Retval.(string))
-		res.TagGps.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_TAG_STATUS, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.TagStatu = StringToTagStatuType(resultVal.Retval.(string))
-		res.TagStatu.NewData = false
-	} else {
-		return resultVal
-	}
-	resultVal = GetRedisForStoreApi(REDIS_TAG_READERS, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.TagReader = StringToTagReaderType(resultVal.Retval.(string))
-		res.TagReader.NewData = false
-	} else {
-		return resultVal
-	}
+
+	resultVal.Retval = res.ToString()
 	return resultVal
 }
 

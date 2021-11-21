@@ -23,36 +23,32 @@ func (res *NfcType) New() {
 	res.NfcReader.New()
 }
 
-//GetAll
-func (res *NfcType) GetAll() ResultType {
+//GetByRedis
+func (res *NfcType) GetByRedis() ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_NFC_MAINS, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.NfcMain = StringToNfcMainType(resultVal.Retval.(string))
-	} else {
+
+	res.NfcMain.NfcId = res.NfcId
+	resultVal = res.NfcMain.GetByRedis()
+	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
-	resultVal = GetRedisForStoreApi(REDIS_NFC_BASES, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.NfcBase = StringToNfcBaseType(resultVal.Retval.(string))
-		res.NfcBase.NewData = false
-	} else {
+	res.NfcBase.NfcId = res.NfcId
+	resultVal = res.NfcBase.GetByRedis()
+	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
-	resultVal = GetRedisForStoreApi(REDIS_NFC_STATUS, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.NfcStatu = StringToNfcStatuType(resultVal.Retval.(string))
-		res.NfcStatu.NewData = false
-	} else {
+	res.NfcStatu.NfcId = res.NfcId
+	resultVal = res.NfcStatu.GetByRedis()
+	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
-	resultVal = GetRedisForStoreApi(REDIS_NFC_READERS, res.ToIdString())
-	if resultVal.Result == RESULT_OK {
-		res.NfcReader = StringToNfcReaderType(resultVal.Retval.(string))
-		res.NfcReader.NewData = false
-	} else {
+	res.NfcReader.NfcId = res.NfcId
+	resultVal = res.NfcReader.GetByRedis()
+	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
+
+	resultVal.Retval = res.ToString()
 	return resultVal
 }
 

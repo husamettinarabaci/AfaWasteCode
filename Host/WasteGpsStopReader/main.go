@@ -63,7 +63,9 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, currentHttpHeader.ToCustomerIdString())
+	var customerTagsList WasteLibrary.CustomerTagsViewListType
+	customerTagsList.CustomerId = currentHttpHeader.CustomerId
+	resultVal = customerTagsList.GetByRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -71,7 +73,6 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 		return
 	}
 
-	var customerTagsList WasteLibrary.CustomerTagsListType = WasteLibrary.StringToCustomerTagsListType(resultVal.Retval.(string))
 	for _, currentViewTag := range customerTagsList.Tags {
 		var distance float64 = WasteLibrary.DistanceInKmBetweenEarthCoordinates(currentViewTag.Latitude, currentViewTag.Longitude, currentData.DeviceGps.Latitude, currentData.DeviceGps.Longitude)
 		if distance < 50 {
@@ -79,7 +80,7 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 			var currentTag WasteLibrary.TagType
 			currentTag.New()
 			currentTag.TagId = currentViewTag.TagId
-			resultVal = currentTag.GetAll()
+			resultVal = currentTag.GetByRedis()
 			WasteLibrary.LogStr("Stop Operation Device : " + currentData.ToString())
 			WasteLibrary.LogStr("Stop Operation Distance : " + WasteLibrary.Float64IdToString(distance))
 			WasteLibrary.LogStr("Stop Operation Tag : " + currentTag.ToString())
@@ -126,9 +127,10 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					}
 
 					WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_STATU, currentTag.TagStatu.ToString())
-					resultVal = WasteLibrary.GetRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, currentHttpHeader.ToCustomerIdString())
+					var customerTagsList WasteLibrary.CustomerTagsViewListType
+					customerTagsList.CustomerId = currentHttpHeader.CustomerId
+					resultVal = customerTagsList.GetByRedisByReel()
 					if resultVal.Result == WasteLibrary.RESULT_OK {
-						var customerTagsList WasteLibrary.CustomerTagsListType = WasteLibrary.StringToCustomerTagsListType(resultVal.Retval.(string))
 
 						customerTag := customerTagsList.Tags[currentTag.TagStatu.ToIdString()]
 						customerTag.ContainerStatu = currentTag.TagStatu.ContainerStatu

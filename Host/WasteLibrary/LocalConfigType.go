@@ -620,6 +620,20 @@ func (res *LocalConfigType) New() {
 	res.Key299 = ""
 }
 
+//GetByRedis
+func (res *LocalConfigType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_LOCALCONFIG, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *LocalConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
@@ -647,4 +661,14 @@ func ByteToLocalConfigType(retByte []byte) LocalConfigType {
 //String To LocalConfigType
 func StringToLocalConfigType(retStr string) LocalConfigType {
 	return ByteToLocalConfigType([]byte(retStr))
+}
+
+//ByteToType
+func (res *LocalConfigType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *LocalConfigType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

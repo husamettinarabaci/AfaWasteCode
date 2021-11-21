@@ -21,6 +21,21 @@ func (res *UltDeviceVersionType) New() {
 
 }
 
+//GetByRedis
+func (res *UltDeviceVersionType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_ULT_VERSION_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *UltDeviceVersionType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -48,6 +63,16 @@ func ByteToUltDeviceVersionType(retByte []byte) UltDeviceVersionType {
 //String To UltDeviceVersionType
 func StringToUltDeviceVersionType(retStr string) UltDeviceVersionType {
 	return ByteToUltDeviceVersionType([]byte(retStr))
+}
+
+//ByteToType
+func (res *UltDeviceVersionType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *UltDeviceVersionType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

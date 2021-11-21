@@ -56,7 +56,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			var oldData WasteLibrary.UltDeviceType
 			oldData.DeviceId = currentData.DeviceId
-			oldData.GetAll()
+			oldData.GetByRedis()
 
 			if currentData.DeviceSens.UltCount < 24 {
 				currentData.DeviceSens.UltRange24 = oldData.DeviceSens.UltRange24

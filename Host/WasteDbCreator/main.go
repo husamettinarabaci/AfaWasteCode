@@ -415,10 +415,6 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	alterSQL := fmt.Sprintf(`ALTER TABLE ult_statu_devices ADD COLUMN IF NOT EXISTS SensPercent NUMERIC(14, 11)  NOT NULL DEFAULT 0;`)
-	_, err = readerDb.Exec(alterSQL)
-	WasteLibrary.LogErr(err)
-
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_battery_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
@@ -922,10 +918,6 @@ func staticDbSet() {
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
-	WasteLibrary.LogErr(err)
-
-	alterSQL := fmt.Sprintf(`ALTER TABLE ult_statu_devices ADD COLUMN IF NOT EXISTS SensPercent NUMERIC(14, 11)  NOT NULL DEFAULT 0;`)
-	_, err = staticDb.Exec(alterSQL)
 	WasteLibrary.LogErr(err)
 
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_battery_devices (

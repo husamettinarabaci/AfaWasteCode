@@ -17,6 +17,20 @@ func (res *CustomerRfidDevicesType) New() {
 	res.Devices = make(map[string]float64)
 }
 
+//GetByRedis
+func (res *CustomerRfidDevicesType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_RFID_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *CustomerRfidDevicesType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)
@@ -45,4 +59,14 @@ func ByteToCustomerRfidDevicesType(retByte []byte) CustomerRfidDevicesType {
 //String To CustomerRfidDevicesType
 func StringToCustomerRfidDevicesType(retStr string) CustomerRfidDevicesType {
 	return ByteToCustomerRfidDevicesType([]byte(retStr))
+}
+
+//ByteToType
+func (res *CustomerRfidDevicesType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *CustomerRfidDevicesType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

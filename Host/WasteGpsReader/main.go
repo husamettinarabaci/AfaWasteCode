@@ -96,7 +96,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentData.DeviceGps.ToString())
 				}
 				if currentData.DeviceGps.Speed == 0 {
-					resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CUSTOMERCONFIG, currentHttpHeader.ToCustomerIdString())
+					var customerConfig WasteLibrary.CustomerConfigType
+					customerConfig.CustomerId = currentHttpHeader.CustomerId
+					resultVal = customerConfig.GetByRedis()
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
 						resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_CUSTOMERCONFIG_NOTFOUND
@@ -104,7 +106,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 						return
 					}
-					var customerConfig WasteLibrary.CustomerConfigType = WasteLibrary.StringToCustomerConfigType(resultVal.Retval.(string))
 					if customerConfig.TruckStopTrace == WasteLibrary.STATU_ACTIVE {
 
 						data = url.Values{

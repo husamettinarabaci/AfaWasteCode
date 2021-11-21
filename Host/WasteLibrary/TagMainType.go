@@ -27,6 +27,21 @@ func (res *TagMainType) New() {
 	res.CreateTime = GetTime()
 }
 
+//GetByRedis
+func (res *TagMainType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_TAG_MAINS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *TagMainType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)
@@ -65,6 +80,16 @@ func ByteToTagMainType(retByte []byte) TagMainType {
 //String To TagMainType
 func StringToTagMainType(retStr string) TagMainType {
 	return ByteToTagMainType([]byte(retStr))
+}
+
+//ByteToType
+func (res *TagMainType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *TagMainType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

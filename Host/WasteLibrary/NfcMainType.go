@@ -16,6 +16,20 @@ type NfcMainType struct {
 	CreateTime string
 }
 
+//GetByRedis
+func (res *NfcMainType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_NFC_MAINS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //New
 func (res *NfcMainType) New() {
 	res.NfcId = 0
@@ -64,6 +78,16 @@ func ByteToNfcMainType(retByte []byte) NfcMainType {
 //String To NfcMainType
 func StringToNfcMainType(retStr string) NfcMainType {
 	return ByteToNfcMainType([]byte(retStr))
+}
+
+//ByteToType
+func (res *NfcMainType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *NfcMainType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

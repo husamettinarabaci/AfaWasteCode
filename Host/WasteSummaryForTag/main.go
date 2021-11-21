@@ -35,11 +35,10 @@ func setCustomerList() {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	for {
 
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMERS, WasteLibrary.REDIS_CUSTOMERS)
-
+		var currentCustomers WasteLibrary.CustomersType
+		resultVal = currentCustomers.GetByRedis()
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
-			var currentCustomers WasteLibrary.CustomersType = WasteLibrary.StringToCustomersType(resultVal.Retval.(string))
 			for _, customerId := range currentCustomers.Customers {
 				if customerId != 0 {
 					if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
@@ -61,10 +60,8 @@ func customerProc(customerId float64) {
 
 		var customerAdminConfig WasteLibrary.AdminConfigType
 		customerAdminConfig.New()
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_ADMINCONFIG, WasteLibrary.Float64IdToString(customerId))
-		if resultVal.Result == WasteLibrary.RESULT_OK {
-			customerAdminConfig = WasteLibrary.StringToAdminConfigType(resultVal.Retval.(string))
-		}
+		customerAdminConfig.CustomerId = customerId
+		resultVal = customerAdminConfig.GetByRedis()
 
 		var workEndHour int = customerAdminConfig.WorkEndHour
 		var workEndMinute int = customerAdminConfig.WorkEndMinute
@@ -95,10 +92,11 @@ func customerProc(customerId float64) {
 			var currentHttpHeader WasteLibrary.HttpClientHeaderType
 			currentHttpHeader.New()
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_STATU
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, WasteLibrary.Float64IdToString(customerId))
+			var customerTags WasteLibrary.CustomerTagsType
+			customerTags.CustomerId = customerId
+			resultVal = customerTags.GetByRedis()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 
-				var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
 				for _, tagId := range customerTags.Tags {
 
 					if tagId != 0 {
@@ -106,18 +104,18 @@ func customerProc(customerId float64) {
 						var currentTag WasteLibrary.TagType
 						currentTag.New()
 						currentTag.TagId = tagId
-						resultVal = currentTag.GetAll()
+						resultVal = currentTag.GetByRedis()
 						if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
 
 							if customerAdminConfig.DeviceBaseWork == WasteLibrary.STATU_ACTIVE {
 
-								resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_WORKHOUR_DEVICES, currentTag.TagMain.ToDeviceIdString())
+								var currentDeviceWorkHour WasteLibrary.RfidDeviceWorkHourType
+								currentDeviceWorkHour.DeviceId = currentTag.TagMain.DeviceId
+								resultVal = currentDeviceWorkHour.GetByRedis()
 								if resultVal.Result == WasteLibrary.RESULT_OK {
 
-									var currentDevice WasteLibrary.RfidDeviceWorkHourType = WasteLibrary.StringToRfidDeviceWorkHourType(resultVal.Retval.(string))
-
-									workEndHour = currentDevice.WorkEndHour
-									workEndMinute = currentDevice.WorkEndMinute
+									workEndHour = currentDeviceWorkHour.WorkEndHour
+									workEndMinute = currentDeviceWorkHour.WorkEndMinute
 									if time.Now().Hour() < workEndHour {
 										inWork = true
 									} else if time.Now().Hour() == workEndHour {
@@ -131,7 +129,7 @@ func customerProc(customerId float64) {
 									}
 
 									if !inWork {
-										workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), currentDevice.WorkStartHour, currentDevice.WorkStartMinute, 0, 0, time.Now().Location())
+										workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), currentDeviceWorkHour.WorkStartHour, currentDeviceWorkHour.WorkStartMinute, 0, 0, time.Now().Location())
 									}
 								}
 

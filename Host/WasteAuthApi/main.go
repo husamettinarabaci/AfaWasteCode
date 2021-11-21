@@ -47,7 +47,8 @@ func register(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	var linkCustomer WasteLibrary.CustomerType
+	resultVal = linkCustomer.GetByRedisByLink(req.Host)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
@@ -55,10 +56,11 @@ func register(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	var customerId string = resultVal.Retval.(string)
 
 	var currentUser WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_USERS, customerId)
+	var currentCustomerUsers WasteLibrary.CustomerUsersType
+	currentCustomerUsers.CustomerId = linkCustomer.CustomerId
+	resultVal = currentCustomerUsers.GetByRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
@@ -66,12 +68,12 @@ func register(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	var currentCustomerUsers WasteLibrary.CustomerUsersType = WasteLibrary.StringToCustomerUsersType(resultVal.Retval.(string))
 
 	for _, userId := range currentCustomerUsers.Users {
 		if userId != 0 {
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, WasteLibrary.Float64IdToString(userId))
-			var inRedisUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
+			var inRedisUser WasteLibrary.UserType
+			inRedisUser.UserId = userId
+			resultVal = inRedisUser.GetByRedis()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 
 				if inRedisUser.UserName == currentUser.UserName {
@@ -106,13 +108,13 @@ func register(w http.ResponseWriter, req *http.Request) {
 	}
 
 	currentUser.UserRole = userRole
-	currentUser.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
+	currentUser.CustomerId = linkCustomer.CustomerId
 	currentUser.Password = WasteLibrary.GetMD5Hash(currentUser.Password)
 	currentUser.Active = WasteLibrary.STATU_ACTIVE
 	currentUser.CreateTime = WasteLibrary.GetTime()
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.CustomerId = WasteLibrary.StringIdToFloat64(customerId)
+	currentHttpHeader.CustomerId = linkCustomer.CustomerId
 	currentHttpHeader.DataType = WasteLibrary.DATATYPE_USER
 	currentUser.Active = WasteLibrary.STATU_ACTIVE
 	currentUser.CreateTime = WasteLibrary.GetTime()
@@ -174,7 +176,8 @@ func login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LINK, req.Host)
+	var linkCustomer WasteLibrary.CustomerType
+	resultVal = linkCustomer.GetByRedisByLink(req.Host)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
@@ -182,10 +185,11 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	var customerId string = resultVal.Retval.(string)
 
 	var currentUser WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_USERS, customerId)
+	var currentCustomerUsers WasteLibrary.CustomerUsersType
+	currentCustomerUsers.CustomerId = linkCustomer.CustomerId
+	resultVal = currentCustomerUsers.GetByRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
@@ -193,14 +197,14 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	var currentCustomerUsers WasteLibrary.CustomerUsersType = WasteLibrary.StringToCustomerUsersType(resultVal.Retval.(string))
 
 	var userExist bool = false
 	for _, userId := range currentCustomerUsers.Users {
 		if userId != 0 {
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, WasteLibrary.Float64IdToString(userId))
+			var inRedisUser WasteLibrary.UserType
+			inRedisUser.UserId = userId
+			resultVal = inRedisUser.GetByRedis()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
-				var inRedisUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
 				if inRedisUser.UserName == currentUser.UserName {
 					userExist = true
 
@@ -316,7 +320,9 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USERS, userIdByToken)
+	var currentUser WasteLibrary.UserType
+	currentUser.UserId = WasteLibrary.StringIdToFloat64(userIdByToken)
+	resultVal = currentUser.GetByRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDUSER
@@ -325,7 +331,6 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentUser WasteLibrary.UserType = WasteLibrary.StringToUserType(resultVal.Retval.(string))
 	customerId := WasteLibrary.StringIdToFloat64(req.FormValue(WasteLibrary.HTTP_CUSTOMERID))
 	if currentUser.CustomerId != customerId {
 		resultVal.Result = WasteLibrary.RESULT_FAIL

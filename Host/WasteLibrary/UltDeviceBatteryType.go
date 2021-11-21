@@ -24,6 +24,21 @@ func (res *UltDeviceBatteryType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *UltDeviceBatteryType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_ULT_BATTERY_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *UltDeviceBatteryType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -51,6 +66,16 @@ func ByteToUltDeviceBatteryType(retByte []byte) UltDeviceBatteryType {
 //String To UltDeviceBatteryType
 func StringToUltDeviceBatteryType(retStr string) UltDeviceBatteryType {
 	return ByteToUltDeviceBatteryType([]byte(retStr))
+}
+
+//ByteToType
+func (res *UltDeviceBatteryType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *UltDeviceBatteryType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

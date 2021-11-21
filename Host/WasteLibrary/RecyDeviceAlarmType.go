@@ -26,6 +26,21 @@ func (res *RecyDeviceAlarmType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *RecyDeviceAlarmType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_RECY_ALARM_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *RecyDeviceAlarmType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -53,6 +68,16 @@ func ByteToRecyDeviceAlarmType(retByte []byte) RecyDeviceAlarmType {
 //String To RecyDeviceAlarmType
 func StringToRecyDeviceAlarmType(retStr string) RecyDeviceAlarmType {
 	return ByteToRecyDeviceAlarmType([]byte(retStr))
+}
+
+//ByteToType
+func (res *RecyDeviceAlarmType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *RecyDeviceAlarmType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

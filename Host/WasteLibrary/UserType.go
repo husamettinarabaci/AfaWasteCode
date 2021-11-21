@@ -30,6 +30,20 @@ func (res *UserType) New() {
 	res.CreateTime = GetTime()
 }
 
+//GetByRedis
+func (res *UserType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_USERS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *UserType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.UserId)
@@ -62,6 +76,16 @@ func ByteToUserType(retByte []byte) UserType {
 //String To UserType
 func StringToUserType(retStr string) UserType {
 	return ByteToUserType([]byte(retStr))
+}
+
+//ByteToType
+func (res *UserType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *UserType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

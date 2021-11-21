@@ -317,7 +317,9 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_RFID_DEVICES, currentDeviceMain.ToCustomerIdString())
+		var customerDevices WasteLibrary.CustomerRfidDevicesType
+		customerDevices.CustomerId = currentDeviceMain.CustomerId
+		resultVal = customerDevices.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -326,7 +328,6 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		var customerDevices WasteLibrary.CustomerRfidDevicesType = WasteLibrary.StringToCustomerRfidDevicesType(resultVal.Retval.(string))
 		customerDevices.Devices[currentDeviceMain.ToIdString()] = currentDeviceMain.DeviceId
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_RFID_DEVICES, customerDevices.ToIdString(), customerDevices.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -609,8 +610,9 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
-
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_ULT_DEVICES, currentDeviceMain.ToCustomerIdString())
+		var customerDevices WasteLibrary.CustomerUltDevicesType
+		customerDevices.CustomerId = currentDeviceMain.CustomerId
+		resultVal = customerDevices.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -619,7 +621,6 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		var customerDevices WasteLibrary.CustomerUltDevicesType = WasteLibrary.StringToCustomerUltDevicesType(resultVal.Retval.(string))
 		customerDevices.Devices[currentDeviceMain.ToIdString()] = currentDeviceMain.DeviceId
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_ULT_DEVICES, customerDevices.ToIdString(), customerDevices.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -871,7 +872,9 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_RECY_DEVICES, currentDeviceMain.ToCustomerIdString())
+		var customerDevices WasteLibrary.CustomerRecyDevicesType
+		customerDevices.CustomerId = currentDeviceMain.CustomerId
+		resultVal = customerDevices.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -880,7 +883,6 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		var customerDevices WasteLibrary.CustomerRecyDevicesType = WasteLibrary.StringToCustomerRecyDevicesType(resultVal.Retval.(string))
 		customerDevices.Devices[currentDeviceMain.ToIdString()] = currentDeviceMain.DeviceId
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_RECY_DEVICES, customerDevices.ToIdString(), customerDevices.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -1075,7 +1077,9 @@ func createTag(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, currentData.TagMain.ToCustomerIdString())
+		var customerTags WasteLibrary.CustomerTagsType
+		customerTags.CustomerId = currentData.TagMain.CustomerId
+		resultVal = customerTags.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -1084,7 +1088,6 @@ func createTag(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(resultVal.Retval.(string))
 		customerTags.Tags[currentData.TagMain.ToIdString()] = currentData.TagMain.TagId
 		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGS, customerTags.ToIdString(), customerTags.ToString())
 		if resultVal.Result != WasteLibrary.RESULT_OK {

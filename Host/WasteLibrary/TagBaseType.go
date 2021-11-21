@@ -22,6 +22,22 @@ func (res *TagBaseType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *TagBaseType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_TAG_BASES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *TagBaseType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)
@@ -50,6 +66,16 @@ func ByteToTagBaseType(retByte []byte) TagBaseType {
 //String To TagBaseType
 func StringToTagBaseType(retStr string) TagBaseType {
 	return ByteToTagBaseType([]byte(retStr))
+}
+
+//ByteToType
+func (res *TagBaseType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *TagBaseType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

@@ -80,6 +80,22 @@ func (res *RfidDeviceStatuType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *RfidDeviceStatuType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_RFID_STATU_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *RfidDeviceStatuType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -107,6 +123,16 @@ func ByteToRfidDeviceStatuType(retByte []byte) RfidDeviceStatuType {
 //String To RfidDeviceStatuType
 func StringToRfidDeviceStatuType(retStr string) RfidDeviceStatuType {
 	return ByteToRfidDeviceStatuType([]byte(retStr))
+}
+
+//ByteToType
+func (res *RfidDeviceStatuType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *RfidDeviceStatuType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

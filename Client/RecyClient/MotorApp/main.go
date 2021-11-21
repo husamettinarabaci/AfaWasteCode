@@ -60,7 +60,7 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 	WasteLibrary.LogStr(readerType)
 
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	if readerType == WasteLibrary.READERTYPE_MOTORRIGGER {
+	if readerType == WasteLibrary.READERTYPE_MOTORTRIGGER {
 		motorProc()
 		resultVal.Result = WasteLibrary.RESULT_OK
 	} else {

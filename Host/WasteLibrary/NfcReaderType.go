@@ -22,6 +22,21 @@ func (res *NfcReaderType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *NfcReaderType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_NFC_READERS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *NfcReaderType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.NfcId)
@@ -50,6 +65,16 @@ func ByteToNfcReaderType(retByte []byte) NfcReaderType {
 //String To NfcReaderType
 func StringToNfcReaderType(retStr string) NfcReaderType {
 	return ByteToNfcReaderType([]byte(retStr))
+}
+
+//ByteToType
+func (res *NfcReaderType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *NfcReaderType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL

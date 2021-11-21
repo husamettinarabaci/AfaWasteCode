@@ -51,7 +51,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			currentData.TagMain.CustomerId = currentHttpHeader.CustomerId
 			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
 			WasteLibrary.LogStr("Data : " + currentData.ToString())
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TAG_EPC, currentData.TagMain.Epc)
+			var redisTag WasteLibrary.TagType
+			resultVal = redisTag.GetByRedisByEpc(currentData.TagMain.Epc)
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				var createHttpHeader WasteLibrary.HttpClientHeaderType
 				createHttpHeader.New()
@@ -68,7 +69,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 					return
 				}
-				resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_TAG_EPC, currentData.TagMain.Epc)
+				resultVal = redisTag.GetByRedisByEpc(currentData.TagMain.Epc)
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_TAG_NOTFOUND
@@ -78,10 +79,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				}
 			}
 
-			var redisTag WasteLibrary.TagType
-			redisTag.New()
-			redisTag.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-			redisTag.GetAll()
 			currentData.TagId = redisTag.TagId
 
 			if currentData.TagMain.DeviceId != redisTag.TagMain.DeviceId {
@@ -158,7 +155,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_READER, currentData.TagReader.ToString())
 
 			//TagGps
-			resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_RFID_GPS_DEVICES, currentHttpHeader.ToDeviceIdString())
+			var currentDeviceGps WasteLibrary.RfidDeviceGpsType
+			currentDeviceGps.DeviceId = currentHttpHeader.DeviceId
+			resultVal = currentDeviceGps.GetByRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
@@ -166,7 +165,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			var currentDeviceGps WasteLibrary.RfidDeviceGpsType = WasteLibrary.StringToRfidDeviceGpsType(resultVal.Retval.(string))
 			currentData.TagGps.TagId = currentData.TagId
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_GPS
 			currentData.TagGps.Latitude = currentDeviceGps.Latitude
@@ -252,9 +250,10 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			}
 
 			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_STATU, redisTag.TagStatu.ToString())
-			resultVal = WasteLibrary.GetRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, currentHttpHeader.ToCustomerIdString())
+			var customerTagsList WasteLibrary.CustomerTagsViewListType
+			customerTagsList.CustomerId = currentHttpHeader.CustomerId
+			resultVal = customerTagsList.GetByRedisByReel()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
-				var customerTagsList WasteLibrary.CustomerTagsListType = WasteLibrary.StringToCustomerTagsListType(resultVal.Retval.(string))
 
 				customerTag := customerTagsList.Tags[redisTag.TagStatu.ToIdString()]
 				customerTag.ContainerStatu = redisTag.TagStatu.ContainerStatu

@@ -26,6 +26,22 @@ func (res *RfidDeviceWorkHourType) New() {
 	res.NewData = false
 }
 
+//GetByRedis
+func (res *RfidDeviceWorkHourType) GetByRedis() ResultType {
+
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_RFID_WORKHOUR_DEVICES, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+		res.NewData = false
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
 //ToId String
 func (res *RfidDeviceWorkHourType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
@@ -53,6 +69,16 @@ func ByteToRfidDeviceWorkHourType(retByte []byte) RfidDeviceWorkHourType {
 //String To RfidDeviceWorkHourType
 func StringToRfidDeviceWorkHourType(retStr string) RfidDeviceWorkHourType {
 	return ByteToRfidDeviceWorkHourType([]byte(retStr))
+}
+
+//ByteToType
+func (res *RfidDeviceWorkHourType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *RfidDeviceWorkHourType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
 
 //SelectSQL
