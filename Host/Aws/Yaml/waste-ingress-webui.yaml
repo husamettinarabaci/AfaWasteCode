@@ -44,21 +44,7 @@ spec:
                 name: waste-webui-cluster-ip
                 port:
                   number: 80
-            path: /js(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
-                name: waste-webui-cluster-ip
-                port:
-                  number: 80
-            path: /css(/|$)(.*)
-            pathType: Prefix
-          - backend:
-              service:
-                name: waste-webui-cluster-ip
-                port:
-                  number: 80
-            path: /img(/|$)(.*)
+            path: /assets(/|$)(.*)
             pathType: Prefix
           - backend:
               service:

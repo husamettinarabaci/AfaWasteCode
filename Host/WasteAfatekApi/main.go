@@ -234,8 +234,6 @@ func logApp(w http.ResponseWriter, req *http.Request) {
 
 	appTypes := req.URL.Query()["appType"]
 	opTypes := req.URL.Query()["opType"]
-	//data := url.Values{}
-	//resultVal = WasteLibrary.HttpPostReq("http://waste-"+appTypes[0]+"-cluster-ip/"+opTypes[0], data)
 	resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_APP_LOG_CHANNEL, appTypes[0], opTypes[0])
 
 	w.Write(resultVal.ToByte())

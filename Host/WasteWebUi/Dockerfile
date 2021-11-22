@@ -28,15 +28,10 @@ RUN mkdir -p ${LOG_DATA}
 ENV LOG_FOLDER=${LOG_DATA}
 
 ENV CONTAINER_TYPE=wastewebui
+ENV AWS_ACCESS_KEY_ID=AKIA2B2SBK7OQLT4GSVK
+ENV AWS_SECRET_ACCESS_KEY=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
 
 COPY --from=builder /app/WasteWebUi .
-RUN mkdir -p ./css
-RUN mkdir -p ./img
-RUN mkdir -p ./js
-COPY WasteWebUi/css/ ./css/
-COPY WasteWebUi/img/ ./img/
-COPY WasteWebUi/js/ ./js/
-COPY WasteWebUi/index.html ./index.html
 
 VOLUME ${LOG_DATA}
 
