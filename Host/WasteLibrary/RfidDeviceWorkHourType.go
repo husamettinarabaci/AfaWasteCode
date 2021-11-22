@@ -42,6 +42,13 @@ func (res *RfidDeviceWorkHourType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *RfidDeviceWorkHourType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_WORKHOUR_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *RfidDeviceWorkHourType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

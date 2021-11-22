@@ -40,6 +40,13 @@ func (res *TagGpsType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *TagGpsType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_TAG_GPSES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *TagGpsType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)

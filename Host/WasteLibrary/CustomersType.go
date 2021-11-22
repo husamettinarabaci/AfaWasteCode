@@ -28,6 +28,13 @@ func (res *CustomersType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *CustomersType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMERS, REDIS_CUSTOMERS, res.ToString())
+	return resultVal
+}
+
 //ToByte
 func (res *CustomersType) ToByte() []byte {
 	jData, _ := json.Marshal(res)

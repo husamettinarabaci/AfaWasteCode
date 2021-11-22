@@ -31,6 +31,13 @@ func (res *CustomerUltDevicesType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *CustomerUltDevicesType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_ULT_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *CustomerUltDevicesType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

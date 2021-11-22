@@ -39,6 +39,13 @@ func (res *UltDeviceBatteryType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *UltDeviceBatteryType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_BATTERY_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *UltDeviceBatteryType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

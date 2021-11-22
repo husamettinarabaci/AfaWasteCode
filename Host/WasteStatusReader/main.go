@@ -119,7 +119,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_STATU_DEVICES, currentData.DeviceStatu.ToIdString(), currentData.DeviceStatu.ToString())
+			resultVal = currentData.DeviceStatu.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -211,7 +211,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_STATU_DEVICES, currentData.DeviceStatu.ToIdString(), currentData.DeviceStatu.ToString())
+			resultVal = currentData.DeviceStatu.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

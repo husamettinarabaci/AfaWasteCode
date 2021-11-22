@@ -39,6 +39,20 @@ func (res *RfidDeviceMainType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *RfidDeviceMainType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_MAIN_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToRedisBySerial
+func (res *RfidDeviceMainType) SaveToRedisBySerial() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_SERIAL_RFID_DEVICE, res.SerialNumber, res.ToIdString())
+	return resultVal
+}
+
 //ToId String
 func (res *RfidDeviceMainType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

@@ -16,6 +16,16 @@ type NfcMainType struct {
 	CreateTime string
 }
 
+//New
+func (res *NfcMainType) New() {
+	res.NfcId = 0
+	res.CustomerId = 1
+	res.NfcId = 0
+	res.Epc = ""
+	res.Active = STATU_ACTIVE
+	res.CreateTime = GetTime()
+}
+
 //GetByRedis
 func (res *NfcMainType) GetByRedis() ResultType {
 	var resultVal ResultType
@@ -30,14 +40,11 @@ func (res *NfcMainType) GetByRedis() ResultType {
 	return resultVal
 }
 
-//New
-func (res *NfcMainType) New() {
-	res.NfcId = 0
-	res.CustomerId = 1
-	res.NfcId = 0
-	res.Epc = ""
-	res.Active = STATU_ACTIVE
-	res.CreateTime = GetTime()
+//SaveToRedis
+func (res *NfcMainType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_NFC_MAINS, res.ToIdString(), res.ToString())
+	return resultVal
 }
 
 //ToId String

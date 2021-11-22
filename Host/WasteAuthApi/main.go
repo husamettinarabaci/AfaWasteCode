@@ -134,7 +134,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 
 	currentUser.UserId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USERS, currentUser.ToIdString(), currentUser.ToString())
+	resultVal = currentUser.SaveToRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -143,7 +143,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	currentCustomerUsers.Users[currentUser.ToIdString()] = currentUser.UserId
-	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_USERS, currentCustomerUsers.ToIdString(), currentCustomerUsers.ToString())
+	resultVal = currentCustomerUsers.SaveToRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

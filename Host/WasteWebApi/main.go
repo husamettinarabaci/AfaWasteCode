@@ -555,7 +555,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 		currentData.DeviceBase.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_BASE_DEVICES, currentData.DeviceBase.ToIdString(), currentData.DeviceBase.ToString())
+		resultVal = currentData.DeviceBase.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -584,7 +584,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 		currentData.DeviceDetail.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_DETAIL_DEVICES, currentData.DeviceDetail.ToIdString(), currentData.DeviceDetail.ToString())
+		resultVal = currentData.DeviceDetail.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -627,7 +627,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 		currentData.DeviceBase.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_BASE_DEVICES, currentData.DeviceBase.ToIdString(), currentData.DeviceBase.ToString())
+		resultVal = currentData.DeviceBase.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -670,7 +670,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 		currentData.DeviceBase.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RECY_BASE_DEVICES, currentData.DeviceBase.ToIdString(), currentData.DeviceBase.ToString())
+		resultVal = currentData.DeviceBase.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -731,7 +731,8 @@ func setConfig(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ADMINCONFIG {
 		var currentData WasteLibrary.AdminConfigType = WasteLibrary.StringToAdminConfigType(req.FormValue(WasteLibrary.HTTP_DATA))
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_ADMINCONFIG, linkCustomer.ToIdString(), currentData.ToString())
+		currentData.CustomerId = linkCustomer.CustomerId
+		resultVal = currentData.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -742,7 +743,8 @@ func setConfig(w http.ResponseWriter, req *http.Request) {
 		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.ToIdString(), WasteLibrary.DATATYPE_ADMINCONFIG, currentData.ToString())
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_LOCALCONFIG {
 		var currentData WasteLibrary.LocalConfigType = WasteLibrary.StringToLocalConfigType(req.FormValue(WasteLibrary.HTTP_DATA))
-		resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_LOCALCONFIG, linkCustomer.ToIdString(), currentData.ToString())
+		currentData.CustomerId = linkCustomer.CustomerId
+		resultVal = currentData.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -876,7 +878,7 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 	}
 	currentData.UserId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USERS, currentData.ToIdString(), currentData.ToString())
+	resultVal = currentData.SaveToRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

@@ -73,7 +73,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.DeviceBattery.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_BATTERY_DEVICES, currentData.DeviceBattery.ToIdString(), currentData.DeviceBattery.ToString())
+			resultVal = currentData.DeviceBattery.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

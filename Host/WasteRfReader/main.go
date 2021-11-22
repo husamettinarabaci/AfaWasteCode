@@ -100,7 +100,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				redisTag.TagMain.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-				resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_MAINS, redisTag.TagMain.ToIdString(), redisTag.TagMain.ToString())
+				resultVal = redisTag.TagMain.SaveToRedis()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -131,7 +131,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.TagReader.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_READERS, currentData.TagReader.ToIdString(), currentData.TagReader.ToString())
+			resultVal = currentData.TagReader.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -185,7 +185,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.TagGps.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_GPSES, currentData.TagGps.ToIdString(), currentData.TagGps.ToString())
+			resultVal = currentData.TagGps.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -228,7 +228,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			redisTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_STATUS, redisTag.TagStatu.ToIdString(), redisTag.TagStatu.ToString())
+			resultVal = redisTag.TagStatu.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

@@ -43,6 +43,20 @@ func (res *UltDeviceMainType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *UltDeviceMainType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_MAIN_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToRedisBySerial
+func (res *UltDeviceMainType) SaveToRedisBySerial() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_SERIAL_ULT_DEVICE, res.SerialNumber, res.ToIdString())
+	return resultVal
+}
+
 //ToId String
 func (res *UltDeviceMainType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

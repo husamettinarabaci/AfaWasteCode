@@ -45,6 +45,20 @@ func (res *CustomerTagsViewListType) GetByRedisByReel() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *CustomerTagsViewListType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_TAGVIEWS, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToRedisWODb
+func (res *CustomerTagsViewListType) SaveToRedisWODb() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisWODbForStoreApi(REDIS_CUSTOMER_TAGVIEWS_REEL, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *CustomerTagsViewListType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

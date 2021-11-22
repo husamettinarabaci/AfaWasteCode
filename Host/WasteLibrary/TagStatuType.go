@@ -42,6 +42,13 @@ func (res *TagStatuType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *TagStatuType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_TAG_STATUS, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *TagStatuType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.TagId)

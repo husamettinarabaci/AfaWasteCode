@@ -84,8 +84,8 @@ func customerProc(customerId float64) {
 					}
 				}
 			}
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS, customerTagsList.ToIdString(), customerTagsList.ToString())
-			resultVal = WasteLibrary.SaveRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, customerTagsList.ToIdString(), customerTagsList.ToString())
+			resultVal = customerTagsList.SaveToRedis()
+			resultVal = customerTagsList.SaveToRedisWODb()
 		}
 
 		time.Sleep(opInterval * time.Second)

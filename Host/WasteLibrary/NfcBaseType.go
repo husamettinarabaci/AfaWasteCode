@@ -41,6 +41,13 @@ func (res *NfcBaseType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *NfcBaseType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_NFC_BASES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *NfcBaseType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.NfcId)

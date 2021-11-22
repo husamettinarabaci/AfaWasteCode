@@ -43,6 +43,13 @@ func (res *AdminConfigType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *AdminConfigType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_ADMINCONFIG, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *AdminConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

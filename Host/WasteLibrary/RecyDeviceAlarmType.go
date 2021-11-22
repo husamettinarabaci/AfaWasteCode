@@ -41,6 +41,13 @@ func (res *RecyDeviceAlarmType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *RecyDeviceAlarmType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_ALARM_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *RecyDeviceAlarmType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

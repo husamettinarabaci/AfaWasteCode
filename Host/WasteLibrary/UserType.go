@@ -44,6 +44,13 @@ func (res *UserType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *UserType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_USERS, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *UserType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.UserId)

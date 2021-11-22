@@ -61,6 +61,20 @@ func (res *CustomerType) GetByRedisByLink(link string) ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *CustomerType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMERS, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToRedisLink
+func (res *CustomerType) SaveToRedisLink() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_LINK, res.CustomerLink, res.ToIdString())
+	return resultVal
+}
+
 //ToId String
 func (res *CustomerType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

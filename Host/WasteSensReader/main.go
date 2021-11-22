@@ -143,7 +143,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			currentData.DeviceSens.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-			resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_SENS_DEVICES, currentData.DeviceSens.ToIdString(), currentData.DeviceSens.ToString())
+			resultVal = currentData.DeviceSens.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

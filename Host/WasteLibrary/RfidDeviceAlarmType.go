@@ -42,6 +42,13 @@ func (res *RfidDeviceAlarmType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *RfidDeviceAlarmType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_ALARM_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *RfidDeviceAlarmType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

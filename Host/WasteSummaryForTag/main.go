@@ -161,7 +161,7 @@ func customerProc(customerId float64) {
 
 									currentTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-									resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_TAG_STATUS, currentTag.TagStatu.ToIdString(), currentTag.TagStatu.ToString())
+									resultVal = currentTag.TagStatu.SaveToRedis()
 									if resultVal.Result != WasteLibrary.RESULT_OK {
 										WasteLibrary.LogStr(resultVal.ToString())
 										continue

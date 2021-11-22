@@ -39,6 +39,13 @@ func (res *RecyDeviceGpsType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *RecyDeviceGpsType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_GPS_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *RecyDeviceGpsType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

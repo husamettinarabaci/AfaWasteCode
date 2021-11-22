@@ -634,6 +634,13 @@ func (res *LocalConfigType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *LocalConfigType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_LOCALCONFIG, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *LocalConfigType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.CustomerId)

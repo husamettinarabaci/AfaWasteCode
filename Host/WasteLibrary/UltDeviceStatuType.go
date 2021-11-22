@@ -45,6 +45,13 @@ func (res *UltDeviceStatuType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *UltDeviceStatuType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_STATU_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *UltDeviceStatuType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)

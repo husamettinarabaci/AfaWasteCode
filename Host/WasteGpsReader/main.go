@@ -71,7 +71,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				currentData.DeviceGps.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-				resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_RFID_GPS_DEVICES, currentData.DeviceGps.ToIdString(), currentData.DeviceGps.ToString())
+				resultVal = currentData.DeviceGps.SaveToRedis()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -142,7 +142,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				currentData.DeviceGps.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
-				resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_ULT_GPS_DEVICES, currentData.DeviceGps.ToIdString(), currentData.DeviceGps.ToString())
+				resultVal = currentData.DeviceGps.SaveToRedis()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

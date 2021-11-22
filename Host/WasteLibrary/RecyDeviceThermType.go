@@ -39,6 +39,13 @@ func (res *RecyDeviceThermType) GetByRedis() ResultType {
 	return resultVal
 }
 
+//SaveToRedis
+func (res *RecyDeviceThermType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_THERM_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
 //ToId String
 func (res *RecyDeviceThermType) ToIdString() string {
 	return fmt.Sprintf("%.0f", res.DeviceId)
