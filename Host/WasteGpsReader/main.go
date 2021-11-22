@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/devafatek/WasteLibrary"
@@ -51,14 +50,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceGps.DeviceId = currentData.DeviceId
 
-			currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_GPS_DEVICE
 			currentData.DeviceGps.GpsTime = currentHttpHeader.Time
 			if currentData.DeviceGps.Longitude != 0 && currentData.DeviceGps.Latitude != 0 {
-				data := url.Values{
-					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-					WasteLibrary.HTTP_DATA:   {currentData.DeviceGps.ToString()},
-				}
-				resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+				resultVal = currentData.DeviceGps.SaveToDb()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -66,8 +60,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 					return
 				}
-
-				currentData.DeviceGps.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 				resultVal = currentData.DeviceGps.SaveToRedis()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -77,11 +69,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 					return
 				}
-				data = url.Values{
-					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-					WasteLibrary.HTTP_DATA:   {currentData.DeviceGps.ToString()},
-				}
-				resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+
+				resultVal = currentData.DeviceGps.SaveToReaderDb()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -106,10 +95,10 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					}
 					if customerConfig.TruckStopTrace == WasteLibrary.STATU_ACTIVE {
 
-						data = url.Values{
-							WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-							WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-						}
+						// data = url.Values{
+						// WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+						// WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+						// }
 						//TO DO
 						//send gps stop reader
 						//resultVal = WasteLibrary.HttpPostReq("http://waste-gpsstopreader-cluster-ip/reader", data)
@@ -123,14 +112,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceGps.DeviceId = currentData.DeviceId
-			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_GPS_DEVICE
 			currentData.DeviceGps.GpsTime = currentHttpHeader.Time
 			if currentData.DeviceGps.Longitude != 0 && currentData.DeviceGps.Latitude != 0 {
-				data := url.Values{
-					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-					WasteLibrary.HTTP_DATA:   {currentData.DeviceGps.ToString()},
-				}
-				resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+				resultVal = currentData.DeviceGps.SaveToDb()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -138,8 +122,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 					return
 				}
-
-				currentData.DeviceGps.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 				resultVal = currentData.DeviceGps.SaveToRedis()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -149,11 +131,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 					return
 				}
-				data = url.Values{
-					WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-					WasteLibrary.HTTP_DATA:   {currentData.DeviceGps.ToString()},
-				}
-				resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+
+				resultVal = currentData.DeviceGps.SaveToReaderDb()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
 					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE

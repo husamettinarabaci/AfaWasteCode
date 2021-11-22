@@ -469,8 +469,6 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	currentData = WasteLibrary.StringToTagType(resultVal.Retval.(string))
-	currentData.GetByRedis()
 	if currentData.TagMain.CustomerId == linkCustomer.CustomerId {
 		resultVal.Result = WasteLibrary.RESULT_OK
 		resultVal.Retval = currentData.ToString()
@@ -538,13 +536,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 		//DeviceBase
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_BASE_DEVICE
 		currentData.DeviceBase.DeviceId = currentData.DeviceId
-		data := url.Values{
-			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {currentData.DeviceBase.ToString()},
-		}
-		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+		resultVal = currentData.DeviceBase.SaveToDb()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -552,8 +545,6 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
-
-		currentData.DeviceBase.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 		resultVal = currentData.DeviceBase.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -567,13 +558,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_BASE_DEVICE, currentData.DeviceBase.ToString())
 
 		//DeviceDetail
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_DETAIL_DEVICE
 		currentData.DeviceDetail.DeviceId = currentData.DeviceId
-		data = url.Values{
-			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {currentData.DeviceDetail.ToString()},
-		}
-		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+		resultVal = currentData.DeviceDetail.SaveToDb()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -581,8 +567,6 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
-
-		currentData.DeviceDetail.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 		resultVal = currentData.DeviceDetail.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -610,13 +594,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 		//DeviceBase
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_BASE_DEVICE
 		currentData.DeviceBase.DeviceId = currentData.DeviceId
-		data := url.Values{
-			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {currentData.DeviceBase.ToString()},
-		}
-		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+		resultVal = currentData.DeviceBase.SaveToDb()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -624,8 +603,6 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
-
-		currentData.DeviceBase.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 		resultVal = currentData.DeviceBase.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -653,13 +630,8 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 		//DeviceBase
-		currentHttpHeader.DataType = WasteLibrary.DATATYPE_RECY_BASE_DEVICE
 		currentData.DeviceBase.DeviceId = currentData.DeviceId
-		data := url.Values{
-			WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-			WasteLibrary.HTTP_DATA:   {currentData.DeviceBase.ToString()},
-		}
-		resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+		resultVal = currentData.DeviceBase.SaveToDb()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -667,8 +639,6 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
-
-		currentData.DeviceBase.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 		resultVal = currentData.DeviceBase.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -860,15 +830,7 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType
-	currentHttpHeader.New()
-	currentHttpHeader.CustomerId = linkCustomer.CustomerId
-	currentHttpHeader.DataType = WasteLibrary.DATATYPE_USER
-	data := url.Values{
-		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-		WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-	}
-	resultVal = WasteLibrary.SaveConfigDbMainForStoreApi(data)
+	resultVal = currentData.SaveToDb()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -876,7 +838,6 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	currentData.UserId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 	resultVal = currentData.SaveToRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {

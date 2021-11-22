@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 //RecyDeviceVersionType
@@ -53,6 +54,26 @@ func (res *RecyDeviceVersionType) GetByRedis() ResultType {
 func (res *RecyDeviceVersionType) SaveToRedis() ResultType {
 	var resultVal ResultType
 	resultVal = SaveRedisForStoreApi(REDIS_RECY_VERSION_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToDb
+func (res *RecyDeviceVersionType) SaveToDb() ResultType {
+	var resultVal ResultType
+	var currentHttpHeader HttpClientHeaderType
+	currentHttpHeader.New()
+	currentHttpHeader.DataType = DATATYPE_RECY_VERSION_DEVICE
+
+	data := url.Values{
+		HTTP_HEADER: {currentHttpHeader.ToString()},
+		HTTP_DATA:   {res.ToString()},
+	}
+	resultVal = SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result == RESULT_OK {
+		res.DeviceId = StringIdToFloat64(resultVal.Retval.(string))
+		resultVal.Retval = res.ToString()
+	}
+
 	return resultVal
 }
 

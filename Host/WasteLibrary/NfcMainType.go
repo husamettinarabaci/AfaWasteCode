@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 //NfcMainType
@@ -44,6 +45,26 @@ func (res *NfcMainType) GetByRedis() ResultType {
 func (res *NfcMainType) SaveToRedis() ResultType {
 	var resultVal ResultType
 	resultVal = SaveRedisForStoreApi(REDIS_NFC_MAINS, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToDb
+func (res *NfcMainType) SaveToDb() ResultType {
+	var resultVal ResultType
+	var currentHttpHeader HttpClientHeaderType
+	currentHttpHeader.New()
+	currentHttpHeader.DataType = DATATYPE_NFC_MAIN
+
+	data := url.Values{
+		HTTP_HEADER: {currentHttpHeader.ToString()},
+		HTTP_DATA:   {res.ToString()},
+	}
+	resultVal = SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result == RESULT_OK {
+		res.NfcId = StringIdToFloat64(resultVal.Retval.(string))
+		resultVal.Retval = res.ToString()
+	}
+
 	return resultVal
 }
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -54,13 +53,9 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			} else {
 				currentData.DeviceBattery.BatteryStatus = WasteLibrary.BATTERYSTATU_LOW
 			}
-			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_BATTERY_DEVICE
+
 			currentData.DeviceBattery.BatteryTime = currentHttpHeader.Time
-			data := url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceBattery.ToString()},
-			}
-			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+			resultVal = currentData.DeviceBattery.SaveToDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -68,8 +63,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-
-			currentData.DeviceBattery.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 			resultVal = currentData.DeviceBattery.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -79,11 +72,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceBattery.ToString()},
-			}
-			resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+
+			resultVal = currentData.DeviceBattery.SaveToReaderDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE

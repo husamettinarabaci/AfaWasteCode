@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 //TagMainType
@@ -53,6 +54,26 @@ func (res *TagMainType) SaveToRedis() ResultType {
 func (res *TagMainType) SaveToRedisByEpc() ResultType {
 	var resultVal ResultType
 	resultVal = SaveRedisForStoreApi(REDIS_TAG_EPC, res.Epc, res.ToIdString())
+	return resultVal
+}
+
+//SaveToDb
+func (res *TagMainType) SaveToDb() ResultType {
+	var resultVal ResultType
+	var currentHttpHeader HttpClientHeaderType
+	currentHttpHeader.New()
+	currentHttpHeader.DataType = DATATYPE_TAG_MAIN
+
+	data := url.Values{
+		HTTP_HEADER: {currentHttpHeader.ToString()},
+		HTTP_DATA:   {res.ToString()},
+	}
+	resultVal = SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result == RESULT_OK {
+		res.TagId = StringIdToFloat64(resultVal.Retval.(string))
+		resultVal.Retval = res.ToString()
+	}
+
 	return resultVal
 }
 

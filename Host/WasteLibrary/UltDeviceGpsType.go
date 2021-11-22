@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 //UltDeviceGpsType
@@ -43,6 +44,46 @@ func (res *UltDeviceGpsType) GetByRedis() ResultType {
 func (res *UltDeviceGpsType) SaveToRedis() ResultType {
 	var resultVal ResultType
 	resultVal = SaveRedisForStoreApi(REDIS_ULT_GPS_DEVICES, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToDb
+func (res *UltDeviceGpsType) SaveToDb() ResultType {
+	var resultVal ResultType
+	var currentHttpHeader HttpClientHeaderType
+	currentHttpHeader.New()
+	currentHttpHeader.DataType = DATATYPE_ULT_GPS_DEVICE
+
+	data := url.Values{
+		HTTP_HEADER: {currentHttpHeader.ToString()},
+		HTTP_DATA:   {res.ToString()},
+	}
+	resultVal = SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result == RESULT_OK {
+		res.DeviceId = StringIdToFloat64(resultVal.Retval.(string))
+		resultVal.Retval = res.ToString()
+	}
+
+	return resultVal
+}
+
+//SaveToReaderDb
+func (res *UltDeviceGpsType) SaveToReaderDb() ResultType {
+	var resultVal ResultType
+	var currentHttpHeader HttpClientHeaderType
+	currentHttpHeader.New()
+	currentHttpHeader.DataType = DATATYPE_ULT_GPS_DEVICE
+
+	data := url.Values{
+		HTTP_HEADER: {currentHttpHeader.ToString()},
+		HTTP_DATA:   {res.ToString()},
+	}
+	resultVal = SaveReaderDbMainForStoreApi(data)
+	if resultVal.Result == RESULT_OK {
+		res.DeviceId = StringIdToFloat64(resultVal.Retval.(string))
+		resultVal.Retval = res.ToString()
+	}
+
 	return resultVal
 }
 

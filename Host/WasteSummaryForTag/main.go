@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/devafatek/WasteLibrary"
@@ -90,7 +89,6 @@ func customerProc(customerId float64) {
 		} else {
 			var currentHttpHeader WasteLibrary.HttpClientHeaderType
 			currentHttpHeader.New()
-			currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_STATU
 			var customerTags WasteLibrary.CustomerTagsType
 			customerTags.CustomerId = customerId
 			resultVal = customerTags.GetByRedis()
@@ -148,16 +146,11 @@ func customerProc(customerId float64) {
 
 								if containerStatu != currentTag.TagStatu.ContainerStatu {
 									currentTag.TagStatu.ContainerStatu = containerStatu
-									data := url.Values{
-										WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-										WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-									}
-									resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+
+									resultVal = currentTag.TagStatu.SaveToDb()
 									if resultVal.Result != WasteLibrary.RESULT_OK {
 										continue
 									}
-
-									currentTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 									resultVal = currentTag.TagStatu.SaveToRedis()
 									if resultVal.Result != WasteLibrary.RESULT_OK {

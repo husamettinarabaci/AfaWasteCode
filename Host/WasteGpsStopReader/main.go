@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/devafatek/WasteLibrary"
@@ -86,19 +85,12 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					currentTag.TagStatu.CheckTime = WasteLibrary.GetTime()
 					currentTag.TagStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
 					currentTag.TagStatu.TagStatu = WasteLibrary.TAG_STATU_STOP
-					currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_STATU
-					data := url.Values{
-						WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-						WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-					}
-					resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+					resultVal = currentTag.TagStatu.SaveToDb()
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
 						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 						continue
 					}
-
-					currentTag.TagStatu.TagId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 					resultVal = currentTag.TagStatu.SaveToRedis()
 					if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -106,11 +98,8 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 						resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
 						continue
 					}
-					data = url.Values{
-						WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-						WasteLibrary.HTTP_DATA:   {currentTag.TagStatu.ToString()},
-					}
-					resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+
+					resultVal = currentTag.TagStatu.SaveToReaderDb()
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
 						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -127,7 +116,7 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 						customerTag.ContainerStatu = currentTag.TagStatu.ContainerStatu
 						customerTag.TagStatu = currentTag.TagStatu.TagStatu
 						customerTagsList.Tags[currentTag.TagStatu.ToIdString()] = customerTag
-						WasteLibrary.SaveRedisWODbForStoreApi(WasteLibrary.REDIS_CUSTOMER_TAGVIEWS_REEL, currentHttpHeader.ToCustomerIdString(), customerTagsList.ToString())
+						customerTagsList.SaveToRedisWODb()
 					}
 				}
 			}

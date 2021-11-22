@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/devafatek/WasteLibrary"
@@ -112,18 +111,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 	currentUser.Password = WasteLibrary.GetMD5Hash(currentUser.Password)
 	currentUser.Active = WasteLibrary.STATU_ACTIVE
 	currentUser.CreateTime = WasteLibrary.GetTime()
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType
-	currentHttpHeader.New()
-	currentHttpHeader.CustomerId = linkCustomer.CustomerId
-	currentHttpHeader.DataType = WasteLibrary.DATATYPE_USER
-	currentUser.Active = WasteLibrary.STATU_ACTIVE
-	currentUser.CreateTime = WasteLibrary.GetTime()
-	data := url.Values{
-		WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-		WasteLibrary.HTTP_DATA:   {currentUser.ToString()},
-	}
-
-	resultVal = WasteLibrary.SaveConfigDbMainForStoreApi(data)
+	resultVal = currentUser.SaveToDb()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -131,8 +119,6 @@ func register(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-
-	currentUser.UserId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 	resultVal = currentUser.SaveToRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {

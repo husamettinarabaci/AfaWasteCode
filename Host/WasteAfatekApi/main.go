@@ -714,8 +714,6 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		currentData.DeviceMain.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
-
 		resultVal = currentData.DeviceMain.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -783,8 +781,6 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
-
-		currentData.DeviceMain.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 		resultVal = currentData.DeviceMain.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {

@@ -88,7 +88,7 @@ func (res *CustomerType) SaveToDb() ResultType {
 		HTTP_DATA:   {res.ToString()},
 	}
 	resultVal = SaveStaticDbMainForStoreApi(data)
-	if resultVal.Result == WasteLibrary.RESULT_OK {
+	if resultVal.Result == RESULT_OK {
 		res.CustomerId = StringIdToFloat64(resultVal.Retval.(string))
 		resultVal.Retval = res.ToString()
 	}

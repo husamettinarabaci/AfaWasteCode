@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -50,7 +49,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceStatu.DeviceId = currentData.DeviceId
-			currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_STATU_DEVICE
 			currentData.DeviceStatu.StatusTime = currentHttpHeader.Time
 
 			if currentData.DeviceStatu.ReaderAppStatus == WasteLibrary.STATU_ACTIVE {
@@ -102,11 +100,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				currentData.DeviceStatu.ContactLastOkTime = currentHttpHeader.Time
 			}
 
-			data := url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
-			}
-			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+			resultVal = currentData.DeviceStatu.SaveToDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -114,8 +108,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-
-			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 			resultVal = currentData.DeviceStatu.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -125,11 +117,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
-			}
-			resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+
+			resultVal = currentData.DeviceStatu.SaveToReaderDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -142,7 +131,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceStatu.DeviceId = currentData.DeviceId
-			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_STATU_DEVICE
 			currentData.DeviceStatu.StatusTime = currentHttpHeader.Time
 
 			ultCm := currentData.DeviceSens.UltRange1 * 173 / 10000
@@ -192,11 +180,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				currentData.DeviceStatu.AliveLastOkTime = currentHttpHeader.Time
 			}
 
-			data := url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
-			}
-			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+			resultVal = currentData.DeviceStatu.SaveToDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -204,8 +188,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-
-			currentData.DeviceStatu.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 			resultVal = currentData.DeviceStatu.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -215,11 +197,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceStatu.ToString()},
-			}
-			resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+
+			resultVal = currentData.DeviceStatu.SaveToReaderDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE

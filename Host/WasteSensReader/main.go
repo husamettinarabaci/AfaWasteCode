@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -49,7 +48,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceSens.DeviceId = currentData.DeviceId
-			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_SENS_DEVICE
 			currentData.DeviceSens.UltTime = currentHttpHeader.Time
 
 			var oldData WasteLibrary.UltDeviceType
@@ -126,11 +124,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				currentData.DeviceSens.UltRange2 = oldData.DeviceSens.UltRange2
 			}
 
-			data := url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceSens.ToString()},
-			}
-			resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
+			resultVal = currentData.DeviceSens.SaveToDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
@@ -138,8 +132,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-
-			currentData.DeviceSens.DeviceId = WasteLibrary.StringIdToFloat64(resultVal.Retval.(string))
 
 			resultVal = currentData.DeviceSens.SaveToRedis()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -149,11 +141,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			data = url.Values{
-				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-				WasteLibrary.HTTP_DATA:   {currentData.DeviceSens.ToString()},
-			}
-			resultVal = WasteLibrary.SaveReaderDbMainForStoreApi(data)
+
+			resultVal = currentData.DeviceSens.SaveToReaderDb()
 			if resultVal.Result != WasteLibrary.RESULT_OK {
 				resultVal.Result = WasteLibrary.RESULT_FAIL
 				resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
