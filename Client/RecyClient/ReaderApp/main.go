@@ -67,7 +67,6 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		nid, _ := uuid.NewUUID()
 		currentNfcDataType.NfcMain.Epc = cardId[0]
 		currentNfcDataType.NfcReader.UID = nid.String()
-		WasteLibrary.LogStr(currentNfcDataType.ToString())
 		resultVal = sendRf(currentNfcDataType)
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 			//TO DO

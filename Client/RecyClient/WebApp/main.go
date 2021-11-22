@@ -11,10 +11,15 @@ import (
 
 var upgrader = websocket.Upgrader{}
 var socketCh chan string
+var currentUser string
 
 func initStart() {
 
 	WasteLibrary.LogStr("Successfully connected!")
+	WasteLibrary.Version = "1"
+	WasteLibrary.LogStr("Version : " + WasteLibrary.Version)
+	currentUser = WasteLibrary.GetCurrentUser()
+	WasteLibrary.LogStr(currentUser)
 	go WasteLibrary.InitLog()
 	socketCh = make(chan string)
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -57,7 +62,6 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 
 	readerType := req.FormValue(WasteLibrary.HTTP_READERTYPE)
 	var nfcTypeVal WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
-	WasteLibrary.LogStr(readerType)
 
 	if readerType == WasteLibrary.READERTYPE_RF {
 		resultVal.Result = WasteLibrary.RECY_SOCKET_ANALYZE

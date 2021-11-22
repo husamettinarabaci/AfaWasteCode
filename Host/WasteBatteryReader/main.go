@@ -54,8 +54,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			} else {
 				currentData.DeviceBattery.BatteryStatus = WasteLibrary.BATTERYSTATU_LOW
 			}
-			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_BATTERY_DEVICE
 			currentData.DeviceBattery.BatteryTime = currentHttpHeader.Time
 			data := url.Values{

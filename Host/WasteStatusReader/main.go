@@ -50,8 +50,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceStatu.DeviceId = currentData.DeviceId
-			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_STATU_DEVICE
 			currentData.DeviceStatu.StatusTime = currentHttpHeader.Time
 
@@ -144,8 +142,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceStatu.DeviceId = currentData.DeviceId
-			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_STATU_DEVICE
 			currentData.DeviceStatu.StatusTime = currentHttpHeader.Time
 

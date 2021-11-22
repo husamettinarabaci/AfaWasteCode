@@ -82,7 +82,6 @@ func rfCheck() {
 		var err error
 		for {
 			time.Sleep(time.Second)
-			WasteLibrary.LogStr("Device Check")
 			serialPort, err = devafatekserial.Open(serialOptions0)
 			if err != nil {
 				WasteLibrary.LogErr(err)
@@ -105,7 +104,6 @@ func rfCheck() {
 
 			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.STATU_ACTIVE {
 				for {
-					WasteLibrary.LogStr("Device OK")
 					buf := make([]byte, 256)
 					n, err := serialPort.Read(buf)
 					if err != nil {
@@ -119,7 +117,6 @@ func rfCheck() {
 						data = hex.EncodeToString(buf)
 						lastReadTime = time.Now()
 						data = strings.ToUpper(data)
-						WasteLibrary.LogStr(data)
 
 						if strings.Contains(data, WasteLibrary.RFID_READER_OKBIT) || strings.Contains(data, WasteLibrary.RFID_READER_STARTBIT) {
 							WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_ACTIVE
@@ -148,7 +145,6 @@ func rfCheck() {
 					}
 				}
 			}
-			WasteLibrary.LogStr("Device NONE")
 		}
 	}
 	wg.Done()
@@ -175,7 +171,6 @@ func deviceCheck() {
 	for {
 		if time.Since(lastReadTime).Seconds() > 60*60 {
 
-			WasteLibrary.LogStr("Restart device...")
 			rpio.Open()
 			readerPort, _ := strconv.Atoi(readerPort)
 			pin := rpio.Pin(readerPort)

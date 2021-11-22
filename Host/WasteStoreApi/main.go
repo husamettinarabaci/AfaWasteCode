@@ -16,7 +16,6 @@ func main() {
 
 	initStart()
 
-	WasteLibrary.LogStr("Start")
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
@@ -194,8 +193,6 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	WasteLibrary.LogStr("StoreApi Receive Header : " + req.FormValue("HEADER"))
-	WasteLibrary.LogStr("StoreApi Receive Data : " + req.FormValue("DATA"))
 	resultVal = WasteLibrary.HttpPostReq("http://waste-storeapiforstaticdb-cluster-ip/saveStaticDbMain", req.Form)
 	w.Write(resultVal.ToByte())
 

@@ -68,7 +68,6 @@ func gpsCheck() {
 		var err error
 		for {
 			time.Sleep(time.Second)
-			WasteLibrary.LogStr("Device Check")
 			serialPort, err = devafatekserial.Open(serialOptions0)
 			if err != nil {
 				WasteLibrary.LogErr(err)
@@ -89,7 +88,6 @@ func gpsCheck() {
 			if WasteLibrary.CurrentCheckStatu.ConnStatu == WasteLibrary.STATU_ACTIVE {
 				reader := bufio.NewReader(serialPort)
 				scanner := bufio.NewScanner(reader)
-				WasteLibrary.LogStr("Device OK")
 				for scanner.Scan() {
 					gps, err := devafatekgps.ParseGpsLine(scanner.Text())
 					if err == nil {
@@ -117,7 +115,6 @@ func gpsCheck() {
 					time.Sleep(opInterval * time.Second)
 				}
 			}
-			WasteLibrary.LogStr("Device NONE")
 		}
 	}
 	wg.Done()

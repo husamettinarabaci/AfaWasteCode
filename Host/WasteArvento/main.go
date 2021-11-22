@@ -44,7 +44,6 @@ func setCustomerList() {
 			for _, customerId := range currentCustomers.Customers {
 				if customerId != 0 {
 					if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
-						WasteLibrary.LogStr("Add Customer : " + WasteLibrary.Float64IdToString(customerId))
 						currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)] = customerId
 						go customerProc(customerId)
 						time.Sleep(60 * time.Second)
@@ -79,7 +78,6 @@ func customerProc(customerId float64) {
 				currentCustomerDevices.CustomerId = currentCustomerConfig.CustomerId
 				resultVal = currentCustomerDevices.GetByRedis()
 				if resultVal.Result == WasteLibrary.RESULT_OK {
-					WasteLibrary.LogStr("Add Devices : " + WasteLibrary.Float64IdToString(customerId))
 				}
 				resultVal = getDevice(currentCustomerConfig)
 				if resultVal.Result == WasteLibrary.RESULT_OK {
@@ -106,12 +104,6 @@ func customerProc(customerId float64) {
 								currentDevice.DeviceGps.Longitude = currentDeviceLocation.Longitude
 								currentDevice.DeviceGps.GpsTime = WasteLibrary.TimeToString(WasteLibrary.AddTimeToBase(WasteLibrary.StringToTime(currentDeviceLocation.GpsTime), 3*time.Hour))
 								currentDevice.DeviceGps.Speed = currentDeviceLocation.Speed
-								WasteLibrary.LogStr("Devices Gps : " +
-									WasteLibrary.Float64IdToString(customerId) + " - " +
-									WasteLibrary.Float64IdToString(currentDevice.DeviceId) + " - " +
-									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Latitude) + " - " +
-									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Longitude) + " - " +
-									WasteLibrary.Float64ToString(currentDevice.DeviceGps.Speed))
 								var newCurrentHttpHeader WasteLibrary.HttpClientHeaderType
 								newCurrentHttpHeader.New()
 								newCurrentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
@@ -123,7 +115,6 @@ func customerProc(customerId float64) {
 									WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
 								}
 
-								WasteLibrary.LogStr("Send Gps Reader" + currentDevice.ToString())
 								resultVal = WasteLibrary.HttpPostReq("http://waste-gpsreader-cluster-ip/reader", data)
 							}
 						}

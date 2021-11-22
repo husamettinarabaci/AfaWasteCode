@@ -49,8 +49,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.TagMain.DeviceId = currentHttpHeader.DeviceId
 			currentData.TagMain.CustomerId = currentHttpHeader.CustomerId
-			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			var redisTag WasteLibrary.TagType
 			resultVal = redisTag.GetByRedisByEpc(currentData.TagMain.Epc)
 			if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -115,7 +113,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			currentData.TagReader.TagId = currentData.TagId
 			currentData.TagReader.ReadTime = currentHttpHeader.Time
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_TAG_READER
-			WasteLibrary.LogStr("Data Reader : " + currentData.ToString())
 			data := url.Values{
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {currentData.TagReader.ToString()},

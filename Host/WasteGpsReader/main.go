@@ -45,8 +45,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -112,7 +110,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 							WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 							WasteLibrary.HTTP_DATA:   {currentData.ToString()},
 						}
-						WasteLibrary.LogStr("Send Gps Stop Reader" + currentData.ToString())
+						//TO DO
+						//send gps stop reader
 						//resultVal = WasteLibrary.HttpPostReq("http://waste-gpsstopreader-cluster-ip/reader", data)
 
 					}

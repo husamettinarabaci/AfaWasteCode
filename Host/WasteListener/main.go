@@ -61,7 +61,6 @@ func handleTcpRequest(conn net.Conn) {
 		return
 	} else {
 		var strBuf = string(buf)
-		WasteLibrary.LogStr(strBuf)
 		if reqLen == 215 {
 			split := strings.Split(strBuf, "#")
 			if len(split) == 32 {
@@ -222,7 +221,6 @@ func handleTcpRequest(conn net.Conn) {
 						WasteLibrary.HTTP_DATA:   {currentDevice.ToString()},
 					}
 					resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", data)
-					WasteLibrary.LogStr(resultVal.ToString())
 
 				} else {
 					conn.Write([]byte(WasteLibrary.RESULT_FAIL))
@@ -256,8 +254,6 @@ func data(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID || currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
 		if resultVal.Result != WasteLibrary.RESULT_OK {

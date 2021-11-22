@@ -159,35 +159,26 @@ func startUpdate(appType string) {
 									if checkApp(updaterType).Result == WasteLibrary.RESULT_OK {
 										updateVersion(updaterType)
 									} else {
-										WasteLibrary.LogStr("Error : Check App - " + updaterType.AppType)
 									}
 								} else {
-									WasteLibrary.LogStr("Error : Start App - " + updaterType.AppType)
 								}
 							} else {
-								WasteLibrary.LogStr("Error : Chmod App - " + updaterType.AppType)
 							}
 						} else {
-							WasteLibrary.LogStr("Error : Chown App - " + updaterType.AppType)
 						}
 					} else {
-						WasteLibrary.LogStr("Error : Cp App - " + updaterType.AppType)
 					}
 				} else {
-					WasteLibrary.LogStr("Error : Rm App - " + updaterType.AppType)
 				}
 			} else {
-				WasteLibrary.LogStr("Error : Stop App - " + updaterType.AppType)
 			}
 		} else {
-			WasteLibrary.LogStr("Error : Download App - " + updaterType.AppType)
 		}
 	}
 
 }
 
 func downloadApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Download App : " + updaterType.AppType + " - " + updaterType.Version)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 
@@ -226,7 +217,6 @@ func downloadApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func stopApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Stop App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	cmd := exec.Command("sudo", "systemctl", "stop", updaterType.AppType+".service")
@@ -243,7 +233,6 @@ func stopApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func rmAppDownloaded(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Rm Downloaded App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	cmd := exec.Command("sudo", "rm", "/home/pi/DOWNLOADED_APP/"+updaterType.AppType)
@@ -260,7 +249,6 @@ func rmAppDownloaded(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultTy
 }
 
 func rmApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Rm App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if !WasteLibrary.IsFileExists("/home/pi/" + updaterType.AppType) {
@@ -283,7 +271,6 @@ func rmApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func mvApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Cp App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	cmd := exec.Command("sudo", "cp", "/home/pi/DOWNLOADED_APP/"+updaterType.AppType, "/home/pi/"+updaterType.AppType)
@@ -302,7 +289,6 @@ func mvApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func chownApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Chown App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	cmd := exec.Command("sudo", "chown", "pi:pi", "/home/pi/"+updaterType.AppType)
@@ -319,7 +305,6 @@ func chownApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func chmodApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Chmod App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	cmd := exec.Command("sudo", "chmod", "+x", "/home/pi/"+updaterType.AppType)
@@ -336,7 +321,6 @@ func chmodApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func startApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Start App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	cmd := exec.Command("sudo", "systemctl", "start", updaterType.AppType+".service")
@@ -355,7 +339,6 @@ func startApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func checkApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Check App : " + updaterType.AppType)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	for i := range statusTypes {
@@ -373,7 +356,6 @@ func checkApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 }
 
 func updateVersion(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
-	WasteLibrary.LogStr("Update Version : " + updaterType.AppType + " - " + updaterType.Version)
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType

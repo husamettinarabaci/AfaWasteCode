@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net/url"
 )
 
 //CustomerType
@@ -72,6 +73,26 @@ func (res *CustomerType) SaveToRedis() ResultType {
 func (res *CustomerType) SaveToRedisLink() ResultType {
 	var resultVal ResultType
 	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_LINK, res.CustomerLink, res.ToIdString())
+	return resultVal
+}
+
+//SaveToDb
+func (res *CustomerType) SaveToDb() ResultType {
+	var resultVal ResultType
+	var currentHttpHeader HttpClientHeaderType
+	currentHttpHeader.New()
+	currentHttpHeader.DataType = DATATYPE_CUSTOMER
+
+	data := url.Values{
+		HTTP_HEADER: {currentHttpHeader.ToString()},
+		HTTP_DATA:   {res.ToString()},
+	}
+	resultVal = SaveStaticDbMainForStoreApi(data)
+	if resultVal.Result == WasteLibrary.RESULT_OK {
+		res.CustomerId = StringIdToFloat64(resultVal.Retval.(string))
+		resultVal.Retval = res.ToString()
+	}
+
 	return resultVal
 }
 

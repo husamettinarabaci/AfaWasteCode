@@ -62,7 +62,6 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 	}
 
 	readerType := req.FormValue(WasteLibrary.HTTP_READERTYPE)
-	WasteLibrary.LogStr(readerType)
 
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if readerType == WasteLibrary.READERTYPE_CAMTRIGGER {
@@ -86,7 +85,6 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 
 func doRecord(readerDataTypeVal WasteLibrary.NfcType, integratedPort string, repeat string) {
 	WasteLibrary.CurrentCheckStatu.DeviceStatu = WasteLibrary.STATU_PASSIVE
-	WasteLibrary.LogStr("Do Record : " + readerDataTypeVal.NfcMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.NfcReader.UID + " - " + repeat)
 
 	cmd := exec.Command("timeout", "30", "ffmpeg", "-y", "-v", "0", "-loglevel", "0", "-hide_banner", "-f", "mpegts", "-i", "udp://localhost:1000"+integratedPort, "-frames:v", "1", "WAIT_CAM/"+readerDataTypeVal.NfcReader.UID+".png")
 	cmd.Stderr = os.Stderr
@@ -96,7 +94,6 @@ func doRecord(readerDataTypeVal WasteLibrary.NfcType, integratedPort string, rep
 	if err != nil && !strings.Contains(err.Error(), "124") {
 		WasteLibrary.LogErr(err)
 		if repeat == WasteLibrary.STATU_ACTIVE {
-			WasteLibrary.LogStr("Do Record repeat for err : " + readerDataTypeVal.NfcMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.NfcReader.UID + " - " + repeat)
 			doRecord(readerDataTypeVal, integratedPort, WasteLibrary.STATU_PASSIVE)
 			return
 		}
@@ -107,7 +104,6 @@ func doRecord(readerDataTypeVal WasteLibrary.NfcType, integratedPort string, rep
 			_, err := os.Stat("WAIT_CAM/" + readerDataTypeVal.NfcReader.UID + ".png")
 			if err != nil {
 				if repeat == WasteLibrary.STATU_ACTIVE {
-					WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.NfcMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.NfcReader.UID + " - " + repeat)
 					doRecord(readerDataTypeVal, integratedPort, WasteLibrary.STATU_PASSIVE)
 					return
 				}
@@ -119,7 +115,6 @@ func doRecord(readerDataTypeVal WasteLibrary.NfcType, integratedPort string, rep
 
 		} else {
 			if repeat == WasteLibrary.STATU_ACTIVE {
-				WasteLibrary.LogStr("Do Record repeat for not file : " + readerDataTypeVal.NfcMain.Epc + " - " + integratedPort + " - " + readerDataTypeVal.NfcReader.UID + " - " + repeat)
 				doRecord(readerDataTypeVal, integratedPort, WasteLibrary.STATU_PASSIVE)
 				return
 			}

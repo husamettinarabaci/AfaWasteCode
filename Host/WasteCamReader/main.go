@@ -47,8 +47,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 			//var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
-			//WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			//WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 			//TO DO
 			//Set ImageStatu

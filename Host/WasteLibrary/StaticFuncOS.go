@@ -28,7 +28,6 @@ func IsFileExists(filename string) bool {
 
 //RemoveFile
 func RemoveFile(filePath string) {
-	LogStr("Remove File : " + filePath)
 	cmdRm := exec.Command("rm", filePath)
 	errRm := cmdRm.Start()
 	if errRm != nil {

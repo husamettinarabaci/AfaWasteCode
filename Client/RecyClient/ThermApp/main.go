@@ -53,7 +53,6 @@ func thermCheck() {
 			cmd.Stderr = &errb
 			err := cmd.Run()
 			currentThermDataType.DeviceTherm.Therm = strings.TrimSuffix(outb.String(), "'C\n")
-			WasteLibrary.LogStr(currentThermDataType.DeviceTherm.Therm)
 			if err != nil {
 				WasteLibrary.LogErr(err)
 

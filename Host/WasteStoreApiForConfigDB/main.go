@@ -42,7 +42,6 @@ func main() {
 	err = configDb.Ping()
 	WasteLibrary.LogErr(err)
 
-	WasteLibrary.LogStr("Start")
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
@@ -73,20 +72,15 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	var execSQL string = ""
 	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_USER {
 
 		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
-		WasteLibrary.LogStr("Data : " + currentData.ToString())
 		if currentData.UserId != 0 {
 			execSQL = currentData.UpdateSQL()
-			WasteLibrary.LogStr(execSQL)
 		} else {
 
 			execSQL = currentData.InsertSQL()
-			WasteLibrary.LogStr(execSQL)
 		}
 		var userId int = 0
 		errDb := configDb.QueryRow(execSQL).Scan(&userId)
@@ -127,12 +121,9 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_USER {
 
 		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
-		WasteLibrary.LogStr("Data : " + currentData.ToString())
 
 		errDb := currentData.SelectWithDb(configDb)
 		if errDb != nil {

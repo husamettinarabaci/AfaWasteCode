@@ -42,7 +42,6 @@ func setCustomerList() {
 			for _, customerId := range currentCustomers.Customers {
 				if customerId != 0 {
 					if _, ok := currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)]; !ok {
-						WasteLibrary.LogStr("Add Customer : " + WasteLibrary.Float64IdToString(customerId))
 						currentCustomerList.Customers[WasteLibrary.Float64IdToString(customerId)] = customerId
 						go customerProc(customerId)
 					}
@@ -155,7 +154,6 @@ func customerProc(customerId float64) {
 									}
 									resultVal = WasteLibrary.SaveStaticDbMainForStoreApi(data)
 									if resultVal.Result != WasteLibrary.RESULT_OK {
-										WasteLibrary.LogStr(resultVal.ToString())
 										continue
 									}
 
@@ -163,7 +161,6 @@ func customerProc(customerId float64) {
 
 									resultVal = currentTag.TagStatu.SaveToRedis()
 									if resultVal.Result != WasteLibrary.RESULT_OK {
-										WasteLibrary.LogStr(resultVal.ToString())
 										continue
 									}
 								}

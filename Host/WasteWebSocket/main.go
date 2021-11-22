@@ -35,7 +35,6 @@ func main() {
 
 	initStart()
 
-	WasteLibrary.LogStr("Start")
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)

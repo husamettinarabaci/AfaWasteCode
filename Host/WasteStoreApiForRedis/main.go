@@ -54,7 +54,6 @@ func main() {
 	err = sumDb.Ping()
 	WasteLibrary.LogErr(err)
 
-	WasteLibrary.LogStr("Start")
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
@@ -88,9 +87,7 @@ func getkey(w http.ResponseWriter, req *http.Request) {
 	}
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
-	WasteLibrary.LogStr("GetKey : " + hKey + " - " + sKey)
 	resultVal = getKeyRedis(hKey, sKey)
-	WasteLibrary.LogStr("RetValByRedis : " + resultVal.ToString())
 	if resultVal.Result == WasteLibrary.RESULT_FAIL {
 		resultVal = getKeyDb(hKey, sKey)
 		if resultVal.Result == WasteLibrary.RESULT_OK {
@@ -123,12 +120,9 @@ func getkeyWODb(w http.ResponseWriter, req *http.Request) {
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
 	hBKey := req.FormValue(WasteLibrary.REDIS_HASHBASEKEY)
-	WasteLibrary.LogStr("GetKey : " + hKey + " - " + sKey)
 	resultVal = getKeyRedis(hKey, sKey)
-	WasteLibrary.LogStr("RetValByRedis : " + resultVal.ToString())
 	if resultVal.Result == WasteLibrary.RESULT_FAIL {
 		resultVal = getKeyRedis(hBKey, sKey)
-		WasteLibrary.LogStr("RetValByRedis : " + resultVal.ToString())
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
 			resultVal = getKeyDb(hBKey, sKey)
 			if resultVal.Result == WasteLibrary.RESULT_OK {
@@ -188,9 +182,7 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
 	kVal := req.FormValue(WasteLibrary.REDIS_KEYVALUE)
-	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
 	resultVal = getKeyDb(hKey, sKey)
-	WasteLibrary.LogStr("GetKeyDb : " + resultVal.ToString())
 	if resultVal.Result == WasteLibrary.RESULT_OK {
 		resultVal = updateKeyDb(hKey, sKey, kVal)
 	} else {
@@ -251,9 +243,7 @@ func deletekey(w http.ResponseWriter, req *http.Request) {
 	}
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
-	WasteLibrary.LogStr("DeleteKeyDb : " + resultVal.ToString())
 	resultVal = deleteKeyDb(hKey, sKey)
-	WasteLibrary.LogStr("DeleteKeyDb : " + resultVal.ToString())
 	deleteKeyRedis(hKey, sKey)
 
 	w.Write(resultVal.ToByte())
@@ -272,17 +262,14 @@ func getKeyRedis(hKey string, sKey string) WasteLibrary.ResultType {
 	}
 	switch {
 	case err == redis.Nil:
-		WasteLibrary.LogStr("Not Found")
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	case err != nil:
 		WasteLibrary.LogErr(err)
 	case val == "":
-		WasteLibrary.LogStr("Not Found")
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	case val != "":
 		resultVal.Result = WasteLibrary.RESULT_OK
 		resultVal.Retval = val
-		WasteLibrary.LogStr(resultVal.ToString())
 	}
 
 	return resultVal
@@ -298,7 +285,6 @@ func setKeyRedis(hKey string, sKey string, kVal string) {
 	}
 	switch {
 	case err == redis.Nil:
-		WasteLibrary.LogStr("Not Found")
 	case err != nil:
 		WasteLibrary.LogErr(err)
 	}
@@ -312,7 +298,6 @@ func publishKeyRedis(channelKey string, kVal string) WasteLibrary.ResultType {
 	_, err = redisDb.Publish(ctx, channelKey, kVal).Result()
 	switch {
 	case err == redis.Nil:
-		WasteLibrary.LogStr("Not Found")
 	case err != nil:
 		WasteLibrary.LogErr(err)
 	}
@@ -335,7 +320,6 @@ func deleteKeyRedis(hKey string, sKey string) {
 	}
 	switch {
 	case err == redis.Nil:
-		WasteLibrary.LogStr("Not Found")
 	case err != nil:
 		WasteLibrary.LogErr(err)
 	}
@@ -344,7 +328,6 @@ func deleteKeyRedis(hKey string, sKey string) {
 func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	WasteLibrary.LogStr("Serach Db : " + hKey + " - " + sKey)
 
 	var selectSQL string = fmt.Sprintf(`SELECT KeyValue 
 	FROM public.redisdata WHERE HashKey='%s' AND SubKey='%s';`, hKey, sKey)
@@ -361,14 +344,12 @@ func getKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 		resultVal.Retval = kVal
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}
-	WasteLibrary.LogStr("KeyValue : " + kVal)
 	return resultVal
 }
 
 func insertKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	WasteLibrary.LogStr("Insert Db : " + hKey + " - " + sKey + " - " + kVal)
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.redisdata(
 		HashKey,SubKey,KeyValue)
 	   VALUES ('%s','%s','%s');`, hKey, sKey, kVal)
@@ -381,7 +362,6 @@ func insertKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType 
 func deleteKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	WasteLibrary.LogStr("Delete Db : " + hKey + " - " + sKey)
 	var deleteSQL string = fmt.Sprintf(`DELETE FROM public.redisdata
 	    WHERE HashKey='%s' AND SubKey='%s';`, hKey, sKey)
 	_, errDb := sumDb.Exec(deleteSQL)
@@ -393,7 +373,6 @@ func deleteKeyDb(hKey string, sKey string) WasteLibrary.ResultType {
 func updateKeyDb(hKey string, sKey string, kVal string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	WasteLibrary.LogStr("Update Db : " + hKey + " - " + sKey + " - " + kVal)
 	var updateSQL string = fmt.Sprintf(`UPDATE public.redisdata SET KeyValue='%s' WHERE HashKey='%s' AND SubKey='%s';`, kVal, hKey, sKey)
 	_, errDb := sumDb.Exec(updateSQL)
 	WasteLibrary.LogErr(errDb)

@@ -44,7 +44,6 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 	} else {
 
 		readerType := req.FormValue(HTTP_CHECKTYPE)
-		LogStr(readerType)
 		resultVal.Result = RESULT_FAIL
 		if readerType == CHECKTYPE_APP {
 			if CurrentCheckStatu.AppStatu == STATU_ACTIVE {
@@ -90,7 +89,6 @@ func HttpPostReq(url string, data url.Values) ResultType {
 			LogErr(err)
 		}
 		resultVal = ByteToResultType(bodyBytes)
-		LogStr(resultVal.ToString())
 	}
 
 	return resultVal

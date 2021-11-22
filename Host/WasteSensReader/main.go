@@ -49,8 +49,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceSens.DeviceId = currentData.DeviceId
-			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_SENS_DEVICE
 			currentData.DeviceSens.UltTime = currentHttpHeader.Time
 

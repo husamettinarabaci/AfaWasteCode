@@ -45,8 +45,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -69,7 +67,6 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
-		WasteLibrary.LogStr(resultVal.ToString())
 		return
 	}
 
@@ -81,9 +78,6 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 			currentTag.New()
 			currentTag.TagId = currentViewTag.TagId
 			resultVal = currentTag.GetByRedis()
-			WasteLibrary.LogStr("Stop Operation Device : " + currentData.ToString())
-			WasteLibrary.LogStr("Stop Operation Distance : " + WasteLibrary.Float64IdToString(distance))
-			WasteLibrary.LogStr("Stop Operation Tag : " + currentTag.ToString())
 			if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
 				second := time.Since(WasteLibrary.StringToTime(currentTag.TagReader.ReadTime)).Seconds()
 				if second < 1*60*60 {
@@ -101,7 +95,6 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
 						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-						WasteLibrary.LogStr(resultVal.ToString())
 						continue
 					}
 
@@ -111,7 +104,6 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
 						resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-						WasteLibrary.LogStr(resultVal.ToString())
 						continue
 					}
 					data = url.Values{
@@ -122,7 +114,6 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
 						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-						WasteLibrary.LogStr(resultVal.ToString())
 						continue
 					}
 

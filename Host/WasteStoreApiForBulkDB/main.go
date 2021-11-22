@@ -42,7 +42,6 @@ func main() {
 	err = bulkDb.Ping()
 	WasteLibrary.LogErr(err)
 
-	WasteLibrary.LogStr("Start")
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
@@ -71,8 +70,6 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 	}
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	dataVal := req.FormValue(WasteLibrary.HTTP_DATA)
-	WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-	WasteLibrary.LogStr("Data : " + dataVal)
 
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.listenerdata 
 	  (AppType,DeviceNo,DeviceId,CustomerId,Time,Repeat,DeviceType,ReaderType,DataType,Token,Data) 
@@ -88,7 +85,6 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 		currentHttpHeader.DataType,
 		currentHttpHeader.Token,
 		dataVal)
-	WasteLibrary.LogStr(insertSQL)
 	_, errDb := bulkDb.Exec(insertSQL)
 	if errDb != nil {
 		WasteLibrary.LogErr(err)

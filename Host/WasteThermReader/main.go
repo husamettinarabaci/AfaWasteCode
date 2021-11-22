@@ -54,8 +54,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			} else {
 				currentData.DeviceTherm.ThermStatus = WasteLibrary.THERMSTATU_NORMAL
 			}
-			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_THERM_DEVICE
 			currentData.DeviceTherm.ThermTime = currentHttpHeader.Time
 			data := url.Values{
@@ -104,8 +102,6 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			} else {
 				currentData.DeviceTherm.ThermStatus = WasteLibrary.THERMSTATU_NORMAL
 			}
-			WasteLibrary.LogStr("Header : " + currentHttpHeader.ToString())
-			WasteLibrary.LogStr("Data : " + currentData.ToString())
 			currentHttpHeader.DataType = WasteLibrary.DATATYPE_ULT_THERM_DEVICE
 			currentData.DeviceTherm.ThermTime = currentHttpHeader.Time
 			data := url.Values{
