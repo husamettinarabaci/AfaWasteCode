@@ -40,7 +40,7 @@ func (res *RfidDeviceWorkHourType) New() {
 }
 
 //GetByRedis
-func (res *RfidDeviceWorkHourType) GetByRedis() ResultType {
+func (res *RfidDeviceWorkHourType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_RFID_WORKHOUR_DEVICES, res.ToIdString())

@@ -24,7 +24,7 @@ func (res *TagReaderType) New() {
 }
 
 //GetByRedis
-func (res *TagReaderType) GetByRedis() ResultType {
+func (res *TagReaderType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_TAG_READERS, res.ToIdString())

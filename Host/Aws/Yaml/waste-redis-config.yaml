@@ -8,3 +8,4 @@ data:
     maxmemory 2gb
     maxmemory-policy allkeys-lru
     requirepass Amca151200!Furkan
+    databases 31

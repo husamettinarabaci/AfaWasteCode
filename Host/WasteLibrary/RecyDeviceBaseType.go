@@ -24,7 +24,7 @@ func (res *RecyDeviceBaseType) New() {
 }
 
 //GetByRedis
-func (res *RecyDeviceBaseType) GetByRedis() ResultType {
+func (res *RecyDeviceBaseType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_RECY_BASE_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {

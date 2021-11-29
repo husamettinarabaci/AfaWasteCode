@@ -26,7 +26,7 @@ func (res *RfidDeviceDetailType) New() {
 }
 
 //GetByRedis
-func (res *RfidDeviceDetailType) GetByRedis() ResultType {
+func (res *RfidDeviceDetailType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_RFID_DETAIL_DEVICES, res.ToIdString())

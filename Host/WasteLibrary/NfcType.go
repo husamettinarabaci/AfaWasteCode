@@ -24,7 +24,7 @@ func (res *NfcType) New() {
 }
 
 //GetByRedis
-func (res *NfcType) GetByRedis() ResultType {
+func (res *NfcType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 
 	res.NfcMain.NfcId = res.NfcId

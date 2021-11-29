@@ -3,7 +3,6 @@ package WasteLibrary
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 )
 
 //CustomerRfidDevicesViewListType
@@ -19,7 +18,7 @@ func (res *CustomerRfidDevicesViewListType) New() {
 }
 
 //GetByRedis
-func (res *CustomerRfidDevicesViewListType) GetByRedis() ResultType {
+func (res *CustomerRfidDevicesViewListType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_RFID_DEVICEVIEWS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
@@ -57,20 +56,6 @@ func (res *CustomerRfidDevicesViewListType) SaveToRedis() ResultType {
 func (res *CustomerRfidDevicesViewListType) SaveToRedisWODb() ResultType {
 	var resultVal ResultType
 	resultVal = SaveRedisWODbForStoreApi(REDIS_CUSTOMER_RFID_DEVICEVIEWS_REEL, res.ToIdString(), res.ToString())
-	return resultVal
-}
-
-//TakeSnapshot
-func (res *CustomerRfidDevicesViewListType) TakeSnapshot() ResultType {
-	var resultVal ResultType
-	var i int
-	for i = 29; i > 0; i-- {
-		resultVal = GetRedisWODbForStoreApi(REDIS_CUSTOMER_RFID_DEVICEVIEWS_REEL_DAY+strconv.Itoa(i), "", res.ToIdString())
-		if resultVal.Result == RESULT_OK {
-			SaveRedisWODbForStoreApi(REDIS_CUSTOMER_RFID_DEVICEVIEWS_REEL_DAY+strconv.Itoa(i+1), res.ToIdString(), resultVal.Retval.(string))
-		}
-	}
-	SaveRedisWODbForStoreApi(REDIS_CUSTOMER_RFID_DEVICEVIEWS_REEL_DAY+strconv.Itoa(i+1), res.ToIdString(), res.ToString())
 	return resultVal
 }
 

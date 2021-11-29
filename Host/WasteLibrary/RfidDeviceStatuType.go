@@ -82,7 +82,7 @@ func (res *RfidDeviceStatuType) New() {
 }
 
 //GetByRedis
-func (res *RfidDeviceStatuType) GetByRedis() ResultType {
+func (res *RfidDeviceStatuType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_RFID_STATU_DEVICES, res.ToIdString())

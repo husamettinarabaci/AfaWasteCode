@@ -28,7 +28,7 @@ func (res *NfcBaseType) New() {
 }
 
 //GetByRedis
-func (res *NfcBaseType) GetByRedis() ResultType {
+func (res *NfcBaseType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_NFC_BASES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {

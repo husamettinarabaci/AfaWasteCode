@@ -18,7 +18,7 @@ func (res *CustomerUltDevicesType) New() {
 }
 
 //GetByRedis
-func (res *CustomerUltDevicesType) GetByRedis() ResultType {
+func (res *CustomerUltDevicesType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_ULT_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {

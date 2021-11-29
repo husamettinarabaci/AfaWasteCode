@@ -96,9 +96,6 @@ func customerProcRfid(customerDevices WasteLibrary.CustomerRfidDevicesType) {
 	}
 	resultVal = customerDevicesList.SaveToRedis()
 	resultVal = customerDevicesList.SaveToRedisWODb()
-	if time.Now().Hour() == 23 {
-		customerDevicesList.TakeSnapshot()
-	}
 
 }
 
@@ -140,9 +137,6 @@ func customerProcRecy(customerDevices WasteLibrary.CustomerRecyDevicesType) {
 	}
 	resultVal = customerDevicesList.SaveToRedis()
 	resultVal = customerDevicesList.SaveToRedisWODb()
-	if time.Now().Hour() == 23 {
-		customerDevicesList.TakeSnapshot()
-	}
 
 }
 
@@ -181,8 +175,5 @@ func customerProcUlt(customerDevices WasteLibrary.CustomerUltDevicesType) {
 	}
 	resultVal = customerDevicesList.SaveToRedis()
 	resultVal = customerDevicesList.SaveToRedisWODb()
-	if time.Now().Hour() == 23 {
-		customerDevicesList.TakeSnapshot()
-	}
 
 }

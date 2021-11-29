@@ -32,7 +32,7 @@ func (res *RecyDeviceType) New() {
 }
 
 //GetByRedis
-func (res *RecyDeviceType) GetByRedis() ResultType {
+func (res *RecyDeviceType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 
 	res.DeviceMain.DeviceId = res.DeviceId

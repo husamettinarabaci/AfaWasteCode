@@ -29,7 +29,7 @@ func (res *TagMainType) New() {
 }
 
 //GetByRedis
-func (res *TagMainType) GetByRedis() ResultType {
+func (res *TagMainType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_TAG_MAINS, res.ToIdString())

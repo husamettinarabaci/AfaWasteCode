@@ -26,7 +26,7 @@ func (res *RecyDeviceGpsType) New() {
 }
 
 //GetByRedis
-func (res *RecyDeviceGpsType) GetByRedis() ResultType {
+func (res *RecyDeviceGpsType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_RECY_GPS_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {

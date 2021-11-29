@@ -28,7 +28,7 @@ func (res *UltDeviceAlarmType) New() {
 }
 
 //GetByRedis
-func (res *UltDeviceAlarmType) GetByRedis() ResultType {
+func (res *UltDeviceAlarmType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_ULT_ALARM_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {

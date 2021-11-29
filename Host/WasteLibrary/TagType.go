@@ -30,7 +30,7 @@ func (res *TagType) New() {
 }
 
 //GetByRedis
-func (res *TagType) GetByRedis() ResultType {
+func (res *TagType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 

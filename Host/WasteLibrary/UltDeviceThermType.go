@@ -26,7 +26,7 @@ func (res *UltDeviceThermType) New() {
 }
 
 //GetByRedis
-func (res *UltDeviceThermType) GetByRedis() ResultType {
+func (res *UltDeviceThermType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_ULT_THERM_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {

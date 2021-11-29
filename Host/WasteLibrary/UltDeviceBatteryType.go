@@ -26,7 +26,7 @@ func (res *UltDeviceBatteryType) New() {
 }
 
 //GetByRedis
-func (res *UltDeviceBatteryType) GetByRedis() ResultType {
+func (res *UltDeviceBatteryType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_ULT_BATTERY_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {

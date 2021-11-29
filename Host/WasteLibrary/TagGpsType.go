@@ -26,7 +26,7 @@ func (res *TagGpsType) New() {
 }
 
 //GetByRedis
-func (res *TagGpsType) GetByRedis() ResultType {
+func (res *TagGpsType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_TAG_GPSES, res.ToIdString())

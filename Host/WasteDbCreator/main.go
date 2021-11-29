@@ -112,15 +112,18 @@ func sumDbSet() {
 	err = sumDb.Ping()
 	WasteLibrary.LogErr(err)
 
-	var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS redisdata ( 
+	for i := 0; i < 31; i++ {
+
+		var createSQL string = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS redisdata_%d ( 
 			DataId serial PRIMARY KEY,
 			HashKey TEXT NOT NULL DEFAULT '',
 			SubKey TEXT NOT NULL DEFAULT '',
 			KeyValue TEXT NOT NULL DEFAULT '',
 			  create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-			);`)
-	_, err = sumDb.Exec(createSQL)
-	WasteLibrary.LogErr(err)
+			);`, i)
+		_, err = sumDb.Exec(createSQL)
+		WasteLibrary.LogErr(err)
+	}
 	sumDb.Close()
 }
 

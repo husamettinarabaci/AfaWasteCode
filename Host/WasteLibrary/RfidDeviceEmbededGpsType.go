@@ -28,7 +28,7 @@ func (res *RfidDeviceEmbededGpsType) New() {
 }
 
 //GetByRedis
-func (res *RfidDeviceEmbededGpsType) GetByRedis() ResultType {
+func (res *RfidDeviceEmbededGpsType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_RFID_EMBEDED_GPS_DEVICES, res.ToIdString())

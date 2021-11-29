@@ -28,7 +28,7 @@ func (res *TagAlarmType) New() {
 }
 
 //GetByRedis
-func (res *TagAlarmType) GetByRedis() ResultType {
+func (res *TagAlarmType) GetByRedis(dbIndex int) ResultType {
 
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_TAG_ALARMS, res.ToIdString())

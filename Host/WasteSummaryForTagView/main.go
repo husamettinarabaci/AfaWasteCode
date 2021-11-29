@@ -92,8 +92,5 @@ func customerProc(customerTags WasteLibrary.CustomerTagsType) {
 	}
 	resultVal = customerTagsList.SaveToRedis()
 	resultVal = customerTagsList.SaveToRedisWODb()
-	if time.Now().Hour() == 23 {
-		customerTagsList.TakeSnapshot()
-	}
 
 }

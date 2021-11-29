@@ -26,7 +26,7 @@ func (res *UltDeviceGpsType) New() {
 }
 
 //GetByRedis
-func (res *UltDeviceGpsType) GetByRedis() ResultType {
+func (res *UltDeviceGpsType) GetByRedis(dbIndex int) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(REDIS_ULT_GPS_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
