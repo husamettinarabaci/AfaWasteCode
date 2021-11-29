@@ -246,8 +246,6 @@ func data(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.RESULT_OK
-	w.Write(resultVal.ToByte())
 	if err := req.ParseForm(); err != nil {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
@@ -259,11 +257,10 @@ func data(w http.ResponseWriter, req *http.Request) {
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
-			return
 		}
 	} else {
 	}
-
+	w.Write(resultVal.ToByte())
 }
 
 func update(w http.ResponseWriter, req *http.Request) {
@@ -295,14 +292,10 @@ func update(w http.ResponseWriter, req *http.Request) {
 	}*/
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	var updaterType WasteLibrary.UpdaterType = WasteLibrary.StringToUpdaterType(req.FormValue(WasteLibrary.HTTP_DATA))
-	//fmt.Println(req.FormValue(WasteLibrary.HTTP_HEADER))
-	//fmt.Println(req.FormValue(WasteLibrary.HTTP_DATA))
 
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 		if currentHttpHeader.DeviceNo == "0000000064231683" ||
-			currentHttpHeader.DeviceNo == "000000008ce06a67" ||
-			currentHttpHeader.DeviceNo == "000000004e64f0f2" ||
-			currentHttpHeader.DeviceNo == "000000007d4a013b" {
+			currentHttpHeader.DeviceNo == "000000008ce06a67" {
 			fmt.Println(req.FormValue(WasteLibrary.HTTP_HEADER))
 			fmt.Println(req.FormValue(WasteLibrary.HTTP_DATA))
 		}

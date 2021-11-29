@@ -143,6 +143,28 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
+		//DeviceEmbededGps     RfidDeviceEmbededGpsType
+		var currentDeviceEmbededGps WasteLibrary.RfidDeviceEmbededGpsType
+		currentDeviceEmbededGps.New()
+		currentDeviceEmbededGps.NewData = true
+		currentDeviceEmbededGps.DeviceId = currentDeviceMain.DeviceId
+		resultVal = currentDeviceEmbededGps.SaveToDb()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		resultVal = currentDeviceEmbededGps.SaveToRedis()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
 		//DeviceAlarm   RfidDeviceAlarmType
 		var currentDeviceAlarm WasteLibrary.RfidDeviceAlarmType
 		currentDeviceAlarm.New()
@@ -854,6 +876,52 @@ func createTag(w http.ResponseWriter, req *http.Request) {
 		}
 
 		resultVal = currentTagReader.SaveToRedis()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		//TagNote   TagNoteType
+		var currentTagNote WasteLibrary.TagNoteType
+		currentTagNote.New()
+		currentTagNote.NewData = true
+		currentTagNote.TagId = currentData.TagId
+		resultVal = currentTagNote.SaveToDb()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		resultVal = currentTagNote.SaveToRedis()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		//TagAlarm   TagAlarmType
+		var currentTagAlarm WasteLibrary.TagAlarmType
+		currentTagAlarm.New()
+		currentTagAlarm.NewData = true
+		currentTagAlarm.TagId = currentData.TagId
+		resultVal = currentTagAlarm.SaveToDb()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		resultVal = currentTagAlarm.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

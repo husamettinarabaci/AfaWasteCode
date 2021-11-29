@@ -3,6 +3,7 @@ package WasteLibrary
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 //CustomerUltDevicesViewListType
@@ -15,6 +16,62 @@ type CustomerUltDevicesViewListType struct {
 func (res *CustomerUltDevicesViewListType) New() {
 	res.CustomerId = 1
 	res.Devices = make(map[string]UltDeviceViewType)
+}
+
+//GetByRedis
+func (res *CustomerUltDevicesViewListType) GetByRedis() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_ULT_DEVICEVIEWS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
+//GetByRedisByReel
+func (res *CustomerUltDevicesViewListType) GetByRedisByReel() ResultType {
+	var resultVal ResultType
+	resultVal = GetRedisWODbForStoreApi(REDIS_CUSTOMER_ULT_DEVICEVIEWS_REEL, REDIS_CUSTOMER_ULT_DEVICEVIEWS, res.ToIdString())
+	if resultVal.Result == RESULT_OK {
+		res.StringToType(resultVal.Retval.(string))
+	} else {
+		return resultVal
+	}
+
+	resultVal.Retval = res.ToString()
+	return resultVal
+}
+
+//SaveToRedis
+func (res *CustomerUltDevicesViewListType) SaveToRedis() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_ULT_DEVICEVIEWS, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//SaveToRedisWODb
+func (res *CustomerUltDevicesViewListType) SaveToRedisWODb() ResultType {
+	var resultVal ResultType
+	resultVal = SaveRedisWODbForStoreApi(REDIS_CUSTOMER_ULT_DEVICEVIEWS_REEL, res.ToIdString(), res.ToString())
+	return resultVal
+}
+
+//TakeSnapshot
+func (res *CustomerUltDevicesViewListType) TakeSnapshot() ResultType {
+	var resultVal ResultType
+	var i int
+	for i = 29; i > 0; i-- {
+		resultVal = GetRedisWODbForStoreApi(REDIS_CUSTOMER_ULT_DEVICEVIEWS_REEL_DAY+strconv.Itoa(i), "", res.ToIdString())
+		if resultVal.Result == RESULT_OK {
+			SaveRedisWODbForStoreApi(REDIS_CUSTOMER_ULT_DEVICEVIEWS_REEL_DAY+strconv.Itoa(i+1), res.ToIdString(), resultVal.Retval.(string))
+		}
+	}
+	SaveRedisWODbForStoreApi(REDIS_CUSTOMER_ULT_DEVICEVIEWS_REEL_DAY+strconv.Itoa(i+1), res.ToIdString(), res.ToString())
+	return resultVal
 }
 
 //ToId String
@@ -45,4 +102,14 @@ func ByteToCustomerUltDevicesViewListType(retByte []byte) CustomerUltDevicesView
 //String To CustomerUltDevicesViewListType
 func StringToCustomerUltDevicesViewListType(retStr string) CustomerUltDevicesViewListType {
 	return ByteToCustomerUltDevicesViewListType([]byte(retStr))
+}
+
+//ByteToType
+func (res *CustomerUltDevicesViewListType) ByteToType(retByte []byte) {
+	json.Unmarshal(retByte, res)
+}
+
+//StringToType
+func (res *CustomerUltDevicesViewListType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

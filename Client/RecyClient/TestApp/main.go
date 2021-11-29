@@ -1,52 +1,65 @@
 package main
 
 import (
-	"os"
-	"strconv"
-	"time"
+	"context"
+
+	"github.com/devafatek/WasteLibrary"
+	"github.com/go-redis/redis/v8"
 )
 
-var currentUser string
-var turnLeftEnb string = os.Getenv("MOTOR_L_ENB")
-var turnLeftPwm string = os.Getenv("MOTOR_L_PWM")
-var turnRigthEnb string = os.Getenv("MOTOR_R_ENB")
-var turnRigthPwm string = os.Getenv("MOTOR_R_PWM")
+var redisDb *redis.Client
+var redisDb1 *redis.Client
+
+var ctx = context.Background()
 
 func main() {
-	motorProc()
-}
 
-func motorProc() {
+	WasteLibrary.Debug = true
+	redisDb = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "Amca151200!Furkan",
+		DB:       0,
+	})
 
-	rpio.Open()
-	leftEnb, _ := strconv.Atoi(turnLeftEnb)
-	rightEnb, _ := strconv.Atoi(turnRigthEnb)
-	leftPwm, _ := strconv.Atoi(turnLeftPwm)
-	rightPwm, _ := strconv.Atoi(turnRigthPwm)
-	pinLeftEnb := rpio.Pin(leftEnb)
-	pinRightEnb := rpio.Pin(rightEnb)
-	pinLeftPwm := rpio.Pin(leftPwm)
-	pinRightPwm := rpio.Pin(rightPwm)
-	pinLeftEnb.Output()
-	pinRightEnb.Output()
-	pinLeftPwm.Output()
-	pinRightPwm.Output()
+	pong, err := redisDb.Ping(ctx).Result()
+	WasteLibrary.LogErr(err)
+	WasteLibrary.LogStr(pong)
 
-	pinLeftEnb.High()
-	pinRightEnb.High()
-	pinLeftPwm.Low()
-	pinRightPwm.Low()
-	time.Sleep(1 * time.Second)
-	pinLeftPwm.High()
-	pinRightPwm.Low()
-	time.Sleep(3 * time.Second)
-	pinLeftPwm.Low()
-	pinRightPwm.High()
-	time.Sleep(3 * time.Second)
-	pinLeftEnb.Low()
-	pinRightEnb.Low()
-	pinLeftPwm.Low()
-	pinRightPwm.Low()
-	rpio.Close()
+	redisDb1 = redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "Amca151200!Furkan",
+		DB:       1,
+	})
+
+	pong, err = redisDb1.Ping(ctx).Result()
+	WasteLibrary.LogErr(err)
+	WasteLibrary.LogStr(pong)
+
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	var val map[string]string
+
+	val, err = redisDb.HGetAll(ctx, "customers").Result()
+
+	switch {
+	case err == redis.Nil:
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+	case err != nil:
+		WasteLibrary.LogErr(err)
+	case len(val) == 0:
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+	case len(val) != 0:
+		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = val
+	}
+
+	_, err = redisDb1.HMSet(ctx, "customers", resultVal.Retval.(map[string]string)).Result()
+	switch {
+	case err == redis.Nil:
+	case err != nil:
+		WasteLibrary.LogErr(err)
+	}
+
+	WasteLibrary.LogStr(resultVal.ToString())
 
 }

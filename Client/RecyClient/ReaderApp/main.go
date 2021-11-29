@@ -67,27 +67,9 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		nid, _ := uuid.NewUUID()
 		currentNfcDataType.NfcMain.Epc = cardId[0]
 		currentNfcDataType.NfcReader.UID = nid.String()
-		resultVal = sendRf(currentNfcDataType)
-		if resultVal.Result == WasteLibrary.RESULT_OK {
-			//TO DO
-			// return nfc type
-			//var nfcData WasteLibrary.NfcType = WasteLibrary.StringToNfcType(resultVal.Retval.(string))
-			go sendRfToCam(currentNfcDataType)
-			go sendRfToWeb(currentNfcDataType)
-		}
+		sendRfToWeb(currentNfcDataType)
 	}
 
-}
-
-func sendRf(nfcData WasteLibrary.NfcType) WasteLibrary.ResultType {
-	var resultVal WasteLibrary.ResultType
-	resultVal.Result = WasteLibrary.RESULT_FAIL
-	data := url.Values{
-		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_RF},
-		WasteLibrary.HTTP_DATA:       {nfcData.ToString()},
-	}
-	resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
-	return resultVal
 }
 
 func sendRfToWeb(nfcData WasteLibrary.NfcType) {
@@ -97,15 +79,6 @@ func sendRfToWeb(nfcData WasteLibrary.NfcType) {
 		WasteLibrary.HTTP_DATA:       {nfcData.ToString()},
 	}
 	WasteLibrary.HttpPostReq("http://127.0.0.1:10003/trigger", data)
-}
-
-func sendRfToCam(nfcData WasteLibrary.NfcType) {
-
-	data := url.Values{
-		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_CAMTRIGGER},
-		WasteLibrary.HTTP_DATA:       {nfcData.ToString()},
-	}
-	WasteLibrary.HttpPostReq("http://127.0.0.1:10002/trigger", data)
 }
 
 func deviceCheck() {

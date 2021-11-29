@@ -198,6 +198,29 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_notes ( 
+		DataId serial PRIMARY KEY,
+		TagID INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_NOTE_NONE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_alarms (
+		DataId serial PRIMARY KEY,
+		TagId INT NOT NULL DEFAULT -1,
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
+		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
+		Alarm varchar(50) NOT NULL DEFAULT '',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_mains ( 
 		DataId serial PRIMARY KEY,
 		NfcID INT NOT NULL DEFAULT -1,
@@ -314,6 +337,18 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_embeded_gps_devices (
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Speed NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
@@ -366,10 +401,16 @@ func readerDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_workhour_devices ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		WorkStartHour  INT NOT NULL DEFAULT 6,
-		WorkStartMinute  INT NOT NULL DEFAULT 0,
-		WorkEndHour  INT NOT NULL DEFAULT 18,
-		WorkEndMinute  INT NOT NULL DEFAULT 30,
+		WorkCount INT NOT NULL DEFAULT 1,
+		Work1StartHour  INT NOT NULL DEFAULT 6,
+		Work1StartMinute  INT NOT NULL DEFAULT 0,
+		Work1AddMinute  INT NOT NULL DEFAULT 510,
+		Work2StartHour  INT NOT NULL DEFAULT 0,
+		Work2StartMinute  INT NOT NULL DEFAULT 0,
+		Work2AddMinute  INT NOT NULL DEFAULT 0,
+		Work3StartHour  INT NOT NULL DEFAULT 0,
+		Work3StartMinute  INT NOT NULL DEFAULT 0,
+		Work3AddMinute  INT NOT NULL DEFAULT 0,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -706,6 +747,29 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_notes ( 
+		DataId serial PRIMARY KEY,
+		TagID INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_NOTE_NONE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS tag_alarms (
+		DataId serial PRIMARY KEY,
+		TagId INT NOT NULL DEFAULT -1,
+		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
+		AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		AlarmType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMTYPE_NONE + `',
+		Alarm varchar(50) NOT NULL DEFAULT '',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS nfc_mains ( 
 		NfcID serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -820,6 +884,18 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_embeded_gps_devices (
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		Speed NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+		GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_alarm_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
@@ -872,10 +948,16 @@ func staticDbSet() {
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_workhour_devices ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
-		WorkStartHour  INT NOT NULL DEFAULT 6,
-		WorkStartMinute  INT NOT NULL DEFAULT 0,
-		WorkEndHour  INT NOT NULL DEFAULT 6,
-		WorkEndMinute  INT NOT NULL DEFAULT 0,
+		WorkCount INT NOT NULL DEFAULT 1,
+		Work1StartHour  INT NOT NULL DEFAULT 6,
+		Work1StartMinute  INT NOT NULL DEFAULT 0,
+		Work1AddMinute  INT NOT NULL DEFAULT 510,
+		Work2StartHour  INT NOT NULL DEFAULT 0,
+		Work2StartMinute  INT NOT NULL DEFAULT 0,
+		Work2AddMinute  INT NOT NULL DEFAULT 0,
+		Work3StartHour  INT NOT NULL DEFAULT 0,
+		Work3StartMinute  INT NOT NULL DEFAULT 0,
+		Work3AddMinute  INT NOT NULL DEFAULT 0,
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)

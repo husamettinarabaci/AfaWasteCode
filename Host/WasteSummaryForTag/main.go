@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/devafatek/WasteLibrary"
@@ -61,112 +62,115 @@ func customerProc(customerId float64) {
 		customerAdminConfig.CustomerId = customerId
 		resultVal = customerAdminConfig.GetByRedis()
 
-		var workEndHour int = customerAdminConfig.WorkEndHour
-		var workEndMinute int = customerAdminConfig.WorkEndMinute
+		workStartTime := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), customerAdminConfig.WorkStartHour, customerAdminConfig.WorkStartMinute, 0, 0, time.Now().Location())
+		workEndTime := workStartTime.Add(time.Duration(customerAdminConfig.WorkAddMinute) * time.Minute)
+		workYestStartTime := workStartTime.Add(-24 * time.Hour)
 
-		var inWork bool = false
-		var workStartTime time.Time
+		var opLimitTime time.Time
 		if customerAdminConfig.DeviceBaseWork == WasteLibrary.STATU_PASSIVE {
-			if time.Now().Hour() < workEndHour {
-				inWork = true
-			} else if time.Now().Hour() == workEndHour {
-				if time.Now().Minute() < workEndMinute {
-					inWork = true
-				} else {
-					inWork = false
-				}
+			if time.Since(workEndTime).Seconds() > 0 {
+				opLimitTime = workStartTime
 			} else {
-				inWork = false
-			}
-
-			if !inWork {
-				workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), customerAdminConfig.WorkStartHour, customerAdminConfig.WorkStartMinute, 0, 0, time.Now().Location())
+				opLimitTime = workYestStartTime
 			}
 		}
 
-		if inWork {
+		var currentHttpHeader WasteLibrary.HttpClientHeaderType
+		currentHttpHeader.New()
+		var customerTags WasteLibrary.CustomerTagsType
+		customerTags.CustomerId = customerId
+		resultVal = customerTags.GetByRedis()
+		if resultVal.Result == WasteLibrary.RESULT_OK {
 
-		} else {
-			var currentHttpHeader WasteLibrary.HttpClientHeaderType
-			currentHttpHeader.New()
-			var customerTags WasteLibrary.CustomerTagsType
-			customerTags.CustomerId = customerId
-			resultVal = customerTags.GetByRedis()
-			if resultVal.Result == WasteLibrary.RESULT_OK {
+			for _, tagId := range customerTags.Tags {
 
-				for _, tagId := range customerTags.Tags {
+				if tagId != 0 {
 
-					if tagId != 0 {
+					var currentTag WasteLibrary.TagType
+					currentTag.New()
+					currentTag.TagId = tagId
+					resultVal = currentTag.GetByRedis()
+					if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
 
-						var currentTag WasteLibrary.TagType
-						currentTag.New()
-						currentTag.TagId = tagId
-						resultVal = currentTag.GetByRedis()
-						if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
+						if customerAdminConfig.DeviceBaseWork == WasteLibrary.STATU_ACTIVE {
 
-							if customerAdminConfig.DeviceBaseWork == WasteLibrary.STATU_ACTIVE {
+							var currentDeviceWorkHour WasteLibrary.RfidDeviceWorkHourType
+							currentDeviceWorkHour.DeviceId = currentTag.TagMain.DeviceId
+							resultVal = currentDeviceWorkHour.GetByRedis()
+							if resultVal.Result == WasteLibrary.RESULT_OK {
 
-								var currentDeviceWorkHour WasteLibrary.RfidDeviceWorkHourType
-								currentDeviceWorkHour.DeviceId = currentTag.TagMain.DeviceId
-								resultVal = currentDeviceWorkHour.GetByRedis()
-								if resultVal.Result == WasteLibrary.RESULT_OK {
+								if currentDeviceWorkHour.WorkCount == 3 {
 
-									workEndHour = currentDeviceWorkHour.WorkEndHour
-									workEndMinute = currentDeviceWorkHour.WorkEndMinute
-									if time.Now().Hour() < workEndHour {
-										inWork = true
-									} else if time.Now().Hour() == workEndHour {
-										if time.Now().Minute() < workEndMinute {
-											inWork = true
-										} else {
-											inWork = false
-										}
+									workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), currentDeviceWorkHour.Work3StartHour, currentDeviceWorkHour.Work3StartMinute, 0, 0, time.Now().Location())
+									workEndTime = workStartTime.Add(time.Duration(currentDeviceWorkHour.Work3AddMinute) * time.Minute)
+									workYestStartTime = workStartTime.Add(-24 * time.Hour)
+
+									if time.Since(workEndTime).Seconds() > 0 {
+										opLimitTime = workStartTime
 									} else {
-										inWork = false
+										opLimitTime = workYestStartTime
 									}
+								} else if currentDeviceWorkHour.WorkCount == 2 {
 
-									if !inWork {
-										workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), currentDeviceWorkHour.WorkStartHour, currentDeviceWorkHour.WorkStartMinute, 0, 0, time.Now().Location())
+									workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), currentDeviceWorkHour.Work2StartHour, currentDeviceWorkHour.Work2StartMinute, 0, 0, time.Now().Location())
+									workEndTime = workStartTime.Add(time.Duration(currentDeviceWorkHour.Work2AddMinute) * time.Minute)
+									workYestStartTime = workStartTime.Add(-24 * time.Hour)
+
+									if time.Since(workEndTime).Seconds() > 0 {
+										opLimitTime = workStartTime
+									} else {
+										opLimitTime = workYestStartTime
 									}
-								}
+								} else if currentDeviceWorkHour.WorkCount == 1 {
 
-							}
+									workStartTime = time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), currentDeviceWorkHour.Work1StartHour, currentDeviceWorkHour.Work1StartMinute, 0, 0, time.Now().Location())
+									workEndTime = workStartTime.Add(time.Duration(currentDeviceWorkHour.Work1AddMinute) * time.Minute)
+									workYestStartTime = workStartTime.Add(-24 * time.Hour)
 
-							if inWork {
-
-							} else {
-
-								var containerStatu = currentTag.TagStatu.ContainerStatu
-								second := workStartTime.Sub(WasteLibrary.StringToTime(currentTag.TagReader.ReadTime)).Seconds()
-								if second < 0 {
-									containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
-								} else {
-									containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
-								}
-
-								if containerStatu != currentTag.TagStatu.ContainerStatu {
-									currentTag.TagStatu.ContainerStatu = containerStatu
-
-									resultVal = currentTag.TagStatu.SaveToDb()
-									if resultVal.Result != WasteLibrary.RESULT_OK {
-										continue
-									}
-
-									resultVal = currentTag.TagStatu.SaveToRedis()
-									if resultVal.Result != WasteLibrary.RESULT_OK {
-										continue
+									if time.Since(workEndTime).Seconds() > 0 {
+										opLimitTime = workStartTime
+									} else {
+										opLimitTime = workYestStartTime
 									}
 								}
+
 							}
 
 						}
+
+						var containerStatu = currentTag.TagStatu.ContainerStatu
+						second := opLimitTime.Sub(WasteLibrary.StringToTime(currentTag.TagReader.ReadTime)).Seconds()
+						if second < 0 {
+							containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY
+						} else {
+							containerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_FULL
+						}
+
+						if containerStatu != currentTag.TagStatu.ContainerStatu {
+							currentTag.TagStatu.ContainerStatu = containerStatu
+
+							resultVal = currentTag.TagStatu.SaveToDb()
+							if resultVal.Result != WasteLibrary.RESULT_OK {
+								continue
+							}
+
+							resultVal = currentTag.TagStatu.SaveToRedis()
+							if resultVal.Result != WasteLibrary.RESULT_OK {
+								continue
+							}
+						}
+
 					}
 				}
-
-				//TO DO
-				//take tag statu spanshot
 			}
+
+			data := url.Values{
+				WasteLibrary.HTTP_DATA: {customerTags.ToString()},
+			}
+
+			resultVal = WasteLibrary.HttpPostReq("http://waste-summaryfortagview-cluster-ip/reader", data)
 		}
+
 		time.Sleep(opInterval * time.Second)
 
 	}

@@ -149,6 +149,25 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		currentData.DeviceId = float64(deviceId)
 		resultVal.Retval = currentData.ToIdString()
 
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_EMBEDED_GPS_DEVICE {
+		var currentData WasteLibrary.RfidDeviceEmbededGpsType = WasteLibrary.StringToRfidDeviceEmbededGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
+		if !currentData.NewData {
+			execSQL = currentData.UpdateSQL()
+		} else {
+			execSQL = currentData.InsertSQL()
+		}
+		var deviceId int = 0
+		errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.DeviceId = float64(deviceId)
+		resultVal.Retval = currentData.ToIdString()
+
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_ALARM_DEVICE {
 
 		var currentData WasteLibrary.RfidDeviceAlarmType = WasteLibrary.StringToRfidDeviceAlarmType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -677,6 +696,46 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		currentData.TagId = float64(tagId)
 		resultVal.Retval = currentData.ToIdString()
 
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_ALARM {
+
+		var currentData WasteLibrary.TagAlarmType = WasteLibrary.StringToTagAlarmType(req.FormValue(WasteLibrary.HTTP_DATA))
+		if !currentData.NewData {
+			execSQL = currentData.UpdateSQL()
+		} else {
+			execSQL = currentData.InsertSQL()
+		}
+		var tagId int = 0
+		errDb := staticDb.QueryRow(execSQL).Scan(&tagId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.TagId = float64(tagId)
+		resultVal.Retval = currentData.ToIdString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_NOTE {
+
+		var currentData WasteLibrary.TagNoteType = WasteLibrary.StringToTagNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
+		if !currentData.NewData {
+			execSQL = currentData.UpdateSQL()
+		} else {
+			execSQL = currentData.InsertSQL()
+		}
+		var tagId int = 0
+		errDb := staticDb.QueryRow(execSQL).Scan(&tagId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.TagId = float64(tagId)
+		resultVal.Retval = currentData.ToIdString()
+
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_CUSTOMER {
 
 		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -765,6 +824,18 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_GPS_DEVICE {
 		var currentData WasteLibrary.RfidDeviceGpsType = WasteLibrary.StringToRfidDeviceGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
+		errDb := currentData.SelectWithDb(staticDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_EMBEDED_GPS_DEVICE {
+		var currentData WasteLibrary.RfidDeviceEmbededGpsType = WasteLibrary.StringToRfidDeviceEmbededGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
 		errDb := currentData.SelectWithDb(staticDb)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
@@ -1089,6 +1160,30 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_READER {
 		var currentData WasteLibrary.TagReaderType = WasteLibrary.StringToTagReaderType(req.FormValue(WasteLibrary.HTTP_DATA))
+		errDb := currentData.SelectWithDb(staticDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_ALARM {
+		var currentData WasteLibrary.TagAlarmType = WasteLibrary.StringToTagAlarmType(req.FormValue(WasteLibrary.HTTP_DATA))
+		errDb := currentData.SelectWithDb(staticDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_NOTE {
+		var currentData WasteLibrary.TagNoteType = WasteLibrary.StringToTagNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
 		errDb := currentData.SelectWithDb(staticDb)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -192,8 +191,6 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println(req.Form)
-
 	var linkCustomer WasteLibrary.CustomerType
 	resultVal = linkCustomer.GetByRedisByLink(req.Host)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -206,109 +203,53 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-		var customerDevices WasteLibrary.CustomerRfidDevicesType
-		customerDevices.CustomerId = linkCustomer.CustomerId
-		resultVal = customerDevices.GetByRedis()
+		var customerDevicesList WasteLibrary.CustomerRfidDevicesViewListType
+		customerDevicesList.CustomerId = linkCustomer.CustomerId
+		resultVal = customerDevicesList.GetByRedisByReel()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND
 			w.Write(resultVal.ToByte())
 
 			return
 		}
 
-		var customerDevicesList WasteLibrary.CustomerRfidDevicesListType
-		customerDevicesList.New()
-		customerDevicesList.CustomerId = linkCustomer.CustomerId
-		for _, deviceId := range customerDevices.Devices {
-
-			if deviceId != 0 {
-
-				var currentDevice WasteLibrary.RfidDeviceType
-				currentDevice.New()
-				currentDevice.DeviceId = deviceId
-				resultVal = currentDevice.GetByRedis()
-				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
-				}
-
-			}
-		}
 		resultVal.Result = WasteLibrary.RESULT_OK
 		resultVal.Retval = customerDevicesList.ToString()
+		w.Write(resultVal.ToByte())
+		return
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-		var customerDevices WasteLibrary.CustomerUltDevicesType
-		customerDevices.CustomerId = linkCustomer.CustomerId
-		resultVal = customerDevices.GetByRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-
 		var customerDevicesList WasteLibrary.CustomerUltDevicesViewListType
-		customerDevicesList.New()
 		customerDevicesList.CustomerId = linkCustomer.CustomerId
-		for _, deviceId := range customerDevices.Devices {
-
-			if deviceId != 0 {
-				var currentDevice WasteLibrary.UltDeviceType
-				currentDevice.New()
-				currentDevice.DeviceId = deviceId
-				resultVal = currentDevice.GetByRedis()
-
-				if resultVal.Result == WasteLibrary.RESULT_OK {
-
-					var currentUltDeviceView WasteLibrary.UltDeviceViewType
-					currentUltDeviceView.New()
-					currentUltDeviceView.DeviceId = currentDevice.DeviceId
-					currentUltDeviceView.ContainerNo = currentDevice.DeviceBase.ContainerNo
-					currentUltDeviceView.ContainerStatu = currentDevice.DeviceStatu.ContainerStatu
-					currentUltDeviceView.UltStatus = currentDevice.DeviceStatu.UltStatus
-					currentUltDeviceView.Latitude = currentDevice.DeviceGps.Latitude
-					currentUltDeviceView.Longitude = currentDevice.DeviceGps.Longitude
-					currentUltDeviceView.SensPercent = currentDevice.DeviceStatu.SensPercent
-
-					customerDevicesList.Devices[currentUltDeviceView.ToIdString()] = currentUltDeviceView
-				}
-
-			}
-		}
-		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = customerDevicesList.ToString()
-	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
-		var customerDevices WasteLibrary.CustomerRecyDevicesType
-		customerDevices.CustomerId = linkCustomer.CustomerId
-		resultVal = customerDevices.GetByRedis()
+		resultVal = customerDevicesList.GetByRedisByReel()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND
 			w.Write(resultVal.ToByte())
 
 			return
 		}
 
-		var customerDevicesList WasteLibrary.CustomerRecyDevicesListType
-		customerDevicesList.New()
-		customerDevicesList.CustomerId = linkCustomer.CustomerId
-
-		for _, deviceId := range customerDevices.Devices {
-
-			if deviceId != 0 {
-				var currentDevice WasteLibrary.RecyDeviceType
-				currentDevice.New()
-				currentDevice.DeviceId = deviceId
-				resultVal = currentDevice.GetByRedis()
-				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
-				}
-
-			}
-		}
 		resultVal.Result = WasteLibrary.RESULT_OK
 		resultVal.Retval = customerDevicesList.ToString()
+		w.Write(resultVal.ToByte())
+		return
+	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
+		var customerDevicesList WasteLibrary.CustomerRecyDevicesViewListType
+		customerDevicesList.CustomerId = linkCustomer.CustomerId
+		resultVal = customerDevicesList.GetByRedisByReel()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = customerDevicesList.ToString()
+		w.Write(resultVal.ToByte())
+		return
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
@@ -413,10 +354,9 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 	var customerTagsList WasteLibrary.CustomerTagsViewListType
 	customerTagsList.CustomerId = linkCustomer.CustomerId
 	resultVal = customerTagsList.GetByRedisByReel()
-
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_TAGS_NOTFOUND
 		w.Write(resultVal.ToByte())
 
 		return

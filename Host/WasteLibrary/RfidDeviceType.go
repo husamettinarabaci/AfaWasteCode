@@ -7,16 +7,17 @@ import (
 
 //RfidDeviceType
 type RfidDeviceType struct {
-	DeviceId       float64
-	DeviceMain     RfidDeviceMainType
-	DeviceBase     RfidDeviceBaseType
-	DeviceStatu    RfidDeviceStatuType
-	DeviceGps      RfidDeviceGpsType
-	DeviceAlarm    RfidDeviceAlarmType
-	DeviceTherm    RfidDeviceThermType
-	DeviceVersion  RfidDeviceVersionType
-	DeviceDetail   RfidDeviceDetailType
-	DeviceWorkHour RfidDeviceWorkHourType
+	DeviceId         float64
+	DeviceMain       RfidDeviceMainType
+	DeviceBase       RfidDeviceBaseType
+	DeviceStatu      RfidDeviceStatuType
+	DeviceGps        RfidDeviceGpsType
+	DeviceAlarm      RfidDeviceAlarmType
+	DeviceTherm      RfidDeviceThermType
+	DeviceVersion    RfidDeviceVersionType
+	DeviceDetail     RfidDeviceDetailType
+	DeviceWorkHour   RfidDeviceWorkHourType
+	DeviceEmbededGps RfidDeviceEmbededGpsType
 }
 
 //New
@@ -31,6 +32,7 @@ func (res *RfidDeviceType) New() {
 	res.DeviceStatu.New()
 	res.DeviceDetail.New()
 	res.DeviceWorkHour.New()
+	res.DeviceEmbededGps.New()
 }
 
 //GetByRedis
@@ -49,6 +51,11 @@ func (res *RfidDeviceType) GetByRedis() ResultType {
 	}
 	res.DeviceGps.DeviceId = res.DeviceId
 	resultVal = res.DeviceGps.GetByRedis()
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceEmbededGps.DeviceId = res.DeviceId
+	resultVal = res.DeviceEmbededGps.GetByRedis()
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

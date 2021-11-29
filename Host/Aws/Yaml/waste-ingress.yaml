@@ -60,6 +60,13 @@ spec:
             pathType: Prefix
           - backend:
               service:
+                name: waste-reportapi-cluster-ip
+                port:
+                  number: 80
+            path: /reportapi(/|$)(.*)
+            pathType: Prefix
+          - backend:
+              service:
                 name: waste-websocket-cluster-ip
                 port:
                   number: 80

@@ -8,9 +8,12 @@ import (
 //TagViewType
 type TagViewType struct {
 	TagId          float64
+	DeviceId       float64
 	ContainerNo    string
 	ContainerStatu string
 	TagStatu       string
+	ReadTime       string
+	UID            string
 	Latitude       float64
 	Longitude      float64
 }
@@ -18,9 +21,12 @@ type TagViewType struct {
 //New
 func (res *TagViewType) New() {
 	res.TagId = 0
+	res.DeviceId = 0
 	res.ContainerNo = ""
 	res.ContainerStatu = CONTAINER_FULLNESS_STATU_NONE
 	res.TagStatu = TAG_STATU_NONE
+	res.ReadTime = GetTime()
+	res.UID = ""
 	res.Latitude = 0
 	res.Longitude = 0
 }

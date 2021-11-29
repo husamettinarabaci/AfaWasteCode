@@ -11,8 +11,11 @@ type AdminConfigType struct {
 	DeviceBaseWork  string
 	WorkStartHour   int
 	WorkStartMinute int
-	WorkEndHour     int
-	WorkEndMinute   int
+	WorkAddMinute   int
+	SWLatitude      float64
+	SWLongitude     float64
+	NELatitude      float64
+	NELongitude     float64
 	Active          string
 	CreateTime      string
 }
@@ -22,8 +25,11 @@ func (res *AdminConfigType) New() {
 	res.CustomerId = 1
 	res.WorkStartHour = 06
 	res.WorkStartMinute = 0
-	res.WorkEndHour = 18
-	res.WorkEndMinute = 30
+	res.WorkAddMinute = 510
+	res.SWLatitude = 0
+	res.SWLongitude = 0
+	res.NELatitude = 0
+	res.NELongitude = 0
 	res.DeviceBaseWork = STATU_PASSIVE
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()

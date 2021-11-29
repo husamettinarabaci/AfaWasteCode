@@ -1,8 +1,11 @@
 package main
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
+	"time"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -148,20 +151,9 @@ func data(w http.ResponseWriter, req *http.Request) {
 			serviceClusterIp = "waste-rfreader-cluster-ip"
 			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GPS {
-			var customerConfig WasteLibrary.CustomerConfigType
-			customerConfig.CustomerId = currentHttpHeader.CustomerId
-			resultVal = customerConfig.GetByRedis()
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
-				w.Write(resultVal.ToByte())
+			serviceClusterIp = "waste-gpsreader-cluster-ip"
+			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
 
-				return
-			}
-			if customerConfig.ArventoApp == WasteLibrary.STATU_PASSIVE {
-				serviceClusterIp = "waste-gpsreader-cluster-ip"
-				resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
-			}
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_STATUS {
 			serviceClusterIp = "waste-statusreader-cluster-ip"
 			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
@@ -197,24 +189,91 @@ func data(w http.ResponseWriter, req *http.Request) {
 		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_RF {
-			serviceClusterIp = "waste-rfreader-cluster-ip"
-			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
-		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_STATUS {
-			serviceClusterIp = "waste-statusreader-cluster-ip"
-			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
-		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_THERM {
-			serviceClusterIp = "waste-thermreader-cluster-ip"
-			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
-		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_CAM {
-			serviceClusterIp = "waste-camreader-cluster-ip"
-			resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
-		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GET_NFC {
 			var currentNfc WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
-			resultVal = currentNfc.GetByRedis()
+			currentNfc.NfcBase.Name = "İsim"
+			currentNfc.NfcBase.SurName = "Soyisim"
+			currentNfc.NfcBase.TotalAmount = 10
+			currentNfc.NfcStatu.ItemStatu = WasteLibrary.RECY_ITEM_STATU_PLASTIC
+			currentNfc.NfcBase.LastAmount = 0
+			resultVal.Result = WasteLibrary.RESULT_OK
+			resultVal.Retval = currentNfc.ToString()
+		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_STATUS {
+			//serviceClusterIp = "waste-statusreader-cluster-ip"
+			//resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
+		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_THERM {
+			//serviceClusterIp = "waste-thermreader-cluster-ip"
+			//resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
+		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_CAM {
+			var currentNfc WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+
+			client := http.Client{
+				Timeout: 10 * time.Second,
+			}
+			resp, err := client.Get("http://161.35.160.129:3000/upload?uid=" + currentNfc.NfcReader.UID)
+			if err != nil {
+				WasteLibrary.LogErr(err)
+
+			} else {
+				_, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					WasteLibrary.LogErr(err)
+				}
+			}
+		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GET_NFC {
+			time.Sleep(20 * time.Second)
+			var currentNfc WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var retVal string
+			retVal = "cam"
+			client := http.Client{
+				Timeout: 10 * time.Second,
+			}
+
+			resp, err := client.Get("http://161.35.160.129:3000/check?uid=" + currentNfc.NfcReader.UID)
+			if err != nil {
+				WasteLibrary.LogErr(err)
+
+			} else {
+				bodyBytes, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					WasteLibrary.LogErr(err)
+				}
+				retVal = string(bodyBytes)
+			}
+			WasteLibrary.LogStr(retVal)
+			if strings.Contains(retVal, "cam") {
+				retVal = "3"
+			}
+			if strings.Contains(retVal, "metal") {
+				retVal = "2"
+			}
+			if strings.Contains(retVal, "plastik") {
+				retVal = "1"
+			}
+
+			currentNfc.NfcBase.Name = "İsim"
+			currentNfc.NfcBase.SurName = "Soyisim"
+			if retVal == "3" {
+				currentNfc.NfcStatu.ItemStatu = WasteLibrary.RECY_ITEM_STATU_GLASS
+				currentNfc.NfcBase.LastAmount = 3
+				currentNfc.NfcBase.TotalAmount = 13
+			} else if retVal == "2" {
+				currentNfc.NfcStatu.ItemStatu = WasteLibrary.RECY_ITEM_STATU_METAL
+				currentNfc.NfcBase.LastAmount = 2
+				currentNfc.NfcBase.TotalAmount = 12
+			} else {
+				currentNfc.NfcStatu.ItemStatu = WasteLibrary.RECY_ITEM_STATU_PLASTIC
+				currentNfc.NfcBase.LastAmount = 1
+				currentNfc.NfcBase.TotalAmount = 11
+			}
+			resultVal.Result = WasteLibrary.RESULT_OK
+			resultVal.Retval = currentNfc.ToString()
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GET_CUSTOMER {
 			var currentCustomer WasteLibrary.CustomerType
 			currentCustomer.CustomerId = currentHttpHeader.CustomerId
-			resultVal = currentCustomer.GetByRedis()
+			currentCustomer.GetByRedis()
+			currentCustomer.CustomerName = "BODRUM"
+			resultVal.Result = WasteLibrary.RESULT_OK
+			resultVal.Retval = currentCustomer.ToString()
 		} else {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 		}

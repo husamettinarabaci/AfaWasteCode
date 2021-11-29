@@ -29,6 +29,7 @@ func initStart() {
 	currentUser = WasteLibrary.GetCurrentUser()
 	WasteLibrary.LogStr(currentUser)
 }
+
 func main() {
 
 	initStart()
@@ -135,7 +136,7 @@ func sendCam(readerDataTypeVal WasteLibrary.NfcType) {
 func sendCamToWeb(readerDataTypeVal WasteLibrary.NfcType) {
 
 	data := url.Values{
-		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_WEBTRIGGER},
+		WasteLibrary.HTTP_READERTYPE: {WasteLibrary.READERTYPE_CAM},
 		WasteLibrary.HTTP_DATA:       {readerDataTypeVal.ToString()},
 	}
 

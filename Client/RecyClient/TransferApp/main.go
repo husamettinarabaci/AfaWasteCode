@@ -101,7 +101,7 @@ func trans(w http.ResponseWriter, req *http.Request) {
 
 			sendFileToServer(currentNfcType.NfcReader.UID)
 		}
-		resultVal.Result = WasteLibrary.RESULT_OK
+		//resultVal.Result = WasteLibrary.RESULT_OK
 	}
 	w.Write(resultVal.ToByte())
 
@@ -160,6 +160,7 @@ func sendDataToServer(readerType string, sendData string, dataTime string, repea
 		WasteLibrary.HTTP_DATA:   {sendData},
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://listener.aws.afatek.com.tr/data", data)
+	WasteLibrary.LogStr(resultVal.ToString())
 	return resultVal
 }
 

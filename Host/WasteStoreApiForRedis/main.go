@@ -122,7 +122,9 @@ func getkeyWODb(w http.ResponseWriter, req *http.Request) {
 	hBKey := req.FormValue(WasteLibrary.REDIS_HASHBASEKEY)
 	resultVal = getKeyRedis(hKey, sKey)
 	if resultVal.Result == WasteLibrary.RESULT_FAIL {
-		resultVal = getKeyRedis(hBKey, sKey)
+		if hBKey != "" {
+			resultVal = getKeyRedis(hBKey, sKey)
+		}
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
 			resultVal = getKeyDb(hBKey, sKey)
 			if resultVal.Result == WasteLibrary.RESULT_OK {

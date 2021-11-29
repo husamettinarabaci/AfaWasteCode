@@ -25,7 +25,7 @@ func initStart() {
 func main() {
 
 	initStart()
-	downloadFolder("WEB_BASE/")
+	downloadFolder("WEB_BASE/dist/")
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)
 	http.HandleFunc("/readiness", WasteLibrary.ReadinessHandler)
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
@@ -43,9 +43,7 @@ func root(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	}
-
-	http.ServeFile(w, req, "index.html")
-
+	http.ServeFile(w, req, req.URL.Path[1:])
 }
 
 func downloadFolder(folderName string) {

@@ -1,8 +1,8 @@
 package main
 
 import (
+	"math/rand"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/devafatek/WasteLibrary"
@@ -47,66 +47,115 @@ func reader(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
-			currentData.DeviceId = currentHttpHeader.DeviceId
-			currentData.DeviceGps.DeviceId = currentData.DeviceId
+			if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GPS_API {
+				WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
+				var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+				currentData.DeviceId = currentHttpHeader.DeviceId
+				currentData.DeviceGps.DeviceId = currentData.DeviceId
 
-			currentData.DeviceGps.GpsTime = currentHttpHeader.Time
-			if currentData.DeviceGps.Longitude != 0 && currentData.DeviceGps.Latitude != 0 {
-				resultVal = currentData.DeviceGps.SaveToDb()
-				if resultVal.Result != WasteLibrary.RESULT_OK {
-					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-					w.Write(resultVal.ToByte())
-
-					return
-				}
-
-				resultVal = currentData.DeviceGps.SaveToRedis()
-				if resultVal.Result != WasteLibrary.RESULT_OK {
-					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-					w.Write(resultVal.ToByte())
-
-					return
-				}
-
-				resultVal = currentData.DeviceGps.SaveToReaderDb()
-				if resultVal.Result != WasteLibrary.RESULT_OK {
-					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-					w.Write(resultVal.ToByte())
-
-					return
-				}
-
-				if int(currentData.DeviceGps.DeviceId)%(time.Now().Second()+1) == 0 {
-					WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentData.DeviceGps.ToString())
-				}
-				if currentData.DeviceGps.Speed == 0 {
-					var customerConfig WasteLibrary.CustomerConfigType
-					customerConfig.CustomerId = currentHttpHeader.CustomerId
-					resultVal = customerConfig.GetByRedis()
+				currentData.DeviceGps.GpsTime = currentHttpHeader.Time
+				if currentData.DeviceGps.Longitude != 0 && currentData.DeviceGps.Latitude != 0 {
+					resultVal = currentData.DeviceGps.SaveToDb()
 					if resultVal.Result != WasteLibrary.RESULT_OK {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
-						resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_CUSTOMERCONFIG_NOTFOUND
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
 						w.Write(resultVal.ToByte())
 
 						return
 					}
-					if customerConfig.TruckStopTrace == WasteLibrary.STATU_ACTIVE {
 
-						data := url.Values{
-							WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
-							WasteLibrary.HTTP_DATA:   {currentData.ToString()},
-						}
+					resultVal = currentData.DeviceGps.SaveToRedis()
+					if resultVal.Result != WasteLibrary.RESULT_OK {
+						resultVal.Result = WasteLibrary.RESULT_FAIL
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+						w.Write(resultVal.ToByte())
 
-						resultVal = WasteLibrary.HttpPostReq("http://waste-gpsstopreader-cluster-ip/reader", data)
-
+						return
 					}
+
+					resultVal = currentData.DeviceGps.SaveToReaderDb()
+					if resultVal.Result != WasteLibrary.RESULT_OK {
+						resultVal.Result = WasteLibrary.RESULT_FAIL
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+						w.Write(resultVal.ToByte())
+
+						return
+					}
+					if int(currentData.DeviceGps.DeviceId)%(rand.Intn(10)+1) == 0 {
+						WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentData.DeviceGps.ToString())
+					}
+					if currentData.DeviceGps.Speed == 0 {
+						var customerConfig WasteLibrary.CustomerConfigType
+						customerConfig.CustomerId = currentHttpHeader.CustomerId
+						resultVal = customerConfig.GetByRedis()
+						if resultVal.Result != WasteLibrary.RESULT_OK {
+							resultVal.Result = WasteLibrary.RESULT_FAIL
+							resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_CUSTOMERCONFIG_NOTFOUND
+							w.Write(resultVal.ToByte())
+
+							return
+						}
+						if customerConfig.TruckStopTrace == WasteLibrary.STATU_ACTIVE {
+
+							//TO DO
+							//gps stop data
+							//data := url.Values{
+							//	WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
+							//	WasteLibrary.HTTP_DATA:   {currentData.ToString()},
+							//}
+							//resultVal = WasteLibrary.HttpPostReq("http://waste-gpsstopreader-cluster-ip/reader", data)
+
+						}
+					}
+				} else {
+					resultVal.Result = WasteLibrary.RESULT_OK
 				}
 			} else {
-				resultVal.Result = WasteLibrary.RESULT_OK
+				WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
+				var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+				currentData.DeviceId = currentHttpHeader.DeviceId
+				var currentEmbGps WasteLibrary.RfidDeviceEmbededGpsType
+				currentEmbGps.New()
+				currentEmbGps.DeviceId = currentData.DeviceId
+
+				currentEmbGps.GpsTime = currentHttpHeader.Time
+				if currentData.DeviceGps.Longitude != 0 && currentData.DeviceGps.Latitude != 0 {
+					currentEmbGps.Longitude = currentData.DeviceGps.Longitude
+					currentEmbGps.Latitude = currentData.DeviceGps.Latitude
+					resultVal = currentEmbGps.SaveToDb()
+					if resultVal.Result != WasteLibrary.RESULT_OK {
+						resultVal.Result = WasteLibrary.RESULT_FAIL
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+						w.Write(resultVal.ToByte())
+
+						return
+					}
+
+					resultVal = currentEmbGps.SaveToRedis()
+					if resultVal.Result != WasteLibrary.RESULT_OK {
+						resultVal.Result = WasteLibrary.RESULT_FAIL
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+						w.Write(resultVal.ToByte())
+
+						return
+					}
+
+					resultVal = currentEmbGps.SaveToReaderDb()
+					if resultVal.Result != WasteLibrary.RESULT_OK {
+						resultVal.Result = WasteLibrary.RESULT_FAIL
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+						w.Write(resultVal.ToByte())
+
+						return
+					}
+					if time.Since(WasteLibrary.StringToTime(currentData.DeviceGps.GpsTime)) > 15*60 {
+						if int(currentData.DeviceGps.DeviceId)%(rand.Intn(10)+1) == 0 {
+							WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentEmbGps.ToString())
+						}
+					}
+				} else {
+					resultVal.Result = WasteLibrary.RESULT_OK
+				}
 			}
 		} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
