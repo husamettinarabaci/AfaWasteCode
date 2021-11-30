@@ -18,9 +18,9 @@ func (res *CustomerRecyDevicesViewListType) New() {
 }
 
 //GetByRedis
-func (res *CustomerRecyDevicesViewListType) GetByRedis(dbIndex int) ResultType {
+func (res *CustomerRecyDevicesViewListType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_RECY_DEVICEVIEWS, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_CUSTOMER_RECY_DEVICEVIEWS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -32,9 +32,9 @@ func (res *CustomerRecyDevicesViewListType) GetByRedis(dbIndex int) ResultType {
 }
 
 //GetByRedisByReel
-func (res *CustomerRecyDevicesViewListType) GetByRedisByReel() ResultType {
+func (res *CustomerRecyDevicesViewListType) GetByRedisByReel(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisWODbForStoreApi(REDIS_CUSTOMER_RECY_DEVICEVIEWS_REEL, REDIS_CUSTOMER_RECY_DEVICEVIEWS, res.ToIdString())
+	resultVal = GetRedisWODbForStoreApi(dbIndex, REDIS_CUSTOMER_RECY_DEVICEVIEWS_REEL, REDIS_CUSTOMER_RECY_DEVICEVIEWS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {

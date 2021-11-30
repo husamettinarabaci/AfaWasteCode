@@ -24,26 +24,26 @@ func (res *NfcType) New() {
 }
 
 //GetByRedis
-func (res *NfcType) GetByRedis(dbIndex int) ResultType {
+func (res *NfcType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
 
 	res.NfcMain.NfcId = res.NfcId
-	resultVal = res.NfcMain.GetByRedis()
+	resultVal = res.NfcMain.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.NfcBase.NfcId = res.NfcId
-	resultVal = res.NfcBase.GetByRedis()
+	resultVal = res.NfcBase.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.NfcStatu.NfcId = res.NfcId
-	resultVal = res.NfcStatu.GetByRedis()
+	resultVal = res.NfcStatu.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.NfcReader.NfcId = res.NfcId
-	resultVal = res.NfcReader.GetByRedis()
+	resultVal = res.NfcReader.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

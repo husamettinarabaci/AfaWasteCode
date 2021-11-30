@@ -623,7 +623,7 @@ func (res *LocalConfigType) New() {
 //GetByRedis
 func (res *LocalConfigType) GetByRedis() ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_LOCALCONFIG, res.ToIdString())
+	resultVal = GetRedisForStoreApi("0", REDIS_CUSTOMER_LOCALCONFIG, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {

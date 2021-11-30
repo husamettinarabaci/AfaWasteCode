@@ -28,10 +28,10 @@ func (res *RfidDeviceEmbededGpsType) New() {
 }
 
 //GetByRedis
-func (res *RfidDeviceEmbededGpsType) GetByRedis(dbIndex int) ResultType {
+func (res *RfidDeviceEmbededGpsType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_RFID_EMBEDED_GPS_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_EMBEDED_GPS_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false

@@ -72,6 +72,7 @@ func main() {
 	http.HandleFunc("/publishkey", publishkey)
 	http.HandleFunc("/getkey", getkey)
 	http.HandleFunc("/getkeyWODb", getkeyWODb)
+	http.HandleFunc("/getkeylist", getkeylist)
 	http.HandleFunc("/clonekey", clonekey)
 	http.HandleFunc("/clonekeyWODb", clonekeyWODb)
 	http.HandleFunc("/setkey", setkey)
@@ -148,6 +149,34 @@ func getkeyWODb(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	}
+	w.Write(resultVal.ToByte())
+
+}
+
+func getkeylist(w http.ResponseWriter, req *http.Request) {
+
+	if WasteLibrary.AllowCors {
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+	}
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+
+	if err := req.ParseForm(); err != nil {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
+		w.Write(resultVal.ToByte())
+
+		WasteLibrary.LogErr(err)
+		return
+	}
+
+	pattern := req.FormValue(WasteLibrary.REDIS_PATTERN)
+
+	resultVal = getKeyListRedis(pattern)
+
 	w.Write(resultVal.ToByte())
 
 }
@@ -274,17 +303,16 @@ func setkey(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	dbIndex, _ := strconv.Atoi(req.FormValue(WasteLibrary.REDIS_DBINDEX))
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
 	kVal := req.FormValue(WasteLibrary.REDIS_KEYVALUE)
-	resultVal = getKeyDb(dbIndex, hKey, sKey)
+	resultVal = getKeyDb(0, hKey, sKey)
 	if resultVal.Result == WasteLibrary.RESULT_OK {
-		resultVal = updateKeyDb(dbIndex, hKey, sKey, kVal)
+		resultVal = updateKeyDb(0, hKey, sKey, kVal)
 	} else {
-		resultVal = insertKeyDb(dbIndex, hKey, sKey, kVal)
+		resultVal = insertKeyDb(0, hKey, sKey, kVal)
 	}
-	setKeyRedis(dbIndex, hKey, sKey, kVal)
+	setKeyRedis(0, hKey, sKey, kVal)
 
 	w.Write(resultVal.ToByte())
 
@@ -309,11 +337,10 @@ func setkeyWODb(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	dbIndex, _ := strconv.Atoi(req.FormValue(WasteLibrary.REDIS_DBINDEX))
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
 	kVal := req.FormValue(WasteLibrary.REDIS_KEYVALUE)
-	setKeyRedis(dbIndex, hKey, sKey, kVal)
+	setKeyRedis(0, hKey, sKey, kVal)
 
 	w.Write(resultVal.ToByte())
 
@@ -338,14 +365,34 @@ func deletekey(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	dbIndex, _ := strconv.Atoi(req.FormValue(WasteLibrary.REDIS_DBINDEX))
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	sKey := req.FormValue(WasteLibrary.REDIS_SUBKEY)
-	resultVal = deleteKeyDb(dbIndex, hKey, sKey)
-	deleteKeyRedis(dbIndex, hKey, sKey)
+	resultVal = deleteKeyDb(0, hKey, sKey)
+	deleteKeyRedis(0, hKey, sKey)
 
 	w.Write(resultVal.ToByte())
 
+}
+
+func getKeyListRedis(pattern string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
+	resultVal.Result = WasteLibrary.RESULT_FAIL
+	var val []string
+	var err error
+	val, err = getRedisDb(0).Keys(ctx, pattern).Result()
+	switch {
+	case err == redis.Nil:
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+	case err != nil:
+		WasteLibrary.LogErr(err)
+	case len(val) == 0:
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+	case len(val) != 0:
+		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = val
+	}
+
+	return resultVal
 }
 
 func getKeyRedis(dbIndex int, hKey string, sKey string) WasteLibrary.ResultType {

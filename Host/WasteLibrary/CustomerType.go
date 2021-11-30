@@ -35,7 +35,7 @@ func (res *CustomerType) New() {
 //GetByRedis
 func (res *CustomerType) GetByRedis() ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_CUSTOMERS, res.ToIdString())
+	resultVal = GetRedisForStoreApi("0", REDIS_CUSTOMERS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -49,7 +49,7 @@ func (res *CustomerType) GetByRedis() ResultType {
 //GetByRedisByLink
 func (res *CustomerType) GetByRedisByLink(link string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_LINK, link)
+	resultVal = GetRedisForStoreApi("0", REDIS_CUSTOMER_LINK, link)
 	if resultVal.Result == RESULT_OK {
 		var customerId string = resultVal.Retval.(string)
 		res.CustomerId = StringIdToFloat64(customerId)

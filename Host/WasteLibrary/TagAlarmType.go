@@ -28,10 +28,10 @@ func (res *TagAlarmType) New() {
 }
 
 //GetByRedis
-func (res *TagAlarmType) GetByRedis(dbIndex int) ResultType {
+func (res *TagAlarmType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_TAG_ALARMS, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_ALARMS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false

@@ -34,7 +34,7 @@ func (res *UserType) New() {
 //GetByRedis
 func (res *UserType) GetByRedis() ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_USERS, res.ToIdString())
+	resultVal = GetRedisForStoreApi("0", REDIS_USERS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {

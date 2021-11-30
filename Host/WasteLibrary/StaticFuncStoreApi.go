@@ -69,28 +69,26 @@ func GetConfigDbMainForStoreApi(data url.Values) ResultType {
 }
 
 //SaveRedisForStoreApi
-func SaveRedisForStoreApi(dbIndex int, hKey string, sKey string, kVal string) ResultType {
+func SaveRedisForStoreApi(hKey string, sKey string, kVal string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	data := url.Values{
 		REDIS_HASHKEY:  {hKey},
 		REDIS_SUBKEY:   {sKey},
 		REDIS_KEYVALUE: {kVal},
-		REDIS_DBINDEX:  {dbIndex},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/setkey", data)
 	return resultVal
 }
 
 //SaveRedisWODbForStoreApi
-func SaveRedisWODbForStoreApi(dbIndex int, hKey string, sKey string, kVal string) ResultType {
+func SaveRedisWODbForStoreApi(hKey string, sKey string, kVal string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	data := url.Values{
 		REDIS_HASHKEY:  {hKey},
 		REDIS_SUBKEY:   {sKey},
 		REDIS_KEYVALUE: {kVal},
-		REDIS_DBINDEX:  {dbIndex},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/setkeyWODb", data)
 	return resultVal
@@ -110,20 +108,19 @@ func PublishRedisForStoreApi(channelKey string, dataType string, dataVal string)
 }
 
 //DeleteRedisForStoreApi
-func DeleteRedisForStoreApi(dbIndex int, hKey string, sKey string) ResultType {
+func DeleteRedisForStoreApi(hKey string, sKey string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	data := url.Values{
 		REDIS_HASHKEY: {hKey},
 		REDIS_SUBKEY:  {sKey},
-		REDIS_DBINDEX: {dbIndex},
 	}
 	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/deletekey", data)
 	return resultVal
 }
 
 //GetRedisForStoreApi
-func GetRedisForStoreApi(dbIndex int, hKey string, sKey string) ResultType {
+func GetRedisForStoreApi(dbIndex string, hKey string, sKey string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	data := url.Values{
@@ -136,7 +133,7 @@ func GetRedisForStoreApi(dbIndex int, hKey string, sKey string) ResultType {
 }
 
 //GetRedisWODbForStoreApi
-func GetRedisWODbForStoreApi(dbIndex int, hKey string, hBaseKey string, sKey string) ResultType {
+func GetRedisWODbForStoreApi(dbIndex string, hKey string, hBaseKey string, sKey string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	data := url.Values{
@@ -149,8 +146,19 @@ func GetRedisWODbForStoreApi(dbIndex int, hKey string, hBaseKey string, sKey str
 	return resultVal
 }
 
+//GetKeyListRedisForStoreApi
+func GetKeyListRedisForStoreApi(pattern string) ResultType {
+	var resultVal ResultType
+	resultVal.Result = RESULT_FAIL
+	data := url.Values{
+		REDIS_PATTERN: {pattern},
+	}
+	resultVal = HttpPostReq("http://waste-storeapi-cluster-ip/getkeylist", data)
+	return resultVal
+}
+
 //CloneRedisForStoreApi
-func CloneRedisForStoreApi(dbIndex int, dbIndexNew int, hKey string) ResultType {
+func CloneRedisForStoreApi(dbIndex string, dbIndexNew string, hKey string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	data := url.Values{
@@ -163,7 +171,7 @@ func CloneRedisForStoreApi(dbIndex int, dbIndexNew int, hKey string) ResultType 
 }
 
 //CloneRedisWODbForStoreApi
-func CloneRedisWODbForStoreApi(dbIndex int, dbIndexNew int, hKey string, hBaseKey string) ResultType {
+func CloneRedisWODbForStoreApi(dbIndex string, dbIndexNew string, hKey string, hBaseKey string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	data := url.Values{

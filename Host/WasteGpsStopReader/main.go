@@ -116,7 +116,7 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 						customerTag.ContainerStatu = currentTag.TagStatu.ContainerStatu
 						customerTag.TagStatu = currentTag.TagStatu.TagStatu
 						customerTagsList.Tags[currentTag.TagStatu.ToIdString()] = customerTag
-						customerTagsList.SaveToRedisWODb()
+						customerTagsList.SaveToRedisByReel()
 					}
 				}
 			}

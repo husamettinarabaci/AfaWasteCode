@@ -18,7 +18,7 @@ func (res *CustomerRecyDevicesType) New() {
 }
 
 //GetByRedis
-func (res *CustomerRecyDevicesType) GetByRedis(dbIndex int) ResultType {
+func (res *CustomerRecyDevicesType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
 	resultVal = GetRedisForStoreApi(dbIndex, REDIS_CUSTOMER_RECY_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
@@ -32,9 +32,9 @@ func (res *CustomerRecyDevicesType) GetByRedis(dbIndex int) ResultType {
 }
 
 //SaveToRedis
-func (res *CustomerRecyDevicesType) SaveToRedis(dbIndex int) ResultType {
+func (res *CustomerRecyDevicesType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(dbIndex, REDIS_CUSTOMER_RECY_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_RECY_DEVICES, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

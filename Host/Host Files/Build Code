@@ -23,6 +23,7 @@ cd WasteStoreApiForRedis && go get "github.com/devafatek/WasteLibrary" && cd .. 
 cd WasteThermReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteAuthApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteSummaryForTagView && go get "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSummaryForRedis && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteSummaryForTag && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteSummaryForDeviceView && go get "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteSummaryForDevice && go get "github.com/devafatek/WasteLibrary" && cd .. &&
@@ -54,6 +55,7 @@ sudo docker build -f WasteAfatekApi/Dockerfile -t devafatek/wasteafatekapi:1.0 .
 sudo docker build -f WasteEnhcApi/Dockerfile -t devafatek/wasteenhcapi:1.0 . && docker push devafatek/wasteenhcapi:1.0 &&
 sudo docker build -f WasteAuthApi/Dockerfile -t devafatek/wasteauthapi:1.0 . && docker push devafatek/wasteauthapi:1.0 &&
 sudo docker build -f WasteSummaryForTagView/Dockerfile -t devafatek/wastesummaryfortagview:1.0 . && docker push devafatek/wastesummaryfortagview:1.0 &&
+sudo docker build -f WasteSummaryForRedis/Dockerfile -t devafatek/wastesummaryforredis:1.0 . && docker push devafatek/wastesummaryforredis:1.0 &&
 sudo docker build -f WasteSummaryForTag/Dockerfile -t devafatek/wastesummaryfortag:1.0 . && docker push devafatek/wastesummaryfortag:1.0 &&
 sudo docker build -f WasteSummaryForDeviceView/Dockerfile -t devafatek/wastesummaryfordeviceview:1.0 . && docker push devafatek/wastesummaryfordeviceview:1.0 &&
 sudo docker build -f WasteSummaryForDevice/Dockerfile -t devafatek/wastesummaryfordevice:1.0 . && docker push devafatek/wastesummaryfordevice:1.0 &&
@@ -90,6 +92,7 @@ kubectl create -f Aws/Yaml/waste-storeapiforredis-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-authapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-thermreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfortagview-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-summaryforredis-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfortag-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfordeviceview-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfordevice-deployment.yaml &&

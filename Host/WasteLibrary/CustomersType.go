@@ -17,7 +17,7 @@ func (res *CustomersType) New() {
 //GetByRedis
 func (res *CustomersType) GetByRedis() ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_CUSTOMERS, REDIS_CUSTOMERS)
+	resultVal = GetRedisForStoreApi("0", REDIS_CUSTOMERS, REDIS_CUSTOMERS)
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {

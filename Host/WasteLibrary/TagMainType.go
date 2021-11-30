@@ -29,10 +29,10 @@ func (res *TagMainType) New() {
 }
 
 //GetByRedis
-func (res *TagMainType) GetByRedis(dbIndex int) ResultType {
+func (res *TagMainType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_TAG_MAINS, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_MAINS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {

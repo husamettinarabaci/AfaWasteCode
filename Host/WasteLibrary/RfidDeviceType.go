@@ -36,56 +36,56 @@ func (res *RfidDeviceType) New() {
 }
 
 //GetByRedis
-func (res *RfidDeviceType) GetByRedis(dbIndex int) ResultType {
+func (res *RfidDeviceType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
 
 	res.DeviceMain.DeviceId = res.DeviceId
-	resultVal = res.DeviceMain.GetByRedis()
+	resultVal = res.DeviceMain.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceBase.DeviceId = res.DeviceId
-	resultVal = res.DeviceBase.GetByRedis()
+	resultVal = res.DeviceBase.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceGps.DeviceId = res.DeviceId
-	resultVal = res.DeviceGps.GetByRedis()
+	resultVal = res.DeviceGps.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceEmbededGps.DeviceId = res.DeviceId
-	resultVal = res.DeviceEmbededGps.GetByRedis()
+	resultVal = res.DeviceEmbededGps.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceTherm.DeviceId = res.DeviceId
-	resultVal = res.DeviceTherm.GetByRedis()
+	resultVal = res.DeviceTherm.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceVersion.DeviceId = res.DeviceId
-	resultVal = res.DeviceVersion.GetByRedis()
+	resultVal = res.DeviceVersion.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceAlarm.DeviceId = res.DeviceId
-	resultVal = res.DeviceAlarm.GetByRedis()
+	resultVal = res.DeviceAlarm.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceStatu.DeviceId = res.DeviceId
-	resultVal = res.DeviceStatu.GetByRedis()
+	resultVal = res.DeviceStatu.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceDetail.DeviceId = res.DeviceId
-	resultVal = res.DeviceDetail.GetByRedis()
+	resultVal = res.DeviceDetail.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.DeviceWorkHour.DeviceId = res.DeviceId
-	resultVal = res.DeviceWorkHour.GetByRedis()
+	resultVal = res.DeviceWorkHour.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
@@ -97,11 +97,11 @@ func (res *RfidDeviceType) GetByRedis(dbIndex int) ResultType {
 //GetByRedisBySerial
 func (res *RfidDeviceType) GetByRedisBySerial(serial string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_SERIAL_RFID_DEVICE, serial)
+	resultVal = GetRedisForStoreApi("0", REDIS_SERIAL_RFID_DEVICE, serial)
 	if resultVal.Result == RESULT_OK {
 		var deviceId string = resultVal.Retval.(string)
 		res.DeviceId = StringIdToFloat64(deviceId)
-		resultVal = res.GetByRedis()
+		resultVal = res.GetByRedis("0")
 	} else {
 		return resultVal
 	}

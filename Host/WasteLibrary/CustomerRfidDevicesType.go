@@ -18,9 +18,9 @@ func (res *CustomerRfidDevicesType) New() {
 }
 
 //GetByRedis
-func (res *CustomerRfidDevicesType) GetByRedis(dbIndex int) ResultType {
+func (res *CustomerRfidDevicesType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_CUSTOMER_RFID_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_CUSTOMER_RFID_DEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {

@@ -30,42 +30,42 @@ func (res *TagType) New() {
 }
 
 //GetByRedis
-func (res *TagType) GetByRedis(dbIndex int) ResultType {
+func (res *TagType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
 
 	res.TagMain.TagId = res.TagId
-	resultVal = res.TagMain.GetByRedis()
+	resultVal = res.TagMain.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.TagBase.TagId = res.TagId
-	resultVal = res.TagBase.GetByRedis()
+	resultVal = res.TagBase.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.TagGps.TagId = res.TagId
-	resultVal = res.TagGps.GetByRedis()
+	resultVal = res.TagGps.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.TagStatu.TagId = res.TagId
-	resultVal = res.TagStatu.GetByRedis()
+	resultVal = res.TagStatu.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.TagReader.TagId = res.TagId
-	resultVal = res.TagReader.GetByRedis()
+	resultVal = res.TagReader.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.TagNote.TagId = res.TagId
-	resultVal = res.TagNote.GetByRedis()
+	resultVal = res.TagNote.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
 	res.TagAlarm.TagId = res.TagId
-	resultVal = res.TagAlarm.GetByRedis()
+	resultVal = res.TagAlarm.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
@@ -77,11 +77,11 @@ func (res *TagType) GetByRedis(dbIndex int) ResultType {
 //GetByRedisByEpc
 func (res *TagType) GetByRedisByEpc(epc string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(REDIS_TAG_EPC, epc)
+	resultVal = GetRedisForStoreApi("0", REDIS_TAG_EPC, epc)
 	if resultVal.Result == RESULT_OK {
 		var tagId string = resultVal.Retval.(string)
 		res.TagId = StringIdToFloat64(tagId)
-		resultVal = res.GetByRedis()
+		resultVal = res.GetByRedis("0")
 	} else {
 		return resultVal
 	}

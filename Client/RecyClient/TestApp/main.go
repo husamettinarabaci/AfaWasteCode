@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/devafatek/WasteLibrary"
 	"github.com/go-redis/redis/v8"
@@ -37,29 +38,10 @@ func main() {
 
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	var val map[string]string
+	var val []string
 
-	val, err = redisDb.HGetAll(ctx, "customers").Result()
+	val, err = redisDb1.Keys(ctx, "*").Result()
 
-	switch {
-	case err == redis.Nil:
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-	case err != nil:
-		WasteLibrary.LogErr(err)
-	case len(val) == 0:
-		resultVal.Result = WasteLibrary.RESULT_FAIL
-	case len(val) != 0:
-		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = val
-	}
-
-	_, err = redisDb1.HMSet(ctx, "customers", resultVal.Retval.(map[string]string)).Result()
-	switch {
-	case err == redis.Nil:
-	case err != nil:
-		WasteLibrary.LogErr(err)
-	}
-
-	WasteLibrary.LogStr(resultVal.ToString())
+	fmt.Println(val)
 
 }
