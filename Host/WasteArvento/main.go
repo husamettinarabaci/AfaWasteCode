@@ -76,7 +76,7 @@ func customerProc(customerId float64) {
 				resultVal = currentCustomerConfig.GetByRedis()
 
 				currentCustomerDevices.CustomerId = currentCustomerConfig.CustomerId
-				resultVal = currentCustomerDevices.GetByRedis()
+				resultVal = currentCustomerDevices.GetByRedis("0")
 				if resultVal.Result == WasteLibrary.RESULT_OK {
 				}
 				resultVal = getDevice(currentCustomerConfig)
@@ -95,7 +95,7 @@ func customerProc(customerId float64) {
 					var currentDevice WasteLibrary.RfidDeviceType
 					currentDevice.New()
 					currentDevice.DeviceId = vDevice
-					resultVal = currentDevice.GetByRedis()
+					resultVal = currentDevice.GetByRedis("0")
 					if resultVal.Result == WasteLibrary.RESULT_OK {
 						var arventoId string = plateDevice[currentDevice.DeviceDetail.PlateNo]
 						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {

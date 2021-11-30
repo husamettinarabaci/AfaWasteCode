@@ -3,12 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/devafatek/WasteLibrary"
 )
-
-var opInterval time.Duration = 60 * 60
 
 func initStart() {
 
@@ -69,7 +66,7 @@ func customerProc(customerTags WasteLibrary.CustomerTagsType) {
 			var currentTag WasteLibrary.TagType
 			currentTag.New()
 			currentTag.TagId = tagId
-			resultVal = currentTag.GetByRedis()
+			resultVal = currentTag.GetByRedis("0")
 			if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
 				var currentViewTag WasteLibrary.TagViewType
 				currentViewTag.New()

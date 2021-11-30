@@ -62,7 +62,7 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 
 	var customerTagsList WasteLibrary.CustomerTagsViewListType
 	customerTagsList.CustomerId = currentHttpHeader.CustomerId
-	resultVal = customerTagsList.GetByRedis()
+	resultVal = customerTagsList.GetByRedis("0")
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -76,7 +76,7 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 			var currentTag WasteLibrary.TagType
 			currentTag.New()
 			currentTag.TagId = currentViewTag.TagId
-			resultVal = currentTag.GetByRedis()
+			resultVal = currentTag.GetByRedis("0")
 			if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
 				second := time.Since(WasteLibrary.StringToTime(currentTag.TagReader.ReadTime)).Seconds()
 				if second < 1*60*60 {
@@ -109,14 +109,14 @@ func procGpsStopDevice(currentData WasteLibrary.RfidDeviceType, currentHttpHeade
 					WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_STATU, currentTag.TagStatu.ToString())
 					var customerTagsList WasteLibrary.CustomerTagsViewListType
 					customerTagsList.CustomerId = currentHttpHeader.CustomerId
-					resultVal = customerTagsList.GetByRedisByReel()
+					resultVal = customerTagsList.GetByRedisByReel("0")
 					if resultVal.Result == WasteLibrary.RESULT_OK {
 
 						customerTag := customerTagsList.Tags[currentTag.TagStatu.ToIdString()]
 						customerTag.ContainerStatu = currentTag.TagStatu.ContainerStatu
 						customerTag.TagStatu = currentTag.TagStatu.TagStatu
 						customerTagsList.Tags[currentTag.TagStatu.ToIdString()] = customerTag
-						customerTagsList.SaveToRedisByReel()
+						customerTagsList.SaveToRedisWODb()
 					}
 				}
 			}

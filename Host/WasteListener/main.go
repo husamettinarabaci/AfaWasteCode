@@ -75,7 +75,7 @@ func handleTcpRequest(conn net.Conn) {
 
 				if deviceType == WasteLibrary.DEVICETYPE_ULT && imsi != "***************" {
 
-					resultVal := WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_SERIAL_ALARM, imsi)
+					resultVal := WasteLibrary.GetRedisForStoreApi("0", WasteLibrary.REDIS_SERIAL_ALARM, imsi)
 					if resultVal.Result == WasteLibrary.RESULT_OK {
 						conn.Write([]byte(WasteLibrary.RESULT_OK + " - " + resultVal.Retval.(string)))
 						conn.Close()

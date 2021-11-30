@@ -79,7 +79,7 @@ func customerProc(customerId float64) {
 		currentHttpHeader.New()
 		var customerTags WasteLibrary.CustomerTagsType
 		customerTags.CustomerId = customerId
-		resultVal = customerTags.GetByRedis()
+		resultVal = customerTags.GetByRedis("0")
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
 			for _, tagId := range customerTags.Tags {
@@ -89,14 +89,14 @@ func customerProc(customerId float64) {
 					var currentTag WasteLibrary.TagType
 					currentTag.New()
 					currentTag.TagId = tagId
-					resultVal = currentTag.GetByRedis()
+					resultVal = currentTag.GetByRedis("0")
 					if resultVal.Result == WasteLibrary.RESULT_OK && currentTag.TagMain.Active == WasteLibrary.STATU_ACTIVE {
 
 						if customerAdminConfig.DeviceBaseWork == WasteLibrary.STATU_ACTIVE {
 
 							var currentDeviceWorkHour WasteLibrary.RfidDeviceWorkHourType
 							currentDeviceWorkHour.DeviceId = currentTag.TagMain.DeviceId
-							resultVal = currentDeviceWorkHour.GetByRedis()
+							resultVal = currentDeviceWorkHour.GetByRedis("0")
 							if resultVal.Result == WasteLibrary.RESULT_OK {
 
 								if currentDeviceWorkHour.WorkCount == 3 {

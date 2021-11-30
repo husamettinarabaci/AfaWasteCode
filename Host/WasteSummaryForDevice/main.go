@@ -63,7 +63,7 @@ func customerProcRfid(customerId float64) {
 		currentHttpHeader.New()
 		var customerDevices WasteLibrary.CustomerRfidDevicesType
 		customerDevices.CustomerId = customerId
-		resultVal = customerDevices.GetByRedis()
+		resultVal = customerDevices.GetByRedis("0")
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
 			var currentHttpHeader WasteLibrary.HttpClientHeaderType
@@ -73,6 +73,8 @@ func customerProcRfid(customerId float64) {
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {customerDevices.ToString()},
 			}
+			//TO DO
+			//summary for device
 
 			resultVal = WasteLibrary.HttpPostReq("http://waste-summaryfordeviceview-cluster-ip/reader", data)
 		}
@@ -91,7 +93,7 @@ func customerProcRecy(customerId float64) {
 		currentHttpHeader.New()
 		var customerDevices WasteLibrary.CustomerRecyDevicesType
 		customerDevices.CustomerId = customerId
-		resultVal = customerDevices.GetByRedis()
+		resultVal = customerDevices.GetByRedis("0")
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
 			var currentHttpHeader WasteLibrary.HttpClientHeaderType
@@ -101,6 +103,8 @@ func customerProcRecy(customerId float64) {
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {customerDevices.ToString()},
 			}
+			//TO DO
+			//summary for device
 
 			resultVal = WasteLibrary.HttpPostReq("http://waste-summaryfordeviceview-cluster-ip/reader", data)
 		}
@@ -119,7 +123,7 @@ func customerProcUlt(customerId float64) {
 		currentHttpHeader.New()
 		var customerDevices WasteLibrary.CustomerUltDevicesType
 		customerDevices.CustomerId = customerId
-		resultVal = customerDevices.GetByRedis()
+		resultVal = customerDevices.GetByRedis("0")
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 
 			var currentHttpHeader WasteLibrary.HttpClientHeaderType
@@ -129,6 +133,8 @@ func customerProcUlt(customerId float64) {
 				WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
 				WasteLibrary.HTTP_DATA:   {customerDevices.ToString()},
 			}
+			//TO DO
+			//summary for device
 
 			resultVal = WasteLibrary.HttpPostReq("http://waste-summaryfordeviceview-cluster-ip/reader", data)
 		}

@@ -143,7 +143,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			//calculate ult status by container type
 			var oldData WasteLibrary.UltDeviceType
 			oldData.DeviceId = currentData.DeviceId
-			oldData.GetByRedis()
+			oldData.GetByRedis("0")
 			if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_NONE {
 				step1 = 50
 				step2 = 100

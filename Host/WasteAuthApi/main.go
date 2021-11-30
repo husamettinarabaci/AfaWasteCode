@@ -263,7 +263,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	var userIdByToken string = WasteLibrary.GetUserIdByToken(currentHttpHeader.Token)
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USER_TOKEN, userIdByToken)
+	resultVal = WasteLibrary.GetRedisForStoreApi("0", WasteLibrary.REDIS_USER_TOKEN, userIdByToken)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
@@ -278,7 +278,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	resultVal = WasteLibrary.GetRedisForStoreApi(WasteLibrary.REDIS_USER_TOKENENDDATE, userIdByToken)
+	resultVal = WasteLibrary.GetRedisForStoreApi("0", WasteLibrary.REDIS_USER_TOKENENDDATE, userIdByToken)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN

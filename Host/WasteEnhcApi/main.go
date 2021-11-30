@@ -279,7 +279,7 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 
 		var customerDevices WasteLibrary.CustomerRfidDevicesType
 		customerDevices.CustomerId = currentDeviceMain.CustomerId
-		resultVal = customerDevices.GetByRedis()
+		resultVal = customerDevices.GetByRedis("0")
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -510,7 +510,7 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		}
 		var customerDevices WasteLibrary.CustomerUltDevicesType
 		customerDevices.CustomerId = currentDeviceMain.CustomerId
-		resultVal = customerDevices.GetByRedis()
+		resultVal = customerDevices.GetByRedis("0")
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -717,7 +717,7 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 
 		var customerDevices WasteLibrary.CustomerRecyDevicesType
 		customerDevices.CustomerId = currentDeviceMain.CustomerId
-		resultVal = customerDevices.GetByRedis()
+		resultVal = customerDevices.GetByRedis("0")
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
@@ -932,7 +932,7 @@ func createTag(w http.ResponseWriter, req *http.Request) {
 
 		var customerTags WasteLibrary.CustomerTagsType
 		customerTags.CustomerId = currentData.TagMain.CustomerId
-		resultVal = customerTags.GetByRedis()
+		resultVal = customerTags.GetByRedis("0")
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_GET
