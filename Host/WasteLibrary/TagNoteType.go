@@ -20,7 +20,7 @@ type TagNoteType struct {
 func (res *TagNoteType) New() {
 	res.TagId = 0
 	res.Note = ""
-	res.NoteType = TAG_NOTE_NONE
+	res.NoteType = NOTETYPE_NONE
 	res.NoteTime = GetTime()
 	res.NewData = false
 }

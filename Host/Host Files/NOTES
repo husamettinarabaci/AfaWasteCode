@@ -1,20 +1,88 @@
-
 *Test Summary tag
 *Test summary tagview
 *Test Speed 0
 *check GpsStopReader distance
 *Listener TcpSocket Error Manage
+***Db Replicas
+*System Version And Update
+*DbBackup
+*Rifd Recy Ult Statu And Alarm
+*Excell Operation
+*UserEventLog
+*Yer Değiştiren konteyner
+****Device Tag Toplandı Toplanmadı
+*RfidDevice DailyCapacity Summary
+*RfidDevice DailyKm Summary
+*CamReader Check TagReader ImageStatu
+*Summary Of 7 Day Toplanmayan Container
+*DeviceMotion Summary
+
+RFID
+Toplanan Toplanmayan Tag
+
+TAG
+Konum Hareket Takibi
 
 
-*Web Arayüz Konum Grid Yapma Üstüste gelenler
 
-***Redis And Db Replicas
+ARAYÜZ
+-------------
+ANASAYFA
+Leaflet -> Afatek
+Sol Alt Icon -> CUSTOMER->CustonmerNAme S3 Icon
+-> https://afatek-waste-webui-s3.s3.eu-central-1.amazonaws.com/WEB_FILES/BODRUM/reportLogo.png
+Harita Köşeler -> AdminConfig
+Max Min Default Zomm -> AdminConfig
+Sağ Üst-> Tarih Excell
+Sol MEnü Vinç Ayrılacak
+Sekme Favicon AE
+Sekme Text Bodrum...
 
-*Tag Device List 
-*Redis Backup By Pattern
-*Device Gps List Arvento 
+ÖZET
+Tip No Tarih Durum
 
+ARAMA
+Herşey Aranacak yazı değişecek
+Sonuç -> Tip No Son Durum
+Pagination -> 10
+Pagination Filtre Çalışmıyor
 
-***GetApis Gün Belirlenecek
+SYSTEM
+Excell Rapor
+7 Gündür Toplanmayan Konteyner
 
-*Rfid DeviceGps if Arvento and GpsReader Change View SaveToRedisWODb check tag SaveToRedisWODb
+RFID
+Pagenitaion
+Araç Durma Noktası
+Araç Gps List Günlük
+Araç Vardiya
+Note
+Haritada Tıklanınca Sadece O KAmyon Kalacak Ve Toplanan Toplanmayanlar Görünecek Günlük Yaptığı Yol İz Olarak Çıkacak
+Popup->
+ Konum
+  Chart Toplanan Toplanmayan
+   Liste Konteyner Tip Toplanan Toplanmayan
+ Uyarı
+ Note
+ Günlük Tonaj
+ Mesai Durumu -> Vardiya Saatleri
+ Günlük Yol Miktarı
+
+TAG
+Konum Hareket Takibi
+CLuster Çözülmüyor
+Video Yoksa ImageStatu -> NoImage
+Chart Altında Son 7 Gündür Toplanmyan GÖrünecek Sadece Canlıda
+TagId ve KonteynerNo
+Popup
+ Tip
+ Uyarı
+ Note
+ Araç Listesi Toplayan
+ Sorumlu Araç DeviceId
+
+ULT
+Note
+
+RECY
+Note

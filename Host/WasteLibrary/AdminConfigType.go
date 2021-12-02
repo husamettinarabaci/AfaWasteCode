@@ -12,10 +12,16 @@ type AdminConfigType struct {
 	WorkStartHour   int
 	WorkStartMinute int
 	WorkAddMinute   int
+	CenterLatitude  float64
+	CenterLongitude float64
 	SWLatitude      float64
 	SWLongitude     float64
 	NELatitude      float64
 	NELongitude     float64
+	DefaultZoom     int
+	MinZoom         int
+	MaxZoom         int
+	ParkLocations   []LocationType
 	Active          string
 	CreateTime      string
 }
@@ -30,7 +36,13 @@ func (res *AdminConfigType) New() {
 	res.SWLongitude = 0
 	res.NELatitude = 0
 	res.NELongitude = 0
+	res.CenterLatitude = 0
+	res.CenterLongitude = 0
+	res.DefaultZoom = 11
+	res.MinZoom = 8
+	res.MaxZoom = 18
 	res.DeviceBaseWork = STATU_PASSIVE
+	res.ParkLocations = []LocationType{}
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 }

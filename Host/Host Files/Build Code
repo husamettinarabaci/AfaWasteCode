@@ -67,7 +67,8 @@ kubectl create -f Aws/Yaml/waste-logserver-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-dbcreator-pod.yaml
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
-kubectl create -f Aws/Yaml/waste-redis-deployment.yaml
+kubectl create -f Aws/Yaml/waste-redis-deployment.yaml %% 
+kubectl create -f Aws/Yaml/waste-redis-rep-deployment.yaml
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-afatekapi-deployment.yaml &&

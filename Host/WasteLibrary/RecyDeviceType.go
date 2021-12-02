@@ -16,6 +16,7 @@ type RecyDeviceType struct {
 	DeviceAlarm   RecyDeviceAlarmType
 	DeviceStatu   RecyDeviceStatuType
 	DeviceDetail  RecyDeviceDetailType
+	DeviceNote    RecyDeviceNoteType
 }
 
 //New
@@ -29,6 +30,7 @@ func (res *RecyDeviceType) New() {
 	res.DeviceAlarm.New()
 	res.DeviceStatu.New()
 	res.DeviceDetail.New()
+	res.DeviceNote.New()
 }
 
 //GetByRedis
@@ -72,6 +74,11 @@ func (res *RecyDeviceType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.DeviceDetail.DeviceId = res.DeviceId
 	resultVal = res.DeviceDetail.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceNote.DeviceId = res.DeviceId
+	resultVal = res.DeviceNote.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

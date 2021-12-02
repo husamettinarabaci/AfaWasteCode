@@ -268,6 +268,26 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		currentData.DeviceId = float64(deviceId)
 		resultVal.Retval = currentData.ToIdString()
 
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_NOTE_DEVICE {
+
+		var currentData WasteLibrary.RfidDeviceNoteType = WasteLibrary.StringToRfidDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
+		if !currentData.NewData {
+			execSQL = currentData.UpdateSQL()
+		} else {
+			execSQL = currentData.InsertSQL()
+		}
+		var deviceId int = 0
+		errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.DeviceId = float64(deviceId)
+		resultVal.Retval = currentData.ToIdString()
+
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_MAIN_DEVICE {
 		var currentData WasteLibrary.RecyDeviceMainType = WasteLibrary.StringToRecyDeviceMainType(req.FormValue(WasteLibrary.HTTP_DATA))
 		if currentData.DeviceId != 0 {
@@ -407,6 +427,25 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_DETAIL_DEVICE {
 
 		var currentData WasteLibrary.RecyDeviceDetailType = WasteLibrary.StringToRecyDeviceDetailType(req.FormValue(WasteLibrary.HTTP_DATA))
+		if !currentData.NewData {
+			execSQL = currentData.UpdateSQL()
+		} else {
+			execSQL = currentData.InsertSQL()
+		}
+		var deviceId int = 0
+		errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.DeviceId = float64(deviceId)
+		resultVal.Retval = currentData.ToIdString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_NOTE_DEVICE {
+		var currentData WasteLibrary.RecyDeviceNoteType = WasteLibrary.StringToRecyDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
 		if !currentData.NewData {
 			execSQL = currentData.UpdateSQL()
 		} else {
@@ -583,6 +622,26 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_SENS_DEVICE {
 
 		var currentData WasteLibrary.UltDeviceSensType = WasteLibrary.StringToUltDeviceSensType(req.FormValue(WasteLibrary.HTTP_DATA))
+		if !currentData.NewData {
+			execSQL = currentData.UpdateSQL()
+		} else {
+			execSQL = currentData.InsertSQL()
+		}
+		var deviceId int = 0
+		errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.DeviceId = float64(deviceId)
+		resultVal.Retval = currentData.ToIdString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_NOTE_DEVICE {
+
+		var currentData WasteLibrary.UltDeviceNoteType = WasteLibrary.StringToUltDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
 		if !currentData.NewData {
 			execSQL = currentData.UpdateSQL()
 		} else {
@@ -906,6 +965,30 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 
 		resultVal.Retval = currentData.ToString()
 
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_NOTE_DEVICE {
+		var currentData WasteLibrary.RfidDeviceNoteType = WasteLibrary.StringToRfidDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
+		errDb := currentData.SelectWithDb(staticDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_REPORT_DEVICE {
+		var currentData WasteLibrary.RfidDeviceReportType = WasteLibrary.StringToRfidDeviceReportType(req.FormValue(WasteLibrary.HTTP_DATA))
+		errDb := currentData.SelectWithDb(staticDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_MAIN_DEVICE {
 		var currentData WasteLibrary.RecyDeviceMainType = WasteLibrary.StringToRecyDeviceMainType(req.FormValue(WasteLibrary.HTTP_DATA))
 		errDb := currentData.SelectWithDb(staticDb)
@@ -992,6 +1075,18 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_DETAIL_DEVICE {
 		var currentData WasteLibrary.RecyDeviceDetailType = WasteLibrary.StringToRecyDeviceDetailType(req.FormValue(WasteLibrary.HTTP_DATA))
+		errDb := currentData.SelectWithDb(staticDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_NOTE_DEVICE {
+		var currentData WasteLibrary.RecyDeviceNoteType = WasteLibrary.StringToRecyDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
 		errDb := currentData.SelectWithDb(staticDb)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)
@@ -1100,6 +1195,18 @@ func getStaticDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_SENS_DEVICE {
 		var currentData WasteLibrary.UltDeviceSensType = WasteLibrary.StringToUltDeviceSensType(req.FormValue(WasteLibrary.HTTP_DATA))
+		errDb := currentData.SelectWithDb(staticDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_NOTE_DEVICE {
+		var currentData WasteLibrary.UltDeviceNoteType = WasteLibrary.StringToUltDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
 		errDb := currentData.SelectWithDb(staticDb)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)

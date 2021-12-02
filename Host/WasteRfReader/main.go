@@ -147,11 +147,57 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
+			var isDeviceGpsCorrect bool = false
+			var deviceLatitude float64 = 0
+			var deviceLongitude float64 = 0
+			var deviceGpsTime string = ""
 			if time.Since(WasteLibrary.StringToTime(currentDeviceGps.GpsTime)).Seconds() < 15*60 {
+				isDeviceGpsCorrect = true
+				deviceLatitude = currentDeviceGps.Latitude
+				deviceLongitude = currentDeviceGps.Longitude
+				deviceGpsTime = currentDeviceGps.GpsTime
+
+			} else {
+				var currentDeviceEmbededGps WasteLibrary.RfidDeviceEmbededGpsType
+				currentDeviceEmbededGps.DeviceId = currentHttpHeader.DeviceId
+				resultVal = currentDeviceEmbededGps.GetByRedis("0")
+				if resultVal.Result != WasteLibrary.RESULT_OK {
+					resultVal.Result = WasteLibrary.RESULT_FAIL
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+					w.Write(resultVal.ToByte())
+
+					return
+				}
+				if time.Since(WasteLibrary.StringToTime(currentDeviceEmbededGps.GpsTime)).Seconds() < 5*60 {
+
+					isDeviceGpsCorrect = true
+					deviceLatitude = currentDeviceEmbededGps.Latitude
+					deviceLongitude = currentDeviceEmbededGps.Longitude
+					deviceGpsTime = currentDeviceEmbededGps.GpsTime
+
+				}
+			}
+
+			if isDeviceGpsCorrect {
+				var adminConfig WasteLibrary.AdminConfigType
+				adminConfig.New()
+				adminConfig.CustomerId = currentHttpHeader.CustomerId
+				adminConfig.GetByRedis()
+				if len(adminConfig.ParkLocations) > 0 {
+					for _, parkLocation := range adminConfig.ParkLocations {
+						if WasteLibrary.DistanceInKmBetweenEarthCoordinates(deviceLatitude, deviceLongitude, parkLocation.Latitude, parkLocation.Longitude) < parkLocation.ZoneRadius {
+							isDeviceGpsCorrect = false
+							break
+						}
+					}
+				}
+			}
+
+			if isDeviceGpsCorrect {
 				currentData.TagGps.TagId = currentData.TagId
-				currentData.TagGps.Latitude = currentDeviceGps.Latitude
-				currentData.TagGps.Longitude = currentDeviceGps.Longitude
-				currentData.TagGps.GpsTime = currentDeviceGps.GpsTime
+				currentData.TagGps.Latitude = deviceLatitude
+				currentData.TagGps.Longitude = deviceLongitude
+				currentData.TagGps.GpsTime = deviceGpsTime
 				resultVal = currentData.TagGps.SaveToDb()
 				if resultVal.Result != WasteLibrary.RESULT_OK {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -180,52 +226,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				}
 
 				WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_GPS, currentData.TagGps.ToString())
-			} else {
-				var currentDeviceEmbededGps WasteLibrary.RfidDeviceEmbededGpsType
-				currentDeviceEmbededGps.DeviceId = currentHttpHeader.DeviceId
-				resultVal = currentDeviceEmbededGps.GetByRedis("0")
-				if resultVal.Result != WasteLibrary.RESULT_OK {
-					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
-					w.Write(resultVal.ToByte())
-
-					return
-				}
-				if time.Since(WasteLibrary.StringToTime(currentDeviceEmbededGps.GpsTime)).Seconds() < 5*60 {
-					currentData.TagGps.TagId = currentData.TagId
-					currentData.TagGps.Latitude = currentDeviceEmbededGps.Latitude
-					currentData.TagGps.Longitude = currentDeviceEmbededGps.Longitude
-					currentData.TagGps.GpsTime = currentDeviceEmbededGps.GpsTime
-					resultVal = currentData.TagGps.SaveToDb()
-					if resultVal.Result != WasteLibrary.RESULT_OK {
-						resultVal.Result = WasteLibrary.RESULT_FAIL
-						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-						w.Write(resultVal.ToByte())
-
-						return
-					}
-
-					resultVal = currentData.TagGps.SaveToRedis()
-					if resultVal.Result != WasteLibrary.RESULT_OK {
-						resultVal.Result = WasteLibrary.RESULT_FAIL
-						resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-						w.Write(resultVal.ToByte())
-
-						return
-					}
-
-					resultVal = currentData.TagGps.SaveToReaderDb()
-					if resultVal.Result != WasteLibrary.RESULT_OK {
-						resultVal.Result = WasteLibrary.RESULT_FAIL
-						resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-						w.Write(resultVal.ToByte())
-
-						return
-					}
-
-					WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_TAG_GPS, currentData.TagGps.ToString())
-				}
 			}
+
 			//TagStatu
 			redisTag.TagStatu.TagId = currentData.TagId
 			redisTag.TagStatu.ContainerStatu = WasteLibrary.CONTAINER_FULLNESS_STATU_EMPTY

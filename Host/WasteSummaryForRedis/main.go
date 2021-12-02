@@ -34,27 +34,27 @@ func summaryRedis() {
 	for {
 
 		if time.Now().Hour() == 0 {
-			var systemDate WasteLibrary.SystemDateType
-			systemDate.New()
-			systemDate.GetByRedis()
-			systemDate.LastDay++
-			if systemDate.LastDay == 31 {
-				systemDate.LastDay = 1
+			var redisDbDate WasteLibrary.RedisDbDateType
+			redisDbDate.New()
+			redisDbDate.GetByRedis()
+			redisDbDate.LastDay++
+			if redisDbDate.LastDay == 31 {
+				redisDbDate.LastDay = 1
 			}
 
-			systemDate.DayDates[0] = WasteLibrary.TimeToString(time.Now())
-			systemDate.DayDates[systemDate.LastDay] = WasteLibrary.TimeToString(time.Now().Add(-24 * time.Hour))
-			systemDate.SaveToRedis()
+			redisDbDate.DayDates[0] = WasteLibrary.TimeToString(time.Now())
+			redisDbDate.DayDates[redisDbDate.LastDay] = WasteLibrary.TimeToString(time.Now().Add(-24 * time.Hour))
+			redisDbDate.SaveToRedis()
 
-			resultVal = WasteLibrary.GetKeyListRedisForStoreApi("*")
+			resultVal = WasteLibrary.GetKeyListRedisForStoreApi("hsm-*")
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 				for _, hKey := range resultVal.Retval.([]string) {
 
 					if strings.Contains(hKey, "-reel") {
 						hBaseKey := strings.Replace(hKey, "-reel", "", -1)
-						WasteLibrary.CloneRedisWODbForStoreApi("0", systemDate.ToLastDayString(), hKey, hBaseKey)
+						WasteLibrary.CloneRedisWODbForStoreApi("0", redisDbDate.ToLastDayString(), hKey, hBaseKey)
 					} else {
-						WasteLibrary.CloneRedisForStoreApi("0", systemDate.ToLastDayString(), hKey)
+						WasteLibrary.CloneRedisForStoreApi("0", redisDbDate.ToLastDayString(), hKey)
 					}
 				}
 

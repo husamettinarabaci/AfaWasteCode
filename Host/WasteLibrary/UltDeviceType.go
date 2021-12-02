@@ -17,6 +17,7 @@ type UltDeviceType struct {
 	DeviceTherm   UltDeviceThermType
 	DeviceVersion UltDeviceVersionType
 	DeviceSens    UltDeviceSensType
+	DeviceNote    UltDeviceNoteType
 }
 
 //New
@@ -31,6 +32,7 @@ func (res *UltDeviceType) New() {
 	res.DeviceTherm.New()
 	res.DeviceVersion.New()
 	res.DeviceSens.New()
+	res.DeviceNote.New()
 
 }
 
@@ -80,6 +82,11 @@ func (res *UltDeviceType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.DeviceBattery.DeviceId = res.DeviceId
 	resultVal = res.DeviceBattery.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceNote.DeviceId = res.DeviceId
+	resultVal = res.DeviceNote.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

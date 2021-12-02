@@ -84,6 +84,18 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					if int(currentData.DeviceGps.DeviceId)%(rand.Intn(10)+1) == 0 {
 						WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentData.DeviceGps.ToString())
 					}
+
+					var customerDevicesList WasteLibrary.CustomerRfidDevicesViewListType
+					customerDevicesList.CustomerId = currentHttpHeader.CustomerId
+					resultVal = customerDevicesList.GetByRedisByReel("0")
+					if resultVal.Result == WasteLibrary.RESULT_OK {
+
+						customerDeviceView := customerDevicesList.Devices[currentData.ToIdString()]
+						customerDeviceView.Latitude = currentData.DeviceGps.Latitude
+						customerDeviceView.Longitude = currentData.DeviceGps.Longitude
+						customerDevicesList.Devices[currentData.ToIdString()] = customerDeviceView
+						customerDevicesList.SaveToRedisWODb()
+					}
 					if currentData.DeviceGps.Speed == 0 {
 						var customerConfig WasteLibrary.CustomerConfigType
 						customerConfig.CustomerId = currentHttpHeader.CustomerId
@@ -120,6 +132,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				currentEmbGps.GpsTime = currentHttpHeader.Time
 				if currentData.DeviceGps.Longitude != 0 && currentData.DeviceGps.Latitude != 0 {
+
 					currentEmbGps.Longitude = currentData.DeviceGps.Longitude
 					currentEmbGps.Latitude = currentData.DeviceGps.Latitude
 					resultVal = currentEmbGps.SaveToDb()
@@ -148,11 +161,28 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 						return
 					}
-					if time.Since(WasteLibrary.StringToTime(currentData.DeviceGps.GpsTime)) > 15*60 {
-						if int(currentData.DeviceGps.DeviceId)%(rand.Intn(10)+1) == 0 {
+
+					var oldDeviceGps WasteLibrary.RfidDeviceGpsType
+					oldDeviceGps.New()
+					oldDeviceGps.DeviceId = currentData.DeviceId
+					oldDeviceGps.GetByRedis("0")
+					if time.Since(WasteLibrary.StringToTime(oldDeviceGps.GpsTime)) > 15*60 {
+						var customerDevicesList WasteLibrary.CustomerRfidDevicesViewListType
+						customerDevicesList.CustomerId = currentHttpHeader.CustomerId
+						resultVal = customerDevicesList.GetByRedisByReel("0")
+						if resultVal.Result == WasteLibrary.RESULT_OK {
+
+							customerDeviceView := customerDevicesList.Devices[currentData.ToIdString()]
+							customerDeviceView.Latitude = currentEmbGps.Latitude
+							customerDeviceView.Longitude = currentEmbGps.Longitude
+							customerDevicesList.Devices[currentData.ToIdString()] = customerDeviceView
+							customerDevicesList.SaveToRedisWODb()
+						}
+						if int(currentEmbGps.DeviceId)%(rand.Intn(10)+1) == 0 {
 							WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentEmbGps.ToString())
 						}
 					}
+
 				} else {
 					resultVal.Result = WasteLibrary.RESULT_OK
 				}

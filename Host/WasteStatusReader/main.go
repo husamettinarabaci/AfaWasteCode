@@ -144,15 +144,46 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var oldData WasteLibrary.UltDeviceType
 			oldData.DeviceId = currentData.DeviceId
 			oldData.GetByRedis("0")
+
 			if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_NONE {
-				step1 = 50
-				step2 = 100
-				step3 = 150
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
+
+			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A400 {
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
+
+			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A800 {
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
+
+			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A1100 {
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
+
+			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A2500 {
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
+
+			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A3500 {
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
+
+			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A3750 {
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
 
 			} else {
-				step1 = 50
-				step2 = 100
-				step3 = 150
+				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
+				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
+				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
 			}
 
 			if ultCm > (step3 + 50) {

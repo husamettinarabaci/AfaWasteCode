@@ -13,6 +13,7 @@ type VersionType struct {
 	RfidCamAppVersion      string
 	RfidReaderAppVersion   string
 	RfidSystemAppVersion   string
+	RfidUpdaterAppVersion  string
 	UltFirmwareVersion     string
 	RecyWebAppVersion      string
 	RecyMotorAppVersion    string
@@ -22,6 +23,7 @@ type VersionType struct {
 	RecyCamAppVersion      string
 	RecyReaderAppVersion   string
 	RecySystemAppVersion   string
+	RecyUpdaterAppVersion  string
 }
 
 //New
@@ -33,6 +35,7 @@ func (res *VersionType) New() {
 	res.RfidCamAppVersion = "1"
 	res.RfidReaderAppVersion = "1"
 	res.RfidSystemAppVersion = "1"
+	res.RfidUpdaterAppVersion = "1"
 	res.UltFirmwareVersion = "1"
 	res.RecyWebAppVersion = "1"
 	res.RecyMotorAppVersion = "1"
@@ -42,6 +45,7 @@ func (res *VersionType) New() {
 	res.RecyCamAppVersion = "1"
 	res.RecyReaderAppVersion = "1"
 	res.RecySystemAppVersion = "1"
+	res.RecyUpdaterAppVersion = "1"
 }
 
 //ToByte

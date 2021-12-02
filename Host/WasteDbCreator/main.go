@@ -206,7 +206,7 @@ func readerDbSet() {
 		TagID INT NOT NULL DEFAULT -1,
 		Note varchar(500) NOT NULL DEFAULT '',
 		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_NOTE_NONE + `',
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = readerDb.Exec(createSQL)
@@ -419,6 +419,16 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_note_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_main_devices (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
@@ -546,6 +556,16 @@ func readerDbSet() {
 		);`)
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_note_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
 
 	// deleteSQL := fmt.Sprintf(`ALTER TABLE ult_sens_devices DROP COLUMN IF EXISTS UltStatus;`)
 	// _, err = readerDb.Exec(deleteSQL)
@@ -675,6 +695,17 @@ func readerDbSet() {
 		);`)
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_note_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = readerDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
 	readerDb.Close()
 }
 
@@ -755,7 +786,7 @@ func staticDbSet() {
 		TagID INT NOT NULL DEFAULT -1,
 		Note varchar(500) NOT NULL DEFAULT '',
 		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.TAG_NOTE_NONE + `',
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)
@@ -966,6 +997,17 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS rfid_note_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_main_devices (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -1093,6 +1135,17 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ult_note_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
 	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_main_devices (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -1212,6 +1265,17 @@ func staticDbSet() {
 		DailyPlasticCount INT NOT NULL DEFAULT 0,
 		DailyMetalCount INT NOT NULL DEFAULT 0,
 		RecyTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+		);`)
+	_, err = staticDb.Exec(createSQL)
+	WasteLibrary.LogErr(err)
+
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS recy_note_devices ( 
+		DataId serial PRIMARY KEY,
+		DeviceId INT NOT NULL DEFAULT -1,
+		Note varchar(500) NOT NULL DEFAULT '',
+		NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		NoteType varchar(50) NOT NULL DEFAULT '` + WasteLibrary.NOTETYPE_NONE + `',
 		CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 		);`)
 	_, err = staticDb.Exec(createSQL)

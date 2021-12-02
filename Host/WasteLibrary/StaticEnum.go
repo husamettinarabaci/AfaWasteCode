@@ -121,7 +121,7 @@ const (
 )
 
 const (
-	TAG_NOTE_NONE = "NONE"
+	NOTETYPE_NONE = "NONE"
 )
 
 const (
@@ -216,64 +216,70 @@ const (
 )
 
 const (
-	REDIS_RECY_MAIN_DEVICES    = "recy-main-devices"
-	REDIS_RECY_BASE_DEVICES    = "recy-base-devices"
-	REDIS_RECY_GPS_DEVICES     = "recy-gps-devices"
-	REDIS_RECY_THERM_DEVICES   = "recy-therm-devices"
-	REDIS_RECY_VERSION_DEVICES = "recy-version-devices"
-	REDIS_RECY_ALARM_DEVICES   = "recy-alarm-devices"
-	REDIS_RECY_STATU_DEVICES   = "recy-statu-devices"
-	REDIS_RECY_DETAIL_DEVICES  = "recy-detail-devices"
+	REDIS_RECY_MAIN_DEVICES    = "hsm-recy-main-devices"
+	REDIS_RECY_BASE_DEVICES    = "hsm-recy-base-devices"
+	REDIS_RECY_GPS_DEVICES     = "hsm-recy-gps-devices"
+	REDIS_RECY_THERM_DEVICES   = "hsm-recy-therm-devices"
+	REDIS_RECY_VERSION_DEVICES = "hsm-recy-version-devices"
+	REDIS_RECY_ALARM_DEVICES   = "hsm-recy-alarm-devices"
+	REDIS_RECY_STATU_DEVICES   = "hsm-recy-statu-devices"
+	REDIS_RECY_DETAIL_DEVICES  = "hsm-recy-detail-devices"
+	REDIS_RECY_NOTE_DEVICES    = "hsm-recy-note-devices"
 
-	REDIS_ULT_MAIN_DEVICES    = "ult-main-devices"
-	REDIS_ULT_BASE_DEVICES    = "ult-base-devices"
-	REDIS_ULT_BATTERY_DEVICES = "ult-battery-devices"
-	REDIS_ULT_GPS_DEVICES     = "ult-gps-devices"
-	REDIS_ULT_ALARM_DEVICES   = "ult-alarm-devices"
-	REDIS_ULT_THERM_DEVICES   = "ult-therm-devices"
-	REDIS_ULT_VERSION_DEVICES = "ult-version-devices"
-	REDIS_ULT_STATU_DEVICES   = "ult-statu-devices"
-	REDIS_ULT_SENS_DEVICES    = "ult-sens-devices"
+	REDIS_ULT_MAIN_DEVICES    = "hsm-ult-main-devices"
+	REDIS_ULT_BASE_DEVICES    = "hsm-ult-base-devices"
+	REDIS_ULT_BATTERY_DEVICES = "hsm-ult-battery-devices"
+	REDIS_ULT_GPS_DEVICES     = "hsm-ult-gps-devices"
+	REDIS_ULT_ALARM_DEVICES   = "hsm-ult-alarm-devices"
+	REDIS_ULT_THERM_DEVICES   = "hsm-ult-therm-devices"
+	REDIS_ULT_VERSION_DEVICES = "hsm-ult-version-devices"
+	REDIS_ULT_STATU_DEVICES   = "hsm-ult-statu-devices"
+	REDIS_ULT_SENS_DEVICES    = "hsm-ult-sens-devices"
+	REDIS_ULT_NOTE_DEVICES    = "hsm-ult-note-devices"
 
-	REDIS_RFID_MAIN_DEVICES        = "rfid-main-devices"
-	REDIS_RFID_GPS_DEVICES         = "rfid-gps-devices"
-	REDIS_RFID_EMBEDED_GPS_DEVICES = "rfid-embeded-gps-devices"
-	REDIS_RFID_ALARM_DEVICES       = "rfid-alarm-devices"
-	REDIS_RFID_THERM_DEVICES       = "rfid-therm-devices"
-	REDIS_RFID_VERSION_DEVICES     = "rfid-version-devices"
-	REDIS_RFID_STATU_DEVICES       = "rfid-statu-devices"
-	REDIS_RFID_BASE_DEVICES        = "rfid-base-devices"
-	REDIS_RFID_DETAIL_DEVICES      = "rfid-detail-devices"
-	REDIS_RFID_WORKHOUR_DEVICES    = "rfid-workhour-devices"
+	REDIS_RFID_MAIN_DEVICES        = "hsm-rfid-main-devices"
+	REDIS_RFID_GPS_DEVICES         = "hsm-rfid-gps-devices"
+	REDIS_RFID_EMBEDED_GPS_DEVICES = "hsm-rfid-embeded-gps-devices"
+	REDIS_RFID_ALARM_DEVICES       = "hsm-rfid-alarm-devices"
+	REDIS_RFID_THERM_DEVICES       = "hsm-rfid-therm-devices"
+	REDIS_RFID_VERSION_DEVICES     = "hsm-rfid-version-devices"
+	REDIS_RFID_STATU_DEVICES       = "hsm-rfid-statu-devices"
+	REDIS_RFID_BASE_DEVICES        = "hsm-rfid-base-devices"
+	REDIS_RFID_DETAIL_DEVICES      = "hsm-rfid-detail-devices"
+	REDIS_RFID_WORKHOUR_DEVICES    = "hsm-rfid-workhour-devices"
+	REDIS_RFID_NOTE_DEVICES        = "hsm-rfid-note-devices"
+	REDIS_RFID_REPORT_DEVICES      = "hsm-rfid-report-devices"
+	REDIS_RFID_MOTION_DEVICES      = "hsm-rfid-motion-devices"
 
-	REDIS_TAG_EPC     = "tag-epc"
-	REDIS_TAG_MAINS   = "tag-mains"
-	REDIS_TAG_BASES   = "tag-bases"
-	REDIS_TAG_STATUS  = "tag-status"
-	REDIS_TAG_GPSES   = "tag-gpses"
-	REDIS_TAG_READERS = "tag-readers"
-	REDIS_TAG_NOTES   = "tag-notes"
-	REDIS_TAG_ALARMS  = "tag-alarms"
+	REDIS_TAG_EPC         = "hsm-tag-epc"
+	REDIS_TAG_MAINS       = "hsm-tag-mains"
+	REDIS_TAG_BASES       = "hsm-tag-bases"
+	REDIS_TAG_STATUS      = "hsm-tag-status"
+	REDIS_TAG_GPSES       = "hsm-tag-gpses"
+	REDIS_TAG_READERS     = "hsm-tag-readers"
+	REDIS_TAG_NOTES       = "hsm-tag-notes"
+	REDIS_TAG_ALARMS      = "hsm-tag-alarms"
+	REDIS_TAG_READDEVICES = "hsm-tag-readdevices"
 
-	REDIS_NFC_EPC     = "nfc-epc"
-	REDIS_NFC_MAINS   = "nfc-mains"
-	REDIS_NFC_BASES   = "nfc-bases"
-	REDIS_NFC_STATUS  = "nfc-status"
-	REDIS_NFC_READERS = "nfc-readers"
+	REDIS_NFC_EPC     = "hsm-nfc-epc"
+	REDIS_NFC_MAINS   = "hsm-nfc-mains"
+	REDIS_NFC_BASES   = "hsm-nfc-bases"
+	REDIS_NFC_STATUS  = "hsm-nfc-status"
+	REDIS_NFC_READERS = "hsm-nfc-readers"
 
-	REDIS_CUSTOMER_TAGVIEWS              = "customer-tagviews"
-	REDIS_CUSTOMER_TAGVIEWS_REEL         = "customer-tagviews-reel"
-	REDIS_CUSTOMER_TAGS                  = "customer-tags"
-	REDIS_CUSTOMER_NFCS                  = "customer-nfcs"
-	REDIS_CUSTOMER_RFID_DEVICES          = "customer-rfid-devices"
-	REDIS_CUSTOMER_RFID_DEVICEVIEWS      = "customer-rfid-deviceviews"
-	REDIS_CUSTOMER_RFID_DEVICEVIEWS_REEL = "customer-rfid-deviceviews-reel"
-	REDIS_CUSTOMER_RECY_DEVICES          = "customer-recy-devices"
-	REDIS_CUSTOMER_RECY_DEVICEVIEWS      = "customer-recy-deviceviews"
-	REDIS_CUSTOMER_RECY_DEVICEVIEWS_REEL = "customer-recy-deviceviews-reel"
-	REDIS_CUSTOMER_ULT_DEVICES           = "customer-ult-devices"
-	REDIS_CUSTOMER_ULT_DEVICEVIEWS       = "customer-ult-deviceviews"
-	REDIS_CUSTOMER_ULT_DEVICEVIEWS_REEL  = "customer-ult-deviceviews-reel"
+	REDIS_CUSTOMER_TAGVIEWS              = "hsm-customer-tagviews"
+	REDIS_CUSTOMER_TAGVIEWS_REEL         = "hsm-customer-tagviews-reel"
+	REDIS_CUSTOMER_TAGS                  = "hsm-customer-tags"
+	REDIS_CUSTOMER_NFCS                  = "hsm-customer-nfcs"
+	REDIS_CUSTOMER_RFID_DEVICES          = "hsm-customer-rfid-devices"
+	REDIS_CUSTOMER_RFID_DEVICEVIEWS      = "hsm-customer-rfid-deviceviews"
+	REDIS_CUSTOMER_RFID_DEVICEVIEWS_REEL = "hsm-customer-rfid-deviceviews-reel"
+	REDIS_CUSTOMER_RECY_DEVICES          = "hsm-customer-recy-devices"
+	REDIS_CUSTOMER_RECY_DEVICEVIEWS      = "hsm-customer-recy-deviceviews"
+	REDIS_CUSTOMER_RECY_DEVICEVIEWS_REEL = "hsm-customer-recy-deviceviews-reel"
+	REDIS_CUSTOMER_ULT_DEVICES           = "hsm-customer-ult-devices"
+	REDIS_CUSTOMER_ULT_DEVICEVIEWS       = "hsm-customer-ult-deviceviews"
+	REDIS_CUSTOMER_ULT_DEVICEVIEWS_REEL  = "hsm-customer-ult-deviceviews-reel"
 
 	REDIS_CUSTOMERS               = "customers"
 	REDIS_CUSTOMER_CUSTOMERCONFIG = "customer-customerconfig"
@@ -289,12 +295,12 @@ const (
 	REDIS_CUSTOMER_CHANNEL = "ch-customer-"
 	REDIS_APP_LOG_CHANNEL  = "ch-app-log"
 
-	REDIS_SYSTEM_DATE = "system-date"
-
 	REDIS_SERIAL_RFID_DEVICE = "serial-rfid-device"
 	REDIS_SERIAL_ULT_DEVICE  = "serial-ult-device"
 	REDIS_SERIAL_RECY_DEVICE = "serial-recy-device"
 	REDIS_SERIAL_ALARM       = "serial-alarm"
+
+	REDIS_DB_DATE = "db-date"
 
 	REDIS_HASHKEY      = "HASHKEY"
 	REDIS_HASHBASEKEY  = "HASHBASEKEY"
@@ -313,7 +319,33 @@ const (
 )
 
 const (
-	CONTAINERTYPE_NONE = "NONE"
+	CONTAINERTYPE_NONE  = "NONE"
+	CONTAINERTYPE_A400  = "400"
+	CONTAINERTYPE_A800  = "800"
+	CONTAINERTYPE_A1100 = "1100"
+	CONTAINERTYPE_A2500 = "2500"
+	CONTAINERTYPE_A3500 = "3500"
+	CONTAINERTYPE_A3750 = "3750"
+)
+
+const (
+	CONTAINERCAPACITY_NONE  = 0
+	CONTAINERCAPACITY_A400  = 400
+	CONTAINERCAPACITY_A800  = 800
+	CONTAINERCAPACITY_A1100 = 1100
+	CONTAINERCAPACITY_A2500 = 2500
+	CONTAINERCAPACITY_A3500 = 3500
+	CONTAINERCAPACITY_A3750 = 3750
+)
+
+const (
+	CONTAINERHEIGTH_NONE  = 200
+	CONTAINERHEIGTH_A400  = 200
+	CONTAINERHEIGTH_A800  = 200
+	CONTAINERHEIGTH_A1100 = 200
+	CONTAINERHEIGTH_A2500 = 200
+	CONTAINERHEIGTH_A3500 = 200
+	CONTAINERHEIGTH_A3750 = 200
 )
 
 const (
@@ -325,6 +357,42 @@ const (
 	DEVICETYPE_RFID = "RFID"
 	DEVICETYPE_ULT  = "ULT"
 	DEVICETYPE_RECY = "RECY"
+)
+
+const (
+	ANGLETYPE_NONE = "NONE"
+	ANGLETYPE_0    = "0"
+	ANGLETYPE_15   = "15"
+	ANGLETYPE_30   = "30"
+	ANGLETYPE_45   = "45"
+	ANGLETYPE_60   = "60"
+	ANGLETYPE_75   = "75"
+	ANGLETYPE_90   = "90"
+	ANGLETYPE_105  = "105"
+	ANGLETYPE_120  = "120"
+	ANGLETYPE_135  = "135"
+	ANGLETYPE_150  = "150"
+	ANGLETYPE_165  = "165"
+	ANGLETYPE_180  = "180"
+	ANGLETYPE_195  = "195"
+	ANGLETYPE_210  = "210"
+	ANGLETYPE_225  = "225"
+	ANGLETYPE_240  = "240"
+	ANGLETYPE_255  = "255"
+	ANGLETYPE_270  = "270"
+	ANGLETYPE_285  = "285"
+	ANGLETYPE_300  = "300"
+	ANGLETYPE_315  = "315"
+	ANGLETYPE_330  = "330"
+	ANGLETYPE_345  = "345"
+)
+
+const (
+	MOTIONTYPE_NONE  = "NONE"
+	MOTIONTYPE_FIRST = "FIRST"
+	MOTIONTYPE_LAST  = "LAST"
+	MOTIONTYPE_START = "START"
+	MOTIONTYPE_STOP  = "STOP"
 )
 
 const (

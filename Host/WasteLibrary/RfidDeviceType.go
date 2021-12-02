@@ -18,6 +18,9 @@ type RfidDeviceType struct {
 	DeviceDetail     RfidDeviceDetailType
 	DeviceWorkHour   RfidDeviceWorkHourType
 	DeviceEmbededGps RfidDeviceEmbededGpsType
+	DeviceNote       RfidDeviceNoteType
+	DeviceReport     RfidDeviceReportType
+	DeviceMotion     RfidDeviceMotionType
 }
 
 //New
@@ -33,6 +36,9 @@ func (res *RfidDeviceType) New() {
 	res.DeviceDetail.New()
 	res.DeviceWorkHour.New()
 	res.DeviceEmbededGps.New()
+	res.DeviceNote.New()
+	res.DeviceReport.New()
+	res.DeviceMotion.New()
 }
 
 //GetByRedis
@@ -86,6 +92,21 @@ func (res *RfidDeviceType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.DeviceWorkHour.DeviceId = res.DeviceId
 	resultVal = res.DeviceWorkHour.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceNote.DeviceId = res.DeviceId
+	resultVal = res.DeviceNote.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceReport.DeviceId = res.DeviceId
+	resultVal = res.DeviceReport.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceMotion.DeviceId = res.DeviceId
+	resultVal = res.DeviceMotion.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

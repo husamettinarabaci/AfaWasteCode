@@ -7,14 +7,15 @@ import (
 
 //TagType
 type TagType struct {
-	TagId     float64
-	TagMain   TagMainType
-	TagBase   TagBaseType
-	TagStatu  TagStatuType
-	TagGps    TagGpsType
-	TagReader TagReaderType
-	TagNote   TagNoteType
-	TagAlarm  TagAlarmType
+	TagId         float64
+	TagMain       TagMainType
+	TagBase       TagBaseType
+	TagStatu      TagStatuType
+	TagGps        TagGpsType
+	TagReader     TagReaderType
+	TagNote       TagNoteType
+	TagAlarm      TagAlarmType
+	TagReadDevice TagReadDeviceType
 }
 
 //New
@@ -27,6 +28,7 @@ func (res *TagType) New() {
 	res.TagReader.New()
 	res.TagNote.New()
 	res.TagAlarm.New()
+	res.TagReadDevice.New()
 }
 
 //GetByRedis
@@ -66,6 +68,11 @@ func (res *TagType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.TagAlarm.TagId = res.TagId
 	resultVal = res.TagAlarm.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.TagReadDevice.TagId = res.TagId
+	resultVal = res.TagReadDevice.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}
