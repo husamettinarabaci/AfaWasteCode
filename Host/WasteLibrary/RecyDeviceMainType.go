@@ -28,7 +28,7 @@ func (res *RecyDeviceMainType) New() {
 //GetByRedis
 func (res *RecyDeviceMainType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_MAIN_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_MAIN, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -42,7 +42,7 @@ func (res *RecyDeviceMainType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RecyDeviceMainType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RECY_MAIN_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_MAIN, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -58,7 +58,7 @@ func (res *RecyDeviceMainType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RECY_MAIN_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RECY_MAIN
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -120,27 +120,27 @@ func (res *RecyDeviceMainType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime
-	 FROM public.`+DATATYPE_RECY_MAIN_DEVICE+` 
+	 FROM public.`+DATATYPE_RECY_MAIN+` 
 	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN_DEVICE+`  (CustomerId,SerialNumber) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN+`  (CustomerId,SerialNumber) 
 	  VALUES (%f,'%s') 
 	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber)
 }
 
 //InsertDataSQL
 func (res *RecyDeviceMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN_DEVICE+`  (DeviceId,CustomerId,SerialNumber) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN+`  (DeviceId,CustomerId,SerialNumber) 
 	  VALUES (%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber)
 }
 
 //UpdateSQL
 func (res *RecyDeviceMainType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_MAIN_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_MAIN+`  
 	  SET CustomerId=%f 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

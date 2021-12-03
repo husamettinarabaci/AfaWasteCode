@@ -29,7 +29,7 @@ func (res *UltDeviceNoteType) New() {
 func (res *UltDeviceNoteType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_NOTE_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_NOTE, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -44,7 +44,7 @@ func (res *UltDeviceNoteType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceNoteType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_NOTE_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_NOTE, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -53,7 +53,7 @@ func (res *UltDeviceNoteType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_NOTE_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_NOTE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -73,7 +73,7 @@ func (res *UltDeviceNoteType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_NOTE_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_NOTE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -131,20 +131,20 @@ func (res *UltDeviceNoteType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceNoteType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Note,NoteTime,NoteType
-	 FROM public.`+DATATYPE_ULT_NOTE_DEVICE+`  
+	 FROM public.`+DATATYPE_ULT_NOTE+`  
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceNoteType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_NOTE_DEVICE+`  (DeviceId,Note,NoteTime,NoteType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_NOTE+`  (DeviceId,Note,NoteTime,NoteType) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Note, res.NoteTime, res.NoteType)
 }
 
 //UpdateSQL
 func (res *UltDeviceNoteType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_NOTE_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_NOTE+`  
 	  SET Note='%s',NoteTime='%s',NoteType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

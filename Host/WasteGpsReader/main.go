@@ -82,7 +82,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 						return
 					}
 					if int(currentData.DeviceGps.DeviceId)%(rand.Intn(10)+1) == 0 {
-						WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentData.DeviceGps.ToString())
+						WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS, currentData.DeviceGps.ToString())
 					}
 
 					var customerDevicesList WasteLibrary.CustomerRfidDevicesViewListType
@@ -179,7 +179,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 							customerDevicesList.SaveToRedisWODb()
 						}
 						if int(currentEmbGps.DeviceId)%(rand.Intn(10)+1) == 0 {
-							WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS_DEVICE, currentEmbGps.ToString())
+							WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_GPS, currentEmbGps.ToString())
 						}
 					}
 
@@ -220,7 +220,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					return
 				}
 
-				WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_GPS_DEVICE, currentData.DeviceGps.ToString())
+				WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_GPS, currentData.DeviceGps.ToString())
 			} else {
 				resultVal.Result = WasteLibrary.RESULT_OK
 			}

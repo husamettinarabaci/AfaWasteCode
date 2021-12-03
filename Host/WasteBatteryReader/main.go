@@ -82,7 +82,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 
-			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_BATTERY_DEVICE, currentData.DeviceBattery.ToString())
+			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_BATTERY, currentData.DeviceBattery.ToString())
 		}
 
 	} else {

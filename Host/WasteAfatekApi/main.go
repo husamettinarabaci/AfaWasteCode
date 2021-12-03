@@ -695,7 +695,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 
-		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_MAIN_DEVICE, currentData.DeviceMain.ToString())
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_MAIN, currentData.DeviceMain.ToString())
 
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 		var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -763,7 +763,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
-		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_MAIN_DEVICE, currentData.DeviceMain.ToString())
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_MAIN, currentData.DeviceMain.ToString())
 
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		var currentData WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -832,7 +832,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
-		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RECY_MAIN_DEVICE, currentData.DeviceMain.ToString())
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RECY_MAIN, currentData.DeviceMain.ToString())
 
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL

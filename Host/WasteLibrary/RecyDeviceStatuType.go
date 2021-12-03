@@ -84,7 +84,7 @@ func (res *RecyDeviceStatuType) New() {
 //GetByRedis
 func (res *RecyDeviceStatuType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_STATU_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_STATU, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -99,7 +99,7 @@ func (res *RecyDeviceStatuType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RecyDeviceStatuType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RECY_STATU_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_STATU, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -108,7 +108,7 @@ func (res *RecyDeviceStatuType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RECY_STATU_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RECY_STATU
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -128,7 +128,7 @@ func (res *RecyDeviceStatuType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RECY_STATU_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RECY_STATU
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -189,13 +189,13 @@ func (res *RecyDeviceStatuType) SelectSQL() string {
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
 	SystemAppLastOkTime,UpdaterAppStatus,UpdaterAppLastOkTime,MotorAppStatus,MotorAppLastOkTime,MotorConnStatus,
 	MotorConnLastOkTime,MotorStatus,MotorLastOkTime,WebAppStatus,WebAppLastOkTime
-	 FROM public.`+DATATYPE_RECY_STATU_DEVICE+` 
+	 FROM public.`+DATATYPE_RECY_STATU+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_STATU_DEVICE+`  (DeviceId,
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_STATU+`  (DeviceId,
 	StatusTime,AliveStatus,AliveLastOkTime,ReaderAppStatus,ReaderAppLastOkTime,ReaderConnStatus,
 	ReaderConnLastOkTime,ReaderStatus,ReaderLastOkTime,CamAppStatus,CamAppLastOkTime,CamConnStatus,CamConnLastOkTime,
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
@@ -263,7 +263,7 @@ func (res *RecyDeviceStatuType) UpdateSQL() string {
 		execSqlExt += ",WebAppLastOkTime='" + res.WebAppLastOkTime + "'"
 	}
 
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_STATU_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_STATU+`  
 	  SET StatusTime='%s',AliveStatus='%s',ReaderAppStatus='%s',ReaderConnStatus='%s',
 	  ReaderStatus='%s',CamAppStatus='%s',CamConnStatus='%s',
 	  CamStatus='%s',ThermAppStatus='%s',TransferAppStatus='%s',SystemAppStatus='%s',

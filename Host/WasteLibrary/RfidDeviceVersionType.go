@@ -37,7 +37,7 @@ func (res *RfidDeviceVersionType) New() {
 func (res *RfidDeviceVersionType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_VERSION_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_VERSION, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -52,7 +52,7 @@ func (res *RfidDeviceVersionType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceVersionType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_VERSION_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_VERSION, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -61,7 +61,7 @@ func (res *RfidDeviceVersionType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_VERSION_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_VERSION
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -118,20 +118,20 @@ func (res *RfidDeviceVersionType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT GpsAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion
-	 FROM public.`+REDIS_RFID_VERSION_DEVICES+` 
+	 FROM public.`+REDIS_RFID_VERSION+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceVersionType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+REDIS_RFID_VERSION_DEVICES+`  (DeviceId,GpsAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
+	return fmt.Sprintf(`INSERT INTO public.`+REDIS_RFID_VERSION+`  (DeviceId,GpsAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
 	  VALUES (%f,'%s','%s','%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.GpsAppVersion, res.ThermAppVersion, res.TransferAppVersion, res.CheckerAppVersion, res.CamAppVersion, res.ReaderAppVersion, res.SystemAppVersion)
 }
 
 //UpdateSQL
 func (res *RfidDeviceVersionType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+REDIS_RFID_VERSION_DEVICES+`  
+	return fmt.Sprintf(`UPDATE public.`+REDIS_RFID_VERSION+`  
 	  SET GpsAppVersion='%s',ThermAppVersion='%s',TransferAppVersion='%s',CheckerAppVersion='%s',CamAppVersion='%s',ReaderAppVersion='%s',SystemAppVersion='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

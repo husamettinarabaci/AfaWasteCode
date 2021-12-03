@@ -38,7 +38,7 @@ func (res *RecyDeviceVersionType) New() {
 //GetByRedis
 func (res *RecyDeviceVersionType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_VERSION_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_VERSION, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -53,7 +53,7 @@ func (res *RecyDeviceVersionType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RecyDeviceVersionType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RECY_VERSION_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_VERSION, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -62,7 +62,7 @@ func (res *RecyDeviceVersionType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RECY_VERSION_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RECY_VERSION
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -119,20 +119,20 @@ func (res *RecyDeviceVersionType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion
-	 FROM public.`+DATATYPE_RECY_VERSION_DEVICE+` 
+	 FROM public.`+DATATYPE_RECY_VERSION+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceVersionType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_VERSION_DEVICE+`  (DeviceId,WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_VERSION+`  (DeviceId,WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
 	  VALUES (%f,'%s','%s','%s','%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.WebAppVersion, res.MotorAppVersion, res.ThermAppVersion, res.TransferAppVersion, res.CheckerAppVersion, res.CamAppVersion, res.ReaderAppVersion, res.SystemAppVersion)
 }
 
 //UpdateSQL
 func (res *RecyDeviceVersionType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_VERSION_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_VERSION+`  
 	  SET WebAppVersion='%s',MotorAppVersion='%s',ThermAppVersion='%s',TransferAppVersion='%s',CheckerAppVersion='%s',CamAppVersion='%s',ReaderAppVersion='%s',SystemAppVersion='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

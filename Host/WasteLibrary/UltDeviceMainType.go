@@ -33,7 +33,7 @@ func (res *UltDeviceMainType) New() {
 //GetByRedis
 func (res *UltDeviceMainType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_MAIN_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_MAIN, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -47,7 +47,7 @@ func (res *UltDeviceMainType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceMainType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_MAIN_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_MAIN, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -63,7 +63,7 @@ func (res *UltDeviceMainType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_MAIN_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_MAIN
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -125,27 +125,27 @@ func (res *UltDeviceMainType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,OldLatitude,OldLongitude
-	 FROM public.`+DATATYPE_ULT_MAIN_DEVICE+` 
+	 FROM public.`+DATATYPE_ULT_MAIN+` 
 	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN_DEVICE+`  (CustomerId,SerialNumber,OldLatitude,OldLongitude) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN+`  (CustomerId,SerialNumber,OldLatitude,OldLongitude) 
 	  VALUES (%f,'%s',%f,%f) 
 	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
 }
 
 //InsertDataSQL
 func (res *UltDeviceMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN_DEVICE+`  (DeviceId,CustomerId,SerialNumber,OldLatitude,OldLongitude) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN+`  (DeviceId,CustomerId,SerialNumber,OldLatitude,OldLongitude) 
 	  VALUES (%f,%f,'%s',%f,%f) 
 	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
 }
 
 //UpdateSQL
 func (res *UltDeviceMainType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_MAIN_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_MAIN+`  
 	  SET CustomerId=%f,OldLatitude=%f,OldLongitude=%f
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

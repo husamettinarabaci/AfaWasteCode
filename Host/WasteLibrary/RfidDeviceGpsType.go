@@ -31,7 +31,7 @@ func (res *RfidDeviceGpsType) New() {
 func (res *RfidDeviceGpsType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_GPS_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_GPS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -46,7 +46,7 @@ func (res *RfidDeviceGpsType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceGpsType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_GPS_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_GPS, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -55,7 +55,7 @@ func (res *RfidDeviceGpsType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_GPS_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_GPS
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -75,7 +75,7 @@ func (res *RfidDeviceGpsType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_GPS_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_GPS
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -132,20 +132,20 @@ func (res *RfidDeviceGpsType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceGpsType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Latitude,Longitude,Speed,GpsTime
-	 FROM public.`+DATATYPE_RFID_GPS_DEVICE+` 
+	 FROM public.`+DATATYPE_RFID_GPS+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceGpsType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_GPS_DEVICE+`  (DeviceId,Latitude,Longitude,Speed,GpsTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_GPS+`  (DeviceId,Latitude,Longitude,Speed,GpsTime) 
 	  VALUES (%f,%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.Speed, res.GpsTime)
 }
 
 //UpdateSQL
 func (res *RfidDeviceGpsType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_GPS_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_GPS+`  
 	  SET Latitude=%f,Longitude=%f,Speed=%f,GpsTime='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

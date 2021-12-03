@@ -32,7 +32,7 @@ func (res *UltDeviceBaseType) New() {
 //GetByRedis
 func (res *UltDeviceBaseType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_BASE_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_BASE, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -47,7 +47,7 @@ func (res *UltDeviceBaseType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceBaseType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_BASE_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_BASE, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -56,7 +56,7 @@ func (res *UltDeviceBaseType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_BASE_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_BASE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -113,20 +113,20 @@ func (res *UltDeviceBaseType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT ContainerNo,ContainerType,DeviceType,Imei,Imsi
-	 FROM public.`+DATATYPE_ULT_BASE_DEVICE+` 
+	 FROM public.`+DATATYPE_ULT_BASE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BASE_DEVICE+`  (DeviceId,ContainerNo,ContainerType,DeviceType,Imei,Imsi) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BASE+`  (DeviceId,ContainerNo,ContainerType,DeviceType,Imei,Imsi) 
 	  VALUES (%f,'%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.ContainerType, res.DeviceType, res.Imei, res.Imsi)
 }
 
 //UpdateSQL
 func (res *UltDeviceBaseType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_BASE_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_BASE+`  
 	  SET ContainerNo='%s',ContainerType='%s',DeviceType='%s',Imei='%s',Imsi='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

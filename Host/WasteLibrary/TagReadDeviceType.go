@@ -24,7 +24,6 @@ func (res *TagReadDeviceType) GetByRedis(dbIndex string) ResultType {
 	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_READDEVICES, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
-		res.NewData = false
 	} else {
 		return resultVal
 	}

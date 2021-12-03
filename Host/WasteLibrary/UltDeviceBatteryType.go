@@ -28,7 +28,7 @@ func (res *UltDeviceBatteryType) New() {
 //GetByRedis
 func (res *UltDeviceBatteryType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_BATTERY_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_BATTERY, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -43,7 +43,7 @@ func (res *UltDeviceBatteryType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceBatteryType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_BATTERY_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_BATTERY, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -52,7 +52,7 @@ func (res *UltDeviceBatteryType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_BATTERY_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_BATTERY
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -72,7 +72,7 @@ func (res *UltDeviceBatteryType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_BATTERY_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_BATTERY
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -129,20 +129,20 @@ func (res *UltDeviceBatteryType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceBatteryType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Battery,BatteryStatus,BatteryTime
-	 FROM public.`+DATATYPE_ULT_BATTERY_DEVICE+` 
+	 FROM public.`+DATATYPE_ULT_BATTERY+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceBatteryType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BATTERY_DEVICE+`  (DeviceId,Battery,BatteryStatus,BatteryTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BATTERY+`  (DeviceId,Battery,BatteryStatus,BatteryTime) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Battery, res.BatteryStatus, res.BatteryTime)
 }
 
 //UpdateSQL
 func (res *UltDeviceBatteryType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_BATTERY_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_BATTERY+`  
 	  SET Battery='%s',BatteryStatus='%s',BatteryTime='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

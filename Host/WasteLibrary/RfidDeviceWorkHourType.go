@@ -43,7 +43,7 @@ func (res *RfidDeviceWorkHourType) New() {
 func (res *RfidDeviceWorkHourType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_WORKHOUR_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_WORKHOUR, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -58,7 +58,7 @@ func (res *RfidDeviceWorkHourType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceWorkHourType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_WORKHOUR_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_WORKHOUR, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -67,7 +67,7 @@ func (res *RfidDeviceWorkHourType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_WORKHOUR_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_WORKHOUR
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -127,13 +127,13 @@ func (res *RfidDeviceWorkHourType) SelectSQL() string {
 	 Work1StartHour,Work1StartMinute,Work1AddMinute,
 	 Work2StartHour,Work2StartMinute,Work2AddMinute,
 	 Work3StartHour,Work3StartMinute,Work3AddMinute
-	 FROM public.`+DATATYPE_RFID_WORKHOUR_DEVICE+` 
+	 FROM public.`+DATATYPE_RFID_WORKHOUR+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceWorkHourType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_WORKHOUR_DEVICE+`  (DeviceId,WorkCount,
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_WORKHOUR+`  (DeviceId,WorkCount,
 	 Work1StartHour,Work1StartMinute,Work1AddMinute,
 	 Work2StartHour,Work2StartMinute,Work2AddMinute,
 	 Work3StartHour,Work3StartMinute,Work3AddMinute) 
@@ -147,7 +147,7 @@ func (res *RfidDeviceWorkHourType) InsertSQL() string {
 //UpdateSQL
 func (res *RfidDeviceWorkHourType) UpdateSQL() string {
 
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_WORKHOUR_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_WORKHOUR+`  
 	  SET WorkCount=%d,
 	  Work1StartHour=%d,Work1StartMinute=%d,Work1AddMinute=%d,
 	  Work2StartHour=%d,Work2StartMinute=%d,Work2AddMinute=%d,

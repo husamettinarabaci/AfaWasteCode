@@ -151,7 +151,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 
-			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_SENS_DEVICE, currentData.DeviceSens.ToString())
+			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_SENS, currentData.DeviceSens.ToString())
 		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK

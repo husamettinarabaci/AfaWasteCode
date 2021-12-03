@@ -183,7 +183,7 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_MAIN_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_MAIN + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -194,7 +194,7 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_MAIN_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_MAIN + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -207,7 +207,7 @@ func readerDbSet() {
 	_, err = readerDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_MAIN_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_MAIN + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		CustomerId INT NOT NULL DEFAULT -1,
@@ -263,7 +263,7 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_MAIN_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_MAIN + `  (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
 		SerialNumber  varchar(50) NOT NULL DEFAULT '',
@@ -273,7 +273,7 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_MAIN_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_MAIN + `  (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
 		SerialNumber  varchar(50) NOT NULL DEFAULT '',
@@ -285,7 +285,7 @@ func staticDbSet() {
 	_, err = staticDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_MAIN_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_MAIN + `  (
 		DeviceId  serial PRIMARY KEY,
 		CustomerId INT NOT NULL DEFAULT -1,
 		SerialNumber  varchar(50) NOT NULL DEFAULT '',
@@ -401,7 +401,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_BASE_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_BASE + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		DeviceType  varchar(50) NOT NULL DEFAULT '` + WasteLibrary.RFID_DEVICE_TYPE_NONE + `',
@@ -411,7 +411,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_STATU_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_STATU + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		StatusTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -450,7 +450,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_GPS_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_GPS + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
@@ -462,7 +462,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_EMBEDED_GPS_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_EMBEDED_GPS + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
@@ -474,7 +474,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_ALARM_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_ALARM + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
@@ -486,7 +486,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_THERM_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_THERM + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
@@ -497,7 +497,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_VERSION_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_VERSION + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
         GpsAppVersion varchar(50) NOT NULL DEFAULT '1',
@@ -512,7 +512,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_DETAIL_DEVICE + `  ( 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_DETAIL + `  ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		PlateNo varchar(50) NOT NULL DEFAULT '',
@@ -523,7 +523,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_WORKHOUR_DEVICE + `  ( 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_WORKHOUR + `  ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		WorkCount INT NOT NULL DEFAULT 1,
@@ -541,7 +541,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_NOTE_DEVICES + `  ( 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RFID_NOTE + `  ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Note varchar(500) NOT NULL DEFAULT '',
@@ -551,7 +551,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 		);`)
 	_, err = currentDb.Exec(createSQL)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_BASE_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_BASE + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		ContainerNo  varchar(50) NOT NULL DEFAULT '',
@@ -564,7 +564,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_STATU_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_STATU + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		StatusTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -578,7 +578,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_BATTERY_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_BATTERY + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Battery varchar(50) NOT NULL DEFAULT '0',
@@ -589,7 +589,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_GPS_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_GPS + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
@@ -600,7 +600,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_ALARM_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_ALARM + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
@@ -612,7 +612,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_THERM_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_THERM + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
@@ -623,7 +623,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_VERSION_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_VERSION + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		FirmwareVersion  varchar(50) NOT NULL DEFAULT '1',
@@ -632,7 +632,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_SENS_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_SENS + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		UltTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -666,7 +666,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_NOTE_DEVICES + `  ( 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_ULT_NOTE + `  ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Note varchar(500) NOT NULL DEFAULT '',
@@ -676,11 +676,11 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 		);`)
 	_, err = currentDb.Exec(createSQL)
 
-	// deleteSQL := fmt.Sprintf(`ALTER TABLE ult_sens_devices DROP COLUMN IF EXISTS `+WasteLibrary.DATATYPE_ULT_STATU_DEVICES+` ;`)
+	// deleteSQL := fmt.Sprintf(`ALTER TABLE ult_sens_devices DROP COLUMN IF EXISTS `+WasteLibrary.DATATYPE_ULT_STATU+` ;`)
 	// _, err = currentDb.Exec(deleteSQL)
 	// WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_BASE_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_BASE + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		ContainerNo  varchar(50) NOT NULL DEFAULT '',
@@ -690,7 +690,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_STATU_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_STATU + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		StatusTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -729,7 +729,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_GPS_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_GPS + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
@@ -740,7 +740,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_ALARM_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_ALARM + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		AlarmStatus varchar(50) NOT NULL DEFAULT '` + WasteLibrary.ALARMSTATU_NONE + `',
@@ -752,7 +752,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_THERM_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_THERM + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Therm varchar(50) NOT NULL DEFAULT '0',
@@ -763,7 +763,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_VERSION_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_VERSION + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		WebAppVersion varchar(50) NOT NULL DEFAULT '1',
@@ -779,7 +779,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_DETAIL_DEVICE + `  (
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_DETAIL + `  (
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		TotalGlassCount INT NOT NULL DEFAULT 0,
@@ -794,7 +794,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
 
-	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_NOTE_DEVICES + `  ( 
+	createSQL = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + WasteLibrary.DATATYPE_RECY_NOTE + `  ( 
 		DataId serial PRIMARY KEY,
 		DeviceId INT NOT NULL DEFAULT -1,
 		Note varchar(500) NOT NULL DEFAULT '',
@@ -804,5 +804,4 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 		);`)
 	_, err = currentDb.Exec(createSQL)
 	WasteLibrary.LogErr(err)
-	readerDb.Close()
 }

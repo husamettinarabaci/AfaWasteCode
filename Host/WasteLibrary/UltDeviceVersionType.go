@@ -25,7 +25,7 @@ func (res *UltDeviceVersionType) New() {
 //GetByRedis
 func (res *UltDeviceVersionType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_VERSION_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_VERSION, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -40,7 +40,7 @@ func (res *UltDeviceVersionType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceVersionType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_VERSION_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_VERSION, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -49,7 +49,7 @@ func (res *UltDeviceVersionType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_VERSION_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_VERSION
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -106,20 +106,20 @@ func (res *UltDeviceVersionType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT FirmwareVersion
-	 FROM public.`+DATATYPE_ULT_VERSION_DEVICE+` 
+	 FROM public.`+DATATYPE_ULT_VERSION+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceVersionType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_VERSION_DEVICE+`  (DeviceId,FirmwareVersion) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_VERSION+`  (DeviceId,FirmwareVersion) 
 	  VALUES (%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.FirmwareVersion)
 }
 
 //UpdateSQL
 func (res *UltDeviceVersionType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_VERSION_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_VERSION+`  
 	  SET FirmwareVersion='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

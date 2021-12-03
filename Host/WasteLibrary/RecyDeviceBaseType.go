@@ -26,7 +26,7 @@ func (res *RecyDeviceBaseType) New() {
 //GetByRedis
 func (res *RecyDeviceBaseType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_BASE_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_BASE, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -41,7 +41,7 @@ func (res *RecyDeviceBaseType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RecyDeviceBaseType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RECY_BASE_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_BASE, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -50,7 +50,7 @@ func (res *RecyDeviceBaseType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RECY_BASE_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RECY_BASE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -107,20 +107,20 @@ func (res *RecyDeviceBaseType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT ContainerNo,DeviceType
-	 FROM public.`+DATATYPE_RECY_BASE_DEVICE+` 
+	 FROM public.`+DATATYPE_RECY_BASE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_BASE_DEVICE+`  (DeviceId,ContainerNo,DeviceType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_BASE+`  (DeviceId,ContainerNo,DeviceType) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.DeviceType)
 }
 
 //UpdateSQL
 func (res *RecyDeviceBaseType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_BASE_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_BASE+`  
 	  SET ContainerNo='%s',DeviceType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

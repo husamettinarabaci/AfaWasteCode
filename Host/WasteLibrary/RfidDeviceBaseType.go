@@ -27,7 +27,7 @@ func (res *RfidDeviceBaseType) New() {
 func (res *RfidDeviceBaseType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_BASE_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_BASE, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -42,7 +42,7 @@ func (res *RfidDeviceBaseType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceBaseType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_BASE_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_BASE, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -51,7 +51,7 @@ func (res *RfidDeviceBaseType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_BASE_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_BASE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -108,20 +108,20 @@ func (res *RfidDeviceBaseType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT DeviceType,TruckType
-	 FROM public.`+DATATYPE_RFID_BASE_DEVICE+` 
+	 FROM public.`+DATATYPE_RFID_BASE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_BASE_DEVICE+`  (DeviceId,DeviceType,TruckType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_BASE+`  (DeviceId,DeviceType,TruckType) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.DeviceType, res.TruckType)
 }
 
 //UpdateSQL
 func (res *RfidDeviceBaseType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_BASE_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_BASE+`  
 	  SET DeviceType='%s',TruckType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

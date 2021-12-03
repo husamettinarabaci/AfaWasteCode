@@ -326,7 +326,6 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		//DeviceMotion RfidDeviceMotionType WODb
 		var currentMotion WasteLibrary.RfidDeviceMotionType
 		currentMotion.New()
-		currentMotion.NewData = true
 		currentMotion.DeviceId = currentDeviceMain.DeviceId
 		resultVal = currentMotion.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -1040,7 +1039,6 @@ func createTag(w http.ResponseWriter, req *http.Request) {
 		//TagReadDevice   TagReadDeviceType WODb
 		var currentTagReadDevice WasteLibrary.TagReadDeviceType
 		currentTagReadDevice.New()
-		currentTagReadDevice.NewData = true
 		currentTagReadDevice.TagId = currentData.TagId
 		resultVal = currentTagReadDevice.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {

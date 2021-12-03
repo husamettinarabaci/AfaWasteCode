@@ -21,10 +21,9 @@ func (res *RfidDeviceMotionType) New() {
 func (res *RfidDeviceMotionType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_MOTION_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_MOTION, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
-		res.NewData = false
 	} else {
 		return resultVal
 	}
@@ -36,7 +35,7 @@ func (res *RfidDeviceMotionType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceMotionType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_MOTION_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_MOTION, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

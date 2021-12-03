@@ -29,7 +29,7 @@ func (res *RfidDeviceThermType) New() {
 func (res *RfidDeviceThermType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_THERM_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_THERM, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -44,7 +44,7 @@ func (res *RfidDeviceThermType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceThermType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_THERM_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_THERM, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -53,7 +53,7 @@ func (res *RfidDeviceThermType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_THERM_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_THERM
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -73,7 +73,7 @@ func (res *RfidDeviceThermType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_THERM_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_THERM
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -130,20 +130,20 @@ func (res *RfidDeviceThermType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceThermType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Therm,ThermTime,ThermStatus
-	 FROM public.`+DATATYPE_RFID_THERM_DEVICE+` 
+	 FROM public.`+DATATYPE_RFID_THERM+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceThermType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_THERM_DEVICE+`  (DeviceId,Therm,ThermTime,ThermStatus) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_THERM+`  (DeviceId,Therm,ThermTime,ThermStatus) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Therm, res.ThermTime, res.ThermStatus)
 }
 
 //UpdateSQL
 func (res *RfidDeviceThermType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_THERM_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_THERM+`  
 	  SET Therm='%s',ThermTime='%s',ThermStatus='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

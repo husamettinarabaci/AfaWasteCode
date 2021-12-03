@@ -109,7 +109,7 @@ func customerProc(customerId float64) {
 								newCurrentHttpHeader.DeviceType = WasteLibrary.DEVICETYPE_RFID
 								newCurrentHttpHeader.DeviceId = currentDevice.DeviceId
 								newCurrentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
-								newCurrentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_GPS_DEVICE
+								newCurrentHttpHeader.DataType = WasteLibrary.DATATYPE_RFID_GPS
 								newCurrentHttpHeader.ReaderType = WasteLibrary.READERTYPE_GPS_API
 								data := url.Values{
 									WasteLibrary.HTTP_HEADER: {newCurrentHttpHeader.ToString()},

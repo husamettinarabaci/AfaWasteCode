@@ -126,7 +126,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_STATU_DEVICE, currentData.DeviceStatu.ToString())
+			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_STATU, currentData.DeviceStatu.ToString())
 		} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
@@ -237,7 +237,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				return
 			}
-			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_STATU_DEVICE, currentData.DeviceStatu.ToString())
+			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_STATU, currentData.DeviceStatu.ToString())
 		}
 
 	} else {

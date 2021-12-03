@@ -500,7 +500,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_BASE_DEVICE, currentData.DeviceBase.ToString())
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_BASE, currentData.DeviceBase.ToString())
 
 		//DeviceDetail
 		currentData.DeviceDetail.DeviceId = currentData.DeviceId
@@ -522,7 +522,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_DETAIL_DEVICE, currentData.DeviceDetail.ToString())
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_DETAIL, currentData.DeviceDetail.ToString())
 
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 		var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -558,7 +558,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_BASE_DEVICE, currentData.DeviceBase.ToString())
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_BASE, currentData.DeviceBase.ToString())
 
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		var currentData WasteLibrary.RecyDeviceType = WasteLibrary.StringToRecyDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
@@ -594,7 +594,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RECY_BASE_DEVICE, currentData.DeviceBase.ToString())
+		resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.DeviceMain.ToCustomerIdString(), WasteLibrary.DATATYPE_RECY_BASE, currentData.DeviceBase.ToString())
 
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL

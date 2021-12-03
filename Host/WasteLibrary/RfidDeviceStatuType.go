@@ -85,7 +85,7 @@ func (res *RfidDeviceStatuType) New() {
 func (res *RfidDeviceStatuType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_STATU_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_STATU, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -100,7 +100,7 @@ func (res *RfidDeviceStatuType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceStatuType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_STATU_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_STATU, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -109,7 +109,7 @@ func (res *RfidDeviceStatuType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_STATU_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_STATU
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -129,7 +129,7 @@ func (res *RfidDeviceStatuType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_STATU_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_STATU
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -190,13 +190,13 @@ func (res *RfidDeviceStatuType) SelectSQL() string {
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
 	SystemAppLastOkTime,UpdaterAppStatus,UpdaterAppLastOkTime,GpsAppStatus,GpsAppLastOkTime,GpsConnStatus,
 	GpsConnLastOkTime,GpsStatus,GpsLastOkTime
-	 FROM public.`+DATATYPE_RFID_STATU_DEVICE+` 
+	 FROM public.`+DATATYPE_RFID_STATU+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_STATU_DEVICE+`  (DeviceId,
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_STATU+`  (DeviceId,
 	StatusTime,AliveStatus,AliveLastOkTime,ReaderAppStatus,ReaderAppLastOkTime,ReaderConnStatus,
 	ReaderConnLastOkTime,ReaderStatus,ReaderLastOkTime,CamAppStatus,CamAppLastOkTime,CamConnStatus,CamConnLastOkTime,
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
@@ -260,7 +260,7 @@ func (res *RfidDeviceStatuType) UpdateSQL() string {
 		execSqlExt += ",GpsLastOkTime='" + res.GpsLastOkTime + "'"
 	}
 
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_STATU_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_STATU+`  
 	  SET StatusTime='%s',AliveStatus='%s',ReaderAppStatus='%s',ReaderConnStatus='%s',
 	  ReaderStatus='%s',CamAppStatus='%s',CamConnStatus='%s',
 	  CamStatus='%s',ThermAppStatus='%s',TransferAppStatus='%s',SystemAppStatus='%s',

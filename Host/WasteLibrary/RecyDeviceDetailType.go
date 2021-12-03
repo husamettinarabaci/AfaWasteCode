@@ -36,7 +36,7 @@ func (res *RecyDeviceDetailType) New() {
 //GetByRedis
 func (res *RecyDeviceDetailType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_DETAIL_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_DETAIL, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -51,7 +51,7 @@ func (res *RecyDeviceDetailType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RecyDeviceDetailType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RECY_DETAIL_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RECY_DETAIL, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -60,7 +60,7 @@ func (res *RecyDeviceDetailType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RECY_DETAIL_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RECY_DETAIL
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -118,13 +118,13 @@ func (res *RecyDeviceDetailType) StringToType(retStr string) {
 func (res *RecyDeviceDetailType) SelectSQL() string {
 
 	return fmt.Sprintf(`SELECT TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime
-	 FROM public.`+DATATYPE_RECY_DETAIL_DEVICE+` 
+	 FROM public.`+DATATYPE_RECY_DETAIL+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceDetailType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_DETAIL_DEVICE+`  (DeviceId,TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_DETAIL+`  (DeviceId,TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime) 
 	  VALUES (%f,%f,%f,%f,%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.TotalGlassCount, res.TotalPlasticCount,
 		res.TotalMetalCount, res.DailyGlassCount, res.DailyPlasticCount, res.DailyMetalCount, res.RecyTime)
@@ -132,7 +132,7 @@ func (res *RecyDeviceDetailType) InsertSQL() string {
 
 //UpdateSQL
 func (res *RecyDeviceDetailType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_DETAIL_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_DETAIL+`  
 	  SET TotalGlassCount=%f,TotalPlasticCount=%f,TotalMetalCount=%f,DailyGlassCount=%f,DailyPlasticCount=%f,DailyMetalCount=%f,RecyTime='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

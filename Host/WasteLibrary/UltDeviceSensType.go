@@ -76,7 +76,7 @@ func (res *UltDeviceSensType) New() {
 //GetByRedis
 func (res *UltDeviceSensType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_SENS_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_SENS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -91,7 +91,7 @@ func (res *UltDeviceSensType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceSensType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_SENS_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_SENS, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -100,7 +100,7 @@ func (res *UltDeviceSensType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_SENS_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_SENS
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -120,7 +120,7 @@ func (res *UltDeviceSensType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_SENS_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_SENS
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -202,13 +202,13 @@ func (res *UltDeviceSensType) SelectSQL() string {
      UltRange22,
      UltRange23,
      UltRange24
-	 FROM public.`+DATATYPE_ULT_SENS_DEVICE+` 
+	 FROM public.`+DATATYPE_ULT_SENS+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceSensType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_SENS_DEVICE+`  (DeviceId,UltTime,
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_SENS+`  (DeviceId,UltTime,
 		UltCount,
 		UltRange1,
         UltRange2,
@@ -271,7 +271,7 @@ func (res *UltDeviceSensType) InsertSQL() string {
 
 //UpdateSQL
 func (res *UltDeviceSensType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_SENS_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_SENS+`  
 	  SET UltTime='%s',
 	  UltCount=%f,
 	  UltRange1=%f,

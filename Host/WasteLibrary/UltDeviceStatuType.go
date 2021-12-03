@@ -34,7 +34,7 @@ func (res *UltDeviceStatuType) New() {
 //GetByRedis
 func (res *UltDeviceStatuType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_STATU_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_STATU, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -49,7 +49,7 @@ func (res *UltDeviceStatuType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceStatuType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_STATU_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_STATU, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -58,7 +58,7 @@ func (res *UltDeviceStatuType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_STATU_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_STATU
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -78,7 +78,7 @@ func (res *UltDeviceStatuType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_STATU_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_STATU
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -135,13 +135,13 @@ func (res *UltDeviceStatuType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent
-	 FROM public.`+DATATYPE_ULT_STATU_DEVICE+` 
+	 FROM public.`+DATATYPE_ULT_STATU+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_STATU_DEVICE+`  (DeviceId,StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_STATU+`  (DeviceId,StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent) 
 	  VALUES (%f,'%s','%s','%s','%s','%s',%f) 
 	  RETURNING DeviceId;`, res.DeviceId,
 		res.StatusTime, res.AliveStatus, res.AliveLastOkTime, res.ContainerStatu, res.UltStatus, res.SensPercent)
@@ -154,7 +154,7 @@ func (res *UltDeviceStatuType) UpdateSQL() string {
 		execSqlExt += ",AliveLastOkTime='" + res.AliveLastOkTime + "'"
 	}
 
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_STATU_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_STATU+`  
 	  SET StatusTime='%s',AliveStatus='%s',ContainerStatu='%s',UltStatus='%s',SensPercent=%f`+execSqlExt+`
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

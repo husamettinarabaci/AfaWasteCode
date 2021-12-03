@@ -27,7 +27,7 @@ func (res *RfidDeviceReportType) New() {
 func (res *RfidDeviceReportType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_REPORT_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_REPORT, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -42,7 +42,7 @@ func (res *RfidDeviceReportType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceReportType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_REPORT_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_REPORT, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -51,7 +51,7 @@ func (res *RfidDeviceReportType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_REPORT_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_REPORT
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -71,7 +71,7 @@ func (res *RfidDeviceReportType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_REPORT_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_REPORT
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -128,20 +128,20 @@ func (res *RfidDeviceReportType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceReportType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT DailyCapacity,DailyKm
-	 FROM public.`+DATATYPE_RFID_REPORT_DEVICE+` 
+	 FROM public.`+DATATYPE_RFID_REPORT+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceReportType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_REPORT_DEVICE+`  (DeviceId,DailyCapacity,DailyKm) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_REPORT+`  (DeviceId,DailyCapacity,DailyKm) 
 	  VALUES (%f,%f,%f) 
 	  RETURNING DeviceId;`, res.DeviceId, res.DailyCapacity, res.DailyKm)
 }
 
 //UpdateSQL
 func (res *RfidDeviceReportType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_REPORT_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_REPORT+`  
 	  SET DailyCapacity=%f,DailyKm=%f 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

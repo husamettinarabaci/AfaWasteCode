@@ -29,7 +29,7 @@ func (res *RfidDeviceDetailType) New() {
 func (res *RfidDeviceDetailType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_DETAIL_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_DETAIL, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -44,7 +44,7 @@ func (res *RfidDeviceDetailType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *RfidDeviceDetailType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_DETAIL_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_RFID_DETAIL, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -53,7 +53,7 @@ func (res *RfidDeviceDetailType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_DETAIL_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_DETAIL
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -110,20 +110,20 @@ func (res *RfidDeviceDetailType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceDetailType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT PlateNo,DriverName,DriverSurName
-	 FROM public.`+DATATYPE_RFID_DETAIL_DEVICE+` 
+	 FROM public.`+DATATYPE_RFID_DETAIL+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceDetailType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_DETAIL_DEVICE+`  (DeviceId,PlateNo,DriverName,DriverSurName) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_DETAIL+`  (DeviceId,PlateNo,DriverName,DriverSurName) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.PlateNo, res.DriverName, res.DriverSurName)
 }
 
 //UpdateSQL
 func (res *RfidDeviceDetailType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_DETAIL_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_DETAIL+`  
 	  SET PlateNo='%s',DriverName='%s',DriverSurName='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

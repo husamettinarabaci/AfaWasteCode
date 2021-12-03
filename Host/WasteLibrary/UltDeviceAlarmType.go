@@ -30,7 +30,7 @@ func (res *UltDeviceAlarmType) New() {
 //GetByRedis
 func (res *UltDeviceAlarmType) GetByRedis(dbIndex string) ResultType {
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_ALARM_DEVICES, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_ALARM, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -45,7 +45,7 @@ func (res *UltDeviceAlarmType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *UltDeviceAlarmType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_ALARM_DEVICES, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_ULT_ALARM, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
@@ -54,7 +54,7 @@ func (res *UltDeviceAlarmType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_ALARM_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_ALARM
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -111,20 +111,20 @@ func (res *UltDeviceAlarmType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceAlarmType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT AlarmStatus,AlarmTime,AlarmType,Alarm
-	 FROM public.`+DATATYPE_ULT_ALARM_DEVICE+` 
+	 FROM public.`+DATATYPE_ULT_ALARM+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceAlarmType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_ALARM_DEVICE+`  (DeviceId,AlarmStatus,AlarmTime,AlarmType,Alarm) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_ALARM+`  (DeviceId,AlarmStatus,AlarmTime,AlarmType,Alarm) 
 	  VALUES (%f,'%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.AlarmStatus, res.AlarmTime, res.AlarmType, res.Alarm)
 }
 
 //UpdateSQL
 func (res *UltDeviceAlarmType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_ALARM_DEVICE+`  
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_ALARM+`  
 	  SET AlarmStatus='%s',AlarmTime='%s',AlarmType='%s',Alarm='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
