@@ -119,20 +119,20 @@ func (res *RecyDeviceVersionType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion
-	 FROM public.recy_version_devices
+	 FROM public.`+DATATYPE_RECY_VERSION_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceVersionType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_version_devices (DeviceId,WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_VERSION_DEVICE+`  (DeviceId,WebAppVersion,MotorAppVersion,ThermAppVersion,TransferAppVersion,CheckerAppVersion,CamAppVersion,ReaderAppVersion,SystemAppVersion) 
 	  VALUES (%f,'%s','%s','%s','%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.WebAppVersion, res.MotorAppVersion, res.ThermAppVersion, res.TransferAppVersion, res.CheckerAppVersion, res.CamAppVersion, res.ReaderAppVersion, res.SystemAppVersion)
 }
 
 //UpdateSQL
 func (res *RecyDeviceVersionType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.recy_version_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_VERSION_DEVICE+`  
 	  SET WebAppVersion='%s',MotorAppVersion='%s',ThermAppVersion='%s',TransferAppVersion='%s',CheckerAppVersion='%s',CamAppVersion='%s',ReaderAppVersion='%s',SystemAppVersion='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

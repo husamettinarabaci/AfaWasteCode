@@ -112,20 +112,20 @@ func (res *NfcStatuType) StringToType(retStr string) {
 //SelectSQL
 func (res *NfcStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT NfcStatu,ImageStatu,CheckTime,ItemStatu
-	 FROM public.nfc_status
+	 FROM public.`+DATATYPE_NFC_STATU+` 
 	 WHERE NfcId=%f ;`, res.NfcId)
 }
 
 //InsertSQL
 func (res *NfcStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.nfc_status (NfcId,NfcStatu,ImageStatu,CheckTime,ItemStatu) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_NFC_STATU+`  (NfcId,NfcStatu,ImageStatu,CheckTime,ItemStatu) 
 	  VALUES (%f,'%s','%s','%s','%s') 
 	  RETURNING NfcId;`, res.NfcId, res.NfcStatu, res.ImageStatu, res.CheckTime, res.ItemStatu)
 }
 
 //UpdateSQL
 func (res *NfcStatuType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.nfc_status 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_NFC_STATU+`  
 	  SET NfcStatu='%s',ImageStatu='%s',CheckTime='%s',ItemStatu='%s'
 	  WHERE NfcId=%f  
 	  RETURNING NfcId;`,

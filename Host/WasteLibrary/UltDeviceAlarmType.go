@@ -111,20 +111,20 @@ func (res *UltDeviceAlarmType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceAlarmType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT AlarmStatus,AlarmTime,AlarmType,Alarm
-	 FROM public.ult_alarm_devices
+	 FROM public.`+DATATYPE_ULT_ALARM_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceAlarmType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_alarm_devices (DeviceId,AlarmStatus,AlarmTime,AlarmType,Alarm) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_ALARM_DEVICE+`  (DeviceId,AlarmStatus,AlarmTime,AlarmType,Alarm) 
 	  VALUES (%f,'%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.AlarmStatus, res.AlarmTime, res.AlarmType, res.Alarm)
 }
 
 //UpdateSQL
 func (res *UltDeviceAlarmType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_alarm_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_ALARM_DEVICE+`  
 	  SET AlarmStatus='%s',AlarmTime='%s',AlarmType='%s',Alarm='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

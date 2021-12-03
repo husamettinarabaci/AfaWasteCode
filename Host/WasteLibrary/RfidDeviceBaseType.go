@@ -108,20 +108,20 @@ func (res *RfidDeviceBaseType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT DeviceType,TruckType
-	 FROM public.rfid_base_devices
+	 FROM public.`+DATATYPE_RFID_BASE_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_base_devices (DeviceId,DeviceType,TruckType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_BASE_DEVICE+`  (DeviceId,DeviceType,TruckType) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.DeviceType, res.TruckType)
 }
 
 //UpdateSQL
 func (res *RfidDeviceBaseType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.rfid_base_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_BASE_DEVICE+`  
 	  SET DeviceType='%s',TruckType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

@@ -125,27 +125,27 @@ func (res *UltDeviceMainType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,OldLatitude,OldLongitude
-	 FROM public.ult_main_devices
+	 FROM public.`+DATATYPE_ULT_MAIN_DEVICE+` 
 	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_main_devices (CustomerId,SerialNumber,OldLatitude,OldLongitude) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN_DEVICE+`  (CustomerId,SerialNumber,OldLatitude,OldLongitude) 
 	  VALUES (%f,'%s',%f,%f) 
 	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
 }
 
 //InsertDataSQL
 func (res *UltDeviceMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_main_devices (DeviceId,CustomerId,SerialNumber,OldLatitude,OldLongitude) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN_DEVICE+`  (DeviceId,CustomerId,SerialNumber,OldLatitude,OldLongitude) 
 	  VALUES (%f,%f,'%s',%f,%f) 
 	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
 }
 
 //UpdateSQL
 func (res *UltDeviceMainType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_main_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_MAIN_DEVICE+`  
 	  SET CustomerId=%f,OldLatitude=%f,OldLongitude=%f
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

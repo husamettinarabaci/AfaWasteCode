@@ -118,13 +118,13 @@ func (res *RecyDeviceDetailType) StringToType(retStr string) {
 func (res *RecyDeviceDetailType) SelectSQL() string {
 
 	return fmt.Sprintf(`SELECT TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime
-	 FROM public.recy_detail_devices
+	 FROM public.`+DATATYPE_RECY_DETAIL_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceDetailType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_detail_devices (DeviceId,TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_DETAIL_DEVICE+`  (DeviceId,TotalGlassCount,TotalPlasticCount,TotalMetalCount,DailyGlassCount,DailyPlasticCount,DailyMetalCount,RecyTime) 
 	  VALUES (%f,%f,%f,%f,%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.TotalGlassCount, res.TotalPlasticCount,
 		res.TotalMetalCount, res.DailyGlassCount, res.DailyPlasticCount, res.DailyMetalCount, res.RecyTime)
@@ -132,7 +132,7 @@ func (res *RecyDeviceDetailType) InsertSQL() string {
 
 //UpdateSQL
 func (res *RecyDeviceDetailType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.recy_detail_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_DETAIL_DEVICE+`  
 	  SET TotalGlassCount=%f,TotalPlasticCount=%f,TotalMetalCount=%f,DailyGlassCount=%f,DailyPlasticCount=%f,DailyMetalCount=%f,RecyTime='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

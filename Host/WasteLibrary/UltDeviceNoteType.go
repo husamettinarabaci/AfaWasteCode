@@ -53,7 +53,7 @@ func (res *UltDeviceNoteType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_MAIN_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_NOTE_DEVICE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -73,7 +73,7 @@ func (res *UltDeviceNoteType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_ULT_MAIN_DEVICE
+	currentHttpHeader.DataType = DATATYPE_ULT_NOTE_DEVICE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -131,20 +131,20 @@ func (res *UltDeviceNoteType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceNoteType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Note,NoteTime,NoteType
-	 FROM public.ult_note_devices 
+	 FROM public.`+DATATYPE_ULT_NOTE_DEVICE+`  
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceNoteType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_note_devices (DeviceId,Note,NoteTime,NoteType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_NOTE_DEVICE+`  (DeviceId,Note,NoteTime,NoteType) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Note, res.NoteTime, res.NoteType)
 }
 
 //UpdateSQL
 func (res *UltDeviceNoteType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_note_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_NOTE_DEVICE+`  
 	  SET Note='%s',NoteTime='%s',NoteType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

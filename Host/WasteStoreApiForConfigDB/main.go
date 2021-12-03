@@ -94,6 +94,28 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		currentData.UserId = float64(userId)
 		resultVal.Retval = currentData.ToIdString()
 
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_CUSTOMER {
+
+		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.HTTP_DATA))
+
+		if currentData.CustomerId != 0 {
+			execSQL = currentData.UpdateSQL()
+		} else {
+
+			execSQL = currentData.InsertSQL()
+		}
+		var customerId int = 0
+		errDb := configDb.QueryRow(execSQL).Scan(&customerId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.CustomerId = float64(customerId)
+		resultVal.Retval = currentData.ToIdString()
+
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	}
@@ -125,6 +147,18 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 
 		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
 
+		errDb := currentData.SelectWithDb(configDb)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		resultVal.Retval = currentData.ToString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_CUSTOMER {
+		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.HTTP_DATA))
 		errDb := currentData.SelectWithDb(configDb)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)

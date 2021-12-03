@@ -87,7 +87,7 @@ func (res *CustomerType) SaveToDb() ResultType {
 		HTTP_HEADER: {currentHttpHeader.ToString()},
 		HTTP_DATA:   {res.ToString()},
 	}
-	resultVal = SaveStaticDbMainForStoreApi(data)
+	resultVal = SaveConfigDbMainForStoreApi(data)
 	if resultVal.Result == RESULT_OK {
 		res.CustomerId = StringIdToFloat64(resultVal.Retval.(string))
 		resultVal.Retval = res.ToString()
@@ -146,13 +146,13 @@ func (res *CustomerType) SelectSQL() string {
 	RecyApp,
 	Active,
 	CreateTime 
-	FROM public.customers 
+	FROM public.`+DATATYPE_CUSTOMER+`  
 	WHERE CustomerId=%f  ;`, res.CustomerId)
 }
 
 //InsertSQL
 func (res *CustomerType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.customers(
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_CUSTOMER+` (
 		CustomerName,CustomerLink,RfIdApp,UltApp,RecyApp)
   VALUES ('%s','%s','%s','%s','%s')  RETURNING CustomerId;`,
 		res.CustomerName, res.CustomerLink, res.RfIdApp,
@@ -161,7 +161,7 @@ func (res *CustomerType) InsertSQL() string {
 
 //UpdateSQL
 func (res *CustomerType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.customers
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_CUSTOMER+` 
 		 SET CustomerName='%s',CustomerLink='%s',RfIdApp='%s',UltApp='%s',RecyApp='%s'
 		 WHERE CustomerId=%f  RETURNING CustomerId;`,
 		res.CustomerName, res.CustomerLink, res.RfIdApp,

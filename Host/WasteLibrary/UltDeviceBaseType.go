@@ -113,20 +113,20 @@ func (res *UltDeviceBaseType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT ContainerNo,ContainerType,DeviceType,Imei,Imsi
-	 FROM public.ult_base_devices
+	 FROM public.`+DATATYPE_ULT_BASE_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_base_devices (DeviceId,ContainerNo,ContainerType,DeviceType,Imei,Imsi) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BASE_DEVICE+`  (DeviceId,ContainerNo,ContainerType,DeviceType,Imei,Imsi) 
 	  VALUES (%f,'%s','%s','%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.ContainerType, res.DeviceType, res.Imei, res.Imsi)
 }
 
 //UpdateSQL
 func (res *UltDeviceBaseType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_base_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_BASE_DEVICE+`  
 	  SET ContainerNo='%s',ContainerType='%s',DeviceType='%s',Imei='%s',Imsi='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

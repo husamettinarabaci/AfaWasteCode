@@ -135,13 +135,13 @@ func (res *UltDeviceStatuType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent
-	 FROM public.ult_statu_devices
+	 FROM public.`+DATATYPE_ULT_STATU_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_statu_devices (DeviceId,StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_STATU_DEVICE+`  (DeviceId,StatusTime,AliveStatus,AliveLastOkTime,ContainerStatu,UltStatus,SensPercent) 
 	  VALUES (%f,'%s','%s','%s','%s','%s',%f) 
 	  RETURNING DeviceId;`, res.DeviceId,
 		res.StatusTime, res.AliveStatus, res.AliveLastOkTime, res.ContainerStatu, res.UltStatus, res.SensPercent)
@@ -154,7 +154,7 @@ func (res *UltDeviceStatuType) UpdateSQL() string {
 		execSqlExt += ",AliveLastOkTime='" + res.AliveLastOkTime + "'"
 	}
 
-	return fmt.Sprintf(`UPDATE public.ult_statu_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_STATU_DEVICE+`  
 	  SET StatusTime='%s',AliveStatus='%s',ContainerStatu='%s',UltStatus='%s',SensPercent=%f`+execSqlExt+`
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

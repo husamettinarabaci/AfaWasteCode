@@ -129,20 +129,20 @@ func (res *UltDeviceGpsType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceGpsType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Latitude,Longitude,GpsTime
-	 FROM public.ult_gps_devices
+	 FROM public.`+DATATYPE_ULT_GPS_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceGpsType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_gps_devices (DeviceId,Latitude,Longitude,GpsTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_GPS_DEVICE+`  (DeviceId,Latitude,Longitude,GpsTime) 
 	  VALUES (%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.GpsTime)
 }
 
 //UpdateSQL
 func (res *UltDeviceGpsType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_gps_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_GPS_DEVICE+`  
 	  SET Latitude=%f,Longitude=%f,GpsTime='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

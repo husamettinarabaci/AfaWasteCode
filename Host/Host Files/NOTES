@@ -16,12 +16,16 @@
 *CamReader Check TagReader ImageStatu
 *Summary Of 7 Day Toplanmayan Container
 *DeviceMotion Summary
+*Device Versions ReaderDb Not Found
+*ReaderDb Minus Note Alarm Detail Report Type
+*Check RfidEmbededGps By REaderDb
+*Check Reader Db InsertDataSql By Main
 
 RFID
 Toplanan Toplanmayan Tag
 
 TAG
-Konum Hareket Takibi
+Konum Hareket Takibi **
 
 
 

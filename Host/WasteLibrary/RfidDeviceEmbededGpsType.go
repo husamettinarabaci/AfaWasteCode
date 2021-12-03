@@ -132,20 +132,20 @@ func (res *RfidDeviceEmbededGpsType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceEmbededGpsType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Latitude,Longitude,Speed,GpsTime
-	 FROM public.rfid_embeded_gps_devices
+	 FROM public.`+DATATYPE_RFID_EMBEDED_GPS_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceEmbededGpsType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_embeded_gps_devices (DeviceId,Latitude,Longitude,Speed,GpsTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_EMBEDED_GPS_DEVICE+`  (DeviceId,Latitude,Longitude,Speed,GpsTime) 
 	  VALUES (%f,%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.Speed, res.GpsTime)
 }
 
 //UpdateSQL
 func (res *RfidDeviceEmbededGpsType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.rfid_embeded_gps_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_EMBEDED_GPS_DEVICE+`  
 	  SET Latitude=%f,Longitude=%f,Speed=%f,GpsTime='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

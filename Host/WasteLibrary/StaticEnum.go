@@ -191,6 +191,8 @@ const (
 	DATATYPE_NFC_BASE                = "NFC_BASE"
 	DATATYPE_NFC_STATU               = "NFC_STATU"
 	DATATYPE_NFC_READER              = "NFC_READER"
+	DATATYPE_LISTENER_DATA           = "LISTENER_DATA"
+	DATATYPE_REDIS_DATA              = "REDIS_DATA"
 )
 
 const (

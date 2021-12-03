@@ -106,20 +106,20 @@ func (res *UltDeviceVersionType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceVersionType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT FirmwareVersion
-	 FROM public.ult_version_devices
+	 FROM public.`+DATATYPE_ULT_VERSION_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceVersionType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_version_devices (DeviceId,FirmwareVersion) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_VERSION_DEVICE+`  (DeviceId,FirmwareVersion) 
 	  VALUES (%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.FirmwareVersion)
 }
 
 //UpdateSQL
 func (res *UltDeviceVersionType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_version_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_VERSION_DEVICE+`  
 	  SET FirmwareVersion='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

@@ -12,6 +12,7 @@ type TagType struct {
 	TagBase       TagBaseType
 	TagStatu      TagStatuType
 	TagGps        TagGpsType
+	TagOldGps     TagOldGpsType
 	TagReader     TagReaderType
 	TagNote       TagNoteType
 	TagAlarm      TagAlarmType
@@ -25,6 +26,7 @@ func (res *TagType) New() {
 	res.TagBase.New()
 	res.TagStatu.New()
 	res.TagGps.New()
+	res.TagOldGps.New()
 	res.TagReader.New()
 	res.TagNote.New()
 	res.TagAlarm.New()
@@ -48,6 +50,11 @@ func (res *TagType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.TagGps.TagId = res.TagId
 	resultVal = res.TagGps.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.TagOldGps.TagId = res.TagId
+	resultVal = res.TagOldGps.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

@@ -131,20 +131,20 @@ func (res *TagGpsType) StringToType(retStr string) {
 //SelectSQL
 func (res *TagGpsType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Latitude,Longitude,GpsTime
-	 FROM public.tag_gpses
+	 FROM public.`+DATATYPE_TAG_GPS+` 
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
 func (res *TagGpsType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_gpses (TagId,Latitude,Longitude,GpsTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_TAG_GPS+`  (TagId,Latitude,Longitude,GpsTime) 
 	  VALUES (%f,%f,%f,'%s') 
 	  RETURNING TagId;`, res.TagId, res.Latitude, res.Longitude, res.GpsTime)
 }
 
 //UpdateSQL
 func (res *TagGpsType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.tag_gpses 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_TAG_GPS+`  
 	  SET Latitude=%f,Longitude=%f,GpsTime='%s' 
 	  WHERE TagId=%f  
 	  RETURNING TagId;`,

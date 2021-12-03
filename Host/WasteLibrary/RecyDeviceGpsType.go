@@ -129,20 +129,20 @@ func (res *RecyDeviceGpsType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceGpsType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Latitude,Longitude,GpsTime
-	 FROM public.recy_gps_devices
+	 FROM public.`+DATATYPE_RECY_GPS_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceGpsType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_gps_devices (DeviceId,Latitude,Longitude,GpsTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_GPS_DEVICE+`  (DeviceId,Latitude,Longitude,GpsTime) 
 	  VALUES (%f,%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Latitude, res.Longitude, res.GpsTime)
 }
 
 //UpdateSQL
 func (res *RecyDeviceGpsType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.recy_gps_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_GPS_DEVICE+`  
 	  SET Latitude=%f,Longitude=%f,GpsTime='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

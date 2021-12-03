@@ -133,20 +133,20 @@ func (res *TagStatuType) StringToType(retStr string) {
 //SelectSQL
 func (res *TagStatuType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT TagStatu,ImageStatu,CheckTime,ContainerStatu
-	 FROM public.tag_status
+	 FROM public.`+DATATYPE_TAG_STATU+` 
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
 func (res *TagStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_status (TagId,TagStatu,ImageStatu,CheckTime,ContainerStatu) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_TAG_STATU+`  (TagId,TagStatu,ImageStatu,CheckTime,ContainerStatu) 
 	  VALUES (%f,'%s','%s','%s','%s') 
 	  RETURNING TagId;`, res.TagId, res.TagStatu, res.ImageStatu, res.CheckTime, res.ContainerStatu)
 }
 
 //UpdateSQL
 func (res *TagStatuType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.tag_status 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_TAG_STATU+`  
 	  SET TagStatu='%s',ImageStatu='%s',CheckTime='%s',ContainerStatu='%s'
 	  WHERE TagId=%f  
 	  RETURNING TagId;`,

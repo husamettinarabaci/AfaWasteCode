@@ -126,13 +126,13 @@ func (res *UserType) SelectSQL() string {
 			Email,
 			Active,
 			CreateTime 
-			 FROM public.users 
+			 FROM public.`+DATATYPE_USER+`  
 			 WHERE UserId=%f  ;`, res.UserId)
 }
 
 //InsertSQL
 func (res *UserType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.users 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_USER+`  
 	(UserRole,Email,UserName,CustomerId,Password) 
 	  VALUES ('%s','%s','%s',%f,'%s')   
 	  RETURNING UserId;`,
@@ -142,7 +142,7 @@ func (res *UserType) InsertSQL() string {
 
 //UpdateSQL
 func (res *UserType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.users 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_USER+`  
 	SET UserRole='%s',Email='%s',UserName='%s'
 	  WHERE UserId=%f  
 	RETURNING UserId;`,
@@ -151,7 +151,7 @@ func (res *UserType) UpdateSQL() string {
 
 //UpdatePasswordSQL
 func (res *UserType) UpdatePasswordSQL() string {
-	return fmt.Sprintf(`UPDATE public.users 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_USER+`  
 	SET Password='%s'
 	  WHERE UserId=%f  
 	RETURNING UserId;`,

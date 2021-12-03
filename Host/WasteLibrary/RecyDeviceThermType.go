@@ -129,20 +129,20 @@ func (res *RecyDeviceThermType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceThermType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Therm,ThermTime,ThermStatus
-	 FROM public.recy_therm_devices
+	 FROM public.`+DATATYPE_RECY_THERM_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceThermType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_therm_devices (DeviceId,Therm,ThermTime,ThermStatus) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_THERM_DEVICE+`  (DeviceId,Therm,ThermTime,ThermStatus) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Therm, res.ThermTime, res.ThermStatus)
 }
 
 //UpdateSQL
 func (res *RecyDeviceThermType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.recy_therm_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_THERM_DEVICE+`  
 	  SET Therm='%s',ThermTime='%s',ThermStatus='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

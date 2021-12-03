@@ -112,20 +112,20 @@ func (res *NfcBaseType) StringToType(retStr string) {
 //SelectSQL
 func (res *NfcBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Name,SurName,TotalAmount,LastAmount
-	 FROM public.nfc_bases
+	 FROM public.`+DATATYPE_NFC_BASE+` 
 	 WHERE NfcId=%f ;`, res.NfcId)
 }
 
 //InsertSQL
 func (res *NfcBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.nfc_bases (NfcId,Name,SurName,TotalAmount,LastAmount) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_NFC_BASE+`  (NfcId,Name,SurName,TotalAmount,LastAmount) 
 	  VALUES (%f,'%s','%s',%f,%f) 
 	  RETURNING NfcId;`, res.NfcId, res.Name, res.SurName, res.TotalAmount, res.LastAmount)
 }
 
 //UpdateSQL
 func (res *NfcBaseType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.nfc_bases 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_NFC_BASE+`  
 	  SET Name='%s',SurName='%s',TotalAmount=%f,LastAmount=%f
 	  WHERE NfcId=%f  
 	  RETURNING NfcId;`, res.Name, res.SurName, res.TotalAmount, res.LastAmount, res.NfcId)

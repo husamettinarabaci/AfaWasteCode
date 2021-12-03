@@ -130,27 +130,27 @@ func (res *TagMainType) StringToType(retStr string) {
 //SelectSQL
 func (res *TagMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,DeviceId,Epc,Active,CreateTime
-	 FROM public.tag_mains
+	 FROM public.`+DATATYPE_TAG_MAIN+` 
 	 WHERE TagId=%f  ;`, res.TagId)
 }
 
 //InsertSQL
 func (res *TagMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_mains (CustomerId,DeviceId,Epc) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_TAG_MAIN+`  (CustomerId,DeviceId,Epc) 
 	  VALUES (%f,%f,'%s') 
 	  RETURNING TagId;`, res.CustomerId, res.DeviceId, res.Epc)
 }
 
 //InsertDataSQL
 func (res *TagMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_mains (TagId,CustomerId,DeviceId,Epc) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_TAG_MAIN+`  (TagId,CustomerId,DeviceId,Epc) 
 	  VALUES (%f,%f,%f,'%s') 
 	  RETURNING TagId;`, res.TagId, res.CustomerId, res.DeviceId, res.Epc)
 }
 
 //UpdateSQL
 func (res *TagMainType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.tag_mains 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_TAG_MAIN+`  
 	  SET CustomerId=%f,DeviceId=%f,Epc='%s' 
 	  WHERE TagId=%f  
 	  RETURNING TagId;`,

@@ -497,7 +497,7 @@ func getKeyDb(dbIndex int, hKey string, sKey string) WasteLibrary.ResultType {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 
 	var selectSQL string = fmt.Sprintf(`SELECT KeyValue 
-	FROM public.redisdata_%d WHERE HashKey='%s' AND SubKey='%s';`, dbIndex, hKey, sKey)
+	FROM public.`+WasteLibrary.DATATYPE_REDIS_DATA+`_%d WHERE HashKey='%s' AND SubKey='%s';`, dbIndex, hKey, sKey)
 	rows, errSel := sumDb.Query(selectSQL)
 	WasteLibrary.LogErr(errSel)
 	var kVal string = WasteLibrary.RESULT_FAIL
@@ -517,7 +517,7 @@ func getKeyDb(dbIndex int, hKey string, sKey string) WasteLibrary.ResultType {
 func insertKeyDb(dbIndex int, hKey string, sKey string, kVal string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	var insertSQL string = fmt.Sprintf(`INSERT INTO public.redisdata_%d (
+	var insertSQL string = fmt.Sprintf(`INSERT INTO public.`+WasteLibrary.DATATYPE_REDIS_DATA+`_%d (
 		HashKey,SubKey,KeyValue)
 	   VALUES ('%s','%s','%s');`, dbIndex, hKey, sKey, kVal)
 	_, errDb := sumDb.Exec(insertSQL)
@@ -529,7 +529,7 @@ func insertKeyDb(dbIndex int, hKey string, sKey string, kVal string) WasteLibrar
 func deleteKeyDb(dbIndex int, hKey string, sKey string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	var deleteSQL string = fmt.Sprintf(`DELETE FROM public.redisdata_%d 
+	var deleteSQL string = fmt.Sprintf(`DELETE FROM public.`+WasteLibrary.DATATYPE_REDIS_DATA+`_%d 
 	    WHERE HashKey='%s' AND SubKey='%s';`, dbIndex, hKey, sKey)
 	_, errDb := sumDb.Exec(deleteSQL)
 	WasteLibrary.LogErr(errDb)
@@ -540,7 +540,7 @@ func deleteKeyDb(dbIndex int, hKey string, sKey string) WasteLibrary.ResultType 
 func updateKeyDb(dbIndex int, hKey string, sKey string, kVal string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
-	var updateSQL string = fmt.Sprintf(`UPDATE public.redisdata_%d SET KeyValue='%s' WHERE HashKey='%s' AND SubKey='%s';`, dbIndex, kVal, hKey, sKey)
+	var updateSQL string = fmt.Sprintf(`UPDATE public.`+WasteLibrary.DATATYPE_REDIS_DATA+`_%d SET KeyValue='%s' WHERE HashKey='%s' AND SubKey='%s';`, dbIndex, kVal, hKey, sKey)
 	_, errDb := sumDb.Exec(updateSQL)
 	WasteLibrary.LogErr(errDb)
 	resultVal.Result = WasteLibrary.RESULT_OK

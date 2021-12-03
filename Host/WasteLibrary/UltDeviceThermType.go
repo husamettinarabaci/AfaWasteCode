@@ -129,20 +129,20 @@ func (res *UltDeviceThermType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceThermType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Therm,ThermTime,ThermStatus
-	 FROM public.ult_therm_devices
+	 FROM public.`+DATATYPE_ULT_THERM_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceThermType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_therm_devices (DeviceId,Therm,ThermTime,ThermStatus) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_THERM_DEVICE+`  (DeviceId,Therm,ThermTime,ThermStatus) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Therm, res.ThermTime, res.ThermStatus)
 }
 
 //UpdateSQL
 func (res *UltDeviceThermType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_therm_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_THERM_DEVICE+`  
 	  SET Therm='%s',ThermTime='%s',ThermStatus='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

@@ -202,13 +202,13 @@ func (res *UltDeviceSensType) SelectSQL() string {
      UltRange22,
      UltRange23,
      UltRange24
-	 FROM public.ult_sens_devices
+	 FROM public.`+DATATYPE_ULT_SENS_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceSensType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_sens_devices (DeviceId,UltTime,
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_SENS_DEVICE+`  (DeviceId,UltTime,
 		UltCount,
 		UltRange1,
         UltRange2,
@@ -271,7 +271,7 @@ func (res *UltDeviceSensType) InsertSQL() string {
 
 //UpdateSQL
 func (res *UltDeviceSensType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_sens_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_SENS_DEVICE+`  
 	  SET UltTime='%s',
 	  UltCount=%f,
 	  UltRange1=%f,

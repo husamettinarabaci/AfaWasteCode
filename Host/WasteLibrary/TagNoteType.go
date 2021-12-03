@@ -131,20 +131,20 @@ func (res *TagNoteType) StringToType(retStr string) {
 //SelectSQL
 func (res *TagNoteType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Note,NoteTime,NoteType
-	 FROM public.tag_notes
+	 FROM public.`+DATATYPE_TAG_NOTE+` 
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
 func (res *TagNoteType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_notes (TagId,Note,NoteTime,NoteType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_TAG_NOTE+`  (TagId,Note,NoteTime,NoteType) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING TagId;`, res.TagId, res.Note, res.NoteTime, res.NoteType)
 }
 
 //UpdateSQL
 func (res *TagNoteType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.tag_notes 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_TAG_NOTE+`  
 	  SET Note='%s',NoteTime='%s',NoteType='%s'
 	  WHERE TagId=%f  
 	  RETURNING TagId;`,

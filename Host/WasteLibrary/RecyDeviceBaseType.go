@@ -107,20 +107,20 @@ func (res *RecyDeviceBaseType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceBaseType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT ContainerNo,DeviceType
-	 FROM public.recy_base_devices
+	 FROM public.`+DATATYPE_RECY_BASE_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_base_devices (DeviceId,ContainerNo,DeviceType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_BASE_DEVICE+`  (DeviceId,ContainerNo,DeviceType) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.DeviceType)
 }
 
 //UpdateSQL
 func (res *RecyDeviceBaseType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.recy_base_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_BASE_DEVICE+`  
 	  SET ContainerNo='%s',DeviceType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

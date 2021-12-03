@@ -127,13 +127,13 @@ func (res *RfidDeviceWorkHourType) SelectSQL() string {
 	 Work1StartHour,Work1StartMinute,Work1AddMinute,
 	 Work2StartHour,Work2StartMinute,Work2AddMinute,
 	 Work3StartHour,Work3StartMinute,Work3AddMinute
-	 FROM public.rfid_workhour_devices
+	 FROM public.`+DATATYPE_RFID_WORKHOUR_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceWorkHourType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_workhour_devices (DeviceId,WorkCount,
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_WORKHOUR_DEVICE+`  (DeviceId,WorkCount,
 	 Work1StartHour,Work1StartMinute,Work1AddMinute,
 	 Work2StartHour,Work2StartMinute,Work2AddMinute,
 	 Work3StartHour,Work3StartMinute,Work3AddMinute) 
@@ -147,7 +147,7 @@ func (res *RfidDeviceWorkHourType) InsertSQL() string {
 //UpdateSQL
 func (res *RfidDeviceWorkHourType) UpdateSQL() string {
 
-	return fmt.Sprintf(`UPDATE public.rfid_workhour_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_WORKHOUR_DEVICE+`  
 	  SET WorkCount=%d,
 	  Work1StartHour=%d,Work1StartMinute=%d,Work1AddMinute=%d,
 	  Work2StartHour=%d,Work2StartMinute=%d,Work2AddMinute=%d,

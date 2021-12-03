@@ -112,20 +112,20 @@ func (res *TagAlarmType) StringToType(retStr string) {
 //SelectSQL
 func (res *TagAlarmType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT AlarmStatus,AlarmTime,AlarmType,Alarm
-	 FROM public.tag_alarms
+	 FROM public.`+DATATYPE_TAG_ALARM+` 
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
 func (res *TagAlarmType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_alarms (TagId,AlarmStatus,AlarmTime,AlarmType,Alarm) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_TAG_ALARM+`  (TagId,AlarmStatus,AlarmTime,AlarmType,Alarm) 
 	  VALUES (%f,'%s','%s','%s','%s') 
 	  RETURNING TagId;`, res.TagId, res.AlarmStatus, res.AlarmTime, res.AlarmType, res.Alarm)
 }
 
 //UpdateSQL
 func (res *TagAlarmType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.tag_alarms 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_TAG_ALARM+`  
 	  SET AlarmStatus='%s',AlarmTime='%s',AlarmType='%s',Alarm='%s' 
 	  WHERE TagId=%f  
 	  RETURNING TagId;`,

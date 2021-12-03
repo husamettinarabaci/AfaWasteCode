@@ -129,20 +129,20 @@ func (res *TagReaderType) StringToType(retStr string) {
 //SelectSQL
 func (res *TagReaderType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT UID,ReadTime
-	 FROM public.tag_readers
+	 FROM public.`+DATATYPE_TAG_READER+` 
 	 WHERE TagId=%f ;`, res.TagId)
 }
 
 //InsertSQL
 func (res *TagReaderType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.tag_readers (TagId,UID,ReadTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_TAG_READER+`  (TagId,UID,ReadTime) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING TagId;`, res.TagId, res.UID, res.ReadTime)
 }
 
 //UpdateSQL
 func (res *TagReaderType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.tag_readers 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_TAG_READER+`  
 	  SET UID='%s',ReadTime='%s'
 	  WHERE TagId=%f  
 	  RETURNING TagId;`,

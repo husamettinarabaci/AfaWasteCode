@@ -121,27 +121,27 @@ func (res *NfcMainType) StringToType(retStr string) {
 //SelectSQL
 func (res *NfcMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,DeviceId,Epc,Active,CreateTime
-	 FROM public.nfc_mains
+	 FROM public.`+DATATYPE_NFC_MAIN+` 
 	 WHERE NfcId=%f  ;`, res.NfcId)
 }
 
 //InsertSQL
 func (res *NfcMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.nfc_mains (CustomerId,DeviceId,Epc) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_NFC_MAIN+`  (CustomerId,DeviceId,Epc) 
 	  VALUES (%f,%f,'%s') 
 	  RETURNING NfcId;`, res.CustomerId, res.DeviceId, res.Epc)
 }
 
 //InsertDataSQL
 func (res *NfcMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.nfc_mains (NfcId,CustomerId,DeviceId,Epc) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_NFC_MAIN+`  (NfcId,CustomerId,DeviceId,Epc) 
 	  VALUES (%f,%f,%f,'%s') 
 	  RETURNING NfcId;`, res.NfcId, res.CustomerId, res.DeviceId, res.Epc)
 }
 
 //UpdateSQL
 func (res *NfcMainType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.nfc_mains 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_NFC_MAIN+`  
 	  SET CustomerId=%f,DeviceId=%f,Epc='%s' 
 	  WHERE NfcId=%f  
 	  RETURNING NfcId;`,

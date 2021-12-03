@@ -128,20 +128,20 @@ func (res *RfidDeviceReportType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceReportType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT DailyCapacity,DailyKm
-	 FROM public.rfid_report_devices
+	 FROM public.`+DATATYPE_RFID_REPORT_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceReportType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_report_devices (DeviceId,DailyCapacity,DailyKm) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_REPORT_DEVICE+`  (DeviceId,DailyCapacity,DailyKm) 
 	  VALUES (%f,%f,%f) 
 	  RETURNING DeviceId;`, res.DeviceId, res.DailyCapacity, res.DailyKm)
 }
 
 //UpdateSQL
 func (res *RfidDeviceReportType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.rfid_therm_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_REPORT_DEVICE+`  
 	  SET DailyCapacity=%f,DailyKm=%f 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

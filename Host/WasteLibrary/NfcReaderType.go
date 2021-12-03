@@ -108,20 +108,20 @@ func (res *NfcReaderType) StringToType(retStr string) {
 //SelectSQL
 func (res *NfcReaderType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT UID,ReadTime
-	 FROM public.nfc_readers
+	 FROM public.`+DATATYPE_NFC_READER+` 
 	 WHERE NfcId=%f ;`, res.NfcId)
 }
 
 //InsertSQL
 func (res *NfcReaderType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.nfc_readers (NfcId,UID,ReadTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_NFC_READER+`  (NfcId,UID,ReadTime) 
 	  VALUES (%f,'%s','%s') 
 	  RETURNING NfcId;`, res.NfcId, res.UID, res.ReadTime)
 }
 
 //UpdateSQL
 func (res *NfcReaderType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.nfc_readers 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_NFC_READER+`  
 	  SET UID='%s',ReadTime='%s'
 	  WHERE NfcId=%f  
 	  RETURNING NfcId;`,

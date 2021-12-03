@@ -129,20 +129,20 @@ func (res *UltDeviceBatteryType) StringToType(retStr string) {
 //SelectSQL
 func (res *UltDeviceBatteryType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Battery,BatteryStatus,BatteryTime
-	 FROM public.ult_battery_devices
+	 FROM public.`+DATATYPE_ULT_BATTERY_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceBatteryType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.ult_battery_devices (DeviceId,Battery,BatteryStatus,BatteryTime) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BATTERY_DEVICE+`  (DeviceId,Battery,BatteryStatus,BatteryTime) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Battery, res.BatteryStatus, res.BatteryTime)
 }
 
 //UpdateSQL
 func (res *UltDeviceBatteryType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.ult_battery_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_BATTERY_DEVICE+`  
 	  SET Battery='%s',BatteryStatus='%s',BatteryTime='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

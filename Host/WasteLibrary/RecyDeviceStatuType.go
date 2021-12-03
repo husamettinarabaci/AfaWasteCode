@@ -189,13 +189,13 @@ func (res *RecyDeviceStatuType) SelectSQL() string {
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
 	SystemAppLastOkTime,UpdaterAppStatus,UpdaterAppLastOkTime,MotorAppStatus,MotorAppLastOkTime,MotorConnStatus,
 	MotorConnLastOkTime,MotorStatus,MotorLastOkTime,WebAppStatus,WebAppLastOkTime
-	 FROM public.recy_statu_devices
+	 FROM public.`+DATATYPE_RECY_STATU_DEVICE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceStatuType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_statu_devices (DeviceId,
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_STATU_DEVICE+`  (DeviceId,
 	StatusTime,AliveStatus,AliveLastOkTime,ReaderAppStatus,ReaderAppLastOkTime,ReaderConnStatus,
 	ReaderConnLastOkTime,ReaderStatus,ReaderLastOkTime,CamAppStatus,CamAppLastOkTime,CamConnStatus,CamConnLastOkTime,
 	CamStatus,CamLastOkTime,ThermAppStatus,ThermAppLastOkTime,TransferAppStatus,TransferAppLastOkTime,SystemAppStatus,
@@ -263,7 +263,7 @@ func (res *RecyDeviceStatuType) UpdateSQL() string {
 		execSqlExt += ",WebAppLastOkTime='" + res.WebAppLastOkTime + "'"
 	}
 
-	return fmt.Sprintf(`UPDATE public.recy_statu_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_STATU_DEVICE+`  
 	  SET StatusTime='%s',AliveStatus='%s',ReaderAppStatus='%s',ReaderConnStatus='%s',
 	  ReaderStatus='%s',CamAppStatus='%s',CamConnStatus='%s',
 	  CamStatus='%s',ThermAppStatus='%s',TransferAppStatus='%s',SystemAppStatus='%s',

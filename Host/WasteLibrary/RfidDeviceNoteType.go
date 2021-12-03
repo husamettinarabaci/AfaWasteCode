@@ -53,7 +53,7 @@ func (res *RfidDeviceNoteType) SaveToDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_MAIN_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_NOTE_DEVICE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -73,7 +73,7 @@ func (res *RfidDeviceNoteType) SaveToReaderDb() ResultType {
 	var resultVal ResultType
 	var currentHttpHeader HttpClientHeaderType
 	currentHttpHeader.New()
-	currentHttpHeader.DataType = DATATYPE_RFID_MAIN_DEVICE
+	currentHttpHeader.DataType = DATATYPE_RFID_NOTE_DEVICE
 
 	data := url.Values{
 		HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -131,20 +131,20 @@ func (res *RfidDeviceNoteType) StringToType(retStr string) {
 //SelectSQL
 func (res *RfidDeviceNoteType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT Note,NoteTime,NoteType
-	 FROM public.rfid_note_devices 
+	 FROM public.`+DATATYPE_RFID_NOTE_DEVICE+`  
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceNoteType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.rfid_note_devices (DeviceId,Note,NoteTime,NoteType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_NOTE_DEVICE+`  (DeviceId,Note,NoteTime,NoteType) 
 	  VALUES (%f,'%s','%s','%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.Note, res.NoteTime, res.NoteType)
 }
 
 //UpdateSQL
 func (res *RfidDeviceNoteType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.rfid_note_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_NOTE_DEVICE+`  
 	  SET Note='%s',NoteTime='%s',NoteType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,

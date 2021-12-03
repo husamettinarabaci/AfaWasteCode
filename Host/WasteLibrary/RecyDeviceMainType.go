@@ -120,27 +120,27 @@ func (res *RecyDeviceMainType) StringToType(retStr string) {
 //SelectSQL
 func (res *RecyDeviceMainType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime
-	 FROM public.recy_main_devices
+	 FROM public.`+DATATYPE_RECY_MAIN_DEVICE+` 
 	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_main_devices (CustomerId,SerialNumber) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN_DEVICE+`  (CustomerId,SerialNumber) 
 	  VALUES (%f,'%s') 
 	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber)
 }
 
 //InsertDataSQL
 func (res *RecyDeviceMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.recy_main_devices (DeviceId,CustomerId,SerialNumber) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN_DEVICE+`  (DeviceId,CustomerId,SerialNumber) 
 	  VALUES (%f,%f,'%s') 
 	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber)
 }
 
 //UpdateSQL
 func (res *RecyDeviceMainType) UpdateSQL() string {
-	return fmt.Sprintf(`UPDATE public.recy_main_devices 
+	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_MAIN_DEVICE+`  
 	  SET CustomerId=%f 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
