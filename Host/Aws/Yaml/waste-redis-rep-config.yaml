@@ -5,4 +5,5 @@ metadata:
   namespace: waste-system
 data:
   redis-rep-config: |
+    requirepass Amca151200!Furkan
     masterauth Amca151200!Furkan

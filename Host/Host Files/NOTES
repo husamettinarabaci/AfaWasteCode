@@ -1,6 +1,7 @@
 *Test Summary tag
 *Test summary tagview
 *Test Speed 0
+*SystemCleaner
 *check GpsStopReader distance
 *Listener TcpSocket Error Manage
 ***Db Replicas
@@ -20,8 +21,8 @@
 *ReaderDb Minus Note Alarm Detail Report Type
 *Check RfidEmbededGps By REaderDb
 *Check Reader Db InsertDataSql By Main
-*main.setKeyRedis - Log : ERR Client sent AUTH, but no password is set - IP : 172.31.9.18:48022
 *Check S3 Db Volum Data Usage Capacity
+*Update and Version tools
 
 
 RFID
