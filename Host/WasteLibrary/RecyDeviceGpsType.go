@@ -160,3 +160,17 @@ func (res *RecyDeviceGpsType) SelectWithDb(db *sql.DB) error {
 		&res.GpsTime)
 	return errDb
 }
+
+//CreateDb
+func (res *RecyDeviceGpsType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_GPS + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	GpsTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

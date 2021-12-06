@@ -169,3 +169,19 @@ func (res *UserType) SelectWithDb(db *sql.DB) error {
 		&res.CreateTime)
 	return errDb
 }
+
+//CreateDb
+func (res *UserType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_USER + `  ( 
+	UserId serial PRIMARY KEY,
+	CustomerId INT NOT NULL DEFAULT -1,
+	UserName varchar(50) NOT NULL DEFAULT '',
+	UserRole varchar(50) NOT NULL DEFAULT '` + USER_ROLE_GUEST + `',
+	Password varchar(50) NOT NULL DEFAULT '',
+	Email varchar(50) NOT NULL DEFAULT '',
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

@@ -172,3 +172,20 @@ func (res *UltDeviceStatuType) SelectWithDb(db *sql.DB) error {
 		&res.SensPercent)
 	return errDb
 }
+
+//CreateDb
+func (res *UltDeviceStatuType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_ULT_STATU + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	StatusTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	AliveStatus varchar(50) NOT NULL DEFAULT '` + STATU_PASSIVE + `',
+	AliveLastOkTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	UltStatus varchar(50) NOT NULL DEFAULT '` + ULT_STATU_NONE + `',
+	SensPercent NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	ContainerStatu varchar(50) NOT NULL DEFAULT '` + CONTAINER_FULLNESS_STATU_NONE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

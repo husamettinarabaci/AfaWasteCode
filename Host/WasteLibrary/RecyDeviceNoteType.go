@@ -163,9 +163,9 @@ func (res *RecyDeviceNoteType) SelectWithDb(db *sql.DB) error {
 	return errDb
 }
 
-//CreateSQL
-func (res *RecyDeviceNoteType) CreateSQL() string {
-	return fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_NOTE + `  ( 
+//CreateDb
+func (res *RecyDeviceNoteType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_NOTE + `  ( 
 	DataId serial PRIMARY KEY,
 	DeviceId INT NOT NULL DEFAULT -1,
 	Note varchar(500) NOT NULL DEFAULT '',
@@ -173,4 +173,6 @@ func (res *RecyDeviceNoteType) CreateSQL() string {
 	NoteType varchar(50) NOT NULL DEFAULT '` + NOTETYPE_NONE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
 }

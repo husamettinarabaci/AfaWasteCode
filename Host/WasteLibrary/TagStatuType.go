@@ -166,3 +166,18 @@ func (res *TagStatuType) SelectWithDb(db *sql.DB) error {
 		&res.ContainerStatu)
 	return errDb
 }
+
+//CreateDb
+func (res *TagStatuType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_TAG_STATU + `  ( 
+	DataId serial PRIMARY KEY,
+	TagID INT NOT NULL DEFAULT -1,
+	ContainerStatu varchar(50) NOT NULL DEFAULT '` + CONTAINER_FULLNESS_STATU_NONE + `',
+	TagStatu varchar(50) NOT NULL DEFAULT '` + TAG_STATU_NONE + `',
+	ImageStatu varchar(50) NOT NULL DEFAULT '` + STATU_PASSIVE + `',
+	CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

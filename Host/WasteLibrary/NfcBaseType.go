@@ -140,3 +140,16 @@ func (res *NfcBaseType) SelectWithDb(db *sql.DB) error {
 		&res.LastAmount)
 	return errDb
 }
+
+//CreateDb
+func (res *NfcBaseType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_NFC_BASE + `  ( 
+	DataId serial PRIMARY KEY,
+	NfcID INT NOT NULL DEFAULT -1,
+	Name varchar(50) NOT NULL DEFAULT '',
+	SurName varchar(50) NOT NULL DEFAULT '',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

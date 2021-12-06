@@ -141,3 +141,17 @@ func (res *RfidDeviceDetailType) SelectWithDb(db *sql.DB) error {
 		&res.DriverSurName)
 	return errDb
 }
+
+//CreateDb
+func (res *RfidDeviceDetailType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RFID_DETAIL + `  ( 
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	PlateNo varchar(50) NOT NULL DEFAULT '',
+	DriverName varchar(50) NOT NULL DEFAULT '',
+	DriverSurName varchar(50) NOT NULL DEFAULT '',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

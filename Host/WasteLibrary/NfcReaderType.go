@@ -137,3 +137,16 @@ func (res *NfcReaderType) SelectWithDb(db *sql.DB) error {
 		&res.ReadTime)
 	return errDb
 }
+
+//CreateDb
+func (res *NfcReaderType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_NFC_READER + `  ( 
+	DataId serial PRIMARY KEY,
+	NfcID INT NOT NULL DEFAULT -1,
+	UID varchar(50) NOT NULL DEFAULT '',
+	ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

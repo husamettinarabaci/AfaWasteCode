@@ -160,3 +160,17 @@ func (res *RecyDeviceThermType) SelectWithDb(db *sql.DB) error {
 		&res.ThermStatus)
 	return errDb
 }
+
+//CreateDb
+func (res *RecyDeviceThermType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_THERM + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	Therm varchar(50) NOT NULL DEFAULT '0',
+	ThermTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	ThermStatus varchar(50) NOT NULL DEFAULT '` + THERMSTATU_NONE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

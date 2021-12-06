@@ -133,3 +133,15 @@ func (res *UltDeviceVersionType) SelectWithDb(db *sql.DB) error {
 		&res.FirmwareVersion)
 	return errDb
 }
+
+//CreateDb
+func (res *UltDeviceVersionType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_ULT_VERSION + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	FirmwareVersion  varchar(50) NOT NULL DEFAULT '1',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

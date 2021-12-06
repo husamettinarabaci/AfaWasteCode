@@ -169,3 +169,24 @@ func (res *RfidDeviceWorkHourType) SelectWithDb(db *sql.DB) error {
 		&res.Work3StartHour, &res.Work3StartMinute, &res.Work3AddMinute)
 	return errDb
 }
+
+//CreateDb
+func (res *RfidDeviceWorkHourType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RFID_WORKHOUR + `  ( 
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	WorkCount INT NOT NULL DEFAULT 1,
+	Work1StartHour  INT NOT NULL DEFAULT 6,
+	Work1StartMinute  INT NOT NULL DEFAULT 0,
+	Work1AddMinute  INT NOT NULL DEFAULT 510,
+	Work2StartHour  INT NOT NULL DEFAULT 0,
+	Work2StartMinute  INT NOT NULL DEFAULT 0,
+	Work2AddMinute  INT NOT NULL DEFAULT 0,
+	Work3StartHour  INT NOT NULL DEFAULT 0,
+	Work3StartMinute  INT NOT NULL DEFAULT 0,
+	Work3AddMinute  INT NOT NULL DEFAULT 0,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

@@ -166,3 +166,34 @@ func (res *UltDeviceMainType) SelectWithDb(db *sql.DB) error {
 		&res.OldLongitude)
 	return errDb
 }
+
+//CreateDb
+func (res *UltDeviceMainType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_ULT_MAIN + `  (
+	DeviceId  serial PRIMARY KEY,
+	CustomerId INT NOT NULL DEFAULT -1,
+	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	OldLongitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}
+
+//CreateDb
+func (res *UltDeviceMainType) CreateReaderDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_ULT_MAIN + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	CustomerId INT NOT NULL DEFAULT -1,
+	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	OldLongitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

@@ -160,3 +160,17 @@ func (res *UltDeviceBatteryType) SelectWithDb(db *sql.DB) error {
 		&res.BatteryTime)
 	return errDb
 }
+
+//CreateDb
+func (res *UltDeviceBatteryType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_ULT_BATTERY + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	Battery varchar(50) NOT NULL DEFAULT '0',
+	BatteryStatus varchar(50) NOT NULL DEFAULT '` + BATTERYSTATU_NONE + `',
+	BatteryTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

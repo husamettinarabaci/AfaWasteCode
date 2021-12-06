@@ -144,3 +144,18 @@ func (res *RecyDeviceAlarmType) SelectWithDb(db *sql.DB) error {
 		&res.Alarm)
 	return errDb
 }
+
+//CreateDb
+func (res *RecyDeviceAlarmType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_ALARM + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	AlarmStatus varchar(50) NOT NULL DEFAULT '` + ALARMSTATU_NONE + `',
+	AlarmTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	AlarmType varchar(50) NOT NULL DEFAULT '` + ALARMTYPE_NONE + `',
+	Alarm varchar(50) NOT NULL DEFAULT '',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

@@ -145,3 +145,18 @@ func (res *NfcStatuType) SelectWithDb(db *sql.DB) error {
 		&res.ItemStatu)
 	return errDb
 }
+
+//CreateDb
+func (res *NfcStatuType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_NFC_STATU + `  ( 
+	DataId serial PRIMARY KEY,
+	NfcID INT NOT NULL DEFAULT -1,
+	ItemStatu varchar(50) NOT NULL DEFAULT '` + RECY_ITEM_STATU_NONE + `',
+	NfcStatu varchar(50) NOT NULL DEFAULT '` + NFC_STATU_NONE + `',
+	ImageStatu varchar(50) NOT NULL DEFAULT '` + STATU_PASSIVE + `',
+	CheckTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

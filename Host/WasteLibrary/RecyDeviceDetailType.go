@@ -158,3 +158,21 @@ func (res *RecyDeviceDetailType) SelectWithDb(db *sql.DB) error {
 		&res.RecyTime)
 	return errDb
 }
+
+//CreateDb
+func (res *RecyDeviceDetailType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_DETAIL + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	TotalGlassCount INT NOT NULL DEFAULT 0,
+	TotalPlasticCount INT NOT NULL DEFAULT 0,
+	TotalMetalCount INT NOT NULL DEFAULT 0,
+	DailyGlassCount INT NOT NULL DEFAULT 0,
+	DailyPlasticCount INT NOT NULL DEFAULT 0,
+	DailyMetalCount INT NOT NULL DEFAULT 0,
+	RecyTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

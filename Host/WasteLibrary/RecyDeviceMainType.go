@@ -157,3 +157,30 @@ func (res *RecyDeviceMainType) SelectWithDb(db *sql.DB) error {
 		&res.CreateTime)
 	return errDb
 }
+
+//CreateDb
+func (res *RecyDeviceMainType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_MAIN + `  (
+	DeviceId  serial PRIMARY KEY,
+	CustomerId INT NOT NULL DEFAULT -1,
+	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}
+
+//CreateDb
+func (res *RecyDeviceMainType) CreateReaderDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_MAIN + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	CustomerId INT NOT NULL DEFAULT -1,
+	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

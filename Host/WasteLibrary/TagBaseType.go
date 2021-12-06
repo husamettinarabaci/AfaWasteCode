@@ -138,3 +138,16 @@ func (res *TagBaseType) SelectWithDb(db *sql.DB) error {
 		&res.ContainerType)
 	return errDb
 }
+
+//CreateDb
+func (res *TagBaseType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_TAG_BASE + `  ( 
+	DataId serial PRIMARY KEY,
+	TagID INT NOT NULL DEFAULT -1,
+	ContainerNo varchar(50) NOT NULL DEFAULT '',
+	ContainerType varchar(50) NOT NULL DEFAULT '` + CONTAINERTYPE_NONE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

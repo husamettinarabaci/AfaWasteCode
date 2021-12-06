@@ -136,3 +136,20 @@ func (res *RecyDeviceBaseType) SelectWithDb(db *sql.DB) error {
 		&res.DeviceType)
 	return errDb
 }
+
+//CreateDb
+func (res *RecyDeviceBaseType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RECY_BASE + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	ContainerNo  varchar(50) NOT NULL DEFAULT '',
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + RECY_DEVICE_TYPE_NONE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}
+
+// deleteSQL := fmt.Sprintf(`ALTER TABLE ult_sens_devices DROP COLUMN IF EXISTS `+WasteLibrary.DATATYPE_ULT_STATU+` ;`)
+// _, err = currentDb.Exec(deleteSQL)
+// WasteLibrary.LogErr(err)

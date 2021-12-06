@@ -162,3 +162,17 @@ func (res *TagNoteType) SelectWithDb(db *sql.DB) error {
 		&res.NoteType)
 	return errDb
 }
+
+//CreateDb
+func (res *TagNoteType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_TAG_NOTE + `  ( 
+	DataId serial PRIMARY KEY,
+	TagID INT NOT NULL DEFAULT -1,
+	Note varchar(500) NOT NULL DEFAULT '',
+	NoteTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	NoteType varchar(50) NOT NULL DEFAULT '` + NOTETYPE_NONE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

@@ -148,3 +148,19 @@ func (res *UltDeviceBaseType) SelectWithDb(db *sql.DB) error {
 		&res.Imsi)
 	return errDb
 }
+
+//CreateDb
+func (res *UltDeviceBaseType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_ULT_BASE + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	ContainerNo  varchar(50) NOT NULL DEFAULT '',
+	ContainerType varchar(50) NOT NULL DEFAULT '` + CONTAINERTYPE_NONE + `',
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + ULT_DEVICE_TYPE_NONE + `',
+	Imei  varchar(50) NOT NULL DEFAULT '',
+	Imsi  varchar(50) NOT NULL DEFAULT '',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

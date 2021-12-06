@@ -170,3 +170,32 @@ func (res *TagMainType) SelectWithDb(db *sql.DB) error {
 		&res.CreateTime)
 	return errDb
 }
+
+//CreateDb
+func (res *TagMainType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_TAG_MAIN + `  ( 
+	TagID serial PRIMARY KEY,
+	CustomerId INT NOT NULL DEFAULT -1,
+	DeviceId INT NOT NULL DEFAULT -1,
+	Epc varchar(50) NOT NULL DEFAULT '',
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}
+
+//CreateDb
+func (res *TagMainType) CreateReaderDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_TAG_MAIN + `  ( 
+	DataId serial PRIMARY KEY,
+	TagID INT NOT NULL DEFAULT -1,
+	CustomerId INT NOT NULL DEFAULT -1,
+	DeviceId INT NOT NULL DEFAULT -1,
+	Epc varchar(50) NOT NULL DEFAULT '',
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

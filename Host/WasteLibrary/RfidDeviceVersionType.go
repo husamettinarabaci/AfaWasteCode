@@ -157,3 +157,21 @@ func (res *RfidDeviceVersionType) SelectWithDb(db *sql.DB) error {
 		&res.SystemAppVersion)
 	return errDb
 }
+
+//CreateDb
+func (res *RfidDeviceVersionType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RFID_VERSION + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	GpsAppVersion varchar(50) NOT NULL DEFAULT '1',
+	ThermAppVersion varchar(50) NOT NULL DEFAULT '1',
+	TransferAppVersion varchar(50) NOT NULL DEFAULT '1',
+	CheckerAppVersion varchar(50) NOT NULL DEFAULT '1',
+	CamAppVersion varchar(50) NOT NULL DEFAULT '1',
+	ReaderAppVersion varchar(50) NOT NULL DEFAULT '1',
+	SystemAppVersion varchar(50) NOT NULL DEFAULT '1',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

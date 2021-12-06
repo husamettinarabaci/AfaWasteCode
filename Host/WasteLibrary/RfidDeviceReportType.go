@@ -157,3 +157,16 @@ func (res *RfidDeviceReportType) SelectWithDb(db *sql.DB) error {
 		&res.DailyKm)
 	return errDb
 }
+
+//CreateDb
+func (res *RfidDeviceReportType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RFID_REPORT + `  (
+	DataId serial PRIMARY KEY,
+	DeviceId INT NOT NULL DEFAULT -1,
+	DailyCapacity NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	DailyCapacity NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

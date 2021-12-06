@@ -180,3 +180,19 @@ func (res *CustomerType) SelectWithDb(db *sql.DB) error {
 		&res.CreateTime)
 	return errDb
 }
+
+//CreateDb
+func (res *CustomerType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_CUSTOMER + ` ( 
+	CustomerId serial PRIMARY KEY,
+	CustomerName varchar(50) NOT NULL DEFAULT '',
+	CustomerLink varchar(50) NOT NULL DEFAULT '',
+	RfIdApp varchar(50) NOT NULL DEFAULT '` + STATU_PASSIVE + `',
+	UltApp varchar(50) NOT NULL DEFAULT '` + STATU_PASSIVE + `',
+	RecyApp varchar(50) NOT NULL DEFAULT '` + STATU_PASSIVE + `',
+	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}

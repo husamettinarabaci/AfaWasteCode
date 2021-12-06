@@ -158,3 +158,16 @@ func (res *TagReaderType) SelectWithDb(db *sql.DB) error {
 		&res.ReadTime)
 	return errDb
 }
+
+//CreateDb
+func (res *TagReaderType) CreateDb(currentDb *sql.DB) {
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_TAG_READER + `  ( 
+	DataId serial PRIMARY KEY,
+	TagID INT NOT NULL DEFAULT -1,
+	UID varchar(50) NOT NULL DEFAULT '',
+	ReadTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	);`)
+	_, err := currentDb.Exec(createSQL)
+	LogErr(err)
+}
