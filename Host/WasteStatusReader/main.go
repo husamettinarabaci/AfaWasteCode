@@ -138,6 +138,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			var step1 float64 = 50
 			var step2 float64 = 100
 			var step3 float64 = 150
+			var containerHeigth float64 = 200
 
 			//TO DO
 			//calculate ult status by container type
@@ -145,46 +146,38 @@ func reader(w http.ResponseWriter, req *http.Request) {
 			oldData.DeviceId = currentData.DeviceId
 			oldData.GetByRedis("0")
 
-			if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_NONE {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
-
-			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A400 {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
-
-			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A800 {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
-
-			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A1100 {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
-
-			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A2500 {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
-
-			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A3500 {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
-
-			} else if oldData.DeviceBase.ContainerType == WasteLibrary.CONTAINERTYPE_A3750 {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
-
-			} else {
-				step1 = (WasteLibrary.CONTAINERHEIGTH_NONE * 25) / 100
-				step2 = (WasteLibrary.CONTAINERHEIGTH_NONE * 50) / 100
-				step3 = (WasteLibrary.CONTAINERHEIGTH_NONE * 75) / 100
+			switch oldData.DeviceBase.ContainerType {
+			case WasteLibrary.CONTAINERTYPE_NONE:
+				containerHeigth = 200
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_400LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_400LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_770LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_770LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_1100LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_1100LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_BOYALI_2500LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_BOYALI_2500LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_BOYALI_3000LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_BOYALI_3000LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_BOYALI_3750LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_BOYALI_3750LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_PASLANMAZ_2200LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_PASLANMAZ_2200LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_PLASTIK_3000LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_PLASTIK_3000LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_PLASTIK_5000LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_PLASTIK_5000LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_PASLANMAZ_3500LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_PASLANMAZ_3500LT
+			case WasteLibrary.CONTAINERTYPE_TEKSIN_GALVANIZ_PASLANMAZ_5000LT:
+				containerHeigth = WasteLibrary.CONTAINERHEIGTH_TEKSIN_GALVANIZ_PASLANMAZ_5000LT
+			default:
+				containerHeigth = 200
 			}
+
+			step1 = (containerHeigth * 25) / 100
+			step2 = (containerHeigth * 50) / 100
+			step3 = (containerHeigth * 75) / 100
 
 			if ultCm > (step3 + 50) {
 				ultCm = step3 + 50

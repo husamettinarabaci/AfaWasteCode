@@ -21,6 +21,7 @@ type RfidDeviceType struct {
 	DeviceNote       RfidDeviceNoteType
 	DeviceReport     RfidDeviceReportType
 	DeviceMotion     RfidDeviceMotionType
+	DeviceTag        RfidDeviceTagType
 }
 
 //New
@@ -39,6 +40,7 @@ func (res *RfidDeviceType) New() {
 	res.DeviceNote.New()
 	res.DeviceReport.New()
 	res.DeviceMotion.New()
+	res.DeviceTag.New()
 }
 
 //GetByRedis
@@ -107,6 +109,11 @@ func (res *RfidDeviceType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.DeviceMotion.DeviceId = res.DeviceId
 	resultVal = res.DeviceMotion.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceTag.DeviceId = res.DeviceId
+	resultVal = res.DeviceTag.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

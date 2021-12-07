@@ -256,6 +256,7 @@ const (
 	REDIS_RFID_NOTE        = "hsm-rfid-note"
 	REDIS_RFID_REPORT      = "hsm-rfid-report"
 	REDIS_RFID_MOTION      = "hsm-rfid-motion"
+	REDIS_RFID_TAGS        = "hsm-rfid-tag"
 
 	REDIS_TAG_EPC         = "hsm-tag-epc"
 	REDIS_TAG_MAINS       = "hsm-tag-mains"

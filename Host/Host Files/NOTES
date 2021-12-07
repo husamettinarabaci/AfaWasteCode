@@ -1,36 +1,25 @@
 *Test Summary tag
 *Test summary tagview
 *Test Speed 0
+*Check S3 Db Volum Data Usage Capacity
 *SystemCleaner
 *check GpsStopReader distance
 *Listener TcpSocket Error Manage
 ***Db Replicas
-*System Version And Update
 *DbBackup
-*Rifd Recy Ult Statu And Alarm
 *Excell Operation
 *UserEventLog
-*Yer Değiştiren konteyner
-****Device Tag Toplandı Toplanmadı
-*RfidDevice DailyCapacity Summary
-*RfidDevice DailyKm Summary
-*CamReader Check TagReader ImageStatu
-*Summary Of 7 Day Toplanmayan Container
-*DeviceMotion Summary
-*Device Versions ReaderDb Not Found
-*ReaderDb Minus Note Alarm Detail Report Type
 *Check RfidEmbededGps By REaderDb
-*Check Reader Db InsertDataSql By Main
-*Check S3 Db Volum Data Usage Capacity
 *Update and Version tools
 *Angle Calculate RfidGps 
-
-
-RFID
-Toplanan Toplanmayan Tag
-
-TAG
-Konum Hareket Takibi **
+*DeviceMotion Summary
+*Rifd Recy Ult Statu And Alarm
+*Yer Değiştiren konteyner
+****Device Tag Toplandı Toplanmadı
+*RfidDevice Report Summary
+*CamReader Check TagReader ImageStatu
+*Summary Of 7 Day Toplanmayan Container
+*Tag ReadDevice summary
 
 
 

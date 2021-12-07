@@ -268,6 +268,26 @@ func saveStaticDbMain(w http.ResponseWriter, req *http.Request) {
 		currentData.DeviceId = float64(deviceId)
 		resultVal.Retval = currentData.ToIdString()
 
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_REPORT {
+
+		var currentData WasteLibrary.RfidDeviceReportType = WasteLibrary.StringToRfidDeviceReportType(req.FormValue(WasteLibrary.HTTP_DATA))
+		if !currentData.NewData {
+			execSQL = currentData.UpdateSQL()
+		} else {
+			execSQL = currentData.InsertSQL()
+		}
+		var deviceId int = 0
+		errDb := staticDb.QueryRow(execSQL).Scan(&deviceId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.DeviceId = float64(deviceId)
+		resultVal.Retval = currentData.ToIdString()
+
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_NOTE {
 
 		var currentData WasteLibrary.RfidDeviceNoteType = WasteLibrary.StringToRfidDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
