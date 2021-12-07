@@ -17,7 +17,8 @@ var port int = 5432
 var user string = os.Getenv("POSTGRES_USER")
 var password string = os.Getenv("POSTGRES_PASSWORD")
 var dbname string = os.Getenv("POSTGRES_DB")
-var redisDbs [31]*redis.Client
+var redisRClts [31]*redis.Client
+var redisWClts [31]*redis.Client
 
 var ctx = context.Background()
 var sumDb *sql.DB
@@ -30,7 +31,7 @@ func initStart() {
 
 }
 
-func setRedisDbs() {
+func setRedisClts() {
 	for i := 0; i < 31; i++ {
 		var redisDb *redis.Client
 		redisDb = redis.NewClient(&redis.Options{
@@ -42,17 +43,37 @@ func setRedisDbs() {
 		pong, err := redisDb.Ping(ctx).Result()
 		WasteLibrary.LogErr(err)
 		WasteLibrary.LogStr(pong)
-		redisDbs[i] = redisDb
+		redisRClts[i] = redisDb
+	}
+
+	for i := 0; i < 31; i++ {
+		var redisDb *redis.Client
+		redisDb = redis.NewClient(&redis.Options{
+			Addr:     "waste-redis-master-cluster-ip:6379",
+			Password: "Amca151200!Furkan",
+			DB:       i,
+		})
+
+		pong, err := redisDb.Ping(ctx).Result()
+		WasteLibrary.LogErr(err)
+		WasteLibrary.LogStr(pong)
+		redisWClts[i] = redisDb
 	}
 }
 
-func getRedisDb(index int) *redis.Client {
-	return redisDbs[index]
+func getRedisClts(index int, isWrite bool) *redis.Client {
+	if isWrite {
+		return redisWClts[index]
+	} else {
+		return redisRClts[index]
+	}
 }
 
 func main() {
 
 	initStart()
+
+	setRedisClts()
 
 	var sumDbHost string = "waste-sumdb-cluster-ip"
 	sumdDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
@@ -379,7 +400,7 @@ func getKeyListRedis(pattern string) WasteLibrary.ResultType {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var val []string
 	var err error
-	val, err = getRedisDb(0).Keys(ctx, pattern).Result()
+	val, err = getRedisClts(0, false).Keys(ctx, pattern).Result()
 	switch {
 	case err == redis.Nil:
 		resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -401,9 +422,9 @@ func getKeyRedis(dbIndex int, hKey string, sKey string) WasteLibrary.ResultType 
 	var val string = ""
 	var err error
 	if hKey != "" {
-		val, err = getRedisDb(dbIndex).HGet(ctx, hKey, sKey).Result()
+		val, err = getRedisClts(dbIndex, false).HGet(ctx, hKey, sKey).Result()
 	} else {
-		val, err = getRedisDb(dbIndex).Get(ctx, sKey).Result()
+		val, err = getRedisClts(dbIndex, false).Get(ctx, sKey).Result()
 	}
 	switch {
 	case err == redis.Nil:
@@ -425,7 +446,7 @@ func getKeyAllRedis(dbIndex int, hKey string) WasteLibrary.ResultType {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var val map[string]string
 	var err error
-	val, err = getRedisDb(dbIndex).HGetAll(ctx, hKey).Result()
+	val, err = getRedisClts(dbIndex, false).HGetAll(ctx, hKey).Result()
 
 	switch {
 	case err == redis.Nil:
@@ -445,9 +466,9 @@ func getKeyAllRedis(dbIndex int, hKey string) WasteLibrary.ResultType {
 func setKeyRedis(dbIndex int, hKey string, sKey string, kVal string) {
 	var err error
 	if hKey != "" {
-		_, err = getRedisDb(dbIndex).HSet(ctx, hKey, sKey, kVal).Result()
+		_, err = getRedisClts(dbIndex, true).HSet(ctx, hKey, sKey, kVal).Result()
 	} else {
-		_, err = getRedisDb(dbIndex).HSet(ctx, sKey, kVal).Result()
+		_, err = getRedisClts(dbIndex, true).HSet(ctx, sKey, kVal).Result()
 
 	}
 	switch {
@@ -462,7 +483,7 @@ func publishKeyRedis(channelKey string, kVal string) WasteLibrary.ResultType {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	var err error
 
-	_, err = getRedisDb(0).Publish(ctx, channelKey, kVal).Result()
+	_, err = getRedisClts(0, true).Publish(ctx, channelKey, kVal).Result()
 	switch {
 	case err == redis.Nil:
 	case err != nil:
@@ -480,9 +501,9 @@ func publishKeyRedis(channelKey string, kVal string) WasteLibrary.ResultType {
 func deleteKeyRedis(dbIndex int, hKey string, sKey string) {
 	var err error
 	if hKey != "" {
-		_, err = getRedisDb(dbIndex).HDel(ctx, hKey, sKey).Result()
+		_, err = getRedisClts(dbIndex, true).HDel(ctx, hKey, sKey).Result()
 	} else {
-		_, err = getRedisDb(dbIndex).HDel(ctx, sKey).Result()
+		_, err = getRedisClts(dbIndex, true).HDel(ctx, sKey).Result()
 
 	}
 	switch {
