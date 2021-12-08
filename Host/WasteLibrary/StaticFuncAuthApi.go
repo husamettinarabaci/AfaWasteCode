@@ -2,18 +2,29 @@ package WasteLibrary
 
 import (
 	"encoding/base64"
+	"net/http"
 	"net/url"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
+type RequestHeaders struct {
+	Authorization string `json: "authorization"`
+}
+
 //CheckAuth
-func CheckAuth(data url.Values, customerId string, userRole string) ResultType {
+func CheckAuth(header http.Header, customerId string, userRole string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
-	data.Add(HTTP_CUSTOMERID, customerId)
-	data.Add(HTTP_USERROLE, userRole)
+	authorization := header.Get("Authorization")
+	headers := RequestHeaders{
+		Authorization: authorization}
+	data := url.Values{
+		HTTP_TOKEN:      {headers.Authorization},
+		HTTP_CUSTOMERID: {customerId},
+		HTTP_USERROLE:   {userRole},
+	}
 	resultVal = HttpPostReq("http://waste-authapi-cluster-ip/checkAuth", data)
 	return resultVal
 }

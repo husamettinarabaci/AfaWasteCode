@@ -32,7 +32,7 @@ func (res *TagMainType) New() {
 func (res *TagMainType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_MAINS, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_MAIN, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -46,7 +46,7 @@ func (res *TagMainType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *TagMainType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_TAG_MAINS, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_TAG_MAIN, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

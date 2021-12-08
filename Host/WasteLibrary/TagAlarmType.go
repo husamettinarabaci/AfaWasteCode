@@ -31,7 +31,7 @@ func (res *TagAlarmType) New() {
 func (res *TagAlarmType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_ALARMS, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_ALARM, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -46,7 +46,7 @@ func (res *TagAlarmType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *TagAlarmType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_TAG_ALARMS, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_TAG_ALARM, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

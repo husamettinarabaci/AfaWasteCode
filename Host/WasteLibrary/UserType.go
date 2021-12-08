@@ -11,10 +11,12 @@ import (
 type UserType struct {
 	UserId     float64
 	CustomerId float64
-	UserName   string
+	FirstName  string
+	LastName   string
 	UserRole   string
 	Password   string
 	Email      string
+	Token      string
 	Active     string
 	CreateTime string
 }
@@ -23,10 +25,12 @@ type UserType struct {
 func (res *UserType) New() {
 	res.UserId = 0
 	res.CustomerId = 1
-	res.UserName = ""
+	res.FirstName = ""
+	res.LastName = ""
 	res.UserRole = USER_ROLE_GUEST
 	res.Password = ""
 	res.Email = ""
+	res.Token = ""
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 }
@@ -120,7 +124,8 @@ func (res *UserType) StringToType(retStr string) {
 func (res *UserType) SelectSQL() string {
 	return fmt.Sprintf(`SELECT 
 			CustomerId,
-			UserName,
+			FirstName,
+			LastName,
 			UserRole,
 			Password,
 			Email,
@@ -133,20 +138,20 @@ func (res *UserType) SelectSQL() string {
 //InsertSQL
 func (res *UserType) InsertSQL() string {
 	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_USER+`  
-	(UserRole,Email,UserName,CustomerId,Password) 
-	  VALUES ('%s','%s','%s',%f,'%s')   
+	(UserRole,Email,FirstName,LastName,CustomerId,Password) 
+	  VALUES ('%s','%s','%s','%s',%f,'%s')   
 	  RETURNING UserId;`,
-		res.UserRole, res.Email, res.UserName,
+		res.UserRole, res.Email, res.FirstName, res.LastName,
 		res.CustomerId, res.Password)
 }
 
 //UpdateSQL
 func (res *UserType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.`+DATATYPE_USER+`  
-	SET UserRole='%s',Email='%s',UserName='%s'
+	SET UserRole='%s',Email='%s',FirstName='%s',LastName='%s'
 	  WHERE UserId=%f  
 	RETURNING UserId;`,
-		res.UserRole, res.Email, res.UserName, res.UserId)
+		res.UserRole, res.Email, res.FirstName, res.LastName, res.UserId)
 }
 
 //UpdatePasswordSQL
@@ -161,7 +166,8 @@ func (res *UserType) UpdatePasswordSQL() string {
 //SelectWithDb
 func (res *UserType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(&res.CustomerId,
-		&res.UserName,
+		&res.FirstName,
+		&res.LastName,
 		&res.UserRole,
 		&res.Password,
 		&res.Email,
@@ -175,7 +181,8 @@ func (res *UserType) CreateDb(currentDb *sql.DB) {
 	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_USER + `  ( 
 	UserId serial PRIMARY KEY,
 	CustomerId INT NOT NULL DEFAULT -1,
-	UserName varchar(50) NOT NULL DEFAULT '',
+	FirstName varchar(50) NOT NULL DEFAULT '',
+	LastName varchar(50) NOT NULL DEFAULT '',
 	UserRole varchar(50) NOT NULL DEFAULT '` + USER_ROLE_GUEST + `',
 	Password varchar(50) NOT NULL DEFAULT '',
 	Email varchar(50) NOT NULL DEFAULT '',

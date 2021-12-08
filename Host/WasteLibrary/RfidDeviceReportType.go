@@ -164,7 +164,7 @@ func (res *RfidDeviceReportType) CreateDb(currentDb *sql.DB) {
 	DataId serial PRIMARY KEY,
 	DeviceId INT NOT NULL DEFAULT -1,
 	DailyCapacity NUMERIC(14, 11)  NOT NULL DEFAULT 0,
-	DailyCapacity NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	DailyKm NUMERIC(14, 11)  NOT NULL DEFAULT 0,
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
 	_, err := currentDb.Exec(createSQL)

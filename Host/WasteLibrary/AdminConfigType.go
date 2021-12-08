@@ -22,6 +22,7 @@ type AdminConfigType struct {
 	MinZoom         int
 	MaxZoom         int
 	ParkLocations   []LocationType
+	WebUIPrivate    string
 	Active          string
 	CreateTime      string
 }
@@ -43,6 +44,7 @@ func (res *AdminConfigType) New() {
 	res.MaxZoom = 18
 	res.DeviceBaseWork = STATU_PASSIVE
 	res.ParkLocations = []LocationType{}
+	res.WebUIPrivate = STATU_ACTIVE
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 }

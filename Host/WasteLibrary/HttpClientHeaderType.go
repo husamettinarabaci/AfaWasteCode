@@ -16,7 +16,6 @@ type HttpClientHeaderType struct {
 	DeviceType string
 	ReaderType string
 	DataType   string
-	Token      string
 }
 
 //New
@@ -30,7 +29,6 @@ func (res *HttpClientHeaderType) New() {
 	res.DeviceType = DEVICETYPE_NONE
 	res.ReaderType = READERTYPE_NONE
 	res.DataType = DATATYPE_NONE
-	res.Token = ""
 }
 
 //ToCustomerId String

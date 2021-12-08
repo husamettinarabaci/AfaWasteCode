@@ -31,7 +31,7 @@ func register(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -75,17 +75,9 @@ func register(w http.ResponseWriter, req *http.Request) {
 			resultVal = inRedisUser.GetByRedis()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 
-				if inRedisUser.UserName == currentUser.UserName {
-					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_USERNAMEEXIST
-					w.Write(resultVal.ToByte())
-
-					return
-				}
-
 				if inRedisUser.Email == currentUser.Email && inRedisUser.Email != "" {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_USEREMAILEXIST
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 					w.Write(resultVal.ToByte())
 
 					return
@@ -98,9 +90,17 @@ func register(w http.ResponseWriter, req *http.Request) {
 		userRole = WasteLibrary.USER_ROLE_ADMIN
 	}
 
+	if currentUser.Email == "" {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
+		w.Write(resultVal.ToByte())
+
+		return
+	}
+
 	if currentUser.Password == "" {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_PASSWORDEMPTY
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -147,7 +147,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -191,12 +191,12 @@ func login(w http.ResponseWriter, req *http.Request) {
 			inRedisUser.UserId = userId
 			resultVal = inRedisUser.GetByRedis()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
-				if inRedisUser.UserName == currentUser.UserName {
+				if inRedisUser.Email == currentUser.Email {
 					userExist = true
 
 					if WasteLibrary.GetMD5Hash(currentUser.Password) != inRedisUser.Password {
 						resultVal.Result = WasteLibrary.RESULT_FAIL
-						resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDPASSWORD
+						resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 						w.Write(resultVal.ToByte())
 
 						return
@@ -209,13 +209,13 @@ func login(w http.ResponseWriter, req *http.Request) {
 	}
 	if !userExist {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDUSER
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
 	}
 
-	var token string = WasteLibrary.GenerateToken(currentUser.UserName+currentUser.Password+currentUser.Email+WasteLibrary.GetTime(), currentUser.ToIdString())
+	var token string = WasteLibrary.GenerateToken(currentUser.Email+currentUser.Password+currentUser.Email+WasteLibrary.GetTime(), currentUser.ToIdString())
 	newDate := WasteLibrary.GetTimePlus(time.Hour * 1)
 	resultVal = WasteLibrary.SaveRedisForStoreApi(WasteLibrary.REDIS_USER_TOKEN, currentUser.ToIdString(), token)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -233,8 +233,10 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
+	currentUser.Token = token
+	currentUser.Password = ""
 	resultVal.Result = WasteLibrary.RESULT_OK
-	resultVal.Retval = token
+	resultVal.Retval = currentUser.ToString()
 
 	w.Write(resultVal.ToByte())
 
@@ -246,7 +248,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -261,19 +263,19 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	var userIdByToken string = WasteLibrary.GetUserIdByToken(currentHttpHeader.Token)
+	var token string = req.FormValue(WasteLibrary.HTTP_TOKEN)
+	var userIdByToken string = WasteLibrary.GetUserIdByToken(token)
 	resultVal = WasteLibrary.GetRedisForStoreApi("0", WasteLibrary.REDIS_USER_TOKEN, userIdByToken)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
 	}
-	if currentHttpHeader.Token != resultVal.Retval.(string) {
+	if token != resultVal.Retval.(string) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -281,7 +283,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 	resultVal = WasteLibrary.GetRedisForStoreApi("0", WasteLibrary.REDIS_USER_TOKENENDDATE, userIdByToken)
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDTOKEN
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -300,7 +302,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_ENDTOKEN
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -311,7 +313,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 	resultVal = currentUser.GetByRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDUSER
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -320,7 +322,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 	customerId := WasteLibrary.StringIdToFloat64(req.FormValue(WasteLibrary.HTTP_CUSTOMERID))
 	if currentUser.CustomerId != customerId {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDUSER
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -336,7 +338,7 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 		return
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_INVALIDUSERROLE
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return

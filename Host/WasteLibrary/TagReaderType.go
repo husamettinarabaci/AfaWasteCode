@@ -27,7 +27,7 @@ func (res *TagReaderType) New() {
 func (res *TagReaderType) GetByRedis(dbIndex string) ResultType {
 
 	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_READERS, res.ToIdString())
+	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_READER, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -42,7 +42,7 @@ func (res *TagReaderType) GetByRedis(dbIndex string) ResultType {
 //SaveToRedis
 func (res *TagReaderType) SaveToRedis() ResultType {
 	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_TAG_READERS, res.ToIdString(), res.ToString())
+	resultVal = SaveRedisForStoreApi(REDIS_TAG_READER, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

@@ -34,4 +34,4 @@ COPY --from=builder /app/WasteSummaryForRedis .
 VOLUME ${LOG_DATA}
 
 ENV DEBUG=0
-CMD ["./WasteSummaryForTagView"]
+CMD ["./WasteSummaryForRedis"]

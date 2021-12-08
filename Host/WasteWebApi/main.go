@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 
 	"github.com/devafatek/WasteLibrary"
 )
@@ -40,7 +39,7 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -63,6 +62,20 @@ func getCustomer(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
+
+	var currentAdminConfig WasteLibrary.AdminConfigType
+	currentAdminConfig.CustomerId = linkCustomer.CustomerId
+	currentAdminConfig.GetByRedis()
+	if currentAdminConfig.WebUIPrivate == WasteLibrary.STATU_ACTIVE {
+		resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
+
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+	}
+
 	w.Write(resultVal.ToByte())
 
 }
@@ -73,7 +86,7 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -96,6 +109,20 @@ func getDevice(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
+
+	var currentAdminConfig WasteLibrary.AdminConfigType
+	currentAdminConfig.CustomerId = linkCustomer.CustomerId
+	currentAdminConfig.GetByRedis()
+	if currentAdminConfig.WebUIPrivate == WasteLibrary.STATU_ACTIVE {
+		resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
+
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+	}
+
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	dbIndex := WasteLibrary.GetDbIndexByDate(currentHttpHeader.Time)
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
@@ -176,7 +203,7 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 
 	}
 
@@ -201,6 +228,20 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
+
+	var currentAdminConfig WasteLibrary.AdminConfigType
+	currentAdminConfig.CustomerId = linkCustomer.CustomerId
+	currentAdminConfig.GetByRedis()
+	if currentAdminConfig.WebUIPrivate == WasteLibrary.STATU_ACTIVE {
+		resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
+
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+	}
+
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	dbIndex := WasteLibrary.GetDbIndexByDate(currentHttpHeader.Time)
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
@@ -265,7 +306,7 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -288,6 +329,19 @@ func getConfig(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 
 		return
+	}
+
+	var currentAdminConfig WasteLibrary.AdminConfigType
+	currentAdminConfig.CustomerId = linkCustomer.CustomerId
+	currentAdminConfig.GetByRedis()
+	if currentAdminConfig.WebUIPrivate == WasteLibrary.STATU_ACTIVE {
+		resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
+
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			w.Write(resultVal.ToByte())
+
+			return
+		}
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
@@ -327,7 +381,7 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -350,6 +404,19 @@ func getTags(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 
 		return
+	}
+
+	var currentAdminConfig WasteLibrary.AdminConfigType
+	currentAdminConfig.CustomerId = linkCustomer.CustomerId
+	currentAdminConfig.GetByRedis()
+	if currentAdminConfig.WebUIPrivate == WasteLibrary.STATU_ACTIVE {
+		resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
+
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			w.Write(resultVal.ToByte())
+
+			return
+		}
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
@@ -377,7 +444,7 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -400,6 +467,19 @@ func getTag(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 
 		return
+	}
+
+	var currentAdminConfig WasteLibrary.AdminConfigType
+	currentAdminConfig.CustomerId = linkCustomer.CustomerId
+	currentAdminConfig.GetByRedis()
+	if currentAdminConfig.WebUIPrivate == WasteLibrary.STATU_ACTIVE {
+		resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
+
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			w.Write(resultVal.ToByte())
+
+			return
+		}
 	}
 
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
@@ -433,7 +513,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -458,7 +538,7 @@ func setDevice(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = checkAuth(req.Form, linkCustomer.ToIdString())
+	resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
 
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		w.Write(resultVal.ToByte())
@@ -611,7 +691,7 @@ func setConfig(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -635,7 +715,7 @@ func setConfig(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = checkAuth(req.Form, linkCustomer.ToIdString())
+	resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
 
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		w.Write(resultVal.ToByte())
@@ -687,7 +767,7 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -711,7 +791,7 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = checkAuth(req.Form, linkCustomer.ToIdString())
+	resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
 
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		w.Write(resultVal.ToByte())
@@ -725,14 +805,14 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 	resultVal = currentDbData.GetByRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_NOTFOUND
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
 	}
 	if currentDbData.CustomerId != linkCustomer.CustomerId {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_NOTFOUND
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -756,17 +836,9 @@ func setUser(w http.ResponseWriter, req *http.Request) {
 			resultVal = inRedisUser.GetByRedis()
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 
-				if inRedisUser.UserName == currentData.UserName {
-					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_USERNAMEEXIST
-					w.Write(resultVal.ToByte())
-
-					return
-				}
-
 				if inRedisUser.Email == currentData.Email && inRedisUser.Email != "" {
 					resultVal.Result = WasteLibrary.RESULT_FAIL
-					resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_USEREMAILEXIST
+					resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 					w.Write(resultVal.ToByte())
 
 					return
@@ -802,7 +874,7 @@ func getUser(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -825,7 +897,7 @@ func getUser(w http.ResponseWriter, req *http.Request) {
 
 		return
 	}
-	resultVal = checkAuth(req.Form, linkCustomer.ToIdString())
+	resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
 
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		w.Write(resultVal.ToByte())
@@ -837,7 +909,7 @@ func getUser(w http.ResponseWriter, req *http.Request) {
 	resultVal = currentData.GetByRedis()
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_NOTFOUND
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 		return
@@ -847,7 +919,7 @@ func getUser(w http.ResponseWriter, req *http.Request) {
 
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_NOTFOUND
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 		w.Write(resultVal.ToByte())
 
 	}
@@ -859,7 +931,7 @@ func getUsers(w http.ResponseWriter, req *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization,access-control-allow-origin, access-control-allow-headers")
 	}
 
 	var resultVal WasteLibrary.ResultType
@@ -883,7 +955,7 @@ func getUsers(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	resultVal = checkAuth(req.Form, linkCustomer.ToIdString())
+	resultVal = checkAuth(req.Header, linkCustomer.ToIdString())
 
 	if resultVal.Result != WasteLibrary.RESULT_OK {
 		w.Write(resultVal.ToByte())
@@ -926,7 +998,7 @@ func getUsers(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func checkAuth(data url.Values, customerId string) WasteLibrary.ResultType {
-	return WasteLibrary.CheckAuth(data, customerId, "ADMIN")
+func checkAuth(header http.Header, customerId string) WasteLibrary.ResultType {
+	return WasteLibrary.CheckAuth(header, customerId, "ADMIN")
 
 }

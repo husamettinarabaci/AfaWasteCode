@@ -48,11 +48,11 @@ sudo docker build -f WasteStoreApiForReaderDB/Dockerfile -t devafatek/wastestore
 sudo docker build -f WasteStoreApiForConfigDB/Dockerfile -t devafatek/wastestoreapiforconfigdb:1.0 . && docker push devafatek/wastestoreapiforconfigdb:1.0 &&
 sudo docker build -f WasteStoreApiForRedis/Dockerfile -t devafatek/wastestoreapiforredis:1.0 . && docker push devafatek/wastestoreapiforredis:1.0 &&
 sudo docker build -f WasteThermReader/Dockerfile -t devafatek/wastethermreader:1.0 . && docker push devafatek/wastethermreader:1.0 &&
-sudo docker build -f WasteWebApi/Dockerfile -t devafatek/wastewebapi:1.0 . && docker push devafatek/wastewebapi:1.0 &&
 sudo docker build -f WasteWebUi/Dockerfile -t devafatek/wastewebui:1.0 . && docker push devafatek/wastewebui:1.0 &&
 sudo docker build -f WasteWebSocket/Dockerfile -t devafatek/wastewebsocket:1.0 . && docker push devafatek/wastewebsocket:1.0 &&
-sudo docker build -f WasteAfatekApi/Dockerfile -t devafatek/wasteafatekapi:1.0 . && docker push devafatek/wasteafatekapi:1.0 &&
 sudo docker build -f WasteEnhcApi/Dockerfile -t devafatek/wasteenhcapi:1.0 . && docker push devafatek/wasteenhcapi:1.0 &&
+sudo docker build -f WasteWebApi/Dockerfile -t devafatek/wastewebapi:1.0 . && docker push devafatek/wastewebapi:1.0 &&
+sudo docker build -f WasteAfatekApi/Dockerfile -t devafatek/wasteafatekapi:1.0 . && docker push devafatek/wasteafatekapi:1.0 &&
 sudo docker build -f WasteAuthApi/Dockerfile -t devafatek/wasteauthapi:1.0 . && docker push devafatek/wasteauthapi:1.0 &&
 sudo docker build -f WasteSummaryForTagView/Dockerfile -t devafatek/wastesummaryfortagview:1.0 . && docker push devafatek/wastesummaryfortagview:1.0 &&
 sudo docker build -f WasteSummaryForRedis/Dockerfile -t devafatek/wastesummaryforredis:1.0 . && docker push devafatek/wastesummaryforredis:1.0 &&
@@ -72,26 +72,26 @@ kubectl create -f Aws/Yaml/waste-redis-rep-deployment.yaml
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-afatekapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-enhcapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-authapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-webapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-webui-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-websocket-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-camreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-enhc-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-enhcapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-camreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-gpsreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-gpsstopreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-sensreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-batteryreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-rfreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-statusreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/waste-thermreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-storeapi-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-storeapiforbulkdb-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-storeapiforstaticdb-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-storeapiforreaderdb-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-storeapiforconfigdb-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-storeapiforredis-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-authapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-thermreader-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfortagview-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryforredis-deployment.yaml &&
 kubectl create -f Aws/Yaml/waste-summaryfortag-deployment.yaml &&
@@ -107,3 +107,15 @@ kubectl create -f Aws/Yaml/waste-listener-deployment.yaml
 #kubectl create -f Aws/Yaml/waste-systemupdater-pod.yaml 
 
 #afatek.aws.afatek.com.tr/afatekapi/logApp?opType=open&appType=wastelistener
+
+
+
+/*
+DO $$ DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) ;
+    END LOOP;
+END $$;
+*/

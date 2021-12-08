@@ -5,5 +5,7 @@ metadata:
   namespace: waste-system
 data:
   redis-rep-config: |
+    maxmemory 2gb
     requirepass Amca151200!Furkan
     masterauth Amca151200!Furkan
+    databases 31
