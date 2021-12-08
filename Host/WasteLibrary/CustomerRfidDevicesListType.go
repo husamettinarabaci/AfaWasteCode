@@ -35,14 +35,13 @@ func (res *CustomerRfidDevicesListType) ToString() string {
 
 }
 
-//Byte To CustomerRfidDevicesListType
-func ByteToCustomerRfidDevicesListType(retByte []byte) CustomerRfidDevicesListType {
-	var retVal CustomerRfidDevicesListType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *CustomerRfidDevicesListType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To CustomerRfidDevicesListType
-func StringToCustomerRfidDevicesListType(retStr string) CustomerRfidDevicesListType {
-	return ByteToCustomerRfidDevicesListType([]byte(retStr))
+//StringToType
+func (res *CustomerRfidDevicesListType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

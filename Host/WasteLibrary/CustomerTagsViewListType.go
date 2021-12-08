@@ -77,20 +77,9 @@ func (res *CustomerTagsViewListType) ToString() string {
 
 }
 
-//Byte To CustomerTagsViewListType
-func ByteToCustomerTagsViewListType(retByte []byte) CustomerTagsViewListType {
-	var retVal CustomerTagsViewListType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To CustomerTagsViewListType
-func StringToCustomerTagsViewListType(retStr string) CustomerTagsViewListType {
-	return ByteToCustomerTagsViewListType([]byte(retStr))
-}
-
 //ByteToType
 func (res *CustomerTagsViewListType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

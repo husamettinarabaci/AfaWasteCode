@@ -56,20 +56,9 @@ func (res *RedisDbDateType) ToString() string {
 
 }
 
-//Byte To RedisDbDateType
-func ByteToRedisDbDateType(retByte []byte) RedisDbDateType {
-	var retVal RedisDbDateType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RedisDbDateType
-func StringToRedisDbDateType(retStr string) RedisDbDateType {
-	return ByteToRedisDbDateType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RedisDbDateType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

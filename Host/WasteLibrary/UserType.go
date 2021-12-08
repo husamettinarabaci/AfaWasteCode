@@ -98,20 +98,9 @@ func (res *UserType) ToString() string {
 
 }
 
-//Byte To UserType
-func ByteToUserType(retByte []byte) UserType {
-	var retVal UserType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To UserType
-func StringToUserType(retStr string) UserType {
-	return ByteToUserType([]byte(retStr))
-}
-
 //ByteToType
 func (res *UserType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

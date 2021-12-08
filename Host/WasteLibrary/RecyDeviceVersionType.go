@@ -94,20 +94,9 @@ func (res *RecyDeviceVersionType) ToString() string {
 
 }
 
-//Byte To RecyDeviceVersionType
-func ByteToRecyDeviceVersionType(retByte []byte) RecyDeviceVersionType {
-	var retVal RecyDeviceVersionType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RecyDeviceVersionType
-func StringToRecyDeviceVersionType(retStr string) RecyDeviceVersionType {
-	return ByteToRecyDeviceVersionType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RecyDeviceVersionType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

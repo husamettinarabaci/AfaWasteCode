@@ -29,14 +29,13 @@ func (res *ReadDeviceType) ToString() string {
 
 }
 
-//Byte To ReadDeviceType
-func ByteToReadDeviceType(retByte []byte) ReadDeviceType {
-	var retVal ReadDeviceType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *ReadDeviceType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To ReadDeviceType
-func StringToReadDeviceType(retStr string) ReadDeviceType {
-	return ByteToReadDeviceType([]byte(retStr))
+//StringToType
+func (res *ReadDeviceType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

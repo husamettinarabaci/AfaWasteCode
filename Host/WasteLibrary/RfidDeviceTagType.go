@@ -58,20 +58,9 @@ func (res *RfidDeviceTagType) ToString() string {
 
 }
 
-//Byte To RfidDeviceTagType
-func ByteToRfidDeviceTagType(retByte []byte) RfidDeviceTagType {
-	var retVal RfidDeviceTagType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceTagType
-func StringToRfidDeviceTagType(retStr string) RfidDeviceTagType {
-	return ByteToRfidDeviceTagType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceTagType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

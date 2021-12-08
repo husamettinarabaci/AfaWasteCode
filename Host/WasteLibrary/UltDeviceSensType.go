@@ -152,20 +152,9 @@ func (res *UltDeviceSensType) ToString() string {
 
 }
 
-//Byte To UltDeviceSensType
-func ByteToUltDeviceSensType(retByte []byte) UltDeviceSensType {
-	var retVal UltDeviceSensType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To UltDeviceSensType
-func StringToUltDeviceSensType(retStr string) UltDeviceSensType {
-	return ByteToUltDeviceSensType([]byte(retStr))
-}
-
 //ByteToType
 func (res *UltDeviceSensType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

@@ -86,20 +86,9 @@ func (res *RecyDeviceAlarmType) ToString() string {
 
 }
 
-//Byte To RecyDeviceAlarmType
-func ByteToRecyDeviceAlarmType(retByte []byte) RecyDeviceAlarmType {
-	var retVal RecyDeviceAlarmType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RecyDeviceAlarmType
-func StringToRecyDeviceAlarmType(retStr string) RecyDeviceAlarmType {
-	return ByteToRecyDeviceAlarmType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RecyDeviceAlarmType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

@@ -104,20 +104,9 @@ func (res *UltDeviceBatteryType) ToString() string {
 
 }
 
-//Byte To UltDeviceBatteryType
-func ByteToUltDeviceBatteryType(retByte []byte) UltDeviceBatteryType {
-	var retVal UltDeviceBatteryType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To UltDeviceBatteryType
-func StringToUltDeviceBatteryType(retStr string) UltDeviceBatteryType {
-	return ByteToUltDeviceBatteryType([]byte(retStr))
-}
-
 //ByteToType
 func (res *UltDeviceBatteryType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

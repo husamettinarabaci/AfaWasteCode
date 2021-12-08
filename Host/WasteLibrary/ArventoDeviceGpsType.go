@@ -34,14 +34,13 @@ func (res *ArventoDeviceGpsType) ToString() string {
 
 }
 
-//Byte To ArventoDeviceGpsType
-func ByteToArventoDeviceGpsType(retByte []byte) ArventoDeviceGpsType {
-	var retVal ArventoDeviceGpsType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *ArventoDeviceGpsType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To ArventoDeviceGpsType
-func StringToArventoDeviceGpsType(retStr string) ArventoDeviceGpsType {
-	return ByteToArventoDeviceGpsType([]byte(retStr))
+//StringToType
+func (res *ArventoDeviceGpsType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

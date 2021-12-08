@@ -56,20 +56,9 @@ func (res *RfidDeviceMotionType) ToString() string {
 
 }
 
-//Byte To RfidDeviceMotionType
-func ByteToRfidDeviceMotionType(retByte []byte) RfidDeviceMotionType {
-	var retVal RfidDeviceMotionType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceMotionType
-func StringToRfidDeviceMotionType(retStr string) RfidDeviceMotionType {
-	return ByteToRfidDeviceMotionType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceMotionType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

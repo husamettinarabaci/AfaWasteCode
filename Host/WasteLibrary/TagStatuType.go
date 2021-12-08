@@ -108,20 +108,9 @@ func (res *TagStatuType) ToString() string {
 
 }
 
-//Byte To TagStatuType
-func ByteToTagStatuType(retByte []byte) TagStatuType {
-	var retVal TagStatuType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagStatuType
-func StringToTagStatuType(retStr string) TagStatuType {
-	return ByteToTagStatuType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagStatuType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

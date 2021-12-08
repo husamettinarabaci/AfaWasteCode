@@ -87,20 +87,9 @@ func (res *RfidDeviceAlarmType) ToString() string {
 
 }
 
-//Byte To RfidDeviceAlarmType
-func ByteToRfidDeviceAlarmType(retByte []byte) RfidDeviceAlarmType {
-	var retVal RfidDeviceAlarmType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceAlarmType
-func StringToRfidDeviceAlarmType(retStr string) RfidDeviceAlarmType {
-	return ByteToRfidDeviceAlarmType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceAlarmType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

@@ -161,20 +161,9 @@ func (res *RfidDeviceStatuType) ToString() string {
 
 }
 
-//Byte To RfidDeviceStatuType
-func ByteToRfidDeviceStatuType(retByte []byte) RfidDeviceStatuType {
-	var retVal RfidDeviceStatuType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceStatuType
-func StringToRfidDeviceStatuType(retStr string) RfidDeviceStatuType {
-	return ByteToRfidDeviceStatuType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceStatuType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

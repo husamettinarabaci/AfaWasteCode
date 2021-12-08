@@ -93,20 +93,9 @@ func (res *RfidDeviceVersionType) ToString() string {
 
 }
 
-//Byte To RfidDeviceVersionType
-func ByteToRfidDeviceVersionType(retByte []byte) RfidDeviceVersionType {
-	var retVal RfidDeviceVersionType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceVersionType
-func StringToRfidDeviceVersionType(retStr string) RfidDeviceVersionType {
-	return ByteToRfidDeviceVersionType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceVersionType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

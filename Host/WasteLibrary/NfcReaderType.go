@@ -83,20 +83,9 @@ func (res *NfcReaderType) ToString() string {
 
 }
 
-//Byte To NfcReaderType
-func ByteToNfcReaderType(retByte []byte) NfcReaderType {
-	var retVal NfcReaderType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To NfcReaderType
-func StringToNfcReaderType(retStr string) NfcReaderType {
-	return ByteToNfcReaderType([]byte(retStr))
-}
-
 //ByteToType
 func (res *NfcReaderType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

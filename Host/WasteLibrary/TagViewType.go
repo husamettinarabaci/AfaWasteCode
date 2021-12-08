@@ -54,14 +54,13 @@ func (res *TagViewType) ToString() string {
 
 }
 
-//Byte To TagViewType
-func ByteToTagViewType(retByte []byte) TagViewType {
-	var retVal TagViewType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *TagViewType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To TagViewType
-func StringToTagViewType(retStr string) TagViewType {
-	return ByteToTagViewType([]byte(retStr))
+//StringToType
+func (res *TagViewType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

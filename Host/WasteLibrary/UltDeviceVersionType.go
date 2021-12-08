@@ -81,20 +81,9 @@ func (res *UltDeviceVersionType) ToString() string {
 
 }
 
-//Byte To UltDeviceVersionType
-func ByteToUltDeviceVersionType(retByte []byte) UltDeviceVersionType {
-	var retVal UltDeviceVersionType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To UltDeviceVersionType
-func StringToUltDeviceVersionType(retStr string) UltDeviceVersionType {
-	return ByteToUltDeviceVersionType([]byte(retStr))
-}
-
 //ByteToType
 func (res *UltDeviceVersionType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

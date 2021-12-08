@@ -57,20 +57,9 @@ func (res *TagReadDeviceType) ToString() string {
 
 }
 
-//Byte To TagReadDeviceType
-func ByteToTagReadDeviceType(retByte []byte) TagReadDeviceType {
-	var retVal TagReadDeviceType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagReadDeviceType
-func StringToTagReadDeviceType(retStr string) TagReadDeviceType {
-	return ByteToTagReadDeviceType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagReadDeviceType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

@@ -33,14 +33,13 @@ func (res *PositionChangeType) ToString() string {
 
 }
 
-//Byte To PositionChangeType
-func ByteToPositionChangeType(retByte []byte) PositionChangeType {
-	var retVal PositionChangeType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *PositionChangeType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To PositionChangeType
-func StringToPositionChangeType(retStr string) PositionChangeType {
-	return ByteToPositionChangeType([]byte(retStr))
+//StringToType
+func (res *PositionChangeType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

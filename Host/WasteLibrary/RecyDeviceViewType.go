@@ -42,14 +42,13 @@ func (res *RecyDeviceViewType) ToString() string {
 
 }
 
-//Byte To RecyDeviceViewType
-func ByteToRecyDeviceViewType(retByte []byte) RecyDeviceViewType {
-	var retVal RecyDeviceViewType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *RecyDeviceViewType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To RecyDeviceViewType
-func StringToRecyDeviceViewType(retStr string) RecyDeviceViewType {
-	return ByteToRecyDeviceViewType([]byte(retStr))
+//StringToType
+func (res *RecyDeviceViewType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

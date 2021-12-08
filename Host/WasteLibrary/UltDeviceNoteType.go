@@ -106,20 +106,9 @@ func (res *UltDeviceNoteType) ToString() string {
 
 }
 
-//Byte To UltDeviceNoteType
-func ByteToUltDeviceNoteType(retByte []byte) UltDeviceNoteType {
-	var retVal UltDeviceNoteType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To UltDeviceNoteType
-func StringToUltDeviceNoteType(retStr string) UltDeviceNoteType {
-	return ByteToUltDeviceNoteType([]byte(retStr))
-}
-
 //ByteToType
 func (res *UltDeviceNoteType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

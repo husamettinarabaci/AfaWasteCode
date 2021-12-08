@@ -53,14 +53,13 @@ func (res *HttpClientHeaderType) ToString() string {
 
 }
 
-//Byte To HttpClientHeaderType
-func ByteToHttpClientHeaderType(retByte []byte) HttpClientHeaderType {
-	var retVal HttpClientHeaderType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *HttpClientHeaderType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To HttpClientHeaderType
-func StringToHttpClientHeaderType(retStr string) HttpClientHeaderType {
-	return ByteToHttpClientHeaderType([]byte(retStr))
+//StringToType
+func (res *HttpClientHeaderType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

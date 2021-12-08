@@ -37,14 +37,13 @@ func (res *GpsMotionType) ToString() string {
 
 }
 
-//Byte To GpsMotionType
-func ByteToGpsMotionType(retByte []byte) GpsMotionType {
-	var retVal GpsMotionType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *GpsMotionType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To GpsMotionType
-func StringToGpsMotionType(retStr string) GpsMotionType {
-	return ByteToGpsMotionType([]byte(retStr))
+//StringToType
+func (res *GpsMotionType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

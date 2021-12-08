@@ -86,20 +86,9 @@ func (res *UltDeviceAlarmType) ToString() string {
 
 }
 
-//Byte To UltDeviceAlarmType
-func ByteToUltDeviceAlarmType(retByte []byte) UltDeviceAlarmType {
-	var retVal UltDeviceAlarmType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To UltDeviceAlarmType
-func StringToUltDeviceAlarmType(retStr string) UltDeviceAlarmType {
-	return ByteToUltDeviceAlarmType([]byte(retStr))
-}
-
 //ByteToType
 func (res *UltDeviceAlarmType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

@@ -41,14 +41,13 @@ func (res *UpdaterType) ToString() string {
 
 }
 
-//Byte To UpdaterType
-func ByteToUpdaterType(retByte []byte) UpdaterType {
-	var retVal UpdaterType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *UpdaterType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To UpdaterType
-func StringToUpdaterType(retStr string) UpdaterType {
-	return ByteToUpdaterType([]byte(retStr))
+//StringToType
+func (res *UpdaterType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

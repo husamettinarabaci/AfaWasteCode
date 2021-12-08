@@ -106,20 +106,9 @@ func (res *TagNoteType) ToString() string {
 
 }
 
-//Byte To TagNoteType
-func ByteToTagNoteType(retByte []byte) TagNoteType {
-	var retVal TagNoteType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagNoteType
-func StringToTagNoteType(retStr string) TagNoteType {
-	return ByteToTagNoteType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagNoteType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

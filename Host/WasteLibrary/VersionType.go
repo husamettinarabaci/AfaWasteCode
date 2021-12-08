@@ -61,14 +61,13 @@ func (res *VersionType) ToString() string {
 
 }
 
-//Byte To VersionType
-func ByteToVersionType(retByte []byte) VersionType {
-	var retVal VersionType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *VersionType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To VersionType
-func StringToVersionType(retStr string) VersionType {
-	return ByteToVersionType([]byte(retStr))
+//StringToType
+func (res *VersionType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

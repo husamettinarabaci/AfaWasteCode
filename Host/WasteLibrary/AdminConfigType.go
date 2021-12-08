@@ -88,20 +88,9 @@ func (res *AdminConfigType) ToString() string {
 
 }
 
-//Byte To AdminConfigType
-func ByteToAdminConfigType(retByte []byte) AdminConfigType {
-	var retVal AdminConfigType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To AdminConfigType
-func StringToAdminConfigType(retStr string) AdminConfigType {
-	return ByteToAdminConfigType([]byte(retStr))
-}
-
 //ByteToType
 func (res *AdminConfigType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

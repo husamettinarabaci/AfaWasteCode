@@ -77,20 +77,9 @@ func (res *CustomerRecyDevicesViewListType) ToString() string {
 
 }
 
-//Byte To CustomerRecyDevicesViewListType
-func ByteToCustomerRecyDevicesViewListType(retByte []byte) CustomerRecyDevicesViewListType {
-	var retVal CustomerRecyDevicesViewListType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To CustomerRecyDevicesViewListType
-func StringToCustomerRecyDevicesViewListType(retStr string) CustomerRecyDevicesViewListType {
-	return ByteToCustomerRecyDevicesViewListType([]byte(retStr))
-}
-
 //ByteToType
 func (res *CustomerRecyDevicesViewListType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

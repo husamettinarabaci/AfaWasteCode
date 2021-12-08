@@ -104,20 +104,9 @@ func (res *RecyDeviceGpsType) ToString() string {
 
 }
 
-//Byte To RecyDeviceGpsType
-func ByteToRecyDeviceGpsType(retByte []byte) RecyDeviceGpsType {
-	var retVal RecyDeviceGpsType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RecyDeviceGpsType
-func StringToRecyDeviceGpsType(retStr string) RecyDeviceGpsType {
-	return ByteToRecyDeviceGpsType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RecyDeviceGpsType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

@@ -99,20 +99,9 @@ func (res *RfidDeviceWorkHourType) ToString() string {
 
 }
 
-//Byte To RfidDeviceWorkHourType
-func ByteToRfidDeviceWorkHourType(retByte []byte) RfidDeviceWorkHourType {
-	var retVal RfidDeviceWorkHourType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceWorkHourType
-func StringToRfidDeviceWorkHourType(retStr string) RfidDeviceWorkHourType {
-	return ByteToRfidDeviceWorkHourType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceWorkHourType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

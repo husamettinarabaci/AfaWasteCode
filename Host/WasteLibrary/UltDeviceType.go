@@ -128,14 +128,13 @@ func (res *UltDeviceType) ToString() string {
 
 }
 
-//Byte To UltDeviceType
-func ByteToUltDeviceType(retByte []byte) UltDeviceType {
-	var retVal UltDeviceType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *UltDeviceType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To UltDeviceType
-func StringToUltDeviceType(retStr string) UltDeviceType {
-	return ByteToUltDeviceType([]byte(retStr))
+//StringToType
+func (res *UltDeviceType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

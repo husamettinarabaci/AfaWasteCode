@@ -50,14 +50,13 @@ func (res *UltDeviceViewType) ToString() string {
 
 }
 
-//Byte To UltDeviceViewType
-func ByteToUltDeviceViewType(retByte []byte) UltDeviceViewType {
-	var retVal UltDeviceViewType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *UltDeviceViewType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To UltDeviceViewType
-func StringToUltDeviceViewType(retStr string) UltDeviceViewType {
-	return ByteToUltDeviceViewType([]byte(retStr))
+//StringToType
+func (res *UltDeviceViewType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

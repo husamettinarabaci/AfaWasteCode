@@ -87,20 +87,9 @@ func (res *TagAlarmType) ToString() string {
 
 }
 
-//Byte To TagAlarmType
-func ByteToTagAlarmType(retByte []byte) TagAlarmType {
-	var retVal TagAlarmType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagAlarmType
-func StringToTagAlarmType(retStr string) TagAlarmType {
-	return ByteToTagAlarmType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagAlarmType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

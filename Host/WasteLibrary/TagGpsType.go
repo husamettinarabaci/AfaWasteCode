@@ -106,20 +106,9 @@ func (res *TagGpsType) ToString() string {
 
 }
 
-//Byte To TagGpsType
-func ByteToTagGpsType(retByte []byte) TagGpsType {
-	var retVal TagGpsType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagGpsType
-func StringToTagGpsType(retStr string) TagGpsType {
-	return ByteToTagGpsType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagGpsType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

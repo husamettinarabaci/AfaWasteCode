@@ -105,20 +105,9 @@ func (res *RfidDeviceThermType) ToString() string {
 
 }
 
-//Byte To RfidDeviceThermType
-func ByteToRfidDeviceThermType(retByte []byte) RfidDeviceThermType {
-	var retVal RfidDeviceThermType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceThermType
-func StringToRfidDeviceThermType(retStr string) RfidDeviceThermType {
-	return ByteToRfidDeviceThermType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceThermType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

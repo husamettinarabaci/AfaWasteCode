@@ -103,20 +103,9 @@ func (res *RfidDeviceReportType) ToString() string {
 
 }
 
-//Byte To RfidDeviceReportType
-func ByteToRfidDeviceReportType(retByte []byte) RfidDeviceReportType {
-	var retVal RfidDeviceReportType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To RfidDeviceReportType
-func StringToRfidDeviceReportType(retStr string) RfidDeviceReportType {
-	return ByteToRfidDeviceReportType([]byte(retStr))
-}
-
 //ByteToType
 func (res *RfidDeviceReportType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

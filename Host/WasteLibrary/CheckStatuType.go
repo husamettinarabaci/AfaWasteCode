@@ -30,14 +30,13 @@ func (res *CheckStatuType) ToString() string {
 
 }
 
-//Byte To CheckStatuType
-func ByteToCheckStatuType(retByte []byte) CheckStatuType {
-	var retVal CheckStatuType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *CheckStatuType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To CheckStatuType
-func StringToCheckStatuType(retStr string) CheckStatuType {
-	return ByteToCheckStatuType([]byte(retStr))
+//StringToType
+func (res *CheckStatuType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

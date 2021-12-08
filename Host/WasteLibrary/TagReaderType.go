@@ -104,20 +104,9 @@ func (res *TagReaderType) ToString() string {
 
 }
 
-//Byte To TagReaderType
-func ByteToTagReaderType(retByte []byte) TagReaderType {
-	var retVal TagReaderType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagReaderType
-func StringToTagReaderType(retStr string) TagReaderType {
-	return ByteToTagReaderType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagReaderType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

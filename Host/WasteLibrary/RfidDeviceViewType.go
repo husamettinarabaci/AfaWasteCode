@@ -44,14 +44,13 @@ func (res *RfidDeviceViewType) ToString() string {
 
 }
 
-//Byte To RfidDeviceViewType
-func ByteToRfidDeviceViewType(retByte []byte) RfidDeviceViewType {
-	var retVal RfidDeviceViewType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *RfidDeviceViewType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To RfidDeviceViewType
-func StringToRfidDeviceViewType(retStr string) RfidDeviceViewType {
-	return ByteToRfidDeviceViewType([]byte(retStr))
+//StringToType
+func (res *RfidDeviceViewType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

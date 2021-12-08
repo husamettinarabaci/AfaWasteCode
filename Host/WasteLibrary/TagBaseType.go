@@ -84,20 +84,9 @@ func (res *TagBaseType) ToString() string {
 
 }
 
-//Byte To TagBaseType
-func ByteToTagBaseType(retByte []byte) TagBaseType {
-	var retVal TagBaseType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagBaseType
-func StringToTagBaseType(retStr string) TagBaseType {
-	return ByteToTagBaseType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagBaseType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

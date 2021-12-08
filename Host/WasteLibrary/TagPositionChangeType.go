@@ -56,20 +56,9 @@ func (res *TagPositionChangeType) ToString() string {
 
 }
 
-//Byte To TagPositionChangeType
-func ByteToTagPositionChangeType(retByte []byte) TagPositionChangeType {
-	var retVal TagPositionChangeType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To TagPositionChangeType
-func StringToTagPositionChangeType(retStr string) TagPositionChangeType {
-	return ByteToTagPositionChangeType([]byte(retStr))
-}
-
 //ByteToType
 func (res *TagPositionChangeType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

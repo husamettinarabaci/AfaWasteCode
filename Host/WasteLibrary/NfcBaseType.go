@@ -87,20 +87,9 @@ func (res *NfcBaseType) ToString() string {
 
 }
 
-//Byte To NfcBaseType
-func ByteToNfcBaseType(retByte []byte) NfcBaseType {
-	var retVal NfcBaseType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To NfcBaseType
-func StringToNfcBaseType(retStr string) NfcBaseType {
-	return ByteToNfcBaseType([]byte(retStr))
-}
-
 //ByteToType
 func (res *NfcBaseType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

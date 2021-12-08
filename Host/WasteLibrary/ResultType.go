@@ -22,14 +22,13 @@ func (res *ResultType) ToString() string {
 
 }
 
-//Byte To ResultType
-func ByteToResultType(retByte []byte) ResultType {
-	var retVal ResultType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *ResultType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To ResultType
-func StringToResultType(retStr string) ResultType {
-	return ByteToResultType([]byte(retStr))
+//StringToType
+func (res *ResultType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

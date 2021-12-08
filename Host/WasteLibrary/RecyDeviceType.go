@@ -120,14 +120,13 @@ func (res *RecyDeviceType) ToString() string {
 
 }
 
-//Byte To RecyDeviceType
-func ByteToRecyDeviceType(retByte []byte) RecyDeviceType {
-	var retVal RecyDeviceType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *RecyDeviceType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To RecyDeviceType
-func StringToRecyDeviceType(retStr string) RecyDeviceType {
-	return ByteToRecyDeviceType([]byte(retStr))
+//StringToType
+func (res *RecyDeviceType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

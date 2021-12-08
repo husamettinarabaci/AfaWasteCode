@@ -114,20 +114,9 @@ func (res *CustomerType) ToString() string {
 
 }
 
-//Byte To CustomerType
-func ByteToCustomerType(retByte []byte) CustomerType {
-	var retVal CustomerType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
-}
-
-//String To CustomerType
-func StringToCustomerType(retStr string) CustomerType {
-	return ByteToCustomerType([]byte(retStr))
-}
-
 //ByteToType
 func (res *CustomerType) ByteToType(retByte []byte) {
+	res.New()
 	json.Unmarshal(retByte, res)
 }
 

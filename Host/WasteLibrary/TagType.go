@@ -127,14 +127,13 @@ func (res *TagType) ToString() string {
 
 }
 
-//Byte To TagType
-func ByteToTagType(retByte []byte) TagType {
-	var retVal TagType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *TagType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To TagType
-func StringToTagType(retStr string) TagType {
-	return ByteToTagType([]byte(retStr))
+//StringToType
+func (res *TagType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }

@@ -25,14 +25,13 @@ func (res *LocationType) ToString() string {
 
 }
 
-//Byte To LocationType
-func ByteToLocationType(retByte []byte) LocationType {
-	var retVal LocationType
-	json.Unmarshal(retByte, &retVal)
-	return retVal
+//ByteToType
+func (res *LocationType) ByteToType(retByte []byte) {
+	res.New()
+	json.Unmarshal(retByte, res)
 }
 
-//String To LocationType
-func StringToLocationType(retStr string) LocationType {
-	return ByteToLocationType([]byte(retStr))
+//StringToType
+func (res *LocationType) StringToType(retStr string) {
+	res.ByteToType([]byte(retStr))
 }
