@@ -47,7 +47,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 	w.Write(resultVal.ToByte())
 
-	var customerTags WasteLibrary.CustomerTagsType = WasteLibrary.StringToCustomerTagsType(req.FormValue(WasteLibrary.HTTP_DATA))
+	var customerTags WasteLibrary.CustomerTagsType
+	customerTags.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 	go customerProc(customerTags)
 
 }

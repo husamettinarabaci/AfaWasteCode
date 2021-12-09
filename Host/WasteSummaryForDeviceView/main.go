@@ -46,15 +46,19 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-		var customerDevices WasteLibrary.CustomerRfidDevicesType = WasteLibrary.StringToCustomerRfidDevicesType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var customerDevices WasteLibrary.CustomerRfidDevicesType
+		customerDevices.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		go customerProcRfid(customerDevices)
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
-		var customerDevices WasteLibrary.CustomerRecyDevicesType = WasteLibrary.StringToCustomerRecyDevicesType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var customerDevices WasteLibrary.CustomerRecyDevicesType
+		customerDevices.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		go customerProcRecy(customerDevices)
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-		var customerDevices WasteLibrary.CustomerUltDevicesType = WasteLibrary.StringToCustomerUltDevicesType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var customerDevices WasteLibrary.CustomerUltDevicesType
+		customerDevices.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		go customerProcUlt(customerDevices)
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL

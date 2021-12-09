@@ -88,7 +88,7 @@ func HttpPostReq(url string, data url.Values) ResultType {
 		if err != nil {
 			LogErr(err)
 		}
-		resultVal = ByteToResultType(bodyBytes)
+		resultVal.ByteToType(bodyBytes)
 	}
 
 	return resultVal

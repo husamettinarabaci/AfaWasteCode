@@ -43,10 +43,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentData WasteLibrary.RfidDeviceType
+			currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 			go procGpsStopDevice(currentData, currentHttpHeader)
 		}
 	} else {

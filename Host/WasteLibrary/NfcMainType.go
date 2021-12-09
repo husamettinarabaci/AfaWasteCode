@@ -29,8 +29,7 @@ func (res *NfcMainType) New() {
 
 //GetByRedis
 func (res *NfcMainType) GetByRedis(dbIndex string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_NFC_MAINS, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_NFC_MAINS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -43,8 +42,7 @@ func (res *NfcMainType) GetByRedis(dbIndex string) ResultType {
 
 //SaveToRedis
 func (res *NfcMainType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_NFC_MAINS, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_NFC_MAINS, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

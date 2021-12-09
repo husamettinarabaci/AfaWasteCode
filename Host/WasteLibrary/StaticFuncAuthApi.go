@@ -10,7 +10,7 @@ import (
 )
 
 type RequestHeaders struct {
-	Authorization string `json: "authorization"`
+	Authorization string `json:"authorization"`
 }
 
 //CheckAuth

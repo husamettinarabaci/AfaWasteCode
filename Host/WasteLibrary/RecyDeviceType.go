@@ -89,8 +89,7 @@ func (res *RecyDeviceType) GetByRedis(dbIndex string) ResultType {
 
 //GetByRedisBySerial
 func (res *RecyDeviceType) GetByRedisBySerial(serial string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi("0", REDIS_SERIAL_RECY_DEVICE, serial)
+	resultVal := GetRedisForStoreApi("0", REDIS_SERIAL_RECY_DEVICE, serial)
 	if resultVal.Result == RESULT_OK {
 		var deviceId string = resultVal.Retval.(string)
 		res.DeviceId = StringIdToFloat64(deviceId)

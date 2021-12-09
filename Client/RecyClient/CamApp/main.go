@@ -66,7 +66,8 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if readerType == WasteLibrary.READERTYPE_CAMTRIGGER {
-		var readerDataTypeVal WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var readerDataTypeVal WasteLibrary.NfcType
+		readerDataTypeVal.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		if integratedPortInt == 4 {
 			integratedPortInt = 1
 		}

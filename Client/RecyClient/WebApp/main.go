@@ -70,14 +70,15 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 	w.Write(resultVal.ToByte())
 
 	readerType := req.FormValue(WasteLibrary.HTTP_READERTYPE)
-	var nfcTypeVal WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+	var nfcTypeVal WasteLibrary.NfcType
+	nfcTypeVal.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 	if readerType == WasteLibrary.READERTYPE_RF {
 
 		resultVal = sendRf(nfcTypeVal)
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RECY_SOCKET_ANALYZE
-			nfcTypeVal = WasteLibrary.StringToNfcType(resultVal.Retval.(string))
+			nfcTypeVal.StringToType(resultVal.Retval.(string))
 			go sendRfToCam(nfcTypeVal)
 			resultVal.Retval = nfcTypeVal.ToString()
 			socketCh <- resultVal.ToString()
@@ -94,7 +95,7 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		resultVal = getResult(nfcTypeVal)
 		if resultVal.Result == WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RECY_SOCKET_FINISH
-			nfcTypeVal = WasteLibrary.StringToNfcType(resultVal.Retval.(string))
+			nfcTypeVal.StringToType(resultVal.Retval.(string))
 			resultVal.Retval = nfcTypeVal.ToString()
 
 			socketCh <- resultVal.ToString()
@@ -127,7 +128,8 @@ func getCustomer() {
 		}
 		resultVal = WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 		if resultVal.Result == WasteLibrary.RESULT_OK {
-			var customer WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(resultVal.Retval.(string))
+			var customer WasteLibrary.CustomerType
+			customer.StringToType(resultVal.Retval.(string))
 			checkCustomer(customer)
 			time.Sleep(opInterval * time.Second)
 		} else {

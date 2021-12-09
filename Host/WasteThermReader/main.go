@@ -42,10 +42,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-			var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentData WasteLibrary.RfidDeviceType
+			currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceTherm.DeviceId = currentData.DeviceId
 			if WasteLibrary.StringIdToFloat64(currentData.DeviceTherm.Therm) > 80 {
@@ -83,7 +85,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 			WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_RFID_THERM, currentData.DeviceTherm.ToString())
 		} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentData WasteLibrary.UltDeviceType
+			currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceTherm.DeviceId = currentData.DeviceId
 			if WasteLibrary.StringIdToFloat64(currentData.DeviceTherm.Therm) > 80 {

@@ -87,7 +87,8 @@ func customerProc(customerId float64) {
 
 			resultVal = getLocation(currentCustomerConfig)
 			if resultVal.Result == WasteLibrary.RESULT_OK {
-				var deviceLocations WasteLibrary.ArventoDeviceGpsListType = WasteLibrary.StringToArventoDeviceGpsListType(resultVal.Retval.(string))
+				var deviceLocations WasteLibrary.ArventoDeviceGpsListType
+				deviceLocations.StringToType(resultVal.Retval.(string))
 				for _, vDevice := range currentCustomerDevices.Devices {
 					if vDevice == 0 {
 						continue

@@ -27,8 +27,7 @@ func (res *UltDeviceGpsType) New() {
 
 //GetByRedis
 func (res *UltDeviceGpsType) GetByRedis(dbIndex string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_GPS, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_ULT_GPS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -42,8 +41,7 @@ func (res *UltDeviceGpsType) GetByRedis(dbIndex string) ResultType {
 
 //SaveToRedis
 func (res *UltDeviceGpsType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_GPS, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_ULT_GPS, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

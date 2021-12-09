@@ -37,8 +37,7 @@ func (res *RecyDeviceVersionType) New() {
 
 //GetByRedis
 func (res *RecyDeviceVersionType) GetByRedis(dbIndex string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_VERSION, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_RECY_VERSION, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -52,8 +51,7 @@ func (res *RecyDeviceVersionType) GetByRedis(dbIndex string) ResultType {
 
 //SaveToRedis
 func (res *RecyDeviceVersionType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RECY_VERSION, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_RECY_VERSION, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

@@ -44,12 +44,14 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 			if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GPS_API {
 				WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
-				var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+				var currentData WasteLibrary.RfidDeviceType
+				currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 				currentData.DeviceId = currentHttpHeader.DeviceId
 				currentData.DeviceGps.DeviceId = currentData.DeviceId
 
@@ -124,7 +126,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				}
 			} else {
 				WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
-				var currentData WasteLibrary.RfidDeviceType = WasteLibrary.StringToRfidDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+				var currentData WasteLibrary.RfidDeviceType
+				currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 				currentData.DeviceId = currentHttpHeader.DeviceId
 				var currentEmbGps WasteLibrary.RfidDeviceEmbededGpsType
 				currentEmbGps.New()
@@ -188,7 +191,8 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				}
 			}
 		} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-			var currentData WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentData WasteLibrary.UltDeviceType
+			currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.DeviceId = currentHttpHeader.DeviceId
 			currentData.DeviceGps.DeviceId = currentData.DeviceId
 			currentData.DeviceGps.GpsTime = currentHttpHeader.Time

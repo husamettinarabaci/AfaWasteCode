@@ -70,7 +70,8 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if readerType == WasteLibrary.READERTYPE_CAMTRIGGER {
-		var readerDataTypeVal WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var readerDataTypeVal WasteLibrary.TagType
+		readerDataTypeVal.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		if integratedPortInt == 4 {
 			integratedPortInt = 1
 		}

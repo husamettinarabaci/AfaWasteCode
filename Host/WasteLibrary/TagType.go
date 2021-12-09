@@ -90,8 +90,7 @@ func (res *TagType) GetByRedis(dbIndex string) ResultType {
 
 //GetByRedisByEpc
 func (res *TagType) GetByRedisByEpc(epc string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi("0", REDIS_TAG_EPC, epc)
+	resultVal := GetRedisForStoreApi("0", REDIS_TAG_EPC, epc)
 	if resultVal.Result == RESULT_OK {
 		var tagId string = resultVal.Retval.(string)
 		res.TagId = StringIdToFloat64(tagId)

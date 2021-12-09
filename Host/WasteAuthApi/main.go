@@ -56,7 +56,8 @@ func register(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentUser WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
+	var currentUser WasteLibrary.UserType
+	currentUser.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 	var currentCustomerUsers WasteLibrary.CustomerUsersType
 	currentCustomerUsers.CustomerId = linkCustomer.CustomerId
 	resultVal = currentCustomerUsers.GetByRedis()
@@ -172,7 +173,8 @@ func login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentUser WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
+	var currentUser WasteLibrary.UserType
+	currentUser.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 	var currentCustomerUsers WasteLibrary.CustomerUsersType
 	currentCustomerUsers.CustomerId = linkCustomer.CustomerId
 	resultVal = currentCustomerUsers.GetByRedis()

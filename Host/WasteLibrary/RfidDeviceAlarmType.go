@@ -29,9 +29,7 @@ func (res *RfidDeviceAlarmType) New() {
 
 //GetByRedis
 func (res *RfidDeviceAlarmType) GetByRedis(dbIndex string) ResultType {
-
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RFID_ALARM, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_RFID_ALARM, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -45,8 +43,7 @@ func (res *RfidDeviceAlarmType) GetByRedis(dbIndex string) ResultType {
 
 //SaveToRedis
 func (res *RfidDeviceAlarmType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RFID_ALARM, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_RFID_ALARM, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

@@ -98,9 +98,9 @@ func trans(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 		if readerType == WasteLibrary.READERTYPE_CAM {
-			var curretnTagType WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
-
-			sendFileToServer(curretnTagType.TagReader.UID)
+			var currentTagType WasteLibrary.TagType
+			currentTagType.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
+			sendFileToServer(currentTagType.TagReader.UID)
 		}
 		resultVal.Result = WasteLibrary.RESULT_OK
 	}

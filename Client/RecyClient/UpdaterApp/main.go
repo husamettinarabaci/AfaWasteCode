@@ -156,7 +156,7 @@ func startUpdate(appType string) {
 	}
 	resultVal = WasteLibrary.HttpPostReq("http://listener.aws.afatek.com.tr/update", data)
 	if resultVal.Result == WasteLibrary.RESULT_OK {
-		updaterType = WasteLibrary.StringToUpdaterType(resultVal.Retval.(string))
+		updaterType.StringToType(resultVal.Retval.(string))
 		if downloadApp(updaterType).Result == WasteLibrary.RESULT_OK {
 			if stopApp(updaterType).Result == WasteLibrary.RESULT_OK {
 				if rmApp(updaterType).Result == WasteLibrary.RESULT_OK {

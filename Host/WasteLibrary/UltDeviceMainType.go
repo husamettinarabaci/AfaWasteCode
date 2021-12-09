@@ -32,8 +32,7 @@ func (res *UltDeviceMainType) New() {
 
 //GetByRedis
 func (res *UltDeviceMainType) GetByRedis(dbIndex string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_ULT_MAIN, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_ULT_MAIN, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -46,15 +45,13 @@ func (res *UltDeviceMainType) GetByRedis(dbIndex string) ResultType {
 
 //SaveToRedis
 func (res *UltDeviceMainType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_ULT_MAIN, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_ULT_MAIN, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
 //SaveToRedisBySerial
 func (res *UltDeviceMainType) SaveToRedisBySerial() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_SERIAL_ULT_DEVICE, res.SerialNumber, res.ToIdString())
+	resultVal := SaveRedisForStoreApi(REDIS_SERIAL_ULT_DEVICE, res.SerialNumber, res.ToIdString())
 	return resultVal
 }
 

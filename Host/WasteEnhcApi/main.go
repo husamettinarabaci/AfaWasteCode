@@ -44,7 +44,8 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 		//DeviceMMainType    RfidDeviceMainType
 		var currentDeviceMain WasteLibrary.RfidDeviceMainType
@@ -358,7 +359,8 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-		var currentUlt WasteLibrary.UltDeviceType = WasteLibrary.StringToUltDeviceType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentUlt WasteLibrary.UltDeviceType
+		currentUlt.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		//DeviceMainType    UltDeviceMainType
 		var currentDeviceMain WasteLibrary.UltDeviceMainType
 		currentDeviceMain.New()
@@ -872,7 +874,8 @@ func createTag(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
+	var currentData WasteLibrary.TagType
+	currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 	if currentData.TagMain.CustomerId > 1 {
 		//TagMainType    TagMainType
 		resultVal = currentData.TagMain.SaveToDb()

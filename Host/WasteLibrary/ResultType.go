@@ -10,6 +10,12 @@ type ResultType struct {
 	Retval interface{}
 }
 
+//New
+func (res *ResultType) New() {
+	res.Result = ""
+	res.Retval = nil
+}
+
 //ToByte
 func (res *ResultType) ToByte() []byte {
 	jData, _ := json.Marshal(res)

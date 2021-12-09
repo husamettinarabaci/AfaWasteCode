@@ -71,11 +71,13 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	var execSQL string = ""
 	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_USER {
 
-		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UserType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		if currentData.UserId != 0 {
 			execSQL = currentData.UpdateSQL()
 		} else {
@@ -96,7 +98,8 @@ func saveConfigDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_CUSTOMER {
 
-		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.CustomerType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		if currentData.CustomerId != 0 {
 			execSQL = currentData.UpdateSQL()
@@ -142,10 +145,12 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_USER {
 
-		var currentData WasteLibrary.UserType = WasteLibrary.StringToUserType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UserType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		errDb := currentData.SelectWithDb(configDb)
 		if errDb != nil {
@@ -158,7 +163,8 @@ func getConfigDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_CUSTOMER {
-		var currentData WasteLibrary.CustomerType = WasteLibrary.StringToCustomerType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.CustomerType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		errDb := currentData.SelectWithDb(configDb)
 		if errDb != nil {
 			WasteLibrary.LogErr(errDb)

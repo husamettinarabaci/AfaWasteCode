@@ -44,10 +44,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.Repeat == WasteLibrary.STATU_PASSIVE {
 		if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-			var currentData WasteLibrary.TagType = WasteLibrary.StringToTagType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentData WasteLibrary.TagType
+			currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentData.TagMain.DeviceId = currentHttpHeader.DeviceId
 			currentData.TagMain.CustomerId = currentHttpHeader.CustomerId
 			var redisTag WasteLibrary.TagType

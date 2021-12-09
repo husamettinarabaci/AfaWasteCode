@@ -69,8 +69,7 @@ func GetFuncName(skipFrames int) runtime.Frame {
 //InitLog
 func InitLog() {
 	var ctxLog = context.Background()
-	var redisDbLog *redis.Client
-	redisDbLog = redis.NewClient(&redis.Options{
+	redisDbLog := redis.NewClient(&redis.Options{
 		Addr:     "waste-redis-cluster-ip:6379",
 		Password: "Amca151200!Furkan",
 		DB:       0,
@@ -80,13 +79,13 @@ func InitLog() {
 	LogErr(err)
 	LogStr(pong)
 	subscriber := redisDbLog.Subscribe(ctxLog, REDIS_APP_LOG_CHANNEL)
-
+	var resultVal ResultType
 	for {
 		msg, err := subscriber.ReceiveMessage(ctxLog)
 		if err != nil {
 			continue
 		}
-		resultVal := StringToResultType(msg.Payload)
+		resultVal.StringToType(msg.Payload)
 		if resultVal.Result == Container {
 			LogStr("LogStatu : " + resultVal.Retval.(string) + " - Container : " + Container)
 			Debug = resultVal.Retval.(string) == "open"

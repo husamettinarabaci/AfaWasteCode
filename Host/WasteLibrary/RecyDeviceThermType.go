@@ -27,8 +27,7 @@ func (res *RecyDeviceThermType) New() {
 
 //GetByRedis
 func (res *RecyDeviceThermType) GetByRedis(dbIndex string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_RECY_THERM, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_RECY_THERM, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 		res.NewData = false
@@ -42,8 +41,7 @@ func (res *RecyDeviceThermType) GetByRedis(dbIndex string) ResultType {
 
 //SaveToRedis
 func (res *RecyDeviceThermType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_RECY_THERM, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_RECY_THERM, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

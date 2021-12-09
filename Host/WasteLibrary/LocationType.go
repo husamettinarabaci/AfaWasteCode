@@ -12,6 +12,14 @@ type LocationType struct {
 	ZoneRadius   float64
 }
 
+//New
+func (res *LocationType) New() {
+	res.LocationName = ""
+	res.Latitude = 0
+	res.Longitude = 0
+	res.ZoneRadius = 0
+}
+
 //ToByte
 func (res *LocationType) ToByte() []byte {
 	jData, _ := json.Marshal(res)

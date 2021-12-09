@@ -97,7 +97,8 @@ func trans(w http.ResponseWriter, req *http.Request) {
 		dataVal := req.FormValue(WasteLibrary.HTTP_DATA)
 		resultVal = sendDataToServer(readerType, dataVal, WasteLibrary.GetTime(), WasteLibrary.STATU_PASSIVE)
 		if readerType == WasteLibrary.READERTYPE_CAM {
-			var currentNfcType WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentNfcType WasteLibrary.NfcType
+			currentNfcType.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 			sendFileToServer(currentNfcType.NfcReader.UID)
 		}

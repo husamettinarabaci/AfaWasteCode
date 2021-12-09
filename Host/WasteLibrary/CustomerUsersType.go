@@ -19,8 +19,7 @@ func (res *CustomerUsersType) New() {
 
 //GetByRedis
 func (res *CustomerUsersType) GetByRedis() ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi("0", REDIS_CUSTOMER_USERS, res.ToIdString())
+	resultVal := GetRedisForStoreApi("0", REDIS_CUSTOMER_USERS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -33,8 +32,7 @@ func (res *CustomerUsersType) GetByRedis() ResultType {
 
 //SaveToRedis
 func (res *CustomerUsersType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_USERS, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_CUSTOMER_USERS, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

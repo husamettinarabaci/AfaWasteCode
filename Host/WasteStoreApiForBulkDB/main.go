@@ -68,7 +68,8 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 		WasteLibrary.LogErr(err)
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	dataVal := req.FormValue(WasteLibrary.HTTP_DATA)
 
 	var insertSQL string = fmt.Sprintf(`INSERT INTO public.`+WasteLibrary.DATATYPE_LISTENER_DATA+`  

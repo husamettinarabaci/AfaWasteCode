@@ -69,10 +69,12 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	var execSQL string = ""
 	if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_MAIN {
-		var currentData WasteLibrary.RfidDeviceMainType = WasteLibrary.StringToRfidDeviceMainType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceMainType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		execSQL = currentData.InsertDataSQL()
 
 		var deviceId int = 0
@@ -88,7 +90,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_BASE {
-		var currentData WasteLibrary.RfidDeviceBaseType = WasteLibrary.StringToRfidDeviceBaseType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceBaseType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		execSQL = currentData.InsertSQL()
 		var deviceId int = 0
 		errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
@@ -103,7 +106,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_STATU {
-		var currentData WasteLibrary.RfidDeviceStatuType = WasteLibrary.StringToRfidDeviceStatuType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceStatuType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		execSQL = currentData.InsertSQL()
 		var deviceId int = 0
 		errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
@@ -118,7 +122,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_GPS {
-		var currentData WasteLibrary.RfidDeviceGpsType = WasteLibrary.StringToRfidDeviceGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceGpsType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		execSQL = currentData.InsertSQL()
 		var deviceId int = 0
 		errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
@@ -133,7 +138,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_EMBEDED_GPS {
-		var currentData WasteLibrary.RfidDeviceEmbededGpsType = WasteLibrary.StringToRfidDeviceEmbededGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceEmbededGpsType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		execSQL = currentData.InsertSQL()
 		var deviceId int = 0
 		errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
@@ -149,7 +155,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_ALARM {
 
-		var currentData WasteLibrary.RfidDeviceAlarmType = WasteLibrary.StringToRfidDeviceAlarmType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceAlarmType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		execSQL = currentData.InsertSQL()
 
 		var deviceId int = 0
@@ -166,7 +173,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_THERM {
 
-		var currentData WasteLibrary.RfidDeviceThermType = WasteLibrary.StringToRfidDeviceThermType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceThermType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -184,7 +192,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_VERSION {
 
-		var currentData WasteLibrary.RfidDeviceVersionType = WasteLibrary.StringToRfidDeviceVersionType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceVersionType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -202,7 +211,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_DETAIL {
 
-		var currentData WasteLibrary.RfidDeviceDetailType = WasteLibrary.StringToRfidDeviceDetailType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceDetailType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -220,7 +230,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_WORKHOUR {
 
-		var currentData WasteLibrary.RfidDeviceWorkHourType = WasteLibrary.StringToRfidDeviceWorkHourType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceWorkHourType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -238,7 +249,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_NOTE {
 
-		var currentData WasteLibrary.RfidDeviceNoteType = WasteLibrary.StringToRfidDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceNoteType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -256,7 +268,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_REPORT {
 
-		var currentData WasteLibrary.RfidDeviceReportType = WasteLibrary.StringToRfidDeviceReportType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RfidDeviceReportType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -273,7 +286,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_MAIN {
-		var currentData WasteLibrary.RecyDeviceMainType = WasteLibrary.StringToRecyDeviceMainType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceMainType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertDataSQL()
 
@@ -290,7 +304,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_BASE {
-		var currentData WasteLibrary.RecyDeviceBaseType = WasteLibrary.StringToRecyDeviceBaseType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceBaseType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -307,7 +322,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_STATU {
-		var currentData WasteLibrary.RecyDeviceStatuType = WasteLibrary.StringToRecyDeviceStatuType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceStatuType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -324,7 +340,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_GPS {
-		var currentData WasteLibrary.RecyDeviceGpsType = WasteLibrary.StringToRecyDeviceGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceGpsType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -342,7 +359,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_ALARM {
 
-		var currentData WasteLibrary.RecyDeviceAlarmType = WasteLibrary.StringToRecyDeviceAlarmType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceAlarmType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -360,7 +378,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_THERM {
 
-		var currentData WasteLibrary.RecyDeviceThermType = WasteLibrary.StringToRecyDeviceThermType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceThermType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -378,8 +397,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_VERSION {
 
-		var currentData WasteLibrary.RecyDeviceVersionType = WasteLibrary.StringToRecyDeviceVersionType(req.FormValue(WasteLibrary.HTTP_DATA))
-
+		var currentData WasteLibrary.RecyDeviceVersionType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 		execSQL = currentData.InsertSQL()
 
 		var deviceId int = 0
@@ -396,7 +415,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_DETAIL {
 
-		var currentData WasteLibrary.RecyDeviceDetailType = WasteLibrary.StringToRecyDeviceDetailType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceDetailType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -413,7 +433,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RECY_NOTE {
-		var currentData WasteLibrary.RecyDeviceNoteType = WasteLibrary.StringToRecyDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.RecyDeviceNoteType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -430,7 +451,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_MAIN {
-		var currentData WasteLibrary.UltDeviceMainType = WasteLibrary.StringToUltDeviceMainType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceMainType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertDataSQL()
 
@@ -447,7 +469,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_BASE {
-		var currentData WasteLibrary.UltDeviceBaseType = WasteLibrary.StringToUltDeviceBaseType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceBaseType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -464,7 +487,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_STATU {
-		var currentData WasteLibrary.UltDeviceStatuType = WasteLibrary.StringToUltDeviceStatuType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceStatuType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -481,7 +505,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_GPS {
-		var currentData WasteLibrary.UltDeviceGpsType = WasteLibrary.StringToUltDeviceGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceGpsType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -499,7 +524,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_ALARM {
 
-		var currentData WasteLibrary.UltDeviceAlarmType = WasteLibrary.StringToUltDeviceAlarmType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceAlarmType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -517,7 +543,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_THERM {
 
-		var currentData WasteLibrary.UltDeviceThermType = WasteLibrary.StringToUltDeviceThermType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceThermType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -535,7 +562,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_VERSION {
 
-		var currentData WasteLibrary.UltDeviceVersionType = WasteLibrary.StringToUltDeviceVersionType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceVersionType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -553,7 +581,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_BATTERY {
 
-		var currentData WasteLibrary.UltDeviceBatteryType = WasteLibrary.StringToUltDeviceBatteryType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceBatteryType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -571,7 +600,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_SENS {
 
-		var currentData WasteLibrary.UltDeviceSensType = WasteLibrary.StringToUltDeviceSensType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceSensType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -588,7 +618,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_NOTE {
-		var currentData WasteLibrary.UltDeviceNoteType = WasteLibrary.StringToUltDeviceNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.UltDeviceNoteType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -605,7 +636,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_MAIN {
-		var currentData WasteLibrary.TagMainType = WasteLibrary.StringToTagMainType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.TagMainType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertDataSQL()
 
@@ -622,7 +654,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_BASE {
-		var currentData WasteLibrary.TagBaseType = WasteLibrary.StringToTagBaseType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.TagBaseType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -639,7 +672,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_STATU {
-		var currentData WasteLibrary.TagStatuType = WasteLibrary.StringToTagStatuType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.TagStatuType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -656,7 +690,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = currentData.ToIdString()
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_GPS {
-		var currentData WasteLibrary.TagGpsType = WasteLibrary.StringToTagGpsType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.TagGpsType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -674,7 +709,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_READER {
 
-		var currentData WasteLibrary.TagReaderType = WasteLibrary.StringToTagReaderType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.TagReaderType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -692,7 +728,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_ALARM {
 
-		var currentData WasteLibrary.TagAlarmType = WasteLibrary.StringToTagAlarmType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.TagAlarmType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 
@@ -710,7 +747,8 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_TAG_NOTE {
 
-		var currentData WasteLibrary.TagNoteType = WasteLibrary.StringToTagNoteType(req.FormValue(WasteLibrary.HTTP_DATA))
+		var currentData WasteLibrary.TagNoteType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()
 

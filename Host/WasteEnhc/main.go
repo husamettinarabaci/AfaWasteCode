@@ -47,7 +47,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 		var currentDevice WasteLibrary.RfidDeviceType
 		currentDevice.New()
@@ -189,7 +190,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_RF {
-			var currentNfc WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentNfc WasteLibrary.NfcType
+			currentNfc.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 			currentNfc.NfcBase.Name = "İsim"
 			currentNfc.NfcBase.SurName = "Soyisim"
 			currentNfc.NfcBase.TotalAmount = 10
@@ -204,7 +206,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 			//serviceClusterIp = "waste-thermreader-cluster-ip"
 			//resultVal = sendReader(serviceClusterIp, currentHttpHeader.ToString(), req.FormValue(WasteLibrary.HTTP_DATA))
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_CAM {
-			var currentNfc WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentNfc WasteLibrary.NfcType
+			currentNfc.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 			client := http.Client{
 				Timeout: 10 * time.Second,
@@ -221,7 +224,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 			}
 		} else if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_GET_NFC {
 			time.Sleep(20 * time.Second)
-			var currentNfc WasteLibrary.NfcType = WasteLibrary.StringToNfcType(req.FormValue(WasteLibrary.HTTP_DATA))
+			var currentNfc WasteLibrary.NfcType
+			currentNfc.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 			var retVal string
 			retVal = "cam"
 			client := http.Client{

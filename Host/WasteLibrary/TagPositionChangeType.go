@@ -20,8 +20,7 @@ func (res *TagPositionChangeType) New() {
 //GetByRedis
 func (res *TagPositionChangeType) GetByRedis(dbIndex string) ResultType {
 
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_TAG_POSITION_CHANGE, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_TAG_POSITION_CHANGE, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -34,8 +33,7 @@ func (res *TagPositionChangeType) GetByRedis(dbIndex string) ResultType {
 
 //SaveToRedis
 func (res *TagPositionChangeType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_TAG_POSITION_CHANGE, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_TAG_POSITION_CHANGE, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

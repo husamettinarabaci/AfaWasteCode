@@ -251,7 +251,8 @@ func data(w http.ResponseWriter, req *http.Request) {
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_PARSE
 		return
 	}
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID || currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		resultVal = WasteLibrary.HttpPostReq("http://waste-enhc-cluster-ip/data", req.Form)
 		if resultVal.Result != WasteLibrary.RESULT_OK {
@@ -290,8 +291,10 @@ func update(w http.ResponseWriter, req *http.Request) {
 		w.Write(resultVal.ToByte())
 		return
 	}*/
-	var currentHttpHeader WasteLibrary.HttpClientHeaderType = WasteLibrary.StringToHttpClientHeaderType(req.FormValue(WasteLibrary.HTTP_HEADER))
-	var updaterType WasteLibrary.UpdaterType = WasteLibrary.StringToUpdaterType(req.FormValue(WasteLibrary.HTTP_DATA))
+	var currentHttpHeader WasteLibrary.HttpClientHeaderType
+	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
+	var updaterType WasteLibrary.UpdaterType
+	updaterType.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
 		if currentHttpHeader.DeviceNo == "0000000064231683" ||

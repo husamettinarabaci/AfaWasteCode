@@ -51,8 +51,7 @@ func (res *AdminConfigType) New() {
 
 //GetByRedis
 func (res *AdminConfigType) GetByRedis() ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi("0", REDIS_CUSTOMER_ADMINCONFIG, res.ToIdString())
+	resultVal := GetRedisForStoreApi("0", REDIS_CUSTOMER_ADMINCONFIG, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -65,8 +64,7 @@ func (res *AdminConfigType) GetByRedis() ResultType {
 
 //SaveToRedis
 func (res *AdminConfigType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_ADMINCONFIG, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_CUSTOMER_ADMINCONFIG, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

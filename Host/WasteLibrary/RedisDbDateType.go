@@ -19,8 +19,7 @@ func (res *RedisDbDateType) New() {
 
 //GetByRedis
 func (res *RedisDbDateType) GetByRedis() ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi("0", REDIS_DB_DATE, REDIS_DB_DATE)
+	resultVal := GetRedisForStoreApi("0", REDIS_DB_DATE, REDIS_DB_DATE)
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -33,8 +32,7 @@ func (res *RedisDbDateType) GetByRedis() ResultType {
 
 //SaveToRedis
 func (res *RedisDbDateType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_DB_DATE, REDIS_DB_DATE, res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_DB_DATE, REDIS_DB_DATE, res.ToString())
 	return resultVal
 }
 

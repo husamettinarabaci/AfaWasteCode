@@ -1,34 +1,34 @@
 cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
-cd WasteAfatekApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteEnhcApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteWebApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteWebUi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteWebSocket && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteCamReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteEnhc && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteGpsReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteGpsStopReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteSensReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteBatteryReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteListener && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteLogServer && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteRfReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteStatusReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteStoreApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteStoreApiForBulkDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteStoreApiForStaticDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteStoreApiForReaderDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteStoreApiForConfigDB && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteStoreApiForRedis && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteThermReader && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteAuthApi && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteSummaryForTagView && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteSummaryForRedis && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteSummaryForTag && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteSummaryForDeviceView && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteSummaryForDevice && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteArvento && go get "github.com/devafatek/WasteLibrary" && cd .. &&
-cd WasteDbCreator && go get "github.com/devafatek/WasteLibrary" && cd .. 
+cd WasteAfatekApi && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteEnhcApi && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteWebApi && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteWebUi && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteWebSocket && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteCamReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteEnhc && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteGpsReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteGpsStopReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSensReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteBatteryReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteListener && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteLogServer && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteRfReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStatusReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApi && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForBulkDB && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForStaticDB && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForReaderDB && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForConfigDB && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteStoreApiForRedis && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteThermReader && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteAuthApi && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSummaryForTagView && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSummaryForRedis && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSummaryForTag && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSummaryForDeviceView && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSummaryForDevice && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteArvento && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteDbCreator && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. 
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
 sudo docker build -f WasteCamReader/Dockerfile -t devafatek/wastecamreader:1.0 . && docker push devafatek/wastecamreader:1.0 &&
@@ -102,7 +102,7 @@ kubectl create -f Aws/Yaml/waste-arvento-deployment.yaml
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-listener-deployment.yaml
 
-#cd WasteSystemUpdater && go get "github.com/devafatek/WasteLibrary" && cd .. 
+#cd WasteSystemUpdater && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. 
 #sudo docker build -f WasteSystemUpdater/Dockerfile -t devafatek/wastesystemupdater:1.0 . && docker push devafatek/wastesystemupdater:1.0 
 #kubectl create -f Aws/Yaml/waste-systemupdater-pod.yaml 
 

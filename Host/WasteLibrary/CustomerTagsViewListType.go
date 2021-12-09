@@ -19,8 +19,7 @@ func (res *CustomerTagsViewListType) New() {
 
 //GetByRedis
 func (res *CustomerTagsViewListType) GetByRedis(dbIndex string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisForStoreApi(dbIndex, REDIS_CUSTOMER_TAGVIEWS, res.ToIdString())
+	resultVal := GetRedisForStoreApi(dbIndex, REDIS_CUSTOMER_TAGVIEWS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -33,8 +32,7 @@ func (res *CustomerTagsViewListType) GetByRedis(dbIndex string) ResultType {
 
 //GetByRedisByReel
 func (res *CustomerTagsViewListType) GetByRedisByReel(dbIndex string) ResultType {
-	var resultVal ResultType
-	resultVal = GetRedisWODbForStoreApi(dbIndex, REDIS_CUSTOMER_TAGVIEWS_REEL, REDIS_CUSTOMER_TAGVIEWS, res.ToIdString())
+	resultVal := GetRedisWODbForStoreApi(dbIndex, REDIS_CUSTOMER_TAGVIEWS_REEL, REDIS_CUSTOMER_TAGVIEWS, res.ToIdString())
 	if resultVal.Result == RESULT_OK {
 		res.StringToType(resultVal.Retval.(string))
 	} else {
@@ -47,15 +45,13 @@ func (res *CustomerTagsViewListType) GetByRedisByReel(dbIndex string) ResultType
 
 //SaveToRedis
 func (res *CustomerTagsViewListType) SaveToRedis() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisForStoreApi(REDIS_CUSTOMER_TAGVIEWS, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisForStoreApi(REDIS_CUSTOMER_TAGVIEWS, res.ToIdString(), res.ToString())
 	return resultVal
 }
 
 //SaveToRedisWODb
 func (res *CustomerTagsViewListType) SaveToRedisWODb() ResultType {
-	var resultVal ResultType
-	resultVal = SaveRedisWODbForStoreApi(REDIS_CUSTOMER_TAGVIEWS_REEL, res.ToIdString(), res.ToString())
+	resultVal := SaveRedisWODbForStoreApi(REDIS_CUSTOMER_TAGVIEWS_REEL, res.ToIdString(), res.ToString())
 	return resultVal
 }
 

@@ -17,6 +17,13 @@ var CurrentCheckStatu CheckStatuType = CheckStatuType{
 	DeviceStatu: STATU_PASSIVE,
 }
 
+//New
+func (res *CheckStatuType) New() {
+	res.AppStatu = STATU_ACTIVE
+	res.ConnStatu = STATU_PASSIVE
+	res.DeviceStatu = STATU_PASSIVE
+}
+
 //ToByte
 func (res *CheckStatuType) ToByte() []byte {
 	jData, _ := json.Marshal(res)
