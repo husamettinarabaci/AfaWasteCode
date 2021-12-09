@@ -27,6 +27,7 @@ cd WasteSummaryForRedis && go mod tidy && go get -u "github.com/devafatek/WasteL
 cd WasteSummaryForTag && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteSummaryForDeviceView && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteSummaryForDevice && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
+cd WasteSystemUpdater && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteArvento && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteDbCreator && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. 
 
@@ -101,10 +102,6 @@ kubectl create -f Aws/Yaml/waste-arvento-deployment.yaml
 
 cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
 kubectl create -f Aws/Yaml/waste-listener-deployment.yaml
-
-#cd WasteSystemUpdater && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. 
-#sudo docker build -f WasteSystemUpdater/Dockerfile -t devafatek/wastesystemupdater:1.0 . && docker push devafatek/wastesystemupdater:1.0 
-#kubectl create -f Aws/Yaml/waste-systemupdater-pod.yaml 
 
 #afatek.aws.afatek.com.tr/afatekapi/logApp?opType=open&appType=wastelistener
 
