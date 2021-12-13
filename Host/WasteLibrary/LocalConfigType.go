@@ -10,6 +10,7 @@ type LocalConfigType struct {
 	CustomerId float64
 	Active     string
 	CreateTime string
+	Locs       map[string]string
 }
 
 //New
@@ -17,6 +18,35 @@ func (res *LocalConfigType) New() {
 	res.CustomerId = 1
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
+	res.Locs = make(map[string]string)
+
+	res.Locs[RESULT_ERROR_HTTP_PARSE] = "İstek Çözülmedi"
+	res.Locs[RESULT_ERROR_HTTP_POST] = "İstek Hatası"
+	res.Locs[RESULT_ERROR_USER_AUTH] = "Hatalı Kullanıcı"
+	res.Locs[RESULT_ERROR_READERTYPE] = "Okuma Türü Hatalı"
+	res.Locs[RESULT_ERROR_DATATYPE] = "Veri Türü Hatalı"
+	res.Locs[RESULT_ERROR_DEVICETYPE] = "Cihaz Tipi Hatalı"
+	res.Locs[RESULT_ERROR_DEVICE_NOTFOUND] = "Cihaz Bulunamadı"
+	res.Locs[RESULT_ERROR_DEVICES_NOTFOUND] = "Cihazlar Bulunamadı"
+	res.Locs[RESULT_ERROR_DB_SAVE] = "Veri Tabanı Kayıt Hatası"
+	res.Locs[RESULT_ERROR_DB_GET] = "Veri Tabanı Sorgu Hatası"
+	res.Locs[RESULT_ERROR_REDIS_SAVE] = "Hafıza Kayıt Hatası"
+	res.Locs[RESULT_ERROR_REDIS_GET] = "Hafıza Sorgu Hatası"
+	res.Locs[RESULT_ERROR_CUSTOMER_NOTFOUND] = "Müşteri Bulunamadı"
+	res.Locs[RESULT_ERROR_CUSTOMER_INVALID] = "Hatalı Müşteri"
+	res.Locs[RESULT_ERROR_CUSTOMER_CUSTOMERCONFIG_NOTFOUND] = "Müşteri Ayarı Bulunamadı"
+	res.Locs[RESULT_ERROR_CUSTOMER_ADMINCONFIG_NOTFOUND] = "Admin Ayarı Bulunamadı"
+	res.Locs[RESULT_ERROR_CUSTOMER_LOCALCONFIG_NOTFOUND] = "Dil Ayarı Bulunamdı"
+	res.Locs[RESULT_ERROR_CUSTOMER_TAGS_NOTFOUND] = "Tagler Bulunamadı"
+	res.Locs[RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND] = "Müşteri Cihazları Bulunamadı"
+	res.Locs[RESULT_ERROR_CUSTOMER_NFCS_NOTFOUND] = "Müşteri Kartları Bulunamadı"
+	res.Locs[RESULT_ERROR_CUSTOMERS_NOTFOUND] = "Müşteriler Bulunamadı"
+	res.Locs[RESULT_ERROR_TAG_NOTFOUND] = "Tag Bulunamadı"
+	res.Locs[RESULT_ERROR_TAG_CUSTOMER_NOTFOUND] = "Tag Müşteri Ataması Bulunamadı"
+	res.Locs[RESULT_ERROR_NFC_NOTFOUND] = "Kart Bulunamadı"
+	res.Locs[RESULT_ERROR_NFC_CUSTOMER_NOTFOUND] = "Kart Müşteri Ataması Bulunamadı"
+	res.Locs[RESULT_ERROR_APP_STARTED] = "Uygulama Başlatılamadı"
+	res.Locs[RESULT_ERROR_IGNORE_FIRST_DATA] = "Başlangıç Verisi Hatalı"
 }
 
 //GetByRedis

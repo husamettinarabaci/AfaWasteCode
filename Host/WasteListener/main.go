@@ -213,8 +213,8 @@ func handleTcpRequest(conn net.Conn) {
 						tempCount--
 					}
 
-					currentDevice.DeviceBase.Imei = imei
-					currentDevice.DeviceBase.Imsi = imsi
+					currentDevice.DeviceSim.Imei = imei
+					currentDevice.DeviceSim.Imsi = imsi
 
 					data := url.Values{
 						WasteLibrary.HTTP_HEADER: {currentHttpHeader.ToString()},
@@ -259,7 +259,6 @@ func data(w http.ResponseWriter, req *http.Request) {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_HTTP_POST
 		}
-	} else {
 	}
 	w.Write(resultVal.ToByte())
 }

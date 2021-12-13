@@ -113,8 +113,6 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		socketCh <- resultVal.ToString()
 		currentStatu = resultVal.Result
 		lastTime = time.Now()
-	} else {
-
 	}
 
 }
@@ -216,8 +214,8 @@ func checkStatu() {
 			currentStatu = resultVal.Result
 			lastTime = time.Now()
 		}
+		time.Sleep(10 * time.Second)
 	}
-	time.Sleep(10 * time.Second)
 
 }
 

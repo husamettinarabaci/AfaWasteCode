@@ -14,18 +14,25 @@ type RequestHeaders struct {
 }
 
 //CheckAuth
-func CheckAuth(header http.Header, customerId string, userRole string) ResultType {
+func CheckAuth(header http.Header, customerId string, userRole []string) ResultType {
 	var resultVal ResultType
 	resultVal.Result = RESULT_FAIL
 	authorization := header.Get("Authorization")
 	headers := RequestHeaders{
 		Authorization: authorization}
-	data := url.Values{
-		HTTP_TOKEN:      {headers.Authorization},
-		HTTP_CUSTOMERID: {customerId},
-		HTTP_USERROLE:   {userRole},
+
+	for i := 0; i < len(userRole); i++ {
+
+		data := url.Values{
+			HTTP_TOKEN:      {headers.Authorization},
+			HTTP_CUSTOMERID: {customerId},
+			HTTP_USERROLE:   {userRole[i]},
+		}
+		resultVal = HttpPostReq("http://waste-authapi-cluster-ip/checkAuth", data)
+		if resultVal.Result == RESULT_OK {
+			break
+		}
 	}
-	resultVal = HttpPostReq("http://waste-authapi-cluster-ip/checkAuth", data)
 	return resultVal
 }
 

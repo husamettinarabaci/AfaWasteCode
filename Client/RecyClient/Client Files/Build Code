@@ -1,10 +1,10 @@
 cd /home/uncle/Documents/Project/AfaWasteCode/Client/RecyClient &&
-cd CamApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp CamApp ../Client\ Files/Binary/ && cd .. &&
-cd CheckerApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp CheckerApp ../Client\ Files/Binary/ && cd .. &&
-cd MotorApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp MotorApp ../Client\ Files/Binary/ && cd .. &&
-cd WebApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp WebApp ../Client\ Files/Binary/ && cd .. &&
-cd ReaderApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp ReaderApp ../Client\ Files/Binary/ && cd .. &&
-cd ThermApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp ThermApp ../Client\ Files/Binary/ && cd .. &&
-cd TransferApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp TransferApp ../Client\ Files/Binary/ && cd .. && 
-cd SystemApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp SystemApp ../Client\ Files/Binary/ && cd .. && 
-cd UpdaterApp/ && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && cp UpdaterApp ../Client\ Files/Binary/ && cd .. 
+cd CamApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv CamApp ../Client\ Files/Binary/ && cd .. &&
+cd CheckerApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv CheckerApp ../Client\ Files/Binary/ && cd .. &&
+cd MotorApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv MotorApp ../Client\ Files/Binary/ && cd .. &&
+cd WebApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv WebApp ../Client\ Files/Binary/ && cd .. &&
+cd ReaderApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv ReaderApp ../Client\ Files/Binary/ && cd .. &&
+cd ThermApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv ThermApp ../Client\ Files/Binary/ && cd .. &&
+cd TransferApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv TransferApp ../Client\ Files/Binary/ && cd .. && 
+cd SystemApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv SystemApp ../Client\ Files/Binary/ && cd .. && 
+cd UpdaterApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv UpdaterApp ../Client\ Files/Binary/ && cd .. 

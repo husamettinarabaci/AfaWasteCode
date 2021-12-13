@@ -72,5 +72,4 @@ func sendTherm() {
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}
-	wg.Done()
 }

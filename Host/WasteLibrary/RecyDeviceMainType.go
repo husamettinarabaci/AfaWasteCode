@@ -12,6 +12,9 @@ type RecyDeviceMainType struct {
 	DeviceId     float64
 	CustomerId   float64
 	SerialNumber string
+	Latitude     float64
+	Longitude    float64
+	DeviceType   string
 	Active       string
 	CreateTime   string
 }
@@ -21,6 +24,9 @@ func (res *RecyDeviceMainType) New() {
 	res.DeviceId = 0
 	res.CustomerId = 1
 	res.SerialNumber = ""
+	res.Latitude = 0
+	res.Longitude = 0
+	res.DeviceType = RECY_DEVICE_TYPE_NONE
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 }
@@ -105,32 +111,35 @@ func (res *RecyDeviceMainType) StringToType(retStr string) {
 
 //SelectSQL
 func (res *RecyDeviceMainType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime
+	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,Latitude,Longitude,DeviceType
 	 FROM public.`+DATATYPE_RECY_MAIN+` 
 	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN+`  (CustomerId,SerialNumber) 
-	  VALUES (%f,'%s') 
-	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN+`  (CustomerId,SerialNumber,Latitude,Longitude,DeviceType) 
+	  VALUES (%f,'%s',%f,%f,'%s') 
+	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.Latitude, res.Longitude, res.DeviceType)
 }
 
 //InsertDataSQL
 func (res *RecyDeviceMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN+`  (DeviceId,CustomerId,SerialNumber) 
-	  VALUES (%f,%f,'%s') 
-	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_MAIN+`  (DeviceId,CustomerId,SerialNumber,Latitude,Longitude,DeviceType) 
+	  VALUES (%f,%f,'%s',%f,%f,'%s') 
+	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.Latitude, res.Longitude, res.DeviceType)
 }
 
 //UpdateSQL
 func (res *RecyDeviceMainType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_MAIN+`  
-	  SET CustomerId=%f 
+	  SET CustomerId=%f,Latitude=%f,Longitude=%f,DeviceType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
 		res.CustomerId,
+		res.Latitude,
+		res.Longitude,
+		res.DeviceType,
 		res.DeviceId)
 }
 
@@ -140,7 +149,10 @@ func (res *RecyDeviceMainType) SelectWithDb(db *sql.DB) error {
 		&res.CustomerId,
 		&res.SerialNumber,
 		&res.Active,
-		&res.CreateTime)
+		&res.CreateTime,
+		&res.Latitude,
+		&res.Longitude,
+		&res.DeviceType)
 	return errDb
 }
 
@@ -150,6 +162,9 @@ func (res *RecyDeviceMainType) CreateDb(currentDb *sql.DB) {
 	DeviceId  serial PRIMARY KEY,
 	CustomerId INT NOT NULL DEFAULT -1,
 	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + RECY_DEVICE_TYPE_NONE + `',
 	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
@@ -164,6 +179,9 @@ func (res *RecyDeviceMainType) CreateReaderDb(currentDb *sql.DB) {
 	DeviceId INT NOT NULL DEFAULT -1,
 	CustomerId INT NOT NULL DEFAULT -1,
 	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + RECY_DEVICE_TYPE_NONE + `',
 	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)

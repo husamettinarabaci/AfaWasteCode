@@ -60,10 +60,10 @@ spec:
             pathType: Prefix
           - backend:
               service:
-                name: waste-reportapi-cluster-ip
+                name: waste-adminapi-cluster-ip
                 port:
                   number: 80
-            path: /reportapi(/|$)(.*)
+            path: /adminapi(/|$)(.*)
             pathType: Prefix
           - backend:
               service:

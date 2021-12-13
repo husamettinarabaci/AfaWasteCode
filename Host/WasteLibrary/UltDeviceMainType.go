@@ -12,8 +12,9 @@ type UltDeviceMainType struct {
 	DeviceId     float64
 	CustomerId   float64
 	SerialNumber string
-	OldLatitude  float64
-	OldLongitude float64
+	Latitude     float64
+	Longitude    float64
+	DeviceType   string
 	Active       string
 	CreateTime   string
 }
@@ -23,8 +24,9 @@ func (res *UltDeviceMainType) New() {
 	res.DeviceId = 0
 	res.CustomerId = 1
 	res.SerialNumber = ""
-	res.OldLatitude = 0
-	res.OldLongitude = 0
+	res.Latitude = 0
+	res.Longitude = 0
+	res.DeviceType = ULT_DEVICE_TYPE_NONE
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 
@@ -110,34 +112,35 @@ func (res *UltDeviceMainType) StringToType(retStr string) {
 
 //SelectSQL
 func (res *UltDeviceMainType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,OldLatitude,OldLongitude
+	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,Latitude,Longitude,DeviceType
 	 FROM public.`+DATATYPE_ULT_MAIN+` 
 	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN+`  (CustomerId,SerialNumber,OldLatitude,OldLongitude) 
-	  VALUES (%f,'%s',%f,%f) 
-	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN+`  (CustomerId,SerialNumber,Latitude,Longitude,DeviceType) 
+	  VALUES (%f,'%s',%f,%f,'%s') 
+	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.Latitude, res.Longitude, res.DeviceType)
 }
 
 //InsertDataSQL
 func (res *UltDeviceMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN+`  (DeviceId,CustomerId,SerialNumber,OldLatitude,OldLongitude) 
-	  VALUES (%f,%f,'%s',%f,%f) 
-	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.OldLatitude, res.OldLongitude)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_MAIN+`  (DeviceId,CustomerId,SerialNumber,Latitude,Longitude,DeviceType) 
+	  VALUES (%f,%f,'%s',%f,%f,'%s') 
+	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.Latitude, res.Longitude, res.DeviceType)
 }
 
 //UpdateSQL
 func (res *UltDeviceMainType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_MAIN+`  
-	  SET CustomerId=%f,OldLatitude=%f,OldLongitude=%f
+	  SET CustomerId=%f,Latitude=%f,Longitude=%f,DeviceType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
 		res.CustomerId,
-		res.OldLatitude,
-		res.OldLongitude,
+		res.Latitude,
+		res.Longitude,
+		res.DeviceType,
 		res.DeviceId)
 }
 
@@ -148,8 +151,9 @@ func (res *UltDeviceMainType) SelectWithDb(db *sql.DB) error {
 		&res.SerialNumber,
 		&res.Active,
 		&res.CreateTime,
-		&res.OldLatitude,
-		&res.OldLongitude)
+		&res.Latitude,
+		&res.Longitude,
+		&res.DeviceType)
 	return errDb
 }
 
@@ -159,8 +163,9 @@ func (res *UltDeviceMainType) CreateDb(currentDb *sql.DB) {
 	DeviceId  serial PRIMARY KEY,
 	CustomerId INT NOT NULL DEFAULT -1,
 	SerialNumber  varchar(50) NOT NULL DEFAULT '',
-	OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
-	OldLongitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + ULT_DEVICE_TYPE_NONE + `',
 	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
@@ -175,8 +180,9 @@ func (res *UltDeviceMainType) CreateReaderDb(currentDb *sql.DB) {
 	DeviceId INT NOT NULL DEFAULT -1,
 	CustomerId INT NOT NULL DEFAULT -1,
 	SerialNumber  varchar(50) NOT NULL DEFAULT '',
-	OldLatitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
-	OldLongitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Latitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	Longitude NUMERIC(14, 11)  NOT NULL DEFAULT 0,
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + ULT_DEVICE_TYPE_NONE + `',
 	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)

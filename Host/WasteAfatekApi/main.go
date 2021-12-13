@@ -286,6 +286,13 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 		isCustomerExist = true
 	}
 
+	if currentData.CustomerId == 1 {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+		w.Write(resultVal.ToByte())
+		return
+	}
+
 	if currentData.CustomerId != 0 {
 		oldCustomer.CustomerId = currentData.CustomerId
 		resultVal = oldCustomer.GetByRedis()
@@ -517,7 +524,7 @@ func getCustomers(w http.ResponseWriter, req *http.Request) {
 	customersList.New()
 	for _, customerId := range customers.Customers {
 
-		if customerId != 0 && customerId != 1 {
+		if customerId != 0 {
 			var currentCustomer WasteLibrary.CustomerType
 			currentCustomer.CustomerId = customerId
 			resultVal = currentCustomer.GetByRedis()
@@ -885,98 +892,135 @@ func getDevices(w http.ResponseWriter, req *http.Request) {
 	var currentHttpHeader WasteLibrary.HttpClientHeaderType
 	currentHttpHeader.StringToType(req.FormValue(WasteLibrary.HTTP_HEADER))
 	if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RFID {
-		var customerDevicesList WasteLibrary.CustomerRfidDevicesListType
-		customerDevicesList.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
-		var customerDevices WasteLibrary.CustomerRfidDevicesType
-		customerDevices.CustomerId = customerDevicesList.CustomerId
-		resultVal = customerDevices.GetByRedis("0")
+		var customers WasteLibrary.CustomersType
+		resultVal = customers.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMERS_DEVICES_NOTFOUND
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMERS_NOTFOUND
 			w.Write(resultVal.ToByte())
 
 			return
 		}
 
+		var customerDevicesList WasteLibrary.RfidDevicesListType
 		customerDevicesList.Devices = make(map[string]WasteLibrary.RfidDeviceType)
-		for _, deviceId := range customerDevices.Devices {
+		for _, customerId := range customers.Customers {
+			var customerDevices WasteLibrary.CustomerRfidDevicesType
+			customerDevices.CustomerId = customerId
+			resultVal = customerDevices.GetByRedis("0")
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND
+				w.Write(resultVal.ToByte())
 
-			if deviceId != 0 {
-				var currentDevice WasteLibrary.RfidDeviceType
-				currentDevice.New()
-				currentDevice.DeviceId = deviceId
-				resultVal = currentDevice.GetByRedis("0")
-				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+				return
+			}
+
+			for _, deviceId := range customerDevices.Devices {
+
+				if deviceId != 0 {
+					var currentDevice WasteLibrary.RfidDeviceType
+					currentDevice.New()
+					currentDevice.DeviceId = deviceId
+					resultVal = currentDevice.GetByRedis("0")
+					if resultVal.Result == WasteLibrary.RESULT_OK {
+						customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+					}
 				}
 			}
-		}
 
-		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = customerDevicesList.ToString()
+			resultVal.Result = WasteLibrary.RESULT_OK
+			resultVal.Retval = customerDevicesList.ToString()
+		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
-		var customerDevicesList WasteLibrary.CustomerUltDevicesListType
-		customerDevicesList.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
-		var customerDevices WasteLibrary.CustomerUltDevicesType
-		customerDevices.CustomerId = customerDevicesList.CustomerId
-		resultVal = customerDevices.GetByRedis("0")
+		var customers WasteLibrary.CustomersType
+		resultVal = customers.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMERS_DEVICES_NOTFOUND
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMERS_NOTFOUND
 			w.Write(resultVal.ToByte())
 
 			return
 		}
 
+		var customersList WasteLibrary.CustomersListType
+		customersList.New()
+		var customerDevicesList WasteLibrary.UltDevicesListType
 		customerDevicesList.Devices = make(map[string]WasteLibrary.UltDeviceType)
-		for _, deviceId := range customerDevices.Devices {
+		for _, customerId := range customers.Customers {
+			var customerDevices WasteLibrary.CustomerUltDevicesType
+			customerDevices.CustomerId = customerId
+			resultVal = customerDevices.GetByRedis("0")
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND
+				w.Write(resultVal.ToByte())
 
-			if deviceId != 0 {
-				var currentDevice WasteLibrary.UltDeviceType
-				currentDevice.New()
-				currentDevice.DeviceId = deviceId
-				resultVal = currentDevice.GetByRedis("0")
-				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+				return
+			}
+
+			for _, deviceId := range customerDevices.Devices {
+
+				if deviceId != 0 {
+					var currentDevice WasteLibrary.UltDeviceType
+					currentDevice.New()
+					currentDevice.DeviceId = deviceId
+					resultVal = currentDevice.GetByRedis("0")
+					if resultVal.Result == WasteLibrary.RESULT_OK {
+						customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+					}
 				}
 			}
-		}
 
-		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = customerDevicesList.ToString()
+			resultVal.Result = WasteLibrary.RESULT_OK
+			resultVal.Retval = customerDevicesList.ToString()
+		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
-		var customerDevicesList WasteLibrary.CustomerRecyDevicesListType
-		customerDevicesList.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
-		var customerDevices WasteLibrary.CustomerRecyDevicesType
-		customerDevices.CustomerId = customerDevicesList.CustomerId
-		resultVal = customerDevices.GetByRedis("0")
+		var customers WasteLibrary.CustomersType
+		resultVal = customers.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMERS_DEVICES_NOTFOUND
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMERS_NOTFOUND
 			w.Write(resultVal.ToByte())
 
 			return
 		}
 
+		var customersList WasteLibrary.CustomersListType
+		customersList.New()
+		var customerDevicesList WasteLibrary.RecyDevicesListType
 		customerDevicesList.Devices = make(map[string]WasteLibrary.RecyDeviceType)
-		for _, deviceId := range customerDevices.Devices {
+		for _, customerId := range customers.Customers {
+			var customerDevices WasteLibrary.CustomerRecyDevicesType
+			customerDevices.CustomerId = customerId
+			resultVal = customerDevices.GetByRedis("0")
+			if resultVal.Result != WasteLibrary.RESULT_OK {
+				resultVal.Result = WasteLibrary.RESULT_FAIL
+				resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND
+				w.Write(resultVal.ToByte())
 
-			if deviceId != 0 {
-				var currentDevice WasteLibrary.RecyDeviceType
-				currentDevice.New()
-				currentDevice.DeviceId = deviceId
-				resultVal = currentDevice.GetByRedis("0")
-				if resultVal.Result == WasteLibrary.RESULT_OK {
-					customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+				return
+			}
+
+			for _, deviceId := range customerDevices.Devices {
+
+				if deviceId != 0 {
+					var currentDevice WasteLibrary.RecyDeviceType
+					currentDevice.New()
+					currentDevice.DeviceId = deviceId
+					resultVal = currentDevice.GetByRedis("0")
+					if resultVal.Result == WasteLibrary.RESULT_OK {
+						customerDevicesList.Devices[currentDevice.ToIdString()] = currentDevice
+					}
 				}
 			}
-		}
 
-		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = customerDevicesList.ToString()
+			resultVal.Result = WasteLibrary.RESULT_OK
+			resultVal.Retval = customerDevicesList.ToString()
+		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
-		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMERS_DEVICES_NOTFOUND
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_DEVICES_NOTFOUND
 	}
 	w.Write(resultVal.ToByte())
 
@@ -1181,7 +1225,7 @@ func setConfig(w http.ResponseWriter, req *http.Request) {
 
 func checkAuth(header http.Header, customerId string) WasteLibrary.ResultType {
 	var resultVal WasteLibrary.ResultType
-	resultVal = WasteLibrary.CheckAuth(header, customerId, "ADMIN")
+	resultVal = WasteLibrary.CheckAuth(header, customerId, []string{WasteLibrary.USER_ROLE_ADMIN})
 
 	if resultVal.Result == WasteLibrary.RESULT_OK {
 		var currentCustomer WasteLibrary.CustomerType
@@ -1189,12 +1233,12 @@ func checkAuth(header http.Header, customerId string) WasteLibrary.ResultType {
 		resultVal = currentCustomer.GetByRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_NOTFOUND
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 			return resultVal
 		}
 		if currentCustomer.CustomerName != "AFATEK" {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_CUSTOMER_INVALID
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_USER_AUTH
 			return resultVal
 		}
 	}

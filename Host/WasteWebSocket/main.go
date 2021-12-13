@@ -19,7 +19,7 @@ func initStart() {
 	WasteLibrary.LogStr("Successfully connected!")
 	go WasteLibrary.InitLog()
 	redisDb = redis.NewClient(&redis.Options{
-		Addr:     "waste-redis-cluster-ip:6379",
+		Addr:     "waste-redis-master-cluster-ip:6379",
 		Password: "Amca151200!Furkan",
 		DB:       0,
 	})

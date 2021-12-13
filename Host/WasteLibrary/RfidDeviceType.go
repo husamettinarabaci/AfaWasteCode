@@ -15,7 +15,6 @@ type RfidDeviceType struct {
 	DeviceAlarm      RfidDeviceAlarmType
 	DeviceTherm      RfidDeviceThermType
 	DeviceVersion    RfidDeviceVersionType
-	DeviceDetail     RfidDeviceDetailType
 	DeviceWorkHour   RfidDeviceWorkHourType
 	DeviceEmbededGps RfidDeviceEmbededGpsType
 	DeviceNote       RfidDeviceNoteType
@@ -34,7 +33,6 @@ func (res *RfidDeviceType) New() {
 	res.DeviceVersion.New()
 	res.DeviceAlarm.New()
 	res.DeviceStatu.New()
-	res.DeviceDetail.New()
 	res.DeviceWorkHour.New()
 	res.DeviceEmbededGps.New()
 	res.DeviceNote.New()
@@ -84,11 +82,6 @@ func (res *RfidDeviceType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.DeviceStatu.DeviceId = res.DeviceId
 	resultVal = res.DeviceStatu.GetByRedis(dbIndex)
-	if resultVal.Result != RESULT_OK {
-		return resultVal
-	}
-	res.DeviceDetail.DeviceId = res.DeviceId
-	resultVal = res.DeviceDetail.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

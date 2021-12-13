@@ -232,28 +232,6 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 
 			return
 		}
-		//DeviceDetail  RfidDeviceDetailType
-		var currentDeviceDetail WasteLibrary.RfidDeviceDetailType
-		currentDeviceDetail.New()
-		currentDeviceDetail.NewData = true
-		currentDeviceDetail.DeviceId = currentDeviceMain.DeviceId
-		resultVal = currentDeviceDetail.SaveToDb()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-
-		resultVal = currentDeviceDetail.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
 
 		//DeviceWorkHour RfidDeviceWorkHourType
 		var currentDeviceWorkHour WasteLibrary.RfidDeviceWorkHourType
@@ -337,6 +315,19 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		//DeviceTag RfidDeviceTagType WODb
+		var currentTag WasteLibrary.RfidDeviceTagType
+		currentTag.New()
+		currentTag.DeviceId = currentDeviceMain.DeviceId
+		resultVal = currentTag.SaveToRedis()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
 		var customerDevices WasteLibrary.CustomerRfidDevicesType
 		customerDevices.CustomerId = currentDeviceMain.CustomerId
 		resultVal = customerDevices.GetByRedis("0")
@@ -396,8 +387,6 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		currentDeviceBase.New()
 		currentDeviceBase.NewData = true
 		currentDeviceBase.DeviceId = currentDeviceMain.DeviceId
-		currentDeviceBase.Imei = currentUlt.DeviceBase.Imei
-		currentDeviceBase.Imsi = currentUlt.DeviceBase.Imsi
 		resultVal = currentDeviceBase.SaveToDb()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
@@ -585,6 +574,31 @@ func createDevice(w http.ResponseWriter, req *http.Request) {
 		}
 
 		resultVal = currentDeviceNote.SaveToRedis()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		//DeviceSim UltDeviceSimType
+		var currentDeviceSim WasteLibrary.UltDeviceSimType
+		currentDeviceSim.New()
+		currentDeviceSim.NewData = true
+		currentDeviceSim.DeviceId = currentDeviceMain.DeviceId
+		currentDeviceSim.Imei = currentUlt.DeviceSim.Imei
+		currentDeviceSim.Imsi = currentUlt.DeviceSim.Imsi
+		resultVal = currentDeviceSim.SaveToDb()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		resultVal = currentDeviceSim.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
@@ -1044,6 +1058,19 @@ func createTag(w http.ResponseWriter, req *http.Request) {
 		currentTagReadDevice.New()
 		currentTagReadDevice.TagId = currentData.TagId
 		resultVal = currentTagReadDevice.SaveToRedis()
+		if resultVal.Result != WasteLibrary.RESULT_OK {
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+			w.Write(resultVal.ToByte())
+
+			return
+		}
+
+		//TagPositionChange   TagPositionChangeType WODb
+		var currentTagPositionChange WasteLibrary.TagPositionChangeType
+		currentTagPositionChange.New()
+		currentTagPositionChange.TagId = currentData.TagId
+		resultVal = currentTagPositionChange.SaveToRedis()
 		if resultVal.Result != WasteLibrary.RESULT_OK {
 			resultVal.Result = WasteLibrary.RESULT_FAIL
 			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE

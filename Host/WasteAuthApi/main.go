@@ -334,7 +334,8 @@ func checkAuth(w http.ResponseWriter, req *http.Request) {
 
 	if currentUser.UserRole == WasteLibrary.USER_ROLE_ADMIN || (reqRole == WasteLibrary.USER_ROLE_REPORT && currentUser.UserRole == WasteLibrary.USER_ROLE_REPORT) {
 		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = ""
+		currentUser.Password = ""
+		resultVal.Retval = currentUser.ToString()
 		w.Write(resultVal.ToByte())
 
 		return

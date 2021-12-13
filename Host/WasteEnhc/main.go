@@ -53,6 +53,7 @@ func data(w http.ResponseWriter, req *http.Request) {
 		var currentDevice WasteLibrary.RfidDeviceType
 		currentDevice.New()
 		resultVal = currentDevice.GetByRedisBySerial(currentHttpHeader.DeviceNo)
+		WasteLibrary.LogStr(resultVal.ToString())
 		if resultVal.Result == WasteLibrary.RESULT_FAIL {
 			if currentHttpHeader.ReaderType == WasteLibrary.READERTYPE_STATUS {
 				resultVal = createDevice(currentHttpHeader, req.FormValue(WasteLibrary.HTTP_DATA))
@@ -79,8 +80,10 @@ func data(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
-		currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
-		currentHttpHeader.DeviceId = currentDevice.DeviceId
+		if resultVal.Result == WasteLibrary.RESULT_OK {
+			currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
+			currentHttpHeader.DeviceId = currentDevice.DeviceId
+		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
 		var currentDevice WasteLibrary.UltDeviceType
 		currentDevice.New()
@@ -103,8 +106,10 @@ func data(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
-		currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
-		currentHttpHeader.DeviceId = currentDevice.DeviceId
+		if resultVal.Result == WasteLibrary.RESULT_OK {
+			currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
+			currentHttpHeader.DeviceId = currentDevice.DeviceId
+		}
 	} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_RECY {
 		var currentDevice WasteLibrary.RecyDeviceType
 		currentDevice.New()
@@ -135,9 +140,19 @@ func data(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 		}
-		currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
-		currentHttpHeader.DeviceId = currentDevice.DeviceId
+		if resultVal.Result == WasteLibrary.RESULT_OK {
+			currentHttpHeader.CustomerId = currentDevice.DeviceMain.CustomerId
+			currentHttpHeader.DeviceId = currentDevice.DeviceId
+		}
 	} else {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
+		w.Write(resultVal.ToByte())
+
+		return
+	}
+
+	if resultVal.Result == WasteLibrary.RESULT_FAIL {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_DEVICE_NOTFOUND
 		w.Write(resultVal.ToByte())

@@ -174,11 +174,8 @@ func statusCheck(statusTypeIndex int) {
 			currentDeviceType.DeviceStatu.SystemAppStatus = lastStatus
 		} else if statusTypes[statusTypeIndex].Name == "aliveStatus" {
 			currentDeviceType.DeviceStatu.AliveStatus = lastStatus
-		} else {
-
 		}
 	}
-	wg.Done()
 }
 
 func sendStatus() {
@@ -191,5 +188,4 @@ func sendStatus() {
 		}
 		WasteLibrary.HttpPostReq("http://127.0.0.1:10000/trans", data)
 	}
-	wg.Done()
 }

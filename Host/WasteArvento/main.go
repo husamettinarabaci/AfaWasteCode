@@ -98,7 +98,7 @@ func customerProc(customerId float64) {
 					currentDevice.DeviceId = vDevice
 					resultVal = currentDevice.GetByRedis("0")
 					if resultVal.Result == WasteLibrary.RESULT_OK {
-						var arventoId string = plateDevice[currentDevice.DeviceDetail.PlateNo]
+						var arventoId string = plateDevice[currentDevice.DeviceBase.PlateNo]
 						if currentDeviceLocation, ok := deviceLocations.ArventoDeviceGpsList[arventoId]; ok {
 							if currentDeviceLocation.Latitude != 0 && currentDeviceLocation.Longitude != 0 {
 								currentDevice.DeviceGps.Latitude = currentDeviceLocation.Latitude

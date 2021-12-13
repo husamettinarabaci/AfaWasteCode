@@ -190,7 +190,6 @@ func fileCheck(readerType string) {
 		}
 	}
 
-	wg.Done()
 }
 
 func getSerialNumber() string {

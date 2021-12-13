@@ -209,25 +209,6 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 		currentData.DeviceId = float64(deviceId)
 		resultVal.Retval = currentData.ToIdString()
 
-	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_DETAIL {
-
-		var currentData WasteLibrary.RfidDeviceDetailType
-		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
-
-		execSQL = currentData.InsertSQL()
-
-		var deviceId int = 0
-		errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
-		if errDb != nil {
-			WasteLibrary.LogErr(errDb)
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-		} else {
-			resultVal.Result = WasteLibrary.RESULT_OK
-		}
-
-		currentData.DeviceId = float64(deviceId)
-		resultVal.Retval = currentData.ToIdString()
-
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_RFID_WORKHOUR {
 
 		var currentData WasteLibrary.RfidDeviceWorkHourType
@@ -619,6 +600,24 @@ func saveReaderDbMain(w http.ResponseWriter, req *http.Request) {
 
 	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_NOTE {
 		var currentData WasteLibrary.UltDeviceNoteType
+		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
+
+		execSQL = currentData.InsertSQL()
+
+		var deviceId int = 0
+		errDb := readerDb.QueryRow(execSQL).Scan(&deviceId)
+		if errDb != nil {
+			WasteLibrary.LogErr(errDb)
+			resultVal.Result = WasteLibrary.RESULT_FAIL
+		} else {
+			resultVal.Result = WasteLibrary.RESULT_OK
+		}
+
+		currentData.DeviceId = float64(deviceId)
+		resultVal.Retval = currentData.ToIdString()
+
+	} else if currentHttpHeader.DataType == WasteLibrary.DATATYPE_ULT_SIM {
+		var currentData WasteLibrary.UltDeviceSimType
 		currentData.StringToType(req.FormValue(WasteLibrary.HTTP_DATA))
 
 		execSQL = currentData.InsertSQL()

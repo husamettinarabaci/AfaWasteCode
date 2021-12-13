@@ -12,8 +12,8 @@ type ResultType struct {
 
 //New
 func (res *ResultType) New() {
-	res.Result = ""
-	res.Retval = nil
+	res.Result = RESULT_FAIL
+	res.Retval = ""
 }
 
 //ToByte

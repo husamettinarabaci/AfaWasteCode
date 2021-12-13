@@ -226,7 +226,7 @@ func clonekey(w http.ResponseWriter, req *http.Request) {
 	hKey := req.FormValue(WasteLibrary.REDIS_HASHKEY)
 	resultVal = getKeyAllRedis(dbIndex, hKey)
 	if resultVal.Result == WasteLibrary.RESULT_OK {
-		for sKey, kVal := range resultVal.Retval.(map[string]string) {
+		for sKey, kVal := range WasteLibrary.StringToMapStringString(resultVal.Retval.(string)) {
 			resultVal = getKeyDb(dbIndexClone, hKey, sKey)
 			if resultVal.Result == WasteLibrary.RESULT_OK {
 				resultVal = updateKeyDb(dbIndexClone, hKey, sKey, kVal)
@@ -271,7 +271,7 @@ func clonekeyWODb(w http.ResponseWriter, req *http.Request) {
 
 	}
 	if resultVal.Result == WasteLibrary.RESULT_OK {
-		for sKey, kVal := range resultVal.Retval.(map[string]string) {
+		for sKey, kVal := range WasteLibrary.StringToMapStringString(resultVal.Retval.(string)) {
 			setKeyRedis(dbIndexClone, hKey, sKey, kVal)
 		}
 	}
@@ -410,7 +410,7 @@ func getKeyListRedis(pattern string) WasteLibrary.ResultType {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	case len(val) != 0:
 		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = val
+		resultVal.Retval = WasteLibrary.StringArrayToString(val)
 	}
 
 	return resultVal
@@ -457,7 +457,7 @@ func getKeyAllRedis(dbIndex int, hKey string) WasteLibrary.ResultType {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	case len(val) != 0:
 		resultVal.Result = WasteLibrary.RESULT_OK
-		resultVal.Retval = val
+		resultVal.Retval = WasteLibrary.MapStringStringToString(val)
 	}
 
 	return resultVal

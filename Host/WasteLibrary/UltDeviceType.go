@@ -18,6 +18,7 @@ type UltDeviceType struct {
 	DeviceVersion UltDeviceVersionType
 	DeviceSens    UltDeviceSensType
 	DeviceNote    UltDeviceNoteType
+	DeviceSim     UltDeviceSimType
 }
 
 //New
@@ -33,6 +34,7 @@ func (res *UltDeviceType) New() {
 	res.DeviceVersion.New()
 	res.DeviceSens.New()
 	res.DeviceNote.New()
+	res.DeviceSim.New()
 
 }
 
@@ -87,6 +89,11 @@ func (res *UltDeviceType) GetByRedis(dbIndex string) ResultType {
 	}
 	res.DeviceNote.DeviceId = res.DeviceId
 	resultVal = res.DeviceNote.GetByRedis(dbIndex)
+	if resultVal.Result != RESULT_OK {
+		return resultVal
+	}
+	res.DeviceSim.DeviceId = res.DeviceId
+	resultVal = res.DeviceSim.GetByRedis(dbIndex)
 	if resultVal.Result != RESULT_OK {
 		return resultVal
 	}

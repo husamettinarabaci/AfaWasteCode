@@ -9,17 +9,19 @@ import (
 
 //RfidDeviceBaseType
 type RfidDeviceBaseType struct {
-	DeviceId   float64
-	DeviceType string
-	TruckType  string
-	NewData    bool
+	DeviceId      float64
+	PlateNo       string
+	DriverName    string
+	DriverSurName string
+	NewData       bool
 }
 
 //New
 func (res *RfidDeviceBaseType) New() {
 	res.DeviceId = 0
-	res.DeviceType = RFID_DEVICE_TYPE_NONE
-	res.TruckType = TRUCKTYPE_NONE
+	res.PlateNo = ""
+	res.DriverName = ""
+	res.DriverSurName = ""
 	res.NewData = false
 }
 
@@ -93,44 +95,47 @@ func (res *RfidDeviceBaseType) StringToType(retStr string) {
 
 //SelectSQL
 func (res *RfidDeviceBaseType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT DeviceType,TruckType
+	return fmt.Sprintf(`SELECT PlateNo,DriverName,DriverSurName
 	 FROM public.`+DATATYPE_RFID_BASE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_BASE+`  (DeviceId,DeviceType,TruckType) 
-	  VALUES (%f,'%s','%s') 
-	  RETURNING DeviceId;`, res.DeviceId, res.DeviceType, res.TruckType)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_BASE+`  (DeviceId,PlateNo,DriverName,DriverSurName) 
+	  VALUES (%f,'%s','%s','%s') 
+	  RETURNING DeviceId;`, res.DeviceId, res.PlateNo, res.DriverName, res.DriverSurName)
 }
 
 //UpdateSQL
 func (res *RfidDeviceBaseType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_BASE+`  
-	  SET DeviceType='%s',TruckType='%s'
+	  SET PlateNo='%s',DriverName='%s',DriverSurName='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
-		res.DeviceType,
-		res.TruckType,
+		res.PlateNo,
+		res.DriverName,
+		res.DriverSurName,
 		res.DeviceId)
 }
 
 //SelectWithDb
 func (res *RfidDeviceBaseType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
-		&res.DeviceType,
-		&res.TruckType)
+		&res.PlateNo,
+		&res.DriverName,
+		&res.DriverSurName)
 	return errDb
 }
 
 //CreateDb
 func (res *RfidDeviceBaseType) CreateDb(currentDb *sql.DB) {
-	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RFID_BASE + `  (
+	createSQL := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS ` + DATATYPE_RFID_BASE + `  ( 
 	DataId serial PRIMARY KEY,
 	DeviceId INT NOT NULL DEFAULT -1,
-	DeviceType  varchar(50) NOT NULL DEFAULT '` + RFID_DEVICE_TYPE_NONE + `',
-	TruckType varchar(50) NOT NULL DEFAULT '` + TRUCKTYPE_NONE + `',
+	PlateNo varchar(50) NOT NULL DEFAULT '',
+	DriverName varchar(50) NOT NULL DEFAULT '',
+	DriverSurName varchar(50) NOT NULL DEFAULT '',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
 	_, err := currentDb.Exec(createSQL)

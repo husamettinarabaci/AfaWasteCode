@@ -21,7 +21,7 @@ type CustomerType struct {
 
 //New
 func (res *CustomerType) New() {
-	res.CustomerId = 1
+	res.CustomerId = 0
 	res.CustomerName = ""
 	res.CustomerLink = ""
 	res.RfIdApp = STATU_PASSIVE

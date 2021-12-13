@@ -9,17 +9,18 @@ import (
 
 //RecyDeviceBaseType
 type RecyDeviceBaseType struct {
-	DeviceId    float64
-	ContainerNo string
-	DeviceType  string
-	NewData     bool
+	DeviceId      float64
+	ContainerNo   string
+	ContainerType string
+	NewData       bool
 }
 
 //New
 func (res *RecyDeviceBaseType) New() {
 	res.DeviceId = 0
 	res.ContainerNo = ""
-	res.DeviceType = RECY_DEVICE_TYPE_NONE
+	res.ContainerType = CONTAINERTYPE_NONE
+
 	res.NewData = false
 }
 
@@ -93,26 +94,26 @@ func (res *RecyDeviceBaseType) StringToType(retStr string) {
 
 //SelectSQL
 func (res *RecyDeviceBaseType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT ContainerNo,DeviceType
+	return fmt.Sprintf(`SELECT ContainerNo,ContainerType 
 	 FROM public.`+DATATYPE_RECY_BASE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RecyDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_BASE+`  (DeviceId,ContainerNo,DeviceType) 
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RECY_BASE+`  (DeviceId,ContainerNo,ContainerType) 
 	  VALUES (%f,'%s','%s') 
-	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.DeviceType)
+	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.ContainerType)
 }
 
 //UpdateSQL
 func (res *RecyDeviceBaseType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RECY_BASE+`  
-	  SET ContainerNo='%s',DeviceType='%s'
+	  SET ContainerNo='%s',ContainerType='%s' 
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
 		res.ContainerNo,
-		res.DeviceType,
+		res.ContainerType,
 		res.DeviceId)
 }
 
@@ -120,7 +121,7 @@ func (res *RecyDeviceBaseType) UpdateSQL() string {
 func (res *RecyDeviceBaseType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.ContainerNo,
-		&res.DeviceType)
+		&res.ContainerType)
 	return errDb
 }
 
@@ -130,7 +131,7 @@ func (res *RecyDeviceBaseType) CreateDb(currentDb *sql.DB) {
 	DataId serial PRIMARY KEY,
 	DeviceId INT NOT NULL DEFAULT -1,
 	ContainerNo  varchar(50) NOT NULL DEFAULT '',
-	DeviceType  varchar(50) NOT NULL DEFAULT '` + RECY_DEVICE_TYPE_NONE + `',
+	ContainerType varchar(50) NOT NULL DEFAULT '` + CONTAINERTYPE_NONE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
 	_, err := currentDb.Exec(createSQL)

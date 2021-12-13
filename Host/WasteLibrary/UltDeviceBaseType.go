@@ -12,9 +12,6 @@ type UltDeviceBaseType struct {
 	DeviceId      float64
 	ContainerNo   string
 	ContainerType string
-	DeviceType    string
-	Imei          string
-	Imsi          string
 	NewData       bool
 }
 
@@ -23,9 +20,6 @@ func (res *UltDeviceBaseType) New() {
 	res.DeviceId = 0
 	res.ContainerNo = ""
 	res.ContainerType = CONTAINERTYPE_NONE
-	res.DeviceType = ULT_DEVICE_TYPE_NONE
-	res.Imei = ""
-	res.Imsi = ""
 	res.NewData = false
 }
 
@@ -99,29 +93,26 @@ func (res *UltDeviceBaseType) StringToType(retStr string) {
 
 //SelectSQL
 func (res *UltDeviceBaseType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT ContainerNo,ContainerType,DeviceType,Imei,Imsi
+	return fmt.Sprintf(`SELECT ContainerNo,ContainerType
 	 FROM public.`+DATATYPE_ULT_BASE+` 
 	 WHERE DeviceId=%f ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *UltDeviceBaseType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BASE+`  (DeviceId,ContainerNo,ContainerType,DeviceType,Imei,Imsi) 
-	  VALUES (%f,'%s','%s','%s','%s','%s') 
-	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.ContainerType, res.DeviceType, res.Imei, res.Imsi)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_ULT_BASE+`  (DeviceId,ContainerNo,ContainerType) 
+	  VALUES (%f,'%s','%s') 
+	  RETURNING DeviceId;`, res.DeviceId, res.ContainerNo, res.ContainerType)
 }
 
 //UpdateSQL
 func (res *UltDeviceBaseType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.`+DATATYPE_ULT_BASE+`  
-	  SET ContainerNo='%s',ContainerType='%s',DeviceType='%s',Imei='%s',Imsi='%s'
+	  SET ContainerNo='%s',ContainerType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
 		res.ContainerNo,
 		res.ContainerType,
-		res.DeviceType,
-		res.Imei,
-		res.Imsi,
 		res.DeviceId)
 }
 
@@ -129,10 +120,7 @@ func (res *UltDeviceBaseType) UpdateSQL() string {
 func (res *UltDeviceBaseType) SelectWithDb(db *sql.DB) error {
 	errDb := db.QueryRow(res.SelectSQL()).Scan(
 		&res.ContainerNo,
-		&res.ContainerType,
-		&res.DeviceType,
-		&res.Imei,
-		&res.Imsi)
+		&res.ContainerType)
 	return errDb
 }
 
@@ -143,9 +131,6 @@ func (res *UltDeviceBaseType) CreateDb(currentDb *sql.DB) {
 	DeviceId INT NOT NULL DEFAULT -1,
 	ContainerNo  varchar(50) NOT NULL DEFAULT '',
 	ContainerType varchar(50) NOT NULL DEFAULT '` + CONTAINERTYPE_NONE + `',
-	DeviceType  varchar(50) NOT NULL DEFAULT '` + ULT_DEVICE_TYPE_NONE + `',
-	Imei  varchar(50) NOT NULL DEFAULT '',
-	Imsi  varchar(50) NOT NULL DEFAULT '',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
 	_, err := currentDb.Exec(createSQL)

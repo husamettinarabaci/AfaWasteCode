@@ -216,7 +216,6 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	rfid.DeviceAlarm.CreateDb(currentDb)
 	rfid.DeviceTherm.CreateDb(currentDb)
 	rfid.DeviceVersion.CreateDb(currentDb)
-	rfid.DeviceDetail.CreateDb(currentDb)
 	rfid.DeviceWorkHour.CreateDb(currentDb)
 	rfid.DeviceNote.CreateDb(currentDb)
 	rfid.DeviceReport.CreateDb(currentDb)
@@ -231,6 +230,7 @@ func readerStaticDbCumulative(currentDb *sql.DB) {
 	ult.DeviceVersion.CreateDb(currentDb)
 	ult.DeviceSens.CreateDb(currentDb)
 	ult.DeviceNote.CreateDb(currentDb)
+	ult.DeviceSim.CreateDb(currentDb)
 
 	var recy WasteLibrary.RecyDeviceType
 	recy.DeviceBase.CreateDb(currentDb)

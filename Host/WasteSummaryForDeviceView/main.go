@@ -89,7 +89,7 @@ func customerProcRfid(customerDevices WasteLibrary.CustomerRfidDevicesType) {
 				var currentViewDevice WasteLibrary.RfidDeviceViewType
 				currentViewDevice.New()
 				currentViewDevice.DeviceId = currentDevice.DeviceId
-				currentViewDevice.PlateNo = currentDevice.DeviceDetail.PlateNo
+				currentViewDevice.PlateNo = currentDevice.DeviceBase.PlateNo
 				if time.Since(WasteLibrary.StringToTime(currentDevice.DeviceGps.GpsTime)) < 15*60 {
 					currentViewDevice.Latitude = currentDevice.DeviceGps.Latitude
 					currentViewDevice.Longitude = currentDevice.DeviceGps.Latitude

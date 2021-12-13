@@ -34,6 +34,10 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-webapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteWebApi...'; done"]
+      - name: wait-for-wasteadminapi
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-adminapi-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteAdminApi...'; done"]
       - name: wait-for-wastewebsocket
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]

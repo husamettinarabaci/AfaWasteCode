@@ -12,6 +12,7 @@ type RfidDeviceMainType struct {
 	DeviceId     float64
 	CustomerId   float64
 	SerialNumber string
+	DeviceType   string
 	Active       string
 	CreateTime   string
 }
@@ -21,6 +22,7 @@ func (res *RfidDeviceMainType) New() {
 	res.DeviceId = 0
 	res.CustomerId = 1
 	res.SerialNumber = ""
+	res.DeviceType = RFID_DEVICE_TYPE_NONE
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 }
@@ -106,32 +108,33 @@ func (res *RfidDeviceMainType) StringToType(retStr string) {
 
 //SelectSQL
 func (res *RfidDeviceMainType) SelectSQL() string {
-	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime
+	return fmt.Sprintf(`SELECT CustomerId,SerialNumber,Active,CreateTime,DeviceType
 	 FROM public.`+DATATYPE_RFID_MAIN+` 
 	 WHERE DeviceId=%f  ;`, res.DeviceId)
 }
 
 //InsertSQL
 func (res *RfidDeviceMainType) InsertSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_MAIN+`  (CustomerId,SerialNumber) 
-	  VALUES (%f,'%s') 
-	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_MAIN+`  (CustomerId,SerialNumber,DeviceType) 
+	  VALUES (%f,'%s','%s') 
+	  RETURNING DeviceId;`, res.CustomerId, res.SerialNumber, res.DeviceType)
 }
 
 //InsertDataSQL
 func (res *RfidDeviceMainType) InsertDataSQL() string {
-	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_MAIN+`  (DeviceId,CustomerId,SerialNumber) 
-	  VALUES (%f,%f,'%s') 
-	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber)
+	return fmt.Sprintf(`INSERT INTO public.`+DATATYPE_RFID_MAIN+`  (DeviceId,CustomerId,SerialNumber,DeviceType) 
+	  VALUES (%f,%f,'%s','%s') 
+	  RETURNING DeviceId;`, res.DeviceId, res.CustomerId, res.SerialNumber, res.DeviceType)
 }
 
 //UpdateSQL
 func (res *RfidDeviceMainType) UpdateSQL() string {
 	return fmt.Sprintf(`UPDATE public.`+DATATYPE_RFID_MAIN+`  
-	  SET CustomerId=%f
+	  SET CustomerId=%f,DeviceType='%s'
 	  WHERE DeviceId=%f  
 	  RETURNING DeviceId;`,
 		res.CustomerId,
+		res.DeviceType,
 		res.DeviceId)
 }
 
@@ -141,7 +144,8 @@ func (res *RfidDeviceMainType) SelectWithDb(db *sql.DB) error {
 		&res.CustomerId,
 		&res.SerialNumber,
 		&res.Active,
-		&res.CreateTime)
+		&res.CreateTime,
+		&res.DeviceType)
 	return errDb
 }
 
@@ -151,6 +155,7 @@ func (res *RfidDeviceMainType) CreateDb(currentDb *sql.DB) {
 	DeviceId  serial PRIMARY KEY,
 	CustomerId INT NOT NULL DEFAULT -1,
 	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + RFID_DEVICE_TYPE_NONE + `',
 	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)
@@ -165,6 +170,7 @@ func (res *RfidDeviceMainType) CreateReaderDb(currentDb *sql.DB) {
 	DeviceId INT NOT NULL DEFAULT -1,
 	CustomerId INT NOT NULL DEFAULT -1,
 	SerialNumber  varchar(50) NOT NULL DEFAULT '',
+	DeviceType  varchar(50) NOT NULL DEFAULT '` + RFID_DEVICE_TYPE_NONE + `',
 	Active varchar(50) NOT NULL DEFAULT '` + STATU_ACTIVE + `',
 	CreateTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 	);`)

@@ -9,7 +9,6 @@
 *DbBackup
 *Excell Operation
 *UserEventLog
-*Check RfidEmbededGps By REaderDb and client
 *Update and Version tools
 *Angle Calculate RfidGps 
 *DeviceMotion Summary
@@ -20,6 +19,9 @@
 *CamReader Check TagReader ImageStatu
 *Summary Of 7 Day Toplanmayan Container
 *Tag ReadDevice summary
+*Add Container No = Epc Parameters And Container=Epc*
+
+/AfatekApi latLong Ult Recy -90 4 -90 -180 +180 .8 digit check
 
 
 
