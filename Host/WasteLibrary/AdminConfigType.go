@@ -44,7 +44,7 @@ func (res *AdminConfigType) New() {
 	res.MaxZoom = 18
 	res.DeviceBaseWork = STATU_PASSIVE
 	res.ParkLocations = []LocationType{}
-	res.WebUIPrivate = STATU_ACTIVE
+	res.WebUIPrivate = STATU_PASSIVE
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 }

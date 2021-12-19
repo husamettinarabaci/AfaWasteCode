@@ -78,6 +78,7 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		go doRecord(readerDataTypeVal, strconv.Itoa(integratedPortInt), WasteLibrary.STATU_ACTIVE)
 		integratedPortInt++
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_READERTYPE

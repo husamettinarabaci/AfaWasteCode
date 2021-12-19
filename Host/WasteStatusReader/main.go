@@ -238,6 +238,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	w.Write(resultVal.ToByte())
 

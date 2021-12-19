@@ -19,7 +19,8 @@ func (res *LocalConfigType) New() {
 	res.Active = STATU_ACTIVE
 	res.CreateTime = GetTime()
 	res.Locs = make(map[string]string)
-
+	res.Locs[RESULT_SUCCESS_OK] = "İşlem Başarılı"
+	res.Locs[RESULT_ERROR_NONE] = "Bilinmeyen Hata"
 	res.Locs[RESULT_ERROR_HTTP_PARSE] = "İstek Çözülmedi"
 	res.Locs[RESULT_ERROR_HTTP_POST] = "İstek Hatası"
 	res.Locs[RESULT_ERROR_USER_AUTH] = "Hatalı Kullanıcı"

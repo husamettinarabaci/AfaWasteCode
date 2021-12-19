@@ -28,6 +28,7 @@ func log(w http.ResponseWriter, req *http.Request) {
 	}
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_OK
+	resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 
 	if err := req.ParseForm(); err != nil {
 		logErr(err)

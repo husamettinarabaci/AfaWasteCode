@@ -67,6 +67,7 @@ func trigger(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	resultVal.Result = WasteLibrary.RESULT_OK
+	resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	w.Write(resultVal.ToByte())
 
 	readerType := req.FormValue(WasteLibrary.HTTP_READERTYPE)
@@ -255,6 +256,7 @@ func writeAutostart(customerAutoStartVal string) WasteLibrary.ResultType {
 
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	return resultVal
 }
@@ -269,6 +271,7 @@ func reboot() WasteLibrary.ResultType {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	return resultVal
 }

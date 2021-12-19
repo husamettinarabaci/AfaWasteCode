@@ -123,6 +123,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 					}
 				} else {
 					resultVal.Result = WasteLibrary.RESULT_OK
+					resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 				}
 			} else {
 				WasteLibrary.LogStr("Data : " + req.FormValue(WasteLibrary.HTTP_DATA))
@@ -188,6 +189,7 @@ func reader(w http.ResponseWriter, req *http.Request) {
 
 				} else {
 					resultVal.Result = WasteLibrary.RESULT_OK
+					resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 				}
 			}
 		} else if currentHttpHeader.DeviceType == WasteLibrary.DEVICETYPE_ULT {
@@ -227,10 +229,12 @@ func reader(w http.ResponseWriter, req *http.Request) {
 				WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentHttpHeader.ToCustomerIdString(), WasteLibrary.DATATYPE_ULT_GPS, currentData.DeviceGps.ToString())
 			} else {
 				resultVal.Result = WasteLibrary.RESULT_OK
+				resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 			}
 		}
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	w.Write(resultVal.ToByte())
 

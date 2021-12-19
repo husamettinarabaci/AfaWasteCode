@@ -92,6 +92,7 @@ func saveBulkDbMain(w http.ResponseWriter, req *http.Request) {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	w.Write(resultVal.ToByte())
 

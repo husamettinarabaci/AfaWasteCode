@@ -216,6 +216,7 @@ func downloadApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 		} else {
 			if WasteLibrary.IsFileExists("/home/pi/DOWNLOADED_APP/" + updaterType.AppType) {
 				resultVal.Result = WasteLibrary.RESULT_OK
+				resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 			}
 		}
 	}
@@ -235,6 +236,7 @@ func stopApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	time.Sleep(time.Second * 2)
 	return resultVal
@@ -251,6 +253,7 @@ func rmAppDownloaded(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultTy
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	time.Sleep(time.Second * 2)
 	return resultVal
@@ -261,6 +264,7 @@ func rmApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 	resultVal.Result = WasteLibrary.RESULT_FAIL
 	if !WasteLibrary.IsFileExists("/home/pi/" + updaterType.AppType) {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	} else {
 		cmd := exec.Command("sudo", "rm", "/home/pi/"+updaterType.AppType)
 		err := cmd.Start()
@@ -271,6 +275,7 @@ func rmApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 		} else {
 			if !WasteLibrary.IsFileExists("/home/pi/" + updaterType.AppType) {
 				resultVal.Result = WasteLibrary.RESULT_OK
+				resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 			}
 		}
 	}
@@ -290,6 +295,7 @@ func mvApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 	} else {
 		if WasteLibrary.IsFileExists("/home/pi/" + updaterType.AppType) {
 			resultVal.Result = WasteLibrary.RESULT_OK
+			resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 		}
 	}
 	time.Sleep(time.Second * 2)
@@ -307,6 +313,7 @@ func chownApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	time.Sleep(time.Second * 2)
 	return resultVal
@@ -323,6 +330,7 @@ func chmodApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	time.Sleep(time.Second * 2)
 	return resultVal
@@ -339,6 +347,7 @@ func startApp(updaterType WasteLibrary.UpdaterType) WasteLibrary.ResultType {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	time.Sleep(time.Second * 10)
 

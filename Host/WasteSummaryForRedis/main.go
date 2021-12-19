@@ -20,7 +20,10 @@ func main() {
 
 	initStart()
 
+	//TO DO
+	//remove after bug fix
 	WasteLibrary.Debug = true
+
 	go summaryRedis()
 
 	http.HandleFunc("/health", WasteLibrary.HealthHandler)

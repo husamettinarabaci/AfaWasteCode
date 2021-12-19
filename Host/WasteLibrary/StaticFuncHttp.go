@@ -55,12 +55,14 @@ func StatusHandler(w http.ResponseWriter, req *http.Request) {
 		} else if readerType == CHECKTYPE_CONN {
 			if CurrentCheckStatu.ConnStatu == STATU_ACTIVE {
 				resultVal.Result = RESULT_OK
+				resultVal.Retval = RESULT_SUCCESS_OK
 			} else {
 				resultVal.Result = RESULT_FAIL
 			}
 		} else if readerType == CHECKTYPE_DEVICE {
 			if CurrentCheckStatu.DeviceStatu == STATU_ACTIVE {
 				resultVal.Result = RESULT_OK
+				resultVal.Retval = RESULT_SUCCESS_OK
 			} else {
 				resultVal.Result = RESULT_FAIL
 			}

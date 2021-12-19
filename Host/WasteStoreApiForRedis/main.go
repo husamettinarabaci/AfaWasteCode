@@ -494,6 +494,7 @@ func publishKeyRedis(channelKey string, kVal string) WasteLibrary.ResultType {
 
 	} else {
 		resultVal.Result = WasteLibrary.RESULT_OK
+		resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	}
 	return resultVal
 }
@@ -544,6 +545,7 @@ func insertKeyDb(dbIndex int, hKey string, sKey string, kVal string) WasteLibrar
 	_, errDb := sumDb.Exec(insertSQL)
 	WasteLibrary.LogErr(errDb)
 	resultVal.Result = WasteLibrary.RESULT_OK
+	resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	return resultVal
 }
 
@@ -555,6 +557,7 @@ func deleteKeyDb(dbIndex int, hKey string, sKey string) WasteLibrary.ResultType 
 	_, errDb := sumDb.Exec(deleteSQL)
 	WasteLibrary.LogErr(errDb)
 	resultVal.Result = WasteLibrary.RESULT_OK
+	resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	return resultVal
 }
 
@@ -565,5 +568,6 @@ func updateKeyDb(dbIndex int, hKey string, sKey string, kVal string) WasteLibrar
 	_, errDb := sumDb.Exec(updateSQL)
 	WasteLibrary.LogErr(errDb)
 	resultVal.Result = WasteLibrary.RESULT_OK
+	resultVal.Retval = WasteLibrary.RESULT_SUCCESS_OK
 	return resultVal
 }

@@ -280,7 +280,6 @@ const (
 	REDIS_CUSTOMER_TAGVIEWS              = "hsm-customer-tagviews"
 	REDIS_CUSTOMER_TAGVIEWS_REEL         = "hsm-customer-tagviews-reel"
 	REDIS_CUSTOMER_TAGS                  = "hsm-customer-tags"
-	REDIS_CUSTOMER_NFCS                  = "hsm-customer-nfcs"
 	REDIS_CUSTOMER_RFID_DEVICES          = "hsm-customer-rfid-devices"
 	REDIS_CUSTOMER_RFID_DEVICEVIEWS      = "hsm-customer-rfid-deviceviews"
 	REDIS_CUSTOMER_RFID_DEVICEVIEWS_REEL = "hsm-customer-rfid-deviceviews-reel"
@@ -437,6 +436,8 @@ const (
 )
 
 const (
+	RESULT_ERROR_NONE = "ERROR_NONE"
+
 	RESULT_ERROR_HTTP_PARSE = "ERROR_HTTP_PARSE"
 	RESULT_ERROR_HTTP_POST  = "ERROR_HTTP_POST"
 
@@ -475,6 +476,10 @@ const (
 	RESULT_ERROR_APP_STARTED = "ERROR_APP_STARTED"
 
 	RESULT_ERROR_IGNORE_FIRST_DATA = "ERROR_IGNORE_FIRST_DATA"
+)
+
+const (
+	RESULT_SUCCESS_OK = "SUCCESS_OK"
 )
 
 const (

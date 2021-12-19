@@ -5,16 +5,18 @@ import (
 	"fmt"
 )
 
-//RecyDeviceViewType
+//UltDeviceViewType
 type RecyDeviceViewType struct {
-	DeviceId  float64
-	Latitude  float64
-	Longitude float64
+	DeviceId    float64
+	ContainerNo string
+	Latitude    float64
+	Longitude   float64
 }
 
 //New
 func (res *RecyDeviceViewType) New() {
 	res.DeviceId = 0
+	res.ContainerNo = ""
 	res.Latitude = 0
 	res.Longitude = 0
 }

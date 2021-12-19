@@ -51,169 +51,263 @@ func startSystem(w http.ResponseWriter, req *http.Request) {
 	if resultVal.Result == WasteLibrary.RESULT_OK {
 		resultVal.Result = WasteLibrary.RESULT_FAIL
 		resultVal.Retval = WasteLibrary.RESULT_ERROR_APP_STARTED
-		w.Write(resultVal.ToByte())
-
-		return
 	} else {
 		WasteLibrary.LogStr("AfatekApi Start System Add Customer AFATEK")
-		var currentData WasteLibrary.CustomerType
-		currentData.CustomerName = "AFATEK"
-		currentData.CustomerLink = "afatek.aws.afatek.com.tr"
-		currentData.RfIdApp = WasteLibrary.STATU_ACTIVE
-		currentData.UltApp = WasteLibrary.STATU_ACTIVE
-		currentData.RecyApp = WasteLibrary.STATU_ACTIVE
-		currentData.Active = WasteLibrary.STATU_ACTIVE
-		currentData.CreateTime = WasteLibrary.GetTime()
-
-		resultVal = currentData.SaveToDb()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-
-		resultVal = currentData.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentData.SaveToRedisLink()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		var currentCustomerRfidDevices WasteLibrary.CustomerRfidDevicesType
-		currentCustomerRfidDevices.New()
-		currentCustomerRfidDevices.CustomerId = currentData.CustomerId
-		currentCustomerRfidDevices.Devices["0"] = 0
-
-		var currentCustomerRecyDevices WasteLibrary.CustomerRecyDevicesType
-		currentCustomerRecyDevices.New()
-		currentCustomerRecyDevices.CustomerId = currentData.CustomerId
-		currentCustomerRecyDevices.Devices["0"] = 0
-
-		var currentCustomerUltDevices WasteLibrary.CustomerUltDevicesType
-		currentCustomerUltDevices.New()
-		currentCustomerUltDevices.CustomerId = currentData.CustomerId
-		currentCustomerUltDevices.Devices["0"] = 0
-
-		var currentCustomerUsers WasteLibrary.CustomerUsersType
-		currentCustomerUsers.New()
-		currentCustomerUsers.CustomerId = currentData.CustomerId
-		currentCustomerUsers.Users["0"] = 0
-
-		var currentCustomerTags WasteLibrary.CustomerTagsType
-		currentCustomerTags.New()
-		currentCustomerTags.CustomerId = currentData.CustomerId
-		currentCustomerTags.Tags["0"] = 0
-
-		var currentCustomerConfig WasteLibrary.CustomerConfigType
-		currentCustomerConfig.New()
-		currentCustomerConfig.CustomerId = currentData.CustomerId
-
-		var currentAdminConfig WasteLibrary.AdminConfigType
-		currentAdminConfig.New()
-		currentAdminConfig.CustomerId = currentData.CustomerId
-
-		var currentLocalConfig WasteLibrary.LocalConfigType
-		currentLocalConfig.New()
-		currentLocalConfig.CustomerId = currentData.CustomerId
-
-		if resultVal.Result == WasteLibrary.RESULT_OK {
-			var currentCustomers WasteLibrary.CustomersType
-			resultVal = currentCustomers.GetByRedis()
-			if resultVal.Result == WasteLibrary.RESULT_OK {
-
-			} else {
-				currentCustomers = WasteLibrary.CustomersType{
-					Customers: make(map[string]float64),
-				}
-			}
-			currentCustomers.Customers[currentData.ToIdString()] = currentData.CustomerId
-			resultVal = currentCustomers.SaveToRedis()
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-				w.Write(resultVal.ToByte())
-
-				return
-			}
-		}
-		resultVal = currentCustomerRfidDevices.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerRecyDevices.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerUltDevices.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerUsers.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerTags.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerConfig.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentAdminConfig.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentLocalConfig.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
+		resultVal = createCustomer("AFATEK", "afatek.aws.afatek.com.tr")
+		resultVal = createCustomer("AFATEKWEB", "atik.afatek.com.tr")
+		resultVal = createCustomer("BODRUM", "atik.bodrum.bel.tr")
 
 	}
 	w.Write(resultVal.ToByte())
+
+}
+
+func createCustomer(customerName string, customerLink string) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
+	var currentData WasteLibrary.CustomerType
+	currentData.New()
+	currentData.CustomerName = customerName
+	currentData.CustomerLink = customerLink
+	currentData.RfIdApp = WasteLibrary.STATU_ACTIVE
+	currentData.UltApp = WasteLibrary.STATU_ACTIVE
+	currentData.RecyApp = WasteLibrary.STATU_ACTIVE
+	currentData.Active = WasteLibrary.STATU_ACTIVE
+	currentData.CreateTime = WasteLibrary.GetTime()
+
+	resultVal = currentData.SaveToDb()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_DB_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentData.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentData.SaveToRedisLink()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = createCustomerPart(currentData)
+
+	return resultVal
+}
+
+func createCustomerPart(currentData WasteLibrary.CustomerType) WasteLibrary.ResultType {
+	var resultVal WasteLibrary.ResultType
+
+	var currentCustomerRfidDevices WasteLibrary.CustomerRfidDevicesType
+	currentCustomerRfidDevices.New()
+	currentCustomerRfidDevices.CustomerId = currentData.CustomerId
+	currentCustomerRfidDevices.Devices["0"] = 0
+
+	var currentCustomerRfidDeviceViews WasteLibrary.CustomerRfidDevicesViewListType
+	currentCustomerRfidDeviceViews.New()
+	currentCustomerRfidDeviceViews.CustomerId = currentData.CustomerId
+
+	var currentCustomerRecyDevices WasteLibrary.CustomerRecyDevicesType
+	currentCustomerRecyDevices.New()
+	currentCustomerRecyDevices.CustomerId = currentData.CustomerId
+	currentCustomerRecyDevices.Devices["0"] = 0
+
+	var currentCustomerRecyDeviceViews WasteLibrary.CustomerRecyDevicesViewListType
+	currentCustomerRecyDeviceViews.New()
+	currentCustomerRecyDeviceViews.CustomerId = currentData.CustomerId
+
+	var currentCustomerUltDevices WasteLibrary.CustomerUltDevicesType
+	currentCustomerUltDevices.New()
+	currentCustomerUltDevices.CustomerId = currentData.CustomerId
+	currentCustomerUltDevices.Devices["0"] = 0
+
+	var currentCustomerUltDeviceViews WasteLibrary.CustomerUltDevicesViewListType
+	currentCustomerUltDeviceViews.New()
+	currentCustomerUltDeviceViews.CustomerId = currentData.CustomerId
+
+	var currentCustomerUsers WasteLibrary.CustomerUsersType
+	currentCustomerUsers.New()
+	currentCustomerUsers.CustomerId = currentData.CustomerId
+	currentCustomerUsers.Users["0"] = 0
+
+	var currentCustomerTags WasteLibrary.CustomerTagsType
+	currentCustomerTags.New()
+	currentCustomerTags.CustomerId = currentData.CustomerId
+	currentCustomerTags.Tags["0"] = 0
+
+	var currentCustomerTagViews WasteLibrary.CustomerTagsViewListType
+	currentCustomerTagViews.New()
+	currentCustomerTagViews.CustomerId = currentData.CustomerId
+
+	var currentCustomerConfig WasteLibrary.CustomerConfigType
+	currentCustomerConfig.New()
+	currentCustomerConfig.CustomerId = currentData.CustomerId
+	currentCustomerConfig.ArventoApp = WasteLibrary.STATU_ACTIVE
+	currentCustomerConfig.ArventoUserName = "afatekbilisim"
+	currentCustomerConfig.ArventoPin1 = "Amca151200!Furkan"
+	currentCustomerConfig.ArventoPin2 = "Amca151200!Furkan"
+
+	var currentAdminConfig WasteLibrary.AdminConfigType
+	currentAdminConfig.New()
+	currentAdminConfig.CustomerId = currentData.CustomerId
+	currentAdminConfig.CenterLatitude = 37.036604
+	currentAdminConfig.CenterLongitude = 27.424406
+
+	var parkLoc1 WasteLibrary.LocationType
+	parkLoc1.LocationName = "TURGUT REİS"
+	parkLoc1.ZoneRadius = 50
+	parkLoc1.Latitude = 37.012583
+	parkLoc1.Longitude = 27.283889
+
+	var parkLoc2 WasteLibrary.LocationType
+	parkLoc2.LocationName = "GÜNDOĞAN"
+	parkLoc2.ZoneRadius = 50
+	parkLoc2.Latitude = 37.114556
+	parkLoc2.Longitude = 27.347444
+
+	var parkLoc3 WasteLibrary.LocationType
+	parkLoc3.LocationName = "KONACIK"
+	parkLoc3.ZoneRadius = 50
+	parkLoc3.Latitude = 37.058611
+	parkLoc3.Longitude = 27.383417
+
+	var parkLoc4 WasteLibrary.LocationType
+	parkLoc4.LocationName = "MUMCULAR 1"
+	parkLoc4.ZoneRadius = 50
+	parkLoc4.Latitude = 37.106806
+	parkLoc4.Longitude = 27.661806
+
+	var parkLoc5 WasteLibrary.LocationType
+	parkLoc5.LocationName = "MUMCULAR 2"
+	parkLoc5.ZoneRadius = 50
+	parkLoc5.Latitude = 36.997361
+	parkLoc5.Longitude = 27.516944
+
+	currentAdminConfig.ParkLocations = append(currentAdminConfig.ParkLocations, parkLoc1, parkLoc2, parkLoc3, parkLoc4, parkLoc5)
+
+	var currentLocalConfig WasteLibrary.LocalConfigType
+	currentLocalConfig.New()
+	currentLocalConfig.CustomerId = currentData.CustomerId
+
+	var currentCustomers WasteLibrary.CustomersType
+	resultVal = currentCustomers.GetByRedis()
+	if resultVal.Result == WasteLibrary.RESULT_OK {
+
+	} else {
+		currentCustomers = WasteLibrary.CustomersType{
+			Customers: make(map[string]float64),
+		}
+	}
+	currentCustomers.Customers[currentData.ToIdString()] = currentData.CustomerId
+	resultVal = currentCustomers.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerRfidDevices.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+	resultVal = currentCustomerRfidDeviceViews.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerRecyDevices.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerRecyDeviceViews.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerUltDevices.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerUltDeviceViews.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerUsers.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+	resultVal = currentCustomerTags.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerTagViews.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	resultVal = currentCustomerConfig.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+	resultVal = currentAdminConfig.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+	resultVal = currentLocalConfig.SaveToRedis()
+	if resultVal.Result != WasteLibrary.RESULT_OK {
+		resultVal.Result = WasteLibrary.RESULT_FAIL
+		resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
+
+		return resultVal
+	}
+
+	return resultVal
 
 }
 
@@ -341,128 +435,7 @@ func setCustomer(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	} else {
-		var currentCustomerRfidDevices WasteLibrary.CustomerRfidDevicesType
-		currentCustomerRfidDevices.New()
-		currentCustomerRfidDevices.CustomerId = currentData.CustomerId
-		currentCustomerRfidDevices.Devices["0"] = 0
-
-		var currentCustomerRecyDevices WasteLibrary.CustomerRecyDevicesType
-		currentCustomerRecyDevices.New()
-		currentCustomerRecyDevices.CustomerId = currentData.CustomerId
-		currentCustomerRecyDevices.Devices["0"] = 0
-
-		var currentCustomerUltDevices WasteLibrary.CustomerUltDevicesType
-		currentCustomerUltDevices.New()
-		currentCustomerUltDevices.CustomerId = currentData.CustomerId
-		currentCustomerUltDevices.Devices["0"] = 0
-
-		var currentCustomerUsers WasteLibrary.CustomerUsersType
-		currentCustomerUsers.New()
-		currentCustomerUsers.CustomerId = currentData.CustomerId
-		currentCustomerUsers.Users["0"] = 0
-
-		var currentCustomerTags WasteLibrary.CustomerTagsType
-		currentCustomerTags.New()
-		currentCustomerTags.CustomerId = currentData.CustomerId
-		currentCustomerTags.Tags["0"] = 0
-
-		var currentCustomerConfig WasteLibrary.CustomerConfigType
-		currentCustomerConfig.New()
-		currentCustomerConfig.CustomerId = currentData.CustomerId
-
-		var currentAdminConfig WasteLibrary.AdminConfigType
-		currentAdminConfig.New()
-		currentAdminConfig.CustomerId = currentData.CustomerId
-
-		var currentLocalConfig WasteLibrary.LocalConfigType
-		currentLocalConfig.New()
-		currentLocalConfig.CustomerId = currentData.CustomerId
-
-		if resultVal.Result == WasteLibrary.RESULT_OK {
-			var currentCustomers WasteLibrary.CustomersType
-			resultVal = currentCustomers.GetByRedis()
-
-			if resultVal.Result == WasteLibrary.RESULT_OK {
-
-			} else {
-				currentCustomers = WasteLibrary.CustomersType{
-					Customers: make(map[string]float64),
-				}
-			}
-			currentCustomers.Customers[currentData.ToIdString()] = currentData.CustomerId
-			resultVal = currentCustomers.SaveToRedis()
-			if resultVal.Result != WasteLibrary.RESULT_OK {
-				resultVal.Result = WasteLibrary.RESULT_FAIL
-				resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-				w.Write(resultVal.ToByte())
-
-				return
-			}
-		}
-		resultVal = currentCustomerRfidDevices.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerRecyDevices.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerUltDevices.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerUsers.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerTags.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentCustomerConfig.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentAdminConfig.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
-		resultVal = currentLocalConfig.SaveToRedis()
-		if resultVal.Result != WasteLibrary.RESULT_OK {
-			resultVal.Result = WasteLibrary.RESULT_FAIL
-			resultVal.Retval = WasteLibrary.RESULT_ERROR_REDIS_SAVE
-			w.Write(resultVal.ToByte())
-
-			return
-		}
+		resultVal = createCustomerPart(currentData)
 	}
 
 	resultVal = WasteLibrary.PublishRedisForStoreApi(WasteLibrary.REDIS_CUSTOMER_CHANNEL+currentData.ToIdString(), WasteLibrary.DATATYPE_CUSTOMER, currentData.ToString())

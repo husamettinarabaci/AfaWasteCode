@@ -130,8 +130,13 @@ func customerProcRecy(customerDevices WasteLibrary.CustomerRecyDevicesType) {
 				var currentViewDevice WasteLibrary.RecyDeviceViewType
 				currentViewDevice.New()
 				currentViewDevice.DeviceId = currentDevice.DeviceId
-				//TO DO
-				//make recy summary
+				if currentDevice.DeviceBase.ContainerNo == "" {
+					currentViewDevice.ContainerNo = fmt.Sprintf("%05d", int(currentDevice.DeviceId))
+				} else {
+					currentViewDevice.ContainerNo = currentDevice.DeviceBase.ContainerNo
+				}
+				currentViewDevice.Latitude = currentDevice.DeviceMain.Latitude
+				currentViewDevice.Longitude = currentDevice.DeviceMain.Longitude
 				customerDevicesList.Devices[currentViewDevice.ToIdString()] = currentViewDevice
 			}
 		}
@@ -144,6 +149,8 @@ func customerProcRecy(customerDevices WasteLibrary.CustomerRecyDevicesType) {
 func customerProcUlt(customerDevices WasteLibrary.CustomerUltDevicesType) {
 	var resultVal WasteLibrary.ResultType
 	resultVal.Result = WasteLibrary.RESULT_FAIL
+	WasteLibrary.Debug = true
+	WasteLibrary.LogStr(customerDevices.ToString())
 
 	var customerDevicesList WasteLibrary.CustomerUltDevicesViewListType
 	customerDevicesList.New()
@@ -156,6 +163,7 @@ func customerProcUlt(customerDevices WasteLibrary.CustomerUltDevicesType) {
 			currentDevice.New()
 			currentDevice.DeviceId = deviceId
 			resultVal = currentDevice.GetByRedis("0")
+			WasteLibrary.LogStr(currentDevice.ToString())
 			if resultVal.Result == WasteLibrary.RESULT_OK && currentDevice.DeviceMain.Active == WasteLibrary.STATU_ACTIVE {
 				var currentViewDevice WasteLibrary.UltDeviceViewType
 				currentViewDevice.New()
@@ -167,8 +175,8 @@ func customerProcUlt(customerDevices WasteLibrary.CustomerUltDevicesType) {
 				}
 				currentViewDevice.ContainerStatu = currentDevice.DeviceStatu.ContainerStatu
 				currentViewDevice.UltStatus = currentDevice.DeviceStatu.UltStatus
-				currentViewDevice.Latitude = currentDevice.DeviceGps.Latitude
-				currentViewDevice.Longitude = currentDevice.DeviceGps.Longitude
+				currentViewDevice.Latitude = currentDevice.DeviceMain.Latitude
+				currentViewDevice.Longitude = currentDevice.DeviceMain.Longitude
 				currentViewDevice.SensPercent = currentDevice.DeviceStatu.SensPercent
 				customerDevicesList.Devices[currentViewDevice.ToIdString()] = currentViewDevice
 			}
@@ -176,5 +184,6 @@ func customerProcUlt(customerDevices WasteLibrary.CustomerUltDevicesType) {
 	}
 	resultVal = customerDevicesList.SaveToRedis()
 	resultVal = customerDevicesList.SaveToRedisWODb()
+	WasteLibrary.LogStr(customerDevicesList.ToString())
 
 }
