@@ -1,4 +1,4 @@
-cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
+cd /home/uncle/Documents/Projects/AfaWasteCode/Host &&
 cd WasteLibrary && go vet && go mod tidy && cd .. &&
 cd WasteAfatekApi && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteEnhcApi && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
@@ -33,7 +33,7 @@ cd WasteSystemUpdater && go vet && go mod tidy && go get -u "github.com/devafate
 cd WasteArvento && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. &&
 cd WasteDbCreator && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && cd .. 
 
-cd /home/uncle/Documents/Project/AfaWasteCode/Host &&
+cd /home/uncle/Documents/Projects/AfaWasteCode/Host &&
 sudo docker build -f WasteCamReader/Dockerfile -t devafatek/wastecamreader:1.0 . && docker push devafatek/wastecamreader:1.0 &&
 sudo docker build -f WasteEnhc/Dockerfile -t devafatek/wasteenhc:1.0 . && docker push devafatek/wasteenhc:1.0 &&
 sudo docker build -f WasteGpsReader/Dockerfile -t devafatek/wastegpsreader:1.0 . && docker push devafatek/wastegpsreader:1.0 &&
@@ -66,46 +66,46 @@ sudo docker build -f WasteSummaryForDevice/Dockerfile -t devafatek/wastesummaryf
 sudo docker build -f WasteArvento/Dockerfile -t devafatek/wastearvento:1.0 . && docker push devafatek/wastearvento:1.0 &&
 sudo docker build -f WasteDbCreator/Dockerfile -t devafatek/wastedbcreator:1.0 . && docker push devafatek/wastedbcreator:1.0 
 
-cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
-kubectl create -f Aws/Yaml/waste-logserver-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-dbcreator-pod.yaml &&
+cd /home/uncle/Documents/Projects/AfaWasteCode/Host/ &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-logserver-deployment.yaml &&
+kubectl create -f Aws/Yaml/Pod/waste-dbcreator-pod.yaml &&
 
-cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
-kubectl create -f Aws/Yaml/waste-redis-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-redis-rep-deployment.yaml &&
+cd /home/uncle/Documents/Projects/AfaWasteCode/Host/ &&
+kubectl create -f Aws/Yaml/Deployment/Redis/waste-redis-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Redis/waste-redis-rep-deployment.yaml &&
 
-cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
-kubectl create -f Aws/Yaml/waste-afatekapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-authapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-adminapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-webapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-webui-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-websocket-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-enhc-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-enhcapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-camreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-gpsreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-gpsstopreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-sensreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-batteryreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-rfreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-statusreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-thermreader-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-storeapi-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-storeapiforbulkdb-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-storeapiforstaticdb-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-storeapiforreaderdb-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-storeapiforconfigdb-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-storeapiforredis-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-summaryfortagview-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-summaryforredis-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-summaryfortag-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-summaryfordeviceview-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-summaryfordevice-deployment.yaml &&
-kubectl create -f Aws/Yaml/waste-arvento-deployment.yaml 
+cd /home/uncle/Documents/Projects/AfaWasteCode/Host/ &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-afatekapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-authapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-adminapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-webapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-webui-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-websocket-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-enhc-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-enhcapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-camreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-gpsreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-gpsstopreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-sensreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-batteryreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-rfreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-statusreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-thermreader-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-storeapi-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-storeapiforbulkdb-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-storeapiforstaticdb-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-storeapiforreaderdb-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-storeapiforconfigdb-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-storeapiforredis-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-summaryfortagview-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-summaryforredis-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-summaryfortag-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-summaryfordeviceview-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-summaryfordevice-deployment.yaml &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-arvento-deployment.yaml 
 
-cd /home/uncle/Documents/Project/AfaWasteCode/Host/ &&
-kubectl create -f Aws/Yaml/waste-listener-deployment.yaml
+cd /home/uncle/Documents/Projects/AfaWasteCode/Host/ &&
+kubectl create -f Aws/Yaml/Deployment/Waste/waste-listener-deployment.yaml
 
 #afatek.aws.afatek.com.tr/afatekapi/logApp?opType=open&appType=wastelistener
 

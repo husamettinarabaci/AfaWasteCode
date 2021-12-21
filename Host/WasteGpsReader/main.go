@@ -22,6 +22,7 @@ func main() {
 	http.HandleFunc("/status", WasteLibrary.StatusHandler)
 	http.HandleFunc("/reader", reader)
 	http.ListenAndServe(":80", nil)
+
 }
 
 func reader(w http.ResponseWriter, req *http.Request) {

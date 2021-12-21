@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waste-sumdb-deployment
+  labels:
+    app: waste-sumdb
+    apptype: waste-dbapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waste-sumdb
+  template:
+    metadata:
+      labels:
+        app: waste-sumdb
+    spec:
+      containers:
+        - name: waste-sumdb
+          image: postgres:13.4
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          args: ["-c", "shared_buffers=256MB", "-c", "max_connections=400"]
+          envFrom:
+            - configMapRef:
+                name: waste-psqldb-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: waste-sumdb-vm
+              subPath: sumdb
+      volumes:
+        - name: waste-sumdb-vm
+          persistentVolumeClaim:
+            claimName: waste-sumdb-pv-claim

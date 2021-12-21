@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waste-redis-deployment
+  labels:
+    app: waste-redis
+    master:  waste-redis-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waste-redis
+  template:
+    metadata:
+      labels:
+        app: waste-redis
+        master:  waste-redis-master
+    spec:
+      containers:
+      - name: waste-redis
+        image: redis:5.0.4
+        command:
+          - redis-server
+          - "/redis-master/redis.conf"
+        env:
+        - name: MASTER
+          value: "true"
+        ports:
+        - name: client
+          containerPort: 6379
+        - name: gossip
+          containerPort: 16379
+        livenessProbe:
+          tcpSocket:
+            port: client
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          periodSeconds: 5
+          failureThreshold: 5
+          successThreshold: 1
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 20
+          timeoutSeconds: 5
+          periodSeconds: 3
+        volumeMounts:
+        - mountPath: /redis-master-data
+          name: data
+        - mountPath: /redis-master
+          name: config
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: waste-redis-config
+            items:
+            - key: redis-config
+              path: redis.conf

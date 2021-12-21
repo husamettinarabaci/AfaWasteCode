@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waste-storeapiforreaderdb-deployment
+  labels:
+    app: waste-storeapiforreaderdb
+    apptype: waste-coreapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: waste-storeapiforreaderdb
+  template:
+    metadata:
+      labels:
+        app: waste-storeapiforreaderdb
+    spec:
+      initContainers:
+      - name: wait-for-wastelogserver
+        image: curlimages/curl:latest
+        command: ["/bin/sh","-c"]
+        args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
+      - name: wait-for-wastereaderdb
+        image: postgres:9.6.5
+        command: ['sh', '-c', 'until pg_isready -h waste-readerdb-cluster-ip -p 5432; do echo waiting for wastereaderdb; sleep 2; done;']
+      containers:
+      - name: waste-storeapiforreaderdb
+        image: devafatek/wastestoreapiforreaderdb:1.0
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: waste-psqldb-config
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 5

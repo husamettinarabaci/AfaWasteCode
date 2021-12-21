@@ -1,4 +1,4 @@
-cd /home/uncle/Documents/Project/AfaWasteCode/Client/RfidClient &&
+cd /home/uncle/Documents/Projects/AfaWasteCode/Client/RfidClient &&
 cd CamApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv CamApp ../Client\ Files/Binary/ && cd .. &&
 cd CheckerApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv CheckerApp ../Client\ Files/Binary/ && cd .. &&
 cd GpsApp/ && go vet && go mod tidy && go get -u "github.com/devafatek/WasteLibrary" && env GOOS=linux GOARCH=arm GOARM=5 go build && mv GpsApp ../Client\ Files/Binary/ && cd .. &&

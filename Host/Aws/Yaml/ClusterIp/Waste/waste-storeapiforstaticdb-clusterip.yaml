@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: waste-storeapiforstaticdb-cluster-ip
+spec:
+  type: ClusterIP
+  selector:
+    app: waste-storeapiforstaticdb
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

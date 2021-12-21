@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waste-pgadmin-deployment
+  labels:
+    app: waste-pgadmin
+    apptype: waste-dbapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: waste-pgadmin
+  template:
+    metadata:
+      labels:
+        app: waste-pgadmin
+    spec:
+      containers:
+      - name: waste-pgadmin
+        image: "dpage/pgadmin4"
+        envFrom:
+          - configMapRef:
+              name: waste-pgadmin-config
+        ports:
+        - containerPort: 80
+

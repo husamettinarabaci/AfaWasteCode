@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: waste-bulkdb-pv-volume
+  labels:
+    app: waste-bulkdb
+spec:
+  storageClassName: gp2
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: vol-09c8b055d3dd7bf59
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: waste-bulkdb-pv-claim
+  labels:
+    app: waste-bulkdb
+spec:
+  storageClassName: gp2
+  volumeMode: Filesystem
+  volumeName: waste-bulkdb-pv-volume
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
