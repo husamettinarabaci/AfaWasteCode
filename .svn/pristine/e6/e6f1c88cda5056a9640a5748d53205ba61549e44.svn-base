@@ -1,8 +1,0 @@
-gitee.com/wiseai/go-rpio v4.2.0+incompatible h1:iD/Ati6cRgEQMHYBRbV+oeY9oYRce+w7ZzLhrpSXJMI=
-gitee.com/wiseai/go-rpio v4.2.0+incompatible/go.mod h1:UqgqSofIqyK3jP+/c6bvRT9lqJp/P3JcYrLr6mkvNvI=
-github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a h1:oNZW9Z2KNR1brtrdGwOPiUrzbBgi+ltn0bzFGfoD5Kg=
-github.com/AfatekDevelopers/serial_lib_go v0.0.0-20200525185650-8665739e675a/go.mod h1:KS1SGJxBYmoQS1jcpvROdAkXJUG4+1o28t+qiIJOJ6I=
-github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
-github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55 h1:rw6UNGRMfarCepjI8qOepea/SXwIBVfTKjztZ5gBbq4=
-golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
