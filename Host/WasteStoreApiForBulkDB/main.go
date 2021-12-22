@@ -14,7 +14,7 @@ import (
 var port int = 5432
 var user string = os.Getenv("POSTGRES_USER")
 var password string = os.Getenv("POSTGRES_PASSWORD")
-var dbname string = os.Getenv("POSTGRES_DB")
+var dbname string = "bulkdb"
 
 var ctx = context.Background()
 var bulkDb *sql.DB
@@ -30,7 +30,7 @@ func main() {
 
 	initStart()
 
-	var bulkDbHost string = "waste-bulkdb-cluster-ip"
+	var bulkDbHost string = "waste-psqldb-cluster-ip"
 	bulkDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		bulkDbHost, port, user, password, dbname)

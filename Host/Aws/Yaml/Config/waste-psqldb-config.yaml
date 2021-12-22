@@ -5,7 +5,6 @@ metadata:
   labels:
     app: waste-psqldb-config
 data:
-  POSTGRES_DB: maindb
   POSTGRES_USER: devafatek
   POSTGRES_PASSWORD: devafatek
   TZ: Europe/Istanbul

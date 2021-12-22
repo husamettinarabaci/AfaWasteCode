@@ -14,7 +14,7 @@ import (
 var port int = 5432
 var user string = os.Getenv("POSTGRES_USER")
 var password string = os.Getenv("POSTGRES_PASSWORD")
-var dbname string = os.Getenv("POSTGRES_DB")
+var dbname string = "staticdb"
 
 var ctx = context.Background()
 var staticDb *sql.DB
@@ -30,7 +30,7 @@ func main() {
 
 	initStart()
 
-	var staticDbHost string = "waste-staticdb-cluster-ip"
+	var staticDbHost string = "waste-psqldb-cluster-ip"
 	staticDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		staticDbHost, port, user, password, dbname)

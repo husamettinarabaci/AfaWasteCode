@@ -1,24 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: waste-configdb-deployment
+  name: waste-psqldb-deployment
   labels:
-    app: waste-configdb
+    app: waste-psqldb
     apptype: waste-dbapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: waste-configdb
+      app: waste-psqldb
   template:
     metadata:
       labels:
-        app: waste-configdb
+        app: waste-psqldb
     spec:
-      nodeSelector:
-        zone: eu-central-1c
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                - eu-central-1a
       containers:
-        - name: waste-configdb
+        - name: waste-psqldb
           image: postgres:13.4
           imagePullPolicy: "IfNotPresent"
           ports:
@@ -29,9 +36,9 @@ spec:
                 name: waste-psqldb-config
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: waste-configdb-vm
-              subPath: configdb
+              name: waste-psqldb-vm
+              subPath: psqldb
       volumes:
-        - name: waste-configdb-vm
+        - name: waste-psqldb-vm
           persistentVolumeClaim:
-            claimName: waste-configdb-pv-claim
+            claimName: waste-psqldb-pv-claim

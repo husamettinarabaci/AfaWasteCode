@@ -16,7 +16,7 @@ import (
 var port int = 5432
 var user string = os.Getenv("POSTGRES_USER")
 var password string = os.Getenv("POSTGRES_PASSWORD")
-var dbname string = os.Getenv("POSTGRES_DB")
+var dbname string = "sumdb"
 var redisRClts [31]*redis.Client
 var redisWClts [31]*redis.Client
 
@@ -75,7 +75,7 @@ func main() {
 
 	setRedisClts()
 
-	var sumDbHost string = "waste-sumdb-cluster-ip"
+	var sumDbHost string = "waste-psqldb-cluster-ip"
 	sumdDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		sumDbHost, port, user, password, dbname)

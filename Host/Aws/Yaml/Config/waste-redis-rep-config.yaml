@@ -4,7 +4,7 @@ metadata:
   name: waste-redis-rep-config
 data:
   redis-rep-config: |
-    maxmemory 2gb
+    maxmemory 4gb
     requirepass Amca151200!Furkan
     masterauth Amca151200!Furkan
     databases 31

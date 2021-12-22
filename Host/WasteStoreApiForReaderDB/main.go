@@ -14,7 +14,7 @@ import (
 var port int = 5432
 var user string = os.Getenv("POSTGRES_USER")
 var password string = os.Getenv("POSTGRES_PASSWORD")
-var dbname string = os.Getenv("POSTGRES_DB")
+var dbname string = "readerdb"
 
 var ctx = context.Background()
 var readerDb *sql.DB
@@ -30,7 +30,7 @@ func main() {
 
 	initStart()
 
-	var readerDbHost string = "waste-readerdb-cluster-ip"
+	var readerDbHost string = "waste-psqldb-cluster-ip"
 	readerDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		readerDbHost, port, user, password, dbname)

@@ -27,11 +27,11 @@ func main() {
 }
 
 func bulkDbSet() {
-	var bulkDbHost string = "waste-bulkdb-cluster-ip"
+	var bulkDbHost string = "waste-psqldb-cluster-ip"
 	var port int = 5432
 	var user string = os.Getenv("POSTGRES_USER")
 	var password string = os.Getenv("POSTGRES_PASSWORD")
-	var dbname string = os.Getenv("POSTGRES_DB")
+	var dbname string = "bulkdb"
 	bulkDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		bulkDbHost, port, user, password, dbname)
@@ -63,11 +63,11 @@ func bulkDbSet() {
 }
 
 func configDbSet() {
-	var configDbHost string = "waste-configdb-cluster-ip"
+	var configDbHost string = "waste-psqldb-cluster-ip"
 	var port int = 5432
 	var user string = os.Getenv("POSTGRES_USER")
 	var password string = os.Getenv("POSTGRES_PASSWORD")
-	var dbname string = os.Getenv("POSTGRES_DB")
+	var dbname string = "configdb"
 	configDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		configDbHost, port, user, password, dbname)
@@ -89,11 +89,11 @@ func configDbSet() {
 }
 
 func sumDbSet() {
-	var sumDbHost string = "waste-sumdb-cluster-ip"
+	var sumDbHost string = "waste-psqldb-cluster-ip"
 	var port int = 5432
 	var user string = os.Getenv("POSTGRES_USER")
 	var password string = os.Getenv("POSTGRES_PASSWORD")
-	var dbname string = os.Getenv("POSTGRES_DB")
+	var dbname string = "sumdb"
 	sumDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		sumDbHost, port, user, password, dbname)
@@ -121,11 +121,11 @@ func sumDbSet() {
 }
 
 func readerDbSet() {
-	var readerDbHost string = "waste-readerdb-cluster-ip"
+	var readerDbHost string = "waste-psqldb-cluster-ip"
 	var port int = 5432
 	var user string = os.Getenv("POSTGRES_USER")
 	var password string = os.Getenv("POSTGRES_PASSWORD")
-	var dbname string = os.Getenv("POSTGRES_DB")
+	var dbname string = "readerdb"
 	readerDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		readerDbHost, port, user, password, dbname)
@@ -157,11 +157,11 @@ func readerDbSet() {
 }
 
 func staticDbSet() {
-	var staticDbHost string = "waste-staticdb-cluster-ip"
+	var staticDbHost string = "waste-psqldb-cluster-ip"
 	var port int = 5432
 	var user string = os.Getenv("POSTGRES_USER")
 	var password string = os.Getenv("POSTGRES_PASSWORD")
-	var dbname string = os.Getenv("POSTGRES_DB")
+	var dbname string = "staticdb"
 	staticDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		staticDbHost, port, user, password, dbname)

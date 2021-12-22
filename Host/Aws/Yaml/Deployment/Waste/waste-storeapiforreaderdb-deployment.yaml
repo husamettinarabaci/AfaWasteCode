@@ -20,9 +20,9 @@ spec:
         image: curlimages/curl:latest
         command: ["/bin/sh","-c"]
         args: ["while [ $(curl -sw '%{http_code}' http://waste-logserver-cluster-ip/readiness -o /dev/null) -ne 200 ]; do sleep 5; echo 'Waiting for the WasteLogServer...'; done"]
-      - name: wait-for-wastereaderdb
+      - name: wait-for-wastepsqldb
         image: postgres:9.6.5
-        command: ['sh', '-c', 'until pg_isready -h waste-readerdb-cluster-ip -p 5432; do echo waiting for wastereaderdb; sleep 2; done;']
+        command: ['sh', '-c', 'until pg_isready -h waste-psqldb-cluster-ip -p 5432; do echo waiting for wastepsqldb; sleep 2; done;']
       containers:
       - name: waste-storeapiforreaderdb
         image: devafatek/wastestoreapiforreaderdb:1.0

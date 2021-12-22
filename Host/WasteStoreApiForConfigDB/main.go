@@ -14,7 +14,7 @@ import (
 var port int = 5432
 var user string = os.Getenv("POSTGRES_USER")
 var password string = os.Getenv("POSTGRES_PASSWORD")
-var dbname string = os.Getenv("POSTGRES_DB")
+var dbname string = "configdb"
 
 var ctx = context.Background()
 var configDb *sql.DB
@@ -30,7 +30,7 @@ func main() {
 
 	initStart()
 
-	var configDbHost string = "waste-configdb-cluster-ip"
+	var configDbHost string = "waste-psqldb-cluster-ip"
 	configDbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		configDbHost, port, user, password, dbname)
